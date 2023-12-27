@@ -32,6 +32,7 @@
     };
     mkLinuxApps = system: {
       "install" = mkApp "install" system;
+      "nvme-lbaf" = mkApp "nvme-lbaf" system;
     };
   in {
     apps = nixpkgs.lib.genAttrs systems mkLinuxApps;
