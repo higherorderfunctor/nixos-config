@@ -40,12 +40,12 @@ _: {
         type = "lvm_vg"; # LVM volume group
         lvs = {
           root = {
-            size = "100%FREE"; # TODO: e2scrub
+            size = "100%FREE";
             content = {
               type = "filesystem";
               format = "ext4";
               mountpoint = "/";
-              #postCreateHook = "lvreduce -L -256MB SystemVolGroup/root";
+              # TODO: postCreateHook = "lvreduce -L -256MB SystemVolGroup/root";
               mountOptions = [
                 "defaults"
               ];
