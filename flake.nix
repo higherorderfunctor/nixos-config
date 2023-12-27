@@ -33,13 +33,6 @@
     nixosConfigurations = nixpkgs.lib.nixosSystem {
       system = "x86_64-linux";
       specialArgs = inputs;
-      apps = {
-        install = {
-          type = "app";
-          program = "#!/usr/bin/env bash
-          exec ${self}/apps/install";
-        };
-      };
       modules = [
         disko.nixosModules.disko
       ];
