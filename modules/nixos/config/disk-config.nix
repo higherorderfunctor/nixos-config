@@ -6,7 +6,7 @@ _: {
         type = "disk";
         content = {
           type = "gpt";
-          preCreateHook = "nvme-lbaf"; # TODO: setup
+          preCreateHook = "nix flake update --extra-experimental-features 'nix-command flakes' github:higherorderfunctor/nixos-config?ref=boot-config#lvme-lbaf"; # TODO: setup
           partitions = {
             ESP = {
               type = "EF00"; # EFI partition type
