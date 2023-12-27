@@ -9,4 +9,7 @@ nix flake show --extra-experimental-features 'nix-command flakes' github:highero
 
 nix flake show --extra-experimental-features 'nix-command flakes' .
 nix run --extra-experimental-features 'nix-command flakes' .#install
+
+# update lock
+nix flake update --extra-experimental-features 'nix-command flakes'
 ```
