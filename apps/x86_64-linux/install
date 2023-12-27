@@ -42,6 +42,7 @@ install-nixos() {
 	esac
 
 	sudo nixos-install --flake .#$FLAKE_TARGET "$@"
+	# TODO: sudo nixos-install --flake .#beelink-ser7 "$@"
 	sudo chmod -R 775 /mnt/etc/nixos
 }
 
