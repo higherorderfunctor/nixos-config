@@ -16,6 +16,11 @@
     nixos-hardware,
     disko,
   } @ inputs: let
+    inherit (self) outputs;
+    systems = [
+      "aarch64-linux"
+      "x86_64-linux"
+    ];
     mkApp = scriptName: system: {
       type = "app";
       program = "${(nixpkgs.legacyPackages.${system}.writeScriptBin scriptName ''
@@ -28,8 +33,8 @@
     mkLinuxApps = system: {
       "install" = mkApp "install" system;
     };
-    apps = mkLinuxApps "x86_64-linux";
   in {
+    apps = nixpkgs.lib.genAttrs systems mkLinuxApps;
     nixosConfigurations.beelink-ser7 = nixpkgs.lib.nixosSystem {
       system = "x86_64-linux";
       specialArgs = inputs;
