@@ -41,6 +41,7 @@
       specialArgs = inputs;
       modules = [
         disko.nixosModules.disko
+        ./hosts/nixos
       ];
     };
   };
