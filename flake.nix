@@ -30,7 +30,7 @@
     };
     apps = mkLinuxApps "x86_64-linux";
   in {
-    nixosConfigurations = nixpkgs.lib.nixosSystem {
+    nixosConfigurations.beelink-ser7 = nixpkgs.lib.nixosSystem {
       system = "x86_64-linux";
       specialArgs = inputs;
       modules = [
