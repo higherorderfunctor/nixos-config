@@ -15,7 +15,7 @@
     home-manager,
     nixos-hardware,
     disko,
-  } @ inputs: {
+  } @ inputs: let
     mkApp = scriptName: system: {
       type = "app";
       program = "${(nixpkgs.legacyPackages.${system}.writeScriptBin scriptName ''
@@ -29,6 +29,7 @@
       "install" = mkApp "install" system;
     };
     apps = mkLinuxApps "x86_64-linux";
+  in {
     nixosConfigurations.beelink-ser7 = nixpkgs.lib.nixosSystem {
       system = "x86_64-linux";
       specialArgs = inputs;
