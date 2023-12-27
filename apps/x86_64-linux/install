@@ -21,7 +21,7 @@ run-disko() {
 
 setup-files() {
 	sudo mkdir /mnt/etc
-	nix flake clone github:higherorderfunctor/nixos-config?ref=feat/disk-config --dest /mnt/etc/nixos
+	nix flake clone --extra-experimental-features 'nix-command flakes' github:higherorderfunctor/nixos-config?ref=feat/disk-config --dest /mnt/etc/nixos
 	cd /mnt/etc/nixos
 }
 
