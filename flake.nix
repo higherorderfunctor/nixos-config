@@ -16,9 +16,16 @@
     nixos-hardware,
     disko,
   } @ inputs: {
-    nixosConfigurations.ser7 = nixpkgs.lib.nixosSystem {
+    nixosConfigurations.beelink-ser7 = nixpkgs.lib.nixosSystem {
       system = "x86_64-linux";
       specialArgs = inputs;
+      apps = {
+        install = {
+          type = "app";
+          program = "#!/usr/bin/env bash
+          exec ${self}/apps/install";
+        };
+      };
       modules = [
         disko.nixosModules.disko
       ];
