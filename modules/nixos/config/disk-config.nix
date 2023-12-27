@@ -6,7 +6,7 @@ _: {
         type = "disk";
         content = {
           type = "gpt";
-          preCreateHook = "nix flake update --extra-experimental-features 'nix-command flakes' github:higherorderfunctor/nixos-config?ref=disk-config#nvme-lbaf"; # TODO: setup
+          preCreateHook = "nix run --extra-experimental-features 'nix-command flakes' github:higherorderfunctor/nixos-config?ref=feat/disk-config#nvme-lbaf"; # TODO: setup
           partitions = {
             ESP = {
               type = "EF00"; # EFI partition type
