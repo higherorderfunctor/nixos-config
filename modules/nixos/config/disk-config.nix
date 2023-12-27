@@ -40,7 +40,7 @@ _: {
         type = "lvm_vg"; # LVM volume group
         lvs = {
           root = {
-            size = "-256M"; # TODO: e2scrub
+            end = "-256M"; # TODO: e2scrub
             content = {
               type = "filesystem";
               format = "ext4";
@@ -55,3 +55,6 @@ _: {
     };
   };
 }
+# TODO: secure boot
+# TODO: tpm key
+# TODO: only-key
