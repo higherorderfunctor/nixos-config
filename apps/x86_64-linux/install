@@ -3,7 +3,7 @@
 set -euETo pipefail
 shopt -s inherit_errexit
 
-NIXOS_CONFIG="$(dirname "$0")/../../modules/nixos/config"
+NIXOS_CONFIG="$(dirname "$0")/../../modules/nixos"
 
 check-installer() {
 	if [ -e /etc/NIXOS ]; then

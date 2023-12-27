@@ -12,4 +12,7 @@ nix run --extra-experimental-features 'nix-command flakes' .#install
 
 # update lock
 nix flake update --extra-experimental-features 'nix-command flakes'
+
+# check config
+nix flake check --extra-experimental-features 'nix-command flakes'
 ```
