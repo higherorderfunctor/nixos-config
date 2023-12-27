@@ -16,6 +16,19 @@
     nixos-hardware,
     disko,
   } @ inputs: {
+    mkApp = scriptName: system: {
+      type = "app";
+      program = "${(nixpkgs.legacyPackages.${system}.writeScriptBin scriptName ''
+        #!/usr/bin/env bash
+        PATH=${nixpkgs.legacyPackages.${system}.git}/bin:$PATH
+        echo "Running ${scriptName} for ${system}"
+        exec ${self}/apps/${system}/${scriptName}
+      '')}/bin/${scriptName}";
+    };
+    mkLinuxApps = system: {
+      "install" = mkApp "install" system;
+    };
+    apps = mkLinuxApps "x86_64-linux";
     nixosConfigurations.beelink-ser7 = nixpkgs.lib.nixosSystem {
       system = "x86_64-linux";
       specialArgs = inputs;
