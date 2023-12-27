@@ -6,7 +6,7 @@ _: {
         type = "disk";
         content = {
           type = "gpt";
-          preCreateHook = "nvme-lbaf";
+          preCreateHook = "nvme-lbaf"; # TODO: setup
           partitions = {
             ESP = {
               type = "EF00"; # EFI partition type

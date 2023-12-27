@@ -13,7 +13,15 @@
     self,
     nixpkgs,
     home-manager,
+    nixos-hardware,
     disko,
   } @ inputs: {
+    nixosConfigurations.ser7 = nixpkgs.lib.nixosSystem {
+      system = "x86_64-linux";
+      specialArgs = inputs;
+      modules = [
+        disko.nixosModules.disko
+      ];
+    };
   };
 }
