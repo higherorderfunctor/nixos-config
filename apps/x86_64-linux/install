@@ -3,7 +3,9 @@
 set -euETo pipefail
 shopt -s inherit_errexit
 
-check_installer() {
+NIXOS_CONFIG='../../modules/nixos/config'
+
+check-installer() {
 	if [ -e /etc/NIXOS ]; then
 		echo -e "\e[1;32mRunning in the NixOS installer environment.\e[0m"
 	else
@@ -11,12 +13,18 @@ check_installer() {
 		exit 1
 	fi
 }
-run_disko() {
+
+setup-config() {
+	cd $NIXOS_CONFIG
+}
+
+run-disko() {
 	sudo nix run --extra-experimental-features nix-command --extra-experimental-features flakes \
-		github:nix-community/disko -- --mode disko ./nixos/disk-config.nix
+		github:nix-community/disko -- --mode disko ./disk-config.nix
 }
 
 echo "hello world" # TODO: remove
 
-check_installer
-run_disko
+check-installer
+setup-config
+run-disko
