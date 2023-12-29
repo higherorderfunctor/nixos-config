@@ -41,7 +41,7 @@ install-nixos() {
 		;;
 	esac
 
-	sudo nixos-rebuild --flake github:higherorderfunctor/nixos-config?ref=feat/disk-config#beelink-ser7 switch
+	sudo nixos-rebuild --flake .#beelink-ser7 switch
 	# sudo nixos-install --flake .#beelink-ser7 "$@"
 	# TODO: sudo nixos-install --flake .#$FLAKE_TARGET "$@"
 	sudo chmod -R 775 /mnt/etc/nixos
