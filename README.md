@@ -15,4 +15,11 @@ nix flake update --extra-experimental-features 'nix-command flakes'
 
 # check config
 nix flake check --extra-experimental-features 'nix-command flakes'
+
+# linter error TODO: fix
+nix flake archive --extra-experimental-features 'nix-command flakes'
+
+
+nixos-generate-config --root /mnt
+nixos-generate-config --root .
 ```

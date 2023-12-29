@@ -10,4 +10,20 @@
   imports = [
     ../../modules/nixos
   ];
+
+  # bootloader
+  boot = {
+    loader = {
+      systemd-boot = {
+        enable = true;
+        configurationLimit = 42;
+      };
+      efi = {
+        canTouchEfiVariables = true;
+      };
+    };
+  };
+
+  # timezone
+  time.timeZone = "America/Denver";
 }
