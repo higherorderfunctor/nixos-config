@@ -15,6 +15,8 @@ nix flake update --extra-experimental-features 'nix-command flakes'
 
 # check config
 nix flake check --extra-experimental-features 'nix-command flakes'
+
+--no-write-lock-file for updates
 ```
 
 nixos-rebuild --extra-experimental-features 'nix-command flakes' --flake github:higherorderfunctor/nixos-config?ref=feat/disk-config switch
