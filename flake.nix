@@ -38,11 +38,14 @@
     apps = nixpkgs.lib.genAttrs systems mkLinuxApps;
     nixosConfigurations.beelink-ser7 = nixpkgs.lib.nixosSystem {
       system = "x86_64-linux";
-      specialArgs = inputs;
       modules = [
         disko.nixosModules.disko
-        ./hosts/nixos
+        nixos-hardware.nixosModules.common-cpu-amd
+        ./hosts/beelink-ser7.nix
       ];
+      specialArgs = {inherit inputs outputs;};
     };
   };
 }
+# formatter = forAllSystems (system: nixpkgs.legacyPackages.${system}.alejandra);
+# export NIX_CONFIG="experimental-features = nix-command flakes"
