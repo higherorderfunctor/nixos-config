@@ -41,7 +41,7 @@
       modules = [
         disko.nixosModules.disko
         nixos-hardware.nixosModules.common-cpu-amd
-        ./hosts/beelink-ser7.nix
+        ./hosts/beelink-ser7
       ];
       specialArgs = {inherit inputs outputs;};
     };

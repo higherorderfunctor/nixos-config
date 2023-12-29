@@ -21,6 +21,10 @@
       device = "/dev/disk/by-label/ESP";
       fsType = "vfat";
     };
+    "/" = {
+      device = "/dev/disk/by-label/dm-name-pool-root";
+      fsType = "ext4";
+    };
   };
 
   nixpkgs.hostPlatform.system = "x86_64-linux";
