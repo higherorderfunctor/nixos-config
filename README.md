@@ -24,3 +24,11 @@ nixos-rebuild --extra-experimental-features 'nix-command flakes' --flake github:
 nix run --extra-experimental-features 'nix-command flakes' nixpkgs#statix -- help
 
 nix profile install  --extra-experimental-features 'nix-command flakes' github:nerdypepper/statix
+nix profile install  --extra-experimental-features 'nix-command flakes' github:siraben/nix-lint
+
+nix-lint is manual
+
+
+# TODO deadnix
+
+nix profile install --extra-experimental-features 'nix-command flakes' github:nix-community/nixd
