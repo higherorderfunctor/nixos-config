@@ -22,4 +22,43 @@ nix flake archive --extra-experimental-features 'nix-command flakes'
 
 nixos-generate-config --root /mnt
 nixos-generate-config --root .
+--no-write-lock-file for updates
+
+nixos-rebuild --extra-experimental-features 'nix-command flakes' --flake github:higherorderfunctor/nixos-config?ref=feat/disk-config switch
+```
+
+## Linters, Formatters, and LSPs
+
+### statix (linter)
+
+nvim: yes via `nvim-lint`.
+
+```sh
+nix profile install  --extra-experimental-features 'nix-command flakes' github:NixOS/nixpkgs#statix
+statix check flake.nix
+```
+
+### deadnix (linter)
+
+nvim: yes, using `none-ls`.
+
+```sh
+nix profile install --extra-experimental-features 'nix-command flakes' github:astro/deadnix#
+deadnix flake.nix
+```
+
+### nil (lsp)
+
+nvim: yes, managed via `mason` and configured automatically via `nvim-lspconfig`.
+
+```sh
+nix profile install  --extra-experimental-features 'nix-command flakes' github:oxalica/nil#
+```
+
+### nixd (lsp)
+
+nvim: yes, installed manually and managed via `neovim/nvim-lspconfig`.
+
+```sh
+nix profile install  --extra-experimental-features 'nix-command flakes' github:nix-community/nixd#
 ```
