@@ -26,7 +26,7 @@ nix run --extra-experimental-features 'nix-command flakes' nixpkgs#statix -- hel
 nix profile install  --extra-experimental-features 'nix-command flakes' github:nerdypepper/statix
 nix profile install  --extra-experimental-features 'nix-command flakes' github:siraben/nix-lint
 
-nix-lint is manual
+nix-lint is manual # should be "linter"
 
 
 # TODO deadnix
