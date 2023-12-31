@@ -20,3 +20,7 @@ nix flake check --extra-experimental-features 'nix-command flakes'
 ```
 
 nixos-rebuild --extra-experimental-features 'nix-command flakes' --flake github:higherorderfunctor/nixos-config?ref=feat/disk-config switch
+
+nix run --extra-experimental-features 'nix-command flakes' nixpkgs#statix -- help
+
+nix profile install  --extra-experimental-features 'nix-command flakes' github:nerdypepper/statix
