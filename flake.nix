@@ -1,5 +1,7 @@
 {
-  description = "Configuration for NixOS";
+  description = "NixOS Configuration";
+
+  # dependency injection
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
     home-manager.url = "github:nix-community/home-manager";
@@ -9,41 +11,82 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
   };
+
+  # implemenetation
   outputs = {
+    # injected dependencies that should match inputs
     self,
     nixpkgs,
     home-manager,
     nixos-hardware,
     disko,
-  } @ inputs: let
-    inherit (self) outputs;
+    # packs dependencies into a single object
+  } @ inputs:
+  # do-notation
+  let
+    inherit (self) outputs; # unpacks inputs into local scope
+    lib = nixpkgs.lib // home-manager.lib; # { ...nixpkgs.lib, ...home-manager.lib }
+    # static binding of supported systems
     systems = [
       "aarch64-linux"
       "x86_64-linux"
     ];
-    mkApp = scriptName: system: {
-      type = "app";
-      program = "${(nixpkgs.legacyPackages.${system}.writeScriptBin scriptName ''
-        #!/usr/bin/env bash
-        PATH=${nixpkgs.legacyPackages.${system}.git}/bin:$PATH
-        echo "Running ${scriptName} for ${system}"
-        exec ${self}/apps/${system}/${scriptName}
-      '')}/bin/${scriptName}";
-    };
-    mkLinuxApps = system: {
-      "install" = mkApp "install" system;
-      "nvme-lbaf" = mkApp "nvme-lbaf" system;
-    };
+    # forEachSystem =     define named function
+    #
+    # f:                  arg to forEachSystem, higher-order function argument
+    #
+    # lib.genAttrs        keys.map((key) => { key: value }).reduce((acc, { k, v }) => { ...acc, k: v })
+    # systems             keys arg to lib.genAttrs
+    # (system:            start of map function with key as arg
+    # f                   calls higher-order function argument
+    # pkgsFor.${system}   passes pkgsFor[system] to f
+    #
+    # returns             { x86_64-linux: f(pkgsFor('x86_64-linux')), ... }
+    forEachSystem = f: lib.genAttrs systems (system: f pkgsFor.${system});
+    # for each system, generate a set of packages by importing nixpkgs and applying the configurated system and allowed
+    # unfree packages
+    #
+    # looks like this is used to inject a semi-configured repo of pkgs to other modules
+    pkgsFor = lib.genAttrs systems (system:
+      import nixpkgs {
+        # configures package set for current system key
+        inherit system;
+        # allows unfree packages
+        config.allowUnfree = true;
+      });
+    # mkApp = scriptName: system: {
+    #   type = "app";
+    #   program = "${(nixpkgs.legacyPackages.${system}.writeScriptBin scriptName ''
+    #     #!/usr/bin/env bash
+    #     PATH=${nixpkgs.legacyPackages.${system}.git}/bin:$PATH
+    #     echo "Running ${scriptName} for ${system}"
+    #     exec ${self}/apps/${system}/${scriptName}
+    #   '')}/bin/${scriptName}";
+    # };
+    # mkLinuxApps = system: {
+    #   "install" = mkApp "install" system;
+    #   "nvme-lbaf" = mkApp "nvme-lbaf" system;
+    # };
   in {
-    apps = nixpkgs.lib.genAttrs systems mkLinuxApps;
-    nixosConfigurations.beelink-ser7 = nixpkgs.lib.nixosSystem {
-      system = "x86_64-linux";
-      modules = [
-        disko.nixosModules.disko
-        nixos-hardware.nixosModules.common-cpu-amd
-        ./hosts/beelink-ser7
-      ];
-      specialArgs = {inherit inputs outputs;};
+    # define system specific configurations
+    nixosConfigurations = {
+      # mini-pc
+      boolink-ser7 = lib.nixosSystem {
+        # add system specific module to this configuration
+        modules = [./hosts/beelink-ser7];
+        # passes { inputs, outputs } as extra args to next stage
+        specialArgs = {inherit inputs outputs;};
+      };
+      # apps = nixpkgs.lib.genAttrs systems mkLinuxApps;
+      # nixosConfigurations.beelink-ser7 = nixpkgs.lib.nixosSystem {
+      #   system = "x86_64-linux";
+      #   modules = [
+      #     disko.nixosModules.disko
+      #     nixos-hardware.nixosModules.common-cpu-amd
+      #     ./hosts/beelink-ser7
+      #   ];
+      #   specialArgs = {inherit inputs outputs;};
+      # };
     };
   };
 }
