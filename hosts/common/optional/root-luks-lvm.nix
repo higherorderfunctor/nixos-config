@@ -17,6 +17,8 @@ _: {
                 format = "vfat";
                 mountpoint = "/boot";
                 mountOptions = [
+                  "fmask=0077"
+                  "dmask=0077" # TODO compare with arch
                   "defaults"
                 ];
               };
