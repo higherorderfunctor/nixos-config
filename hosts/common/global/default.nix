@@ -1,6 +1,6 @@
 {inputs, ...}: {
   imports = [
-    inputs.disko.nixosModules.disko
+    ./nix.nix
   ];
 
   # system state version
@@ -11,14 +11,17 @@
     systemd-boot = {
       enable = true;
       consoleMode = "max";
+      configurationLimit = 64;
     };
     efi.canTouchEfiVariables = true;
   };
 
-  # disko scripts
-  # TODO what these for
-  # environment.systemPackages = with pkgs; [
-  #   (pkgs.writeScriptBin "disko-create" (disko.create cfg))
-  #   (pkgs.writeScriptBin "disko-mount" (disko.mount cfg))
-  # ];
+  # timezone
+  time.timeZone = "America/Denver";
+
+  # networking
+  networking = {
+    hostName = "alcyone";
+    useDHCP = true;
+  };
 }

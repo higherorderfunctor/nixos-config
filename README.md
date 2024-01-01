@@ -31,12 +31,20 @@ nixos-rebuild --extra-experimental-features 'nix-command flakes' --flake github:
 ## Installing
 
 ```sh
-# using "vm" as the host, but can be anything in ./hosts
-
-nix run --extra-experimental-features 'nix-command flakes' .#lvme-lbaf
+# using `vm` as the host, but can be anything in `./hosts`
 
 ##
 # partition drive(s)
+
+# check LBA format
+sudo nix run \
+  --extra-experimental-features 'nix-command flakes' \
+  nixpkgs#nvme-cli -- id-ns /dev/nvme0n1 -H
+
+# update to best format
+sudo nix run \
+  --extra-experimental-features 'nix-command flakes' \
+  nixpkgs#nvme-cli -- format /dev/nvme0n1 --lbaf <BEST>
 
 # remote
 sudo nix run \
@@ -56,12 +64,14 @@ lsblk -l
 
 ##
 # generate hardware config
+
 sudo nixos-generate-config --root /mnt --show-hardware-config
 
 # copy anything wanted into hosts/vm/hardware-configuration.nix
 
 ##
 # update flake with any changes
+
 nix flake update --extra-experimental-features 'nix-command flakes'
 nix flake check --extra-experimental-features 'nix-command flakes'
 git commit -am 'message'
@@ -69,6 +79,7 @@ git push
 
 ##
 # run the installation
+
 sudo nixos-install --flake github:higherorderfunctor/nixos-config?ref=feat/disk-config#vm
 ````
 
@@ -88,17 +99,14 @@ nix flake update --extra-experimental-features 'nix-command flakes' github:highe
 
 ### nix-repl
 
-nvim: no, manual inspection of config.  Use <tab> to walk config to inspect.
-
 ```sh
 nix repl --extra-experimental-features 'nix-command flakes'
 :lf .
-nixosConfigurations.beelink-ser7
 ```
 
 ### statix (linter)
 
-nvim: yes via `nvim-lint`.
+nvim: `nvim-lint`
 
 ```sh
 nix profile install  --extra-experimental-features 'nix-command flakes' github:NixOS/nixpkgs#statix
@@ -107,7 +115,7 @@ statix check flake.nix
 
 ### deadnix (linter)
 
-nvim: yes, using `none-ls`.
+nvim: `none-ls`
 
 ```sh
 nix profile install --extra-experimental-features 'nix-command flakes' github:astro/deadnix#
@@ -116,7 +124,7 @@ deadnix flake.nix
 
 ### nil (lsp)
 
-nvim: yes, managed via `mason` and configured automatically via `nvim-lspconfig`.
+nvim: `mason`, `nvim-lspconfig`
 
 ```sh
 nix profile install  --extra-experimental-features 'nix-command flakes' github:oxalica/nil#
@@ -124,7 +132,7 @@ nix profile install  --extra-experimental-features 'nix-command flakes' github:o
 
 ### nixd (lsp)
 
-nvim: yes, using `neovim/nvim-lspconfig`.
+nvim: `neovim/nvim-lspconfig`
 
 ```sh
 nix profile install  --extra-experimental-features 'nix-command flakes' github:nix-community/nixd#

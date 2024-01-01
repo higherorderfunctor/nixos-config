@@ -21,39 +21,41 @@
   } @ inputs: let
     inherit (self) outputs;
     lib = nixpkgs.lib // home-manager.lib;
-    systems = [
-      "aarch64-linux"
-      "x86_64-linux"
-    ];
+    systems = ["x86_64-linux" "aarch64-linux"];
     forEachSystem = f: lib.genAttrs systems (system: f pkgsFor.${system});
     pkgsFor = lib.genAttrs systems (system:
       import nixpkgs {
         inherit system;
         config.allowUnfree = true;
       });
-    pkgs = flake-utils.lib.eachDefaultSystem (system:
-      import nixpkgs {
-        inherit system;
-        config.allowUnfree = true;
-      });
-  in {
-    # add default packages
-    packages = import ./pkgs {inherit pkgs;};
-
-    # add custom scripts for this flake
-    # PATH=${nixpkgs.legacyPackages.${system}.git}/bin:$PATH
-    # echo "Running ${scriptName} for ${system}"
-    apps = {
-      nvme-lbaf = flake-utils.lib.mkApp {
-        drv = "${(self.packages.writeShellScriptBin "nvme-lbaf" ''
-          #!/usr/bin/env bash
-          exec ${self}/apps/${self.system}/lvme-lbaf
-        '')}/bin/lvme-lbaf";
-      };
+    mkApp = scriptName: system: {
+      type = "app";
+      program = "${(pkgsFor.${system}.writeShellScriptBin scriptName ''
+        #!/usr/bin/env bash
+        exec ${self}/apps/${system}/${scriptName}
+      '')}/bin/${scriptName}";
     };
+    mkApp2 = scriptName: system: {
+      type = "app";
+      program = "${(pkgsFor.${system}.writeShellScriptBin scriptName ''
+        #!/usr/bin/env bash
+        exec ${self}/apps/${system}/${scriptName}
+      '')}/bin/${scriptName}";
+    };
+  in {
+    # add custom packages
+    packages = forEachSystem (pkgs: import ./pkgs {inherit pkgs;});
+
+    # add custom apps
+    apps = lib.genAttrs systems (system: {
+      nvme-lbaf = flake-utils.lib.mkApp {drv = pkgsFor.${system}.nvme-cli;};
+    });
+    # apps = lib.genAttrs systems (system: {
+    #   nvme-lbaf = mkApp "nvme-lbaf" system;
+    # });
 
     # set formmatter for this flake
-    # formatter = pkgs.alejandra; TODO: uncomment after dev
+    formatter = forEachSystem (pkgs: pkgs.alejandra);
 
     # system configurations
     nixosConfigurations = {

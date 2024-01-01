@@ -3,11 +3,10 @@ _: {
   disko.devices = {
     disk = {
       root = {
-        # device = disk;
+        # device = ...; set by importer
         type = "disk";
         content = {
           type = "gpt";
-          # TODO: preCreateHook = "nix run --extra-experimental-features 'nix-command flakes' github:higherorderfunctor/nixos-config?ref=feat/disk-config#nvme-lbaf"; # TODO: setup
           partitions = {
             ESP = {
               type = "EF00"; # EFI partition type
@@ -17,8 +16,10 @@ _: {
                 format = "vfat";
                 mountpoint = "/boot";
                 mountOptions = [
+                  "uid=0"
+                  "gid=0"
                   "fmask=0077"
-                  "dmask=0077" # TODO compare with arch
+                  "dmask=0077"
                   "defaults"
                 ];
               };
