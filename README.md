@@ -30,7 +30,9 @@ nixos-rebuild --extra-experimental-features 'nix-command flakes' --flake github:
 
 ## VM Testing
 
-
+```sh
+sudo nixos-install --flake github:higherorderfunctor/nixos-config?ref=feat/disk-config#vm
+````
 
 ## Linters, Formatters, and LSPs
 

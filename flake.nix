@@ -35,6 +35,10 @@
         modules = [./hosts/beelink-ser7];
         specialArgs = {inherit inputs outputs;};
       };
+      vm = lib.nixosSystem {
+        modules = [./hosts/vm];
+        specialArgs = {inherit inputs outputs;};
+      };
     };
   };
 }
