@@ -1,6 +1,6 @@
 {...}: {
   imports = [
-    ./hardware-configuration.nix
+    ../common/optional/minimal-x86_64-linux-hardware-configuration.nix
     ./disk-config.nix
     ../common/global
   ];
