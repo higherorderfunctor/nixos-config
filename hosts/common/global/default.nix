@@ -12,8 +12,9 @@
   system.stateVersion = "24.05";
 
   # disko scripts
-  environment.systemPackages = with pkgs; [
-    (pkgs.writeScriptBin "disko-create" (disko.create cfg))
-    (pkgs.writeScriptBin "disko-mount" (disko.mount cfg))
-  ];
+  # TODO what these for
+  # environment.systemPackages = with pkgs; [
+  #   (pkgs.writeScriptBin "disko-create" (disko.create cfg))
+  #   (pkgs.writeScriptBin "disko-mount" (disko.mount cfg))
+  # ];
 }

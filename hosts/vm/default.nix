@@ -1,10 +1,5 @@
-{
-  pkgs,
-  inputs,
-  ...
-}: {
+_: {
   imports = [
-    ./hardware-configuration.nix
     ../common/global
   ];
 

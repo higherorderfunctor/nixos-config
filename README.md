@@ -39,9 +39,15 @@ sudo nixos-install --flake github:higherorderfunctor/nixos-config?ref=feat/disk-
 ````
 
 ### Testing Modifications
+
 ```sh
 # host
 nix flake update --extra-experimental-features 'nix-command flakes'
+git commit -am 'message'
+git push
+
+# vm
+nix flake update --extra-experimental-features 'nix-command flakes' github:higherorderfunctor/nixos-config?ref=feat/disk-config
 ```
 
 ## Linters, Formatters, and LSPs

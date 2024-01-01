@@ -14,8 +14,7 @@
     self,
     nixpkgs,
     home-manager,
-    nixos-hardware,
-    disko,
+    ...
   } @ inputs: let
     inherit (self) outputs;
     lib = nixpkgs.lib // home-manager.lib;
