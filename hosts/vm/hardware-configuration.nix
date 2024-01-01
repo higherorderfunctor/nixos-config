@@ -2,6 +2,9 @@
   imports = [
     ../common/optional/minimal-x86_64-linux-hardware-configuration.nix
     inputs.hardware.nixosModules.common-pc-ssd
+    ./disk-config.nix
+    # early load for luks key
+    ../common/global/sops.nix
   ];
 
   boot = {

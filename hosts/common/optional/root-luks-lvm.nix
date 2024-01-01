@@ -1,5 +1,5 @@
 # {disk ? "/dev/nvme0n1", ...}: {
-_: {
+{keyFile ? "", ...}: {
   disko.devices = {
     disk = {
       root = {
@@ -29,6 +29,10 @@ _: {
               content = {
                 type = "luks";
                 name = "cryptlvm";
+                settings = {
+                  inherit keyFile;
+                  allowDiscards = true;
+                };
                 content = {
                   type = "lvm_pv"; # LVM physical volume
                   vg = "cryptlvm";
