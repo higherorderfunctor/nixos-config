@@ -25,9 +25,24 @@ nixos-generate-config --root .
 --no-write-lock-file for updates
 
 nixos-rebuild --extra-experimental-features 'nix-command flakes' --flake github:higherorderfunctor/nixos-config?ref=feat/disk-config switch
+# WARN: may have to target flake instead of use switch? "." see Misterio77's config
 ```
 
+## VM Testing
+
+
+
 ## Linters, Formatters, and LSPs
+
+### nix-repl
+
+nvim: no, manual inspection of config.  Use <tab> to walk config to inspect.
+
+```sh
+nix repl --extra-experimental-features 'nix-command flakes'
+:lf .
+nixosConfigurations.beelink-ser7
+```
 
 ### statix (linter)
 
@@ -57,7 +72,7 @@ nix profile install  --extra-experimental-features 'nix-command flakes' github:o
 
 ### nixd (lsp)
 
-nvim: yes, installed manually and managed via `neovim/nvim-lspconfig`.
+nvim: yes, using `neovim/nvim-lspconfig`.
 
 ```sh
 nix profile install  --extra-experimental-features 'nix-command flakes' github:nix-community/nixd#
