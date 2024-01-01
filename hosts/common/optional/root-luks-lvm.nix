@@ -30,7 +30,7 @@ _: {
                 name = "cryptlvm";
                 content = {
                   type = "lvm_pv"; # LVM physical volume
-                  vg = "pool";
+                  vg = "cryptpool";
                 };
               };
             };
@@ -39,7 +39,7 @@ _: {
       };
     };
     lvm_vg = {
-      pool = {
+      cryptpool = {
         type = "lvm_vg"; # LVM volume group
         lvs = {
           root = {
