@@ -1,6 +1,9 @@
 {inputs, ...}: {
   imports = [
     ./nix.nix
+    ./shell.nix
+    ./sops.nix
+    ../users/caubut
   ];
 
   # system state version
@@ -21,7 +24,6 @@
 
   # networking
   networking = {
-    hostName = "alcyone";
     useDHCP = true;
   };
 }

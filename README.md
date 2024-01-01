@@ -83,17 +83,19 @@ git push
 sudo nixos-install --flake github:higherorderfunctor/nixos-config?ref=feat/disk-config#vm
 ````
 
-### Testing Modifications
+## Secrets Management
 
 ```sh
-# host
-nix flake update --extra-experimental-features 'nix-command flakes'
-git commit -am 'message'
-git push
+# derive a private key from an SSH private key
+nix-shell -p ssh-to-age --run "ssh-to-age -private-key -i ~/.ssh/id_ed25519 > ~/.config/sops/age/keys.txt"
 
-# vm
-nix flake update --extra-experimental-features 'nix-command flakes' github:higherorderfunctor/nixos-config?ref=feat/disk-config
+# derive a public key from an SSH public key
+nix-shell -p ssh-to-age --run 'cat ~/.ssh/id_ed25519.pub | ssh-to-age'
+
+# create/edit a secrets file
+nix-shell -p sops --run "sops hosts/common/secrets.yaml"
 ```
+
 
 ## Linters, Formatters, and LSPs
 

@@ -4,6 +4,17 @@
     inputs.hardware.nixosModules.common-pc-ssd
   ];
 
-  boot.initrd.availableKernelModules = ["ata_piix" "mptspi" "uhci_hcd" "nvme" "sr_mod"];
-  boot.initrd.kernelModules = ["dm-snapshot"];
+  boot = {
+    initrd = {
+      availableKernelModules = ["ata_piix" "mptspi" "uhci_hcd" "nvme" "sr_mod"];
+      kernelModules = ["dm-snapshot"];
+    };
+  };
+
+  swapDevices = [
+    {
+      device = "/var/swap/swapfile";
+      size = 32 * 1024;
+    }
+  ];
 }

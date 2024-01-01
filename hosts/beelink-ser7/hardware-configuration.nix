@@ -1,7 +1,5 @@
 {
-  config,
   inputs,
-  lib,
   modulesPath,
   ...
 }: {
@@ -27,5 +25,11 @@
     };
     kernelModules = ["kvm-amd"];
   };
-  hardware.cpu.amd.updateMicrocode = lib.mkDefault config.hardware.enableRedistributableFirmware;
+
+  swapDevices = [
+    {
+      device = "/var/lib/swapfile";
+      size = 32 * 1024;
+    }
+  ];
 }
