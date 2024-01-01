@@ -83,6 +83,12 @@ git push
 sudo nixos-install --flake github:higherorderfunctor/nixos-config?ref=feat/disk-config#vm
 ````
 
+## Updating
+
+```sh
+nixos-rebuild --flake github:higherorderfunctor/nixos-config?ref=feat/disk-config switch
+```
+
 ## Secrets Management
 
 ```sh
