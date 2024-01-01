@@ -7,7 +7,7 @@ nix flake update --extra-experimental-features 'nix-command flakes' github:highe
 
 nix flake show --extra-experimental-features 'nix-command flakes' github:higherorderfunctor/nixos-config?ref=feat/disk-config
 
-nix flake show --extra-experimental-features 'nix-command flakes' .
+nix flake show
 nix run --extra-experimental-features 'nix-command flakes' .#install
 
 # update lock
@@ -33,7 +33,7 @@ nixos-rebuild --extra-experimental-features 'nix-command flakes' --flake github:
 Build a bootable NixOS ISO with SSH enabled and public key preloaded.
 
 ```sh
-nix build --extra-experimental-features 'nix-command flakes' .#nixosConfigurations.live-cd-x86_64.config.system.build.isoImage
+nix build .#nixosConfigurations.live-cd-x86_64.config.system.build.isoImage
 ```
 
 ## Installing
@@ -42,22 +42,29 @@ nix build --extra-experimental-features 'nix-command flakes' .#nixosConfiguratio
 # using `vm` as the host, but can be anything in `./hosts`
 
 ##
-# partition drive(s)
+# TARGET: get target SSH address after booting the live CD
+
+ip --brief addr show
+
+##
+# HOST: SSH into target
+
+ssh root@<TARGET>
+
+##
+# TARGET (ssh): partition drive(s)
 
 # check LBA format
-sudo nix run \
-  --extra-experimental-features 'nix-command flakes' \
-  nixpkgs#nvme-cli -- id-ns /dev/nvme0n1 -H
+sudo nix run nixpkgs#nvme-cli -- id-ns /dev/nvme0n1 -H
+nix-shell -p nvme-cli --run "nvme id-ns /dev/nvme0n1 -H" | grep "^LBA Format"
 
-# update to best format
-sudo nix run \
-  --extra-experimental-features 'nix-command flakes' \
-  nixpkgs#nvme-cli -- format /dev/nvme0n1 --lbaf <BEST>
+# update to best LBA format (destructive!)
+nix-shell -p nvme-cli --run "nvme format /dev/nvme0n1 --force --lbaf <BEST>"
 
-# remote
-sudo nix run \
-  --extra-experimental-features 'nix-command flakes' \
-  github:nix-community/disko -- --mode disko --flake \
+# partition drive
+nix-shell -p disko --run \
+  "disko --mode disko --flake github:higherorderfunctor/nixos-config?ref=feat/disk-config#vm"
+sudo nix run github:nix-community/disko -- --mode disko --flake \
   github:higherorderfunctor/nixos-config?ref=feat/disk-config#vm
 
 # local clone
