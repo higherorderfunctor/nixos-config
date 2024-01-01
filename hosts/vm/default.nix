@@ -1,6 +1,6 @@
 _: {
   imports = [
-    ./hardware-configuration
+    ./hardware-configuration.nix
     ../common/global
   ];
 
