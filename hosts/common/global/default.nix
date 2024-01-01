@@ -6,6 +6,15 @@
   # system state version
   system.stateVersion = "24.05";
 
+  # bootloader
+  boot.loader = {
+    systemd-boot = {
+      enable = true;
+      consoleMode = "max";
+    };
+    efi.canTouchEfiVariables = true;
+  };
+
   # disko scripts
   # TODO what these for
   # environment.systemPackages = with pkgs; [
