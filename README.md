@@ -84,7 +84,7 @@ sudo nixos-generate-config --root /mnt --show-hardware-config
 # update flake with any changes
 
 nix flake update --refresh github:higherorderfunctor/nixos-config?ref=feat/disk-config
-nix flake check --extra-experimental-features 'nix-command flakes'
+nix flake check
 git commit -am 'message'
 git push
 
