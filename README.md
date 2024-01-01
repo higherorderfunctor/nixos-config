@@ -61,7 +61,7 @@ nix run nixpkgs#nvme-cli -- id-ns /dev/nvme0n1 -H | grep "^LBA Format"
 nix run nixpkgs#nvme-cli -- format /dev/nvme0n1 --force --lbaf <BEST>
 
 # partition drive
-nix run github:nix-community/disko -- --mode disko --flake \
+nix run github:nix-community/disko -- --mode disko --refresh --flake  \
   github:higherorderfunctor/nixos-config?ref=feat/disk-config#vm
 
 # local clone
@@ -83,7 +83,7 @@ sudo nixos-generate-config --root /mnt --show-hardware-config
 ##
 # update flake with any changes
 
-nix flake update --extra-experimental-features 'nix-command flakes'
+nix flake update --refresh github:higherorderfunctor/nixos-config?ref=feat/disk-config
 nix flake check --extra-experimental-features 'nix-command flakes'
 git commit -am 'message'
 git push
