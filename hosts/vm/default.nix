@@ -4,4 +4,6 @@
     ./disk-config.nix
     ../common/global
   ];
+
+  # set the root device
 }
