@@ -31,11 +31,39 @@ nixos-rebuild --extra-experimental-features 'nix-command flakes' --flake github:
 ## VM Testing
 
 ```sh
-# update the flake from git if testing modifications
-sudo nix flake update --extra-experimental-features 'nix-command flakes' github:higherorderfunctor/nixos-config?ref=feat/disk-config
+##
+# partition drive(s)
 
-sudo nix run --extra-experimental-features 'nix-command flakes' github:nix-community/disko -- --mode disko --flake github:higherorderfunctor/nixos-config?ref=feat/disk-config#vm
+# remote
+sudo nix run \
+  --extra-experimental-features 'nix-command flakes' \
+  github:nix-community/disko -- --mode disko --flake \
+  github:higherorderfunctor/nixos-config?ref=feat/disk-config#vm
 
+# local clone
+sudo nix run \
+  --extra-experimental-features 'nix-command flakes' \
+  github:nix-community/disko -- --mode disko --flake \
+  $PWD#vm
+
+# check disks
+sudo fdisk -l
+lsblk -l
+
+##
+# generate hardware config
+sudo nixos-generate-config --root /mnt --show-hardware-config
+
+# copy anything wanted into hosts/vm/hardware-configuration.nix
+
+##
+# update flake with any changes
+nix flake update --extra-experimental-features 'nix-command flakes'
+nix flake check --extra-experimental-features 'nix-command flakes'
+git commit -am 'message'
+git push
+
+##
 # run the installation
 sudo nixos-install --flake github:higherorderfunctor/nixos-config?ref=feat/disk-config#vm
 ````
