@@ -33,6 +33,8 @@ nixos-rebuild --extra-experimental-features 'nix-command flakes' --flake github:
 ```sh
 # using "vm" as the host, but can be anything in ./hosts
 
+nix run --extra-experimental-features 'nix-command flakes' .#lvme-lbaf
+
 ##
 # partition drive(s)
 
