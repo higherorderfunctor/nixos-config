@@ -29,15 +29,11 @@
         config.allowUnfree = true;
       });
   in {
-    # diskoConfigurations = {
-    #   vm = import ./hosts/vm/disk-config.nix;
-    # };
-
     nixosConfigurations = {
-      # beelink-ser7 = lib.nixosSystem {
-      #   modules = [./hosts/beelink-ser7];
-      #   specialArgs = {inherit inputs outputs;};
-      # };
+      beelink-ser7 = lib.nixosSystem {
+        modules = [./hosts/beelink-ser7];
+        specialArgs = {inherit inputs outputs;};
+      };
       vm = lib.nixosSystem {
         modules = [./hosts/vm];
         specialArgs = {inherit inputs outputs;};
