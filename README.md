@@ -1,32 +1,27 @@
 # nixos-config
 
+
+## Helpful Commands
+
 ```sh
-sudo nix run --extra-experimental-features 'nix-command flakes' github:higherorderfunctor/nixos-config?ref=feat/disk-config#install
+# update lock file
+nix flake update
 
-nix flake update --extra-experimental-features 'nix-command flakes' github:higherorderfunctor/nixos-config?ref=feat/disk-config
+# refresh flake from remote (e.g. making edits while testing install from ISO)
+nix flake update --refresh github:higherorderfunctor/nixos-config?ref=feat/disk-config
 
-nix flake show --extra-experimental-features 'nix-command flakes' github:higherorderfunctor/nixos-config?ref=feat/disk-config
-
+# show outputs
 nix flake show
-nix run --extra-experimental-features 'nix-command flakes' .#install
 
-# update lock
-nix flake update --extra-experimental-features 'nix-command flakes'
+# check for errors in outputs
+nix flake check
 
-# check config
-nix flake check --extra-experimental-features 'nix-command flakes'
+# inspect outputs
+nix repl
+:lf .
 
-# linter error TODO: fix
-nix flake archive --extra-experimental-features 'nix-command flakes'
-
-
-nixos-generate-config --root /mnt
-nixos-generate-config --root .
---no-write-lock-file for updates
-
-nixos-rebuild --extra-experimental-features 'nix-command flakes' --flake github:higherorderfunctor/nixos-config?ref=feat/disk-config switch
-# WARN: may have to target flake instead of use switch? "." see Misterio77's config
-```
+outputs...
+````
 
 ## Building Installer ISO
 
@@ -64,11 +59,6 @@ nix run nixpkgs#nvme-cli -- format /dev/nvme0n1 --force --lbaf <BEST>
 nix run github:nix-community/disko -- --mode disko --refresh --flake  \
   github:higherorderfunctor/nixos-config?ref=feat/disk-config#vm
 
-# local clone
-nix run \
-  github:nix-community/disko -- --mode disko --flake \
-  github:higherorderfunctor/nixos-config?ref=feat/disk-config#vm
-
 # check disks
 sudo fdisk -l
 lsblk -l
@@ -79,14 +69,6 @@ lsblk -l
 sudo nixos-generate-config --root /mnt --show-hardware-config
 
 # copy anything wanted into hosts/vm/hardware-configuration.nix
-
-##
-# update flake with any changes
-
-nix flake update --refresh github:higherorderfunctor/nixos-config?ref=feat/disk-config
-nix flake check
-git commit -am 'message'
-git push
 
 ##
 # run the installation
@@ -113,15 +95,7 @@ nix-shell -p ssh-to-age --run 'cat ~/.ssh/id_ed25519.pub | ssh-to-age'
 nix-shell -p sops --run "sops hosts/common/secrets.yaml"
 ```
 
-
 ## Linters, Formatters, and LSPs
-
-### nix-repl
-
-```sh
-nix repl --extra-experimental-features 'nix-command flakes'
-:lf .
-```
 
 ### statix (linter)
 
