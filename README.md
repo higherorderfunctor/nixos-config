@@ -55,23 +55,19 @@ ssh root@<TARGET>
 # TARGET (ssh): partition drive(s)
 
 # check LBA format
-sudo nix run nixpkgs#nvme-cli -- id-ns /dev/nvme0n1 -H
-nix-shell -p nvme-cli --run "nvme id-ns /dev/nvme0n1 -H" | grep "^LBA Format"
+nix run nixpkgs#nvme-cli -- id-ns /dev/nvme0n1 -H | grep "^LBA Format"
 
 # update to best LBA format (destructive!)
-nix-shell -p nvme-cli --run "nvme format /dev/nvme0n1 --force --lbaf <BEST>"
+nix run nixpkgs#nvme-cli -- format /dev/nvme0n1 --force --lbaf <BEST>
 
 # partition drive
-nix-shell -p disko --run \
-  "disko --mode disko --flake github:higherorderfunctor/nixos-config?ref=feat/disk-config#vm"
-sudo nix run github:nix-community/disko -- --mode disko --flake \
+nix run github:nix-community/disko -- --mode disko --flake \
   github:higherorderfunctor/nixos-config?ref=feat/disk-config#vm
 
 # local clone
-sudo nix run \
-  --extra-experimental-features 'nix-command flakes' \
+nix run \
   github:nix-community/disko -- --mode disko --flake \
-  $PWD#vm
+  github:higherorderfunctor/nixos-config?ref=feat/disk-config#vm
 
 # check disks
 sudo fdisk -l

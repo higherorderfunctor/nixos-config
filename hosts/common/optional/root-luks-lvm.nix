@@ -28,7 +28,7 @@ _: {
               size = "100%";
               content = {
                 type = "luks";
-                name = "crypt";
+                name = "cryptlvm";
                 content = {
                   type = "lvm_pv"; # LVM physical volume
                   vg = "cryptlvm";
