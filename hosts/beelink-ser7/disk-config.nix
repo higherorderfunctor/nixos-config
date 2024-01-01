@@ -6,5 +6,4 @@
   # set the root device
   disko.devices.disk.root.device = "/dev/nvme0n1";
   # TODO SSD type stuff https://nixos.wiki/wiki/Nixos-generate-config:wiki
-  # TODO random seed
 }

@@ -28,9 +28,11 @@ nixos-rebuild --extra-experimental-features 'nix-command flakes' --flake github:
 # WARN: may have to target flake instead of use switch? "." see Misterio77's config
 ```
 
-## VM Testing
+## Installing
 
 ```sh
+# using "vm" as the host, but can be anything in ./hosts
+
 ##
 # partition drive(s)
 
