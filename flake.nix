@@ -30,7 +30,7 @@
       });
   in {
     diskoConfigurations = {
-      vm = import ./hosts/vm/disk-config;
+      vm = import ./hosts/vm/disk-config.nix;
     };
 
     nixosConfigurations = {
