@@ -37,6 +37,7 @@
       vm = lib.nixosSystem {
         modules = [./hosts/vm];
         specialArgs = {inherit inputs outputs;};
+        diskoConfigurations = import ./hosts/vm/disk-config;
       };
     };
   };

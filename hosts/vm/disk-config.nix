@@ -1,0 +1,8 @@
+{}: {
+  imports = [
+    ../common/optional/luks-lvm.nix
+  ];
+
+  # set the root device
+  disko.devices.disk.root.device = "/dev/sda";
+}
