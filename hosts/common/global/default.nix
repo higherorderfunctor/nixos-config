@@ -1,7 +1,6 @@
 {inputs, ...}: {
   imports = [
     inputs.disko.nixosModules.disko
-    ./root-disk-config.nix
   ];
 
   # system state version
