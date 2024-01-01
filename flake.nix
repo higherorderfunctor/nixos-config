@@ -6,6 +6,7 @@
     home-manager.url = "github:nix-community/home-manager";
     flake-utils.url = "github:numtide/flake-utils";
     hardware.url = "github:nixos/nixos-hardware";
+    nixos.url = "github:nixos/nixpkgs/nixos-unstable";
     disko = {
       url = "github:nix-community/disko";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -46,6 +47,10 @@
 
     # system configurations
     nixosConfigurations = {
+      live-cd-x86_64 = lib.nixosSystem {
+        modules = [./hosts/live-cd ./hosts/common/optional/minimal-x86_64-linux-hardware-configuration.nix];
+        specialArgs = {inherit inputs outputs;};
+      };
       beelink-ser7 = lib.nixosSystem {
         modules = [./hosts/beelink-ser7];
         specialArgs = {inherit inputs outputs;};

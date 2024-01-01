@@ -28,6 +28,14 @@ nixos-rebuild --extra-experimental-features 'nix-command flakes' --flake github:
 # WARN: may have to target flake instead of use switch? "." see Misterio77's config
 ```
 
+## Building Installer ISO
+
+Build a bootable NixOS ISO with SSH enabled and public key preloaded.
+
+```sh
+nix build --extra-experimental-features 'nix-command flakes' .#nixosConfigurations.live-cd-x86_64.config.system.build.isoImage
+```
+
 ## Installing
 
 ```sh
