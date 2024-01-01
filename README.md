@@ -64,14 +64,14 @@ sudo fdisk -l
 lsblk -l
 
 ##
-# generate hardware config
+# TARGET (ssh): generate hardware config
 
 sudo nixos-generate-config --root /mnt --show-hardware-config
 
 # copy anything wanted into hosts/vm/hardware-configuration.nix
 
 ##
-# run the installation
+# TARGET (ssh): run the installation
 
 sudo nixos-install --flake github:higherorderfunctor/nixos-config?ref=feat/disk-config#vm
 ````
