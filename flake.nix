@@ -4,6 +4,7 @@
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs?ref=nixos-unstable";
     home-manager.url = "github:nix-community/home-manager";
+    hardware.url = "github:nixos/nixos-hardware";
     disko = {
       url = "github:nix-community/disko";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -29,6 +30,8 @@
         config.allowUnfree = true;
       });
   in {
+    packages = forEachSystem (pkgs: import ./pkgs {inherit pkgs;});
+    formatter = forEachSystem (pkgs: pkgs.alejandra);
     nixosConfigurations = {
       beelink-ser7 = lib.nixosSystem {
         modules = [./hosts/beelink-ser7];
