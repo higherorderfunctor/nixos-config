@@ -34,7 +34,7 @@ nixos-rebuild --extra-experimental-features 'nix-command flakes' --flake github:
 # update the flake from git if testing modifications
 sudo nix flake update --extra-experimental-features 'nix-command flakes' github:higherorderfunctor/nixos-config?ref=feat/disk-config
 
-sudo nix run github:nix-community/disko -- --mode disk --flake github:Lassulus/flakes-testing#vm
+sudo nix run --extra-experimental-features 'nix-command flakes' github:nix-community/disko -- --mode disko --flake github:higherorderfunctor/nixos-config?ref=feat/disk-config#vm
 
 # run the installation
 sudo nixos-install --flake github:higherorderfunctor/nixos-config?ref=feat/disk-config#vm
