@@ -31,8 +31,18 @@ nixos-rebuild --extra-experimental-features 'nix-command flakes' --flake github:
 ## VM Testing
 
 ```sh
+# update the flake from git if testing modifications
+sudo nix flake update --extra-experimental-features 'nix-command flakes' github:higherorderfunctor/nixos-config?ref=feat/disk-config
+
+# run the installation
 sudo nixos-install --flake github:higherorderfunctor/nixos-config?ref=feat/disk-config#vm
 ````
+
+### Testing Modifications
+```sh
+# host
+nix flake update --extra-experimental-features 'nix-command flakes'
+```
 
 ## Linters, Formatters, and LSPs
 
