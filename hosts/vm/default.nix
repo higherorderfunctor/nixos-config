@@ -1,5 +1,6 @@
 _: {
   imports = [
+    ./hardware-configuration
     ../common/global
   ];
 
