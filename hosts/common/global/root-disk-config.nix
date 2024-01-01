@@ -1,8 +1,9 @@
-{rootDisk ? "/dev/nvme0n1", ...}: {
+# {disk ? "/dev/nvme0n1", ...}: {
+_: {
   disko.devices = {
     disk = {
       root = {
-        device = rootDisk;
+        # device = disk;
         type = "disk";
         content = {
           type = "gpt";
