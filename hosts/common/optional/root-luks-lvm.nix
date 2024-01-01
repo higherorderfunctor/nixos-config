@@ -28,10 +28,10 @@ _: {
               size = "100%";
               content = {
                 type = "luks";
-                name = "cryptlvm";
+                name = "crypt";
                 content = {
                   type = "lvm_pv"; # LVM physical volume
-                  vg = "cryptpool";
+                  vg = "cryptlvm";
                 };
               };
             };
@@ -40,7 +40,7 @@ _: {
       };
     };
     lvm_vg = {
-      cryptpool = {
+      cryptlvm = {
         type = "lvm_vg"; # LVM volume group
         lvs = {
           root = {
