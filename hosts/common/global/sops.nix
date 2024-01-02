@@ -11,8 +11,8 @@ in {
     inputs.sops-nix.nixosModules.sops
   ];
 
-  sops = {
-    # TODO: get key on system during install/rebuild
-    age.sshKeyPaths = map getKeyPath keys;
-  };
+  # sops = {
+  #   # TODO: get key on system during install/rebuild
+  #   age.sshKeyPaths = map getKeyPath keys;
+  # };
 }
