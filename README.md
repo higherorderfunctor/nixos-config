@@ -74,14 +74,16 @@ nixos-generate-config --root /mnt --show-hardware-config
 # copy wanted configs into hosts/vm/hardware-configuration.nix
 
 ##
-# TARGET (ssh): generate hardware config
-rsync -ravs --progress ~/.config/sops/age/keys.txt root@<TARGET>:/etc/ssh/ssh_host_ed25519_key
-rsync -ravs --progress ~/.ssh/id_ed25519 root@192.168.9.130:/mnt/etc/ssh/ssh_host_ed25519_key
+# HOST: copy key to decrypt secrets to the target
+
+rsync -ravs --progress ~/.ssh/id_ed25519 root@<TARGET>:/mnt/etc/ssh/ssh_host_ed25519_key
+# TODO:
+rsync -ravs --mkpath --progress ~/.ssh/id_ed25519 root@192.168.9.130:/mnt/etc/ssh/ssh_host_ed25519_key
 
 ##
 # TARGET (ssh): run the installation
 
-nixos-install --flake github:higherorderfunctor/nixos-config?ref=feat/disk-config#vm
+nixos-install --no-root-passwd --flake  github:higherorderfunctor/nixos-config?ref=feat/disk-config#vm
 ````
 
 ## Updating
@@ -90,7 +92,7 @@ nixos-install --flake github:higherorderfunctor/nixos-config?ref=feat/disk-confi
 nixos-rebuild --flake github:higherorderfunctor/nixos-config?ref=feat/disk-config switch
 ```
 
-## Secrets Management
+## Managing Secrets
 
 ```sh
 # generate key pair if needed

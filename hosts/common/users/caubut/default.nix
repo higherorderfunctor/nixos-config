@@ -17,7 +17,6 @@
   };
 
   sops.secrets.caubut-password = {
-    sopsFile = ../../secrets.yaml;
     neededForUsers = true;
   };
 
