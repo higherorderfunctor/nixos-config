@@ -76,13 +76,13 @@ nixos-generate-config --root /mnt --show-hardware-config
 ##
 # HOST: copy key to decrypt secrets to the target
 
-rsync -ravs --progress ~/.ssh/id_ed25519 root@<TARGET>:/mnt/etc/ssh/ssh_host_ed25519_key
-# TODO:
-rsync -ravs --mkpath --progress ~/.ssh/id_ed25519 root@192.168.9.130:/mnt/etc/ssh/ssh_host_ed25519_key
+# TODO: verify root
+rsync -ravs --mkpath --progress --chown=root:root ~/.ssh/id_ed25519 root@<TARGET>:/mnt/etc/ssh/ssh_host_ed25519_key
 
 ##
 # TARGET (ssh): run the installation
 
+cd /mnt
 nixos-install --no-root-passwd --flake  github:higherorderfunctor/nixos-config?ref=feat/disk-config#vm
 ````
 
