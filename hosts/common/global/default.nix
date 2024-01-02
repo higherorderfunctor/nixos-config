@@ -9,6 +9,9 @@
   # system state version
   system.stateVersion = "24.05";
 
+  # disable root
+  users.users.root.hashedPassword = "!";
+
   # bootloader
   boot.loader = {
     systemd-boot = {
