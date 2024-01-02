@@ -105,6 +105,9 @@ nix-shell -p ssh-to-age --run "ssh-to-age -private-key -i ~/.ssh/id_ed25519 > ~/
 # derive a public key from an SSH public key
 nix-shell -p ssh-to-age --run 'cat ~/.ssh/id_ed25519.pub | ssh-to-age'
 
+# generate password hashes to store
+mkpasswd --method=SHA-512 --stdin
+
 # create/edit a secrets file
 nix-shell -p sops --run "sops hosts/common/secrets.yaml"
 ```
