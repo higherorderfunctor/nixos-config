@@ -1,6 +1,5 @@
 # nixos-config
 
-
 ## Helpful Commands
 
 ```sh
@@ -20,7 +19,7 @@ nix flake check
 nix repl
 :lf .
 
-outputs...
+outputs.<tab>
 ````
 
 ## Building Installer ISO
@@ -33,9 +32,9 @@ nix build .#nixosConfigurations.live-cd-x86_64.config.system.build.isoImage
 
 ## Installing
 
-```sh
-# using `vm` as the host, but can be anything in `./hosts`
+Example install of the `#vm` hosts, but can be any host in `./hosts`.
 
+```sh
 ##
 # TARGET: get target SSH address after booting the live CD
 
@@ -85,7 +84,11 @@ nixos-rebuild --flake github:higherorderfunctor/nixos-config?ref=feat/disk-confi
 ## Secrets Management
 
 ```sh
+# generate key pair if needed
+ssh-keygen -t ed25519
+
 # derive a private key from an SSH private key
+mkdir -p ~/.config/sops/age
 nix-shell -p ssh-to-age --run "ssh-to-age -private-key -i ~/.ssh/id_ed25519 > ~/.config/sops/age/keys.txt"
 
 # derive a public key from an SSH public key
@@ -102,7 +105,7 @@ nix-shell -p sops --run "sops hosts/common/secrets.yaml"
 nvim: `nvim-lint`
 
 ```sh
-nix profile install  --extra-experimental-features 'nix-command flakes' github:NixOS/nixpkgs#statix
+nix profile install github:NixOS/nixpkgs#statix
 statix check flake.nix
 ```
 
@@ -111,7 +114,7 @@ statix check flake.nix
 nvim: `none-ls`
 
 ```sh
-nix profile install --extra-experimental-features 'nix-command flakes' github:astro/deadnix#
+nix profile install github:astro/deadnix#
 deadnix flake.nix
 ```
 
@@ -120,7 +123,7 @@ deadnix flake.nix
 nvim: `mason`, `nvim-lspconfig`
 
 ```sh
-nix profile install  --extra-experimental-features 'nix-command flakes' github:oxalica/nil#
+nix profile install github:oxalica/nil#
 ```
 
 ### nixd (lsp)
@@ -128,5 +131,5 @@ nix profile install  --extra-experimental-features 'nix-command flakes' github:o
 nvim: `neovim/nvim-lspconfig`
 
 ```sh
-nix profile install  --extra-experimental-features 'nix-command flakes' github:nix-community/nixd#
+nix profile install github:nix-community/nixd#
 ```

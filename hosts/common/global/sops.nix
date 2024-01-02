@@ -12,6 +12,7 @@ in {
   ];
 
   sops = {
+    # TODO: get key on system during install/rebuild
     age.sshKeyPaths = map getKeyPath keys;
   };
 }
