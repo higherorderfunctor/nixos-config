@@ -22,12 +22,16 @@ nix repl
 outputs.<tab>
 ````
 
-## Building Installer ISO
+## Building Live CD Installer ISO
 
-Build a bootable NixOS ISO with SSH enabled and public key preloaded.
+Build a bootable NixOS Live CD Installer ISO with SSH enabled and public key preloaded.
 
 ```sh
-nix build .#nixosConfigurations.live-cd-x86_64.config.system.build.isoImage
+# minimal
+nix build .#nixosConfigurations.live-cd-minimal-x86_64-linux.config.system.build.isoImage
+
+# graphical
+nix build .#nixosConfigurations.live-cd-graphical-x86_64-linux.config.system.build.isoImage
 ```
 
 ## Installing

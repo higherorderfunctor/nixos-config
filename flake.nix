@@ -47,8 +47,18 @@
 
     # system configurations
     nixosConfigurations = {
-      live-cd-x86_64 = lib.nixosSystem {
-        modules = [./hosts/live-cd ./hosts/common/optional/minimal-x86_64-linux-hardware-configuration.nix];
+      live-cd-minimal-x86_64-linux = lib.nixosSystem {
+        modules = [
+          ./hosts/live-cd-minimal
+          ./hosts/common/optional/minimal-x86_64-linux-hardware-configuration.nix
+        ];
+        specialArgs = {inherit inputs outputs;};
+      };
+      live-cd-graphical-x86_64-linux = lib.nixosSystem {
+        modules = [
+          ./hosts/live-cd-graphical
+          ./hosts/common/optional/minimal-x86_64-linux-hardware-configuration.nix
+        ];
         specialArgs = {inherit inputs outputs;};
       };
       beelink-ser7 = lib.nixosSystem {
