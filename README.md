@@ -32,11 +32,13 @@ nix build .#nixosConfigurations.live-cd-minimal-x86_64-linux.config.system.build
 
 # graphical
 nix build .#nixosConfigurations.live-cd-graphical-x86_64-linux.config.system.build.isoImage
+
+# mount disks from live CD
+nix run github:nix-community/disko -- --mode mount --flake  \
+  "github:higherorderfunctor/nixos-config?ref=$BRANCH#$TARGET"
 ```
 
 ## Installing
-
-Example install of the `#vm` hosts, but can be any host in `./hosts`.
 
 ```sh
 ##
@@ -67,20 +69,14 @@ nix run nixpkgs#nvme-cli -- id-ns /dev/nvme0n1 -H | grep "^LBA Format"
 # update to best LBA format (destructive!)
 nix run nixpkgs#nvme-cli -- format /dev/nvme0n1 --force --lbaf <BEST>
 
-# partition drive
-
 BRANCH=fix/ssh-key-permissions
 TARGET=beelink-ser7
 
+# partition disk(s)
 nix run github:nix-community/disko -- --mode disko --flake  \
   "github:higherorderfunctor/nixos-config?ref=$BRANCH#$TARGET"
 
-# TODO:
-
-nix run github:nix-community/disko -- --mode mount --flake  \
-  "github:higherorderfunctor/nixos-config?ref=$BRANCH#$TARGET"
-
-# check disks
+# check disk(s)
 fdisk -l
 lsblk -l
 btrfs subvolume list /mnt
@@ -93,9 +89,10 @@ findmnt -nt btrfs
 git clone -b "$BRANCH" https://github.com/higherorderfunctor/nixos-config.git \
   /mnt/etc/nixos
 
+# generate hardware config
 nixos-generate-config --root /mnt --show-hardware-config
 
-# copy wanted configs into hosts/vm/hardware-configuration.nix
+# copy wanted configs into hosts/$TARGET/hardware-configuration.nix
 
 # virtualbox
 REMOTE=root@localhost
@@ -105,7 +102,6 @@ REMOTE=root@192.168.9.130
 PORT=22
 
 # copy secrets key for sops
-
 scp -P "$PORT" -r ~/.ssh/id_ed25519 "$REMOTE":/mnt/etc/nixos/home/caubut/id_ed25519
 
 
