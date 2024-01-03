@@ -3,7 +3,6 @@
     ../common/optional/minimal-x86_64-linux-hardware-configuration.nix
     inputs.hardware.nixosModules.common-pc-ssd
     ./disk-config.nix
-    ../common/optional/swap-luks-lvm-btrfs.nix
   ];
 
   boot = {

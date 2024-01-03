@@ -134,7 +134,7 @@ in {
                 };
                 "/swap" = {
                   mountpoint = "/.swapvol";
-                  # swap.swapfile.size = "8G";
+                  swap.swapfile.size = "8G";
                 };
               };
             };
@@ -146,6 +146,11 @@ in {
 
   fileSystems."/persist".neededForBoot = true;
   fileSystems."/etc/nixos".neededForBoot = true;
+
+  boot.kernel.sysctl = {
+    "vm.swapiness" = 1;
+    "vm.vfs_cache_pressure" = 50;
+  };
 }
 # TODO: secure boot
 # TODO: tpm key

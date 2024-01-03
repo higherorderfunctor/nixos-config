@@ -10,7 +10,6 @@
     inputs.hardware.nixosModules.common-cpu-amd
     inputs.hardware.nixosModules.common-gpu-amd
     ./disk-config.nix
-    ../common/optional/swap-luks-lvm-btrfs.nix
   ];
 
   boot = {
