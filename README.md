@@ -69,10 +69,17 @@ nix run nixpkgs#nvme-cli -- format /dev/nvme0n1 --force --lbaf <BEST>
 nix run github:nix-community/disko -- --mode disko --refresh --flake  \
   github:higherorderfunctor/nixos-config?ref=fix/ssh-key-permissions#vm
 
+# take an empty snapshot of root
+mkdir /btrfs
+mount -t btrfs /dev/mapper/cryptlvm-root /btrfs
+btrfs subvolume snapshot -r /btrfs /btrfs/root-blank
+umount /mnt/btrfs
+
 # check disks
 fdisk -l
 lsblk -l
 btrfs subvolume list /mnt
+findmnt -nt btrfs
 
 ##
 # TARGET (ssh): generate hardware config
@@ -98,7 +105,7 @@ scp -P "$PORT" -r ~/.ssh/id_ed25519 "$TARGET":/mnt/etc/ssh/ssh_host_ed25519_key
 # TARGET (ssh): run the installation
 
 cd /mnt
-nixos-install --no-root-passwd --flake  github:higherorderfunctor/nixos-config?ref=fix/ssh-key-permissions#vm
+nixos-install --no-root-passwd --flake github:higherorderfunctor/nixos-config?ref=fix/ssh-key-permissions#vm
 ````
 
 ## Updating

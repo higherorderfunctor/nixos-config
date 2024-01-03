@@ -8,12 +8,14 @@
     mkdir /btrfs
     mount -t btrfs /dev/mapper/cryptlvm-root /btrfs
 
+    # backup last root
     if [[ -e /btrfs/root ]]; then
         mkdir -p /btrfs/snapshots
         timestamp=$(date --date="@$(stat -c %Y /btrfs/snapshots)" "+%Y-%m-%-d_%H:%M:%S")
-        mv /btrfs/snapshots "/btrfs/snapshots/$timestamp"
+        mv /btrfs/root "/btrfs/snapshots/$timestamp"
     fi
 
+    # delete old snapshot
     delete_subvolume_recursively() {
         IFS=$'\n'
         for i in $(btrfs subvolume list -o "$1" | cut -f 9- -d ' '); do
@@ -22,12 +24,17 @@
         btrfs subvolume delete "$1"
     }
 
+    # delete anything older than 30 days
     for i in $(find /btrfs/snapshots/ -maxdepth 1 -mtime +30); do
         delete_subvolume_recursively "$i"
     done
 
-    btrfs subvolume create /btrfs/root
+    # restore blank root
+    btrfs subvolume snapshot /btrfs/root-blank /btrfs/root
+
+    # clean up
     umount /btrfs
+    rm /btrfs
   '';
 in {
   boot.initrd = {
@@ -101,18 +108,22 @@ in {
               extraArgs = ["-f"];
               subvolumes = {
                 "/root" = {
+                  # wiped every boot
                   mountpoint = "/";
                   mountOptions = ["subvol=root" "compress=zstd" "noatime"];
                 };
                 "/persist" = {
+                  # persistent data between boots
                   mountpoint = "/persist";
                   mountOptions = ["subvol=persist" "compress=zstd" "noatime"];
                 };
                 "/nix" = {
+                  # managed by this flake, os installed every boot
                   mountpoint = "/nix";
                   mountOptions = ["subvol=nix" "compress=zstd" "noatime"];
                 };
                 "/home" = {
+                  # managed by home-manager
                   mountpoint = "/home";
                   mountOptions = ["compress=zstd" "noatime"];
                 };
