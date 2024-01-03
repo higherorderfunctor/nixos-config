@@ -1,5 +1,6 @@
 {lib, ...}: {
   imports = [
+    ./impermanence.nix
     ./nix.nix
     ./sops.nix
     ./zsh.nix
