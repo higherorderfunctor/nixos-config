@@ -75,6 +75,22 @@ mount -t btrfs /dev/mapper/cryptlvm-root /btrfs
 btrfs subvolume snapshot -r /btrfs /btrfs/root-blank
 umount /mnt/btrfs
 
+# TODO:
+cryptsetup luksOpen /dev/nvme0n1p1 /a
+
+[root@nixos:~]# lsblk -l
+NAME          MAJ:MIN RM  SIZE RO TYPE  MOUNTPOINTS
+loop0           7:0    0  1.1G  1 loop  /nix/.ro-store
+sr0            11:0    1  1.1G  0 rom   /iso
+cryptlvm      254:0    0    6G  0 crypt
+cryptlvm-root 254:1    0    6G  0 lvm   /mnt/persist
+                                        /mnt/nix
+                                        /mnt/home
+                                        /mnt
+nvme0n1       259:0    0    8G  0 disk
+nvme0n1p1     259:2    0    2G  0 part  /mnt/boot
+nvme0n1p2     259:3    0    6G  0 part
+
 # check disks
 fdisk -l
 lsblk -l
