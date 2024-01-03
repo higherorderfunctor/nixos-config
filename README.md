@@ -44,6 +44,7 @@ Example install of the `#vm` hosts, but can be any host in `./hosts`.
 
 ip --brief addr show
 
+
 ##
 # HOST: SSH into target
 
@@ -55,6 +56,7 @@ TARGET=root@<TARGET>
 PORT=22
 
 ssh -p "$PORT" "$TARGET"
+
 
 ##
 # TARGET (ssh): partition drive(s)
@@ -69,27 +71,17 @@ nix run nixpkgs#nvme-cli -- format /dev/nvme0n1 --force --lbaf <BEST>
 nix run github:nix-community/disko -- --mode disko --refresh --flake  \
   github:higherorderfunctor/nixos-config?ref=fix/ssh-key-permissions#vm
 
-# take an empty snapshot of root
+
+##
+# TARGET (ssh): prep impermanence
+
+git clone -b fix/ssh-key-permissions#vm git@github.com/higherorderfunctor/nixos-config.git
+
+# take an "empty" snapshot of root (SSH key preserved)
 mkdir /btrfs
 mount -t btrfs /dev/mapper/cryptlvm-root /btrfs
 btrfs subvolume snapshot -r /btrfs /btrfs/root-blank
 umount /mnt/btrfs
-
-# TODO:
-cryptsetup luksOpen /dev/nvme0n1p1 /a
-
-[root@nixos:~]# lsblk -l
-NAME          MAJ:MIN RM  SIZE RO TYPE  MOUNTPOINTS
-loop0           7:0    0  1.1G  1 loop  /nix/.ro-store
-sr0            11:0    1  1.1G  0 rom   /iso
-cryptlvm      254:0    0    6G  0 crypt
-cryptlvm-root 254:1    0    6G  0 lvm   /mnt/persist
-                                        /mnt/nix
-                                        /mnt/home
-                                        /mnt
-nvme0n1       259:0    0    8G  0 disk
-nvme0n1p1     259:2    0    2G  0 part  /mnt/boot
-nvme0n1p2     259:3    0    6G  0 part
 
 # check disks
 fdisk -l
@@ -97,15 +89,9 @@ lsblk -l
 btrfs subvolume list /mnt
 findmnt -nt btrfs
 
-##
-# TARGET (ssh): generate hardware config
-
-nixos-generate-config --root /mnt --show-hardware-config
-
-# copy wanted configs into hosts/vm/hardware-configuration.nix
 
 ##
-# HOST: copy key to decrypt secrets to the target
+# HOST: copy files
 
 # virtualbox
 TARGET=root@localhost
@@ -116,6 +102,15 @@ PORT=22
 
 ssh -p "$PORT" "$TARGET" "mkdir -p /mnt/etc/ssh"
 scp -P "$PORT" -r ~/.ssh/id_ed25519 "$TARGET":/mnt/etc/ssh/ssh_host_ed25519_key
+
+
+##
+# TARGET (ssh): generate hardware config
+
+nixos-generate-config --root /mnt --show-hardware-config
+
+# copy wanted configs into hosts/vm/hardware-configuration.nix
+
 
 ##
 # TARGET (ssh): run the installation
