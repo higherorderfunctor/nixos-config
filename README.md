@@ -7,7 +7,9 @@
 nix flake update
 
 # refresh flake from remote (e.g. making edits while testing install from ISO)
-nix flake update --refresh github:higherorderfunctor/nixos-config?ref=fix/ssh-key-permissions
+BRANCH=main
+
+nix flake update --refresh github:higherorderfunctor/nixos-config?ref=$BRANCH
 
 # show outputs
 nix flake show
@@ -34,6 +36,9 @@ nix build .#nixosConfigurations.live-cd-minimal-x86_64-linux.config.system.build
 nix build .#nixosConfigurations.live-cd-graphical-x86_64-linux.config.system.build.isoImage
 
 # mount disks from live CD
+BRANCH=main
+TARGET=beelink-ser7
+
 nix run github:nix-community/disko -- --mode mount --flake  \
   "github:higherorderfunctor/nixos-config?ref=$BRANCH#$TARGET"
 ```
@@ -69,7 +74,7 @@ nix run nixpkgs#nvme-cli -- id-ns /dev/nvme0n1 -H | grep "^LBA Format"
 # update to best LBA format (destructive!)
 nix run nixpkgs#nvme-cli -- format /dev/nvme0n1 --force --lbaf <BEST>
 
-BRANCH=fix/ssh-key-permissions
+BRANCH=main
 TARGET=beelink-ser7
 
 # partition disk(s)
@@ -114,7 +119,9 @@ nixos-install --no-root-passwd --flake "/mnt/etc/nixos#$TARGET"
 ## Updating
 
 ```sh
-nixos-rebuild --flake github:higherorderfunctor/nixos-config?ref=fix/ssh-key-permissions switch
+TARGET=beelink-ser7
+
+nixos-rebuild --flake "/etc/nixos#$TARGET" switch
 ```
 
 ## Managing Secrets
