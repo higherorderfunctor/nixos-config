@@ -91,7 +91,7 @@ findmnt -nt btrfs
 # REMOTE (ssh): build the config
 
 git clone -b "$BRANCH" https://github.com/higherorderfunctor/nixos-config.git \
-  /mnt/etc/nixos-config
+  /mnt/etc/nixos
 
 nixos-generate-config --root /mnt --show-hardware-config
 
@@ -110,7 +110,7 @@ scp -P "$PORT" -r ~/.ssh/id_ed25519 "$REMOTE":/mnt/etc/nixos/home/caubut/id_ed25
 ##
 # REMOTE (ssh): run the installation
 
-nixos-install --no-root-passwd --flake "/mnt/etc/nixos-config#$TARGET"
+nixos-install --no-root-passwd --flake "/mnt/etc/nixos#$TARGET"
 ````
 
 ## Updating
