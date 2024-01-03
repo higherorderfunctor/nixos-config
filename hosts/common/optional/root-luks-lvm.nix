@@ -34,6 +34,7 @@ in {
   boot.initrd = {
     supportedFilesystems = ["btrfs"];
     # https://discourse.nixos.org/t/impermanence-vs-systemd-initrd-w-tpm-unlocking/25167/3
+    # https://mt-caret.github.io/blog/posts/2020-06-29-optin-state.html
     postDeviceCommands = lib.mkIf (!phase1Systemd) (lib.mkBefore rollback);
     systemd.services.rollback = lib.mkIf phase1Systemd {
       description = "Rollback btrfs rootfs";
@@ -106,6 +107,7 @@ in {
                 };
                 "/persist" = {
                   mountpoint = "/persist";
+                  bootable = true;
                   mountOptions = ["subvol=persist" "compress=zstd" "noatime"];
                 };
                 "/nix" = {
