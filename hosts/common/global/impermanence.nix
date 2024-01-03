@@ -12,11 +12,15 @@
 
   environment.persistence = {
     "/persist" = {
+      hideMounts = true;
       directories = [
         "/srv"
         "/var/lib/nixos"
         "/var/lib/systemd"
         "/var/log"
+      ];
+      files = [
+        "/etc/machine-id"
       ];
     };
   };

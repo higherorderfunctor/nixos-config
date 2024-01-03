@@ -5,39 +5,38 @@
   ...
 }: let
   rollback = ''
-    mkdir /btrfs-tmp
-    mount -t btrfs /dev/mapper/cryptlvm-root /btrfs-tmp
+    mkdir /btrfs
+    mount -t btrfs /dev/mapper/cryptlvm-root /btrfs
 
-    if [[ -e /btrfs-tmp/root ]]; then
-        mkdir -p /btrfs-tmp/old-roots
-        timestamp=$(date --date="@$(stat -c %Y /btrfs-tmp/root)" "+%Y-%m-%-d_%H:%M:%S")
-        mv /btrfs-tmp/root "/btrfs-tmp/old-roots/$timestamp"
+    if [[ -e /btrfs/root ]]; then
+        mkdir -p /btrfs/snapshots
+        timestamp=$(date --date="@$(stat -c %Y /btrfs/snapshots)" "+%Y-%m-%-d_%H:%M:%S")
+        mv /btrfs/snapshots "/btrfs/snapshots/$timestamp"
     fi
 
-    delete_subvolume_recursively() {
+    delete-subvolume-recursively() {
         IFS=$'\n'
         for i in $(btrfs subvolume list -o "$1" | cut -f 9- -d ' '); do
-            delete_subvolume_recursively "/btrfs-tmp/$i"
+            delete-subvolume-recursively "/btrfs/$i"
         done
         btrfs subvolume delete "$1"
     }
 
-    for i in $(find /btrfs-tmp/old-roots/ -maxdepth 1 -mtime +30); do
-        delete_subvolume_recursively "$i"
+    for i in $(find /btrfs/snapshots/ -maxdepth 1 -mtime +30); do
+        delete-subvolume-recursively "$i"
     done
 
-    btrfs subvolume create /btrfs-tmp/root
-    umount /btrfs-tmp
+    btrfs subvolume create /btrfs/snapshots
+    umount /btrfs
   '';
-  phase1Systemd = config.boot.initrd.systemd.enable;
 in {
   boot.initrd = {
     supportedFilesystems = ["btrfs"];
     # https://discourse.nixos.org/t/impermanence-vs-systemd-initrd-w-tpm-unlocking/25167/3
     # https://mt-caret.github.io/blog/posts/2020-06-29-optin-state.html
-    postDeviceCommands = lib.mkIf (!phase1Systemd) (lib.mkBefore rollback);
-    systemd.services.rollback = lib.mkIf phase1Systemd {
-      description = "Rollback btrfs rootfs";
+    postDeviceCommands = lib.mkIf (!config.boot.initrd.systemd.enable) (lib.mkBefore rollback);
+    systemd.services.rollback = lib.mkIf (config.boot.initrd.systemd.enable) {
+      description = "Rollback BTRFS root subvolume to empty state";
       wantedBy = ["initrd.target"];
       after = [
         "systemd-cryptsetup@enc.service"
@@ -101,7 +100,7 @@ in {
               type = "btrfs";
               extraArgs = ["-f"];
               subvolumes = {
-                "/rootfs" = {
+                "/root" = {
                   mountpoint = "/";
                   mountOptions = ["subvol=root" "compress=zstd" "noatime"];
                 };
