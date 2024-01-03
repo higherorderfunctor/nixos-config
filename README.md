@@ -48,7 +48,10 @@ ip --brief addr show
 ##
 # HOST: SSH into target
 
+# virtualbox
 REMOTE=root@localhost
+PORT=2522
+# real host
 REMOTE=root@192.168.9.130
 PORT=22
 
@@ -100,14 +103,14 @@ REMOTE=root@192.168.9.130
 PORT=22
 
 ssh -p "$PORT" "$REMOTE" "mkdir -p /mnt/etc/ssh"
-scp -P "$PORT" -r ~/.ssh/id_ed25519 "$REMOTE":/mnt/etc/ssh/ssh_host_ed25519_key
+scp -P "$PORT" -r ~/.ssh/id_ed25519 "$REMOTE":/mnt/persist/etc/ssh/ssh_host_ed25519_key
 
 
 ##
 # REMOTE (ssh): build the config
 
 git clone -b "$BRANCH" https://github.com/higherorderfunctor/nixos-config.git \
-  /mnt/nix/nixos-config
+  /mnt/etc/nixos-config
 
 nixos-generate-config --root /mnt --show-hardware-config
 
@@ -117,8 +120,7 @@ nixos-generate-config --root /mnt --show-hardware-config
 ##
 # REMOTE (ssh): run the installation
 
-cd /mnt
-nixos-install --no-root-passwd --flake github:higherorderfunctor/nixos-config?ref=fix/ssh-key-permissions#vm
+nixos-install --no-root-passwd --flake "/mnt/etc/nixos-config#$TARGET"
 ````
 
 ## Updating
