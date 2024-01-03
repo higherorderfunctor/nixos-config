@@ -1,6 +1,6 @@
 {...}: {
   imports = [
-    ../common/optional/root-luks-lvm.nix
+    ../common/optional/root-luks-lvm-btrfs.nix
   ];
 
   # set the root device

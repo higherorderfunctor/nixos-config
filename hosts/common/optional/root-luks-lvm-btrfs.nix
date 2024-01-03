@@ -107,7 +107,6 @@ in {
                 };
                 "/persist" = {
                   mountpoint = "/persist";
-                  bootable = true;
                   mountOptions = ["subvol=persist" "compress=zstd" "noatime"];
                 };
                 "/nix" = {
