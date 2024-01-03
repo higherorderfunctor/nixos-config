@@ -72,38 +72,19 @@ nix run nixpkgs#nvme-cli -- format /dev/nvme0n1 --force --lbaf <BEST>
 BRANCH=fix/ssh-key-permissions
 TARGET=beelink-ser7
 
-nix run github:nix-community/disko -- --mode disko --refresh --flake  \
+nix run github:nix-community/disko -- --mode disko --flake  \
   "github:higherorderfunctor/nixos-config?ref=$BRANCH#$TARGET"
 
+# TODO:
 
-##
-# REMOTE (ssh): prep impermanence
-
-# take an "empty" snapshot of root (SSH key preserved)
-mkdir /btrfs
-mount -t btrfs /dev/mapper/cryptlvm-root /btrfs
-btrfs subvolume snapshot -r /btrfs /btrfs/root-blank
-umount /btrfs
+nix run github:nix-community/disko -- --mode mount --flake  \
+  "github:higherorderfunctor/nixos-config?ref=$BRANCH#$TARGET"
 
 # check disks
 fdisk -l
 lsblk -l
 btrfs subvolume list /mnt
 findmnt -nt btrfs
-
-
-##
-# HOST: copy files
-
-# virtualbox
-REMOTE=root@localhost
-PORT=2522
-# real host
-REMOTE=root@192.168.9.130
-PORT=22
-
-ssh -p "$PORT" "$REMOTE" "mkdir -p /mnt/etc/ssh"
-scp -P "$PORT" -r ~/.ssh/id_ed25519 "$REMOTE":/mnt/persist/etc/ssh/ssh_host_ed25519_key
 
 
 ##
@@ -115,6 +96,15 @@ git clone -b "$BRANCH" https://github.com/higherorderfunctor/nixos-config.git \
 nixos-generate-config --root /mnt --show-hardware-config
 
 # copy wanted configs into hosts/vm/hardware-configuration.nix
+
+# virtualbox
+REMOTE=root@localhost
+PORT=2522
+# real host
+REMOTE=root@192.168.9.130
+PORT=22
+
+scp -P "$PORT" -r ~/.ssh/id_ed25519 "$REMOTE":/mnt/etc/nixos/home/caubut/id_ed25519.pub
 
 
 ##

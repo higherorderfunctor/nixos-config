@@ -30,7 +30,7 @@
     done
 
     # restore blank root
-    btrfs subvolume snapshot /btrfs/root-blank /btrfs/root
+    btrfs subvolume create /btrfs/root
 
     # clean up
     umount /btrfs
