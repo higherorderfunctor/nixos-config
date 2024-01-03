@@ -14,16 +14,16 @@
         mv /btrfs/snapshots "/btrfs/snapshots/$timestamp"
     fi
 
-    delete-subvolume-recursively() {
+    delete_subvolume_recursively() {
         IFS=$'\n'
         for i in $(btrfs subvolume list -o "$1" | cut -f 9- -d ' '); do
-            delete-subvolume-recursively "/btrfs/$i"
+            delete_subvolume_recursively "/btrfs/$i"
         done
         btrfs subvolume delete "$1"
     }
 
     for i in $(find /btrfs/snapshots/ -maxdepth 1 -mtime +30); do
-        delete-subvolume-recursively "$i"
+        delete_subvolume_recursively "$i"
     done
 
     btrfs subvolume create /btrfs/root
