@@ -34,13 +34,6 @@ nix build .#nixosConfigurations.live-cd-minimal-x86_64-linux.config.system.build
 
 # graphical
 nix build .#nixosConfigurations.live-cd-graphical-x86_64-linux.config.system.build.isoImage
-
-# mount disks from live CD
-BRANCH=main
-TARGET=beelink-ser7
-
-nix run github:nix-community/disko -- --mode mount --flake  \
-  "github:higherorderfunctor/nixos-config?ref=$BRANCH#$TARGET"
 ```
 
 ## Installing
@@ -118,10 +111,32 @@ nixos-install --no-root-passwd --flake "/mnt/etc/nixos#$TARGET"
 
 ## Updating
 
+### Updating on the Host
+
 ```sh
 TARGET=beelink-ser7
 
 nixos-rebuild --flake "/etc/nixos#$TARGET" switch
+```
+
+### Updating from a Live CD
+
+```sh
+BRANCH=refactor/shhd-service-style
+TARGET=beelink-ser7
+
+# mount disk(s)
+nix run github:nix-community/disko -- --mode mount --flake  \
+  "github:higherorderfunctor/nixos-config?ref=$BRANCH#$TARGET"
+
+# update system
+cd /mnt/etc/nixos
+git fetch && git checkout "$BRANCH"
+# TODO:
+mkdir -p /mnt/root/.config/sops/age
+rm /mnt/etc/machine-id
+nix-shell -p ssh-to-age --run "ssh-to-age -private-key -i /mnt/etc/nixos/home/caubut/id_ed25519 > /mnt/root/.config/sops/age/keys.txt"
+nixos-install --no-root-passwd --flake "/mnt/etc/nixos#$TARGET"
 ```
 
 ## Managing Secrets
