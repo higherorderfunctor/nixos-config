@@ -7,7 +7,9 @@
 nix flake update
 
 # refresh flake from remote (e.g. making edits while testing install from ISO)
-nix flake update --refresh github:higherorderfunctor/nixos-config?ref=feat/disk-config
+BRANCH=main
+
+nix flake update --refresh github:higherorderfunctor/nixos-config?ref=$BRANCH
 
 # show outputs
 nix flake show
@@ -32,25 +34,39 @@ nix build .#nixosConfigurations.live-cd-minimal-x86_64-linux.config.system.build
 
 # graphical
 nix build .#nixosConfigurations.live-cd-graphical-x86_64-linux.config.system.build.isoImage
+
+# mount disks from live CD
+BRANCH=main
+TARGET=beelink-ser7
+
+nix run github:nix-community/disko -- --mode mount --flake  \
+  "github:higherorderfunctor/nixos-config?ref=$BRANCH#$TARGET"
 ```
 
 ## Installing
 
-Example install of the `#vm` hosts, but can be any host in `./hosts`.
-
 ```sh
 ##
-# TARGET: get target SSH address after booting the live CD
+# REMOTE: get target SSH address after booting the live CD
 
 ip --brief addr show
+
 
 ##
 # HOST: SSH into target
 
-ssh root@<TARGET>
+# virtualbox
+REMOTE=root@localhost
+PORT=2522
+# real host
+REMOTE=root@192.168.9.130
+PORT=22
+
+ssh -p "$PORT" "$REMOTE"
+
 
 ##
-# TARGET (ssh): partition drive(s)
+# REMOTE (ssh): partition drive(s)
 
 # check LBA format
 nix run nixpkgs#nvme-cli -- id-ns /dev/nvme0n1 -H | grep "^LBA Format"
@@ -58,38 +74,54 @@ nix run nixpkgs#nvme-cli -- id-ns /dev/nvme0n1 -H | grep "^LBA Format"
 # update to best LBA format (destructive!)
 nix run nixpkgs#nvme-cli -- format /dev/nvme0n1 --force --lbaf <BEST>
 
-# partition drive
-nix run github:nix-community/disko -- --mode disko --refresh --flake  \
-  github:higherorderfunctor/nixos-config?ref=feat/disk-config#vm
+BRANCH=main
+TARGET=beelink-ser7
 
-# check disks
-sudo fdisk -l
+# partition disk(s)
+nix run github:nix-community/disko -- --mode disko --flake  \
+  "github:higherorderfunctor/nixos-config?ref=$BRANCH#$TARGET"
+
+# check disk(s)
+fdisk -l
 lsblk -l
+btrfs subvolume list /mnt
+findmnt -nt btrfs
+
 
 ##
-# TARGET (ssh): generate hardware config
+# REMOTE (ssh): build the config
 
+git clone -b "$BRANCH" https://github.com/higherorderfunctor/nixos-config.git \
+  /mnt/etc/nixos
+
+# generate hardware config
 nixos-generate-config --root /mnt --show-hardware-config
 
-# copy wanted configs into hosts/vm/hardware-configuration.nix
+# copy wanted configs into hosts/$TARGET/hardware-configuration.nix
+
+# virtualbox
+REMOTE=root@localhost
+PORT=2522
+# real host
+REMOTE=root@192.168.9.130
+PORT=22
+
+# copy secrets key for sops
+scp -P "$PORT" -r ~/.ssh/id_ed25519 "$REMOTE":/mnt/etc/nixos/home/caubut/id_ed25519
+
 
 ##
-# HOST: copy key to decrypt secrets to the target
+# REMOTE (ssh): run the installation
 
-rsync -ravs --progress ~/.ssh/id_ed25519 root@<TARGET>:/mnt/etc/ssh/ssh_host_ed25519_key
-# TODO:
-rsync -ravs --mkpath --progress ~/.ssh/id_ed25519 root@192.168.9.130:/mnt/etc/ssh/ssh_host_ed25519_key
-
-##
-# TARGET (ssh): run the installation
-
-nixos-install --no-root-passwd --flake  github:higherorderfunctor/nixos-config?ref=feat/disk-config#vm
+nixos-install --no-root-passwd --flake "/mnt/etc/nixos#$TARGET"
 ````
 
 ## Updating
 
 ```sh
-nixos-rebuild --flake github:higherorderfunctor/nixos-config?ref=feat/disk-config switch
+TARGET=beelink-ser7
+
+nixos-rebuild --flake "/etc/nixos#$TARGET" switch
 ```
 
 ## Managing Secrets

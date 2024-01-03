@@ -7,7 +7,13 @@
 
   boot = {
     initrd = {
-      availableKernelModules = ["ata_piix" "mptspi" "uhci_hcd" "nvme" "sr_mod"];
+      availableKernelModules = [
+        "ata_piix"
+        "mptspi"
+        "uhci_hcd"
+        "nvme"
+        "sr_mod"
+      ];
       kernelModules = ["dm-snapshot"];
     };
   };

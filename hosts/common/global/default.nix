@@ -1,8 +1,9 @@
-{inputs, ...}: {
+{lib, ...}: {
   imports = [
+    ./impermanence.nix
     ./nix.nix
-    ./shell.nix
     ./sops.nix
+    ./zsh.nix
     ../users/caubut
   ];
 
@@ -24,6 +25,14 @@
 
   # timezone
   time.timeZone = "America/Denver";
+
+  # set locales
+  i18n = {
+    defaultLocale = lib.mkDefault "en_US.UTF-8";
+    supportedLocales = lib.mkDefault [
+      "en_US.UTF-8/UTF-8"
+    ];
+  };
 
   # networking
   networking = {
