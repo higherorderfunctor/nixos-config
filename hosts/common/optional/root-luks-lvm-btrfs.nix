@@ -11,7 +11,7 @@
     # backup last root
     if [[ -e /btrfs/root ]]; then
         mkdir -p /btrfs/snapshots
-        timestamp=$(date --date="@$(stat -c %Y /btrfs/snapshots)" "+%Y-%m-%-d_%H:%M:%S")
+        timestamp=$(date --date="@$(stat -c %Y /btrfs/root)" "+%Y-%m-%-d_%H:%M:%S")
         mv /btrfs/root "/btrfs/snapshots/$timestamp"
     fi
 
@@ -34,7 +34,7 @@
 
     # clean up
     umount /btrfs
-    rm /btrfs
+    rmdir /btrfs
   '';
 in {
   boot.initrd = {
