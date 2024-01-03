@@ -132,6 +132,7 @@ in {
                   mountpoint = "/home";
                   mountOptions = ["compress=zstd" "noatime"];
                 };
+                # TODO SWAP
               };
             };
           };
@@ -141,6 +142,7 @@ in {
   };
 
   fileSystems."/persist".neededForBoot = true;
+  fileSystems."/etc/nixos".neededForBoot = true;
 }
 # TODO: secure boot
 # TODO: tpm key
