@@ -26,7 +26,7 @@
         delete-subvolume-recursively "$i"
     done
 
-    btrfs subvolume create /btrfs/snapshots
+    btrfs subvolume create /btrfs/root
     umount /btrfs
   '';
 in {
@@ -35,7 +35,7 @@ in {
     # https://discourse.nixos.org/t/impermanence-vs-systemd-initrd-w-tpm-unlocking/25167/3
     # https://mt-caret.github.io/blog/posts/2020-06-29-optin-state.html
     postDeviceCommands = lib.mkIf (!config.boot.initrd.systemd.enable) (lib.mkBefore rollback);
-    systemd.services.rollback = lib.mkIf (config.boot.initrd.systemd.enable) {
+    systemd.services.rollback = lib.mkIf config.boot.initrd.systemd.enable {
       description = "Rollback BTRFS root subvolume to empty state";
       wantedBy = ["initrd.target"];
       after = [
