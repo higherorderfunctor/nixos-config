@@ -125,6 +125,8 @@ in {
       };
     };
   };
+
+  fileSystems."/persist".neededForBoot = true;
 }
 # TODO: secure boot
 # TODO: tpm key
