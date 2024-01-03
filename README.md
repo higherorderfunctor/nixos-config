@@ -104,7 +104,7 @@ PORT=2522
 REMOTE=root@192.168.9.130
 PORT=22
 
-scp -P "$PORT" -r ~/.ssh/id_ed25519 "$REMOTE":/mnt/etc/nixos/home/caubut/id_ed25519.pub
+scp -P "$PORT" -r ~/.ssh/id_ed25519 "$REMOTE":/mnt/etc/nixos/home/caubut/id_ed25519
 
 
 ##
