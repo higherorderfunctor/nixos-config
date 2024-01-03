@@ -133,12 +133,9 @@ in {
                   mountOptions = ["compress=zstd" "noatime"];
                 };
                 "/swap" = {
-                  "/swap" = {
-                    mountpoint = "/.swapvol";
-                    swap.swapfile.size = "20M";
-                  };
+                  mountpoint = "/.swapvol";
+                  # swap.swapfile.size = "8G";
                 };
-                # TODO SWAP
               };
             };
           };
