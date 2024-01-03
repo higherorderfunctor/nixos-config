@@ -40,7 +40,7 @@ Example install of the `#vm` hosts, but can be any host in `./hosts`.
 
 ```sh
 ##
-# TARGET: get target SSH address after booting the live CD
+# REMOTE: get target SSH address after booting the live CD
 
 ip --brief addr show
 
@@ -48,18 +48,15 @@ ip --brief addr show
 ##
 # HOST: SSH into target
 
-# virtualbox
-TARGET=root@localhost
-PORT=2522
-# real host
-TARGET=root@<TARGET>
+REMOTE=root@localhost
+REMOTE=root@192.168.9.130
 PORT=22
 
-ssh -p "$PORT" "$TARGET"
+ssh -p "$PORT" "$REMOTE"
 
 
 ##
-# TARGET (ssh): partition drive(s)
+# REMOTE (ssh): partition drive(s)
 
 # check LBA format
 nix run nixpkgs#nvme-cli -- id-ns /dev/nvme0n1 -H | grep "^LBA Format"
@@ -68,20 +65,22 @@ nix run nixpkgs#nvme-cli -- id-ns /dev/nvme0n1 -H | grep "^LBA Format"
 nix run nixpkgs#nvme-cli -- format /dev/nvme0n1 --force --lbaf <BEST>
 
 # partition drive
+
+BRANCH=fix/ssh-key-permissions
+TARGET=beelink-ser7
+
 nix run github:nix-community/disko -- --mode disko --refresh --flake  \
-  github:higherorderfunctor/nixos-config?ref=fix/ssh-key-permissions#vm
+  "github:higherorderfunctor/nixos-config?ref=$BRANCH#$TARGET"
 
 
 ##
-# TARGET (ssh): prep impermanence
-
-git clone -b fix/ssh-key-permissions#vm git@github.com/higherorderfunctor/nixos-config.git
+# REMOTE (ssh): prep impermanence
 
 # take an "empty" snapshot of root (SSH key preserved)
 mkdir /btrfs
 mount -t btrfs /dev/mapper/cryptlvm-root /btrfs
 btrfs subvolume snapshot -r /btrfs /btrfs/root-blank
-umount /mnt/btrfs
+umount /btrfs
 
 # check disks
 fdisk -l
@@ -94,18 +93,21 @@ findmnt -nt btrfs
 # HOST: copy files
 
 # virtualbox
-TARGET=root@localhost
+REMOTE=root@localhost
 PORT=2522
 # real host
-TARGET=root@<TARGET>
+REMOTE=root@192.168.9.130
 PORT=22
 
-ssh -p "$PORT" "$TARGET" "mkdir -p /mnt/etc/ssh"
-scp -P "$PORT" -r ~/.ssh/id_ed25519 "$TARGET":/mnt/etc/ssh/ssh_host_ed25519_key
+ssh -p "$PORT" "$REMOTE" "mkdir -p /mnt/etc/ssh"
+scp -P "$PORT" -r ~/.ssh/id_ed25519 "$REMOTE":/mnt/etc/ssh/ssh_host_ed25519_key
 
 
 ##
-# TARGET (ssh): generate hardware config
+# REMOTE (ssh): build the config
+
+git clone -b "$BRANCH" https://github.com/higherorderfunctor/nixos-config.git \
+  /mnt/nix/nixos-config
 
 nixos-generate-config --root /mnt --show-hardware-config
 
@@ -113,7 +115,7 @@ nixos-generate-config --root /mnt --show-hardware-config
 
 
 ##
-# TARGET (ssh): run the installation
+# REMOTE (ssh): run the installation
 
 cd /mnt
 nixos-install --no-root-passwd --flake github:higherorderfunctor/nixos-config?ref=fix/ssh-key-permissions#vm
