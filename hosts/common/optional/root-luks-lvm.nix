@@ -101,19 +101,19 @@ in {
               subvolumes = {
                 "/rootfs" = {
                   mountpoint = "/";
-                  mountOptions = ["subvol=root" "compress=zstd"];
+                  mountOptions = ["subvol=root" "compress=zstd" "noatime"];
                 };
-                "/persistent" = {
-                  mountpoint = "/persistent";
-                  mountOptions = ["subvol=persistent" "compress=zstd"];
+                "/persist" = {
+                  mountpoint = "/persist";
+                  mountOptions = ["subvol=persist" "compress=zstd" "noatime"];
                 };
                 "/nix" = {
                   mountpoint = "/nix";
-                  mountOptions = ["subvol=nix" "compress=zstd"];
+                  mountOptions = ["subvol=nix" "compress=zstd" "noatime"];
                 };
                 "/home" = {
                   mountpoint = "/home";
-                  mountOptions = ["compress=zstd"];
+                  mountOptions = ["compress=zstd" "noatime"];
                 };
               };
             };

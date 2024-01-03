@@ -21,7 +21,7 @@
     };
   };
 
-  system.activationScripts.persistent-dirs.text = let
+  system.activationScripts.persist-dirs.text = let
     mkHomePersist = user:
       lib.optionalString user.createHome ''
         mkdir -p /persist/${user.home}

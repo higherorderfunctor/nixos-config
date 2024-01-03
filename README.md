@@ -7,7 +7,7 @@
 nix flake update
 
 # refresh flake from remote (e.g. making edits while testing install from ISO)
-nix flake update --refresh github:higherorderfunctor/nixos-config?ref=feat/disk-config
+nix flake update --refresh github:higherorderfunctor/nixos-config?ref=fix/ssh-key-permissions
 
 # show outputs
 nix flake show
@@ -47,7 +47,14 @@ ip --brief addr show
 ##
 # HOST: SSH into target
 
-ssh root@<TARGET>
+# virtualbox
+TARGET=root@localhost
+PORT=2522
+# real host
+TARGET=root@<TARGET>
+PORT=22
+
+ssh -p "$PORT" "$TARGET"
 
 ##
 # TARGET (ssh): partition drive(s)
@@ -60,11 +67,12 @@ nix run nixpkgs#nvme-cli -- format /dev/nvme0n1 --force --lbaf <BEST>
 
 # partition drive
 nix run github:nix-community/disko -- --mode disko --refresh --flake  \
-  github:higherorderfunctor/nixos-config?ref=feat/disk-config#vm
+  github:higherorderfunctor/nixos-config?ref=fix/ssh-key-permissions#vm
 
 # check disks
-sudo fdisk -l
+fdisk -l
 lsblk -l
+btrfs subvolume list /mnt
 
 ##
 # TARGET (ssh): generate hardware config
@@ -76,20 +84,27 @@ nixos-generate-config --root /mnt --show-hardware-config
 ##
 # HOST: copy key to decrypt secrets to the target
 
-# TODO: verify root
-rsync -ravs --mkpath --progress --chown=root:root ~/.ssh/id_ed25519 root@<TARGET>:/mnt/etc/ssh/ssh_host_ed25519_key
+# virtualbox
+TARGET=root@localhost
+PORT=2522
+# real host
+TARGET=root@<TARGET>
+PORT=22
+
+ssh -p "$PORT" "$TARGET" "mkdir -p /mnt/etc/ssh"
+scp -P "$PORT" -r ~/.ssh/id_ed25519 "$TARGET":/mnt/etc/ssh/ssh_host_ed25519_key
 
 ##
 # TARGET (ssh): run the installation
 
 cd /mnt
-nixos-install --no-root-passwd --flake  github:higherorderfunctor/nixos-config?ref=feat/disk-config#vm
+nixos-install --no-root-passwd --flake  github:higherorderfunctor/nixos-config?ref=fix/ssh-key-permissions#vm
 ````
 
 ## Updating
 
 ```sh
-nixos-rebuild --flake github:higherorderfunctor/nixos-config?ref=feat/disk-config switch
+nixos-rebuild --flake github:higherorderfunctor/nixos-config?ref=fix/ssh-key-permissions switch
 ```
 
 ## Managing Secrets
