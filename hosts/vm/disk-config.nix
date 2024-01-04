@@ -3,6 +3,9 @@ _: {
     ../common/optional/root-luks-lvm-btrfs.nix
   ];
 
-  # set the root device
-  disko.devices.disk.root.device = "/dev/nvme0n1";
+  # configure the root device
+  config.rootLuksLvmBtrfs = {
+    device = "/dev/nvme0n1";
+    swapSize = "1G";
+  };
 }

@@ -115,7 +115,12 @@ nixos-install --no-root-passwd --flake "/mnt/etc/nixos#$TARGET"
 ### Updating on the Host
 
 ```sh
-TARGET=beelink-ser7
+BRANCH=refactor/sshd-service-style
+TARGET=vm
+
+# update nixos-conig
+cd /etc/nixos
+git fetch && git checkout "$BRANCH" && git pull
 
 nixos-rebuild --flake "/etc/nixos#$TARGET" switch
 ```
