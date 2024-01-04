@@ -4,7 +4,7 @@
   ];
 
   # configure the root device
-  config.rootLuksLvmBtrfs = {
+  config.root-luks-lvm-btrfs = {
     device = "/dev/nvme0n1";
     swapSize = "8G";
   };

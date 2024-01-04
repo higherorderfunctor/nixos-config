@@ -67,7 +67,7 @@ nix run nixpkgs#nvme-cli -- id-ns /dev/nvme0n1 -H | grep "^LBA Format"
 # update to best LBA format (destructive!)
 nix run nixpkgs#nvme-cli -- format /dev/nvme0n1 --force --lbaf <BEST>
 
-BRANCH=refactor/sshd-service-style
+BRANCH=main
 TARGET=vm
 
 # partition disk(s)
@@ -93,6 +93,10 @@ nixos-generate-config --root /mnt --show-hardware-config
 
 # copy wanted configs into hosts/$TARGET/hardware-configuration.nix
 
+
+##
+# HOST: copy secrets key for sops
+
 # virtualbox
 REMOTE=root@localhost
 PORT=2522
@@ -100,7 +104,6 @@ PORT=2522
 REMOTE=root@192.168.9.130
 PORT=22
 
-# copy secrets key for sops
 scp -P "$PORT" -r ~/.ssh/id_ed25519 "$REMOTE":/mnt/etc/nixos/home/caubut/id_ed25519
 
 
@@ -115,7 +118,7 @@ nixos-install --no-root-passwd --flake "/mnt/etc/nixos#$TARGET"
 ### Updating on the Host
 
 ```sh
-BRANCH=refactor/sshd-service-style
+BRANCH=main
 TARGET=vm
 
 # update nixos-conig
@@ -128,7 +131,7 @@ nixos-rebuild --flake "/etc/nixos#$TARGET" switch
 ### Updating from a Live CD
 
 ```sh
-BRANCH=refactor/sshd-service-style
+BRANCH=main
 TARGET=vm
 
 # mount disk(s)

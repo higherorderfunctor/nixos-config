@@ -3,7 +3,9 @@
   lib,
   config,
   ...
-}: let
+}:
+with lib; let
+  cfg = config.root-luks-lvm-btrfs;
   rollback = ''
     mkdir /btrfs
     mount -t btrfs /dev/mapper/cryptlvm-root /btrfs
@@ -37,12 +39,12 @@
     rmdir /btrfs
   '';
 in {
-  options.rootLuksLvmBtrfs = {
-    device = lib.mkOption {
-      type = lib.types.string;
+  options.root-luks-lvm-btrfs = {
+    device = mkOption {
+      type = types.string;
     };
-    swapSize = lib.mkOption {
-      type = lib.types.string;
+    swapSize = mkOption {
+      type = types.string;
     };
   };
 
@@ -51,8 +53,8 @@ in {
       supportedFilesystems = ["btrfs"];
       # https://discourse.nixos.org/t/impermanence-vs-systemd-initrd-w-tpm-unlocking/25167/3
       # https://mt-caret.github.io/blog/posts/2020-06-29-optin-state.html
-      postDeviceCommands = lib.mkIf (!config.boot.initrd.systemd.enable) (lib.mkBefore rollback);
-      systemd.services.rollback = lib.mkIf config.boot.initrd.systemd.enable {
+      postDeviceCommands = mkIf (!config.boot.initrd.systemd.enable) (mkBefore rollback);
+      systemd.services.rollback = mkIf config.boot.initrd.systemd.enable {
         description = "Rollback BTRFS root subvolume to empty state";
         wantedBy = ["initrd.target"];
         after = [
@@ -68,7 +70,7 @@ in {
     disko.devices = {
       disk = {
         root = {
-          inherit (config.rootLuksLvmBtrfs) device;
+          inherit (cfg) device;
           type = "disk";
           content = {
             type = "gpt";
@@ -144,7 +146,7 @@ in {
                   };
                   "/swap" = {
                     mountpoint = "/.swapvol";
-                    swap.swapfile.size = config.rootLuksLvmBtrfs.swapSize;
+                    swap.swapfile.size = cfg.swapSize;
                   };
                 };
               };
