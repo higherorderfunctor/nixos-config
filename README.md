@@ -129,13 +129,14 @@ TARGET=beelink-ser7
 nix run github:nix-community/disko -- --mode mount --flake  \
   "github:higherorderfunctor/nixos-config?ref=$BRANCH#$TARGET"
 
-# update system
+# update nixos-conig
 cd /mnt/etc/nixos
 git fetch && git checkout "$BRANCH"
-# TODO:
-mkdir -p /mnt/root/.config/sops/age
+
+# normally cleared on boot and restored by impermanence
 rm /mnt/etc/machine-id
-nix-shell -p ssh-to-age --run "ssh-to-age -private-key -i /mnt/etc/nixos/home/caubut/id_ed25519 > /mnt/root/.config/sops/age/keys.txt"
+
+# install the updated nixos-config
 nixos-install --no-root-passwd --flake "/mnt/etc/nixos#$TARGET"
 ```
 

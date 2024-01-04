@@ -2,16 +2,22 @@
   config,
   pkgs,
   ...
-}: {
+}: let
+  ifGroupExist = groups: builtins.filter (group: builtins.hasAttr group config.users.groups) groups;
+in {
   users.mutableUsers = false;
   users.users.caubut = {
     isNormalUser = true;
     shell = pkgs.zsh;
-    extraGroups = [
-      "wheel"
-      "video"
-      "audio"
-    ];
+    extraGroups =
+      [
+        "wheel"
+        "video"
+        "audio"
+      ]
+      ++ ifGroupExist [
+        "network"
+      ];
     hashedPasswordFile = config.sops.secrets.caubut-password.path;
     packages = [pkgs.home-manager];
   };
