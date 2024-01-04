@@ -131,7 +131,7 @@ nix run github:nix-community/disko -- --mode mount --flake  \
 
 # update nixos-conig
 cd /mnt/etc/nixos
-git fetch && git checkout "$BRANCH"
+git fetch && git checkout "$BRANCH" && git pull
 
 # normally cleared on boot and restored by impermanence
 rm /mnt/etc/machine-id

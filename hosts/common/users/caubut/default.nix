@@ -18,6 +18,7 @@ in {
       ++ ifGroupExist [
         "network"
       ];
+    openssh.authorizedKeys.keys = [(builtins.readFile ../../../../home/caubut/id_ed25519.pub)];
     hashedPasswordFile = config.sops.secrets.caubut-password.path;
     packages = [pkgs.home-manager];
   };
@@ -26,6 +27,6 @@ in {
     neededForUsers = true;
   };
 
-  # TODO descrypt secrets on login?  user service
+  # TODO: decrypt secrets on login?  user service
   # TODO: home-manager.users.caubut = import ../../../../home/misterio/${config.networking.hostName}.nix;
 }
