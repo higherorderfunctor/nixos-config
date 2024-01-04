@@ -123,9 +123,9 @@ TARGET=vm
 
 # update nixos-conig
 cd /etc/nixos
-git fetch && git checkout "$BRANCH" && git pull
+sudo git fetch && git checkout "$BRANCH" && git pull
 
-nixos-rebuild --flake "/etc/nixos#$TARGET" switch
+sudo nixos-rebuild --flake "/etc/nixos#$TARGET" switch
 ```
 
 ### Updating from a Live CD
