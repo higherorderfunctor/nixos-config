@@ -18,7 +18,7 @@
 
   home =
     # lock system and home-mnager state versions
-    (import ../../../hosts/common/global/stateVersion.nix)
+    (import ../../../hosts/common/global/state-version.nix)
     // {
       username = lib.mkDefault "caubut";
       homeDirectory = lib.mkDefault "/home/${config.home.username}";

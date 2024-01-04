@@ -1,8 +1,6 @@
 _: {
   imports = [
-    # enable extra options
     ../global/nix.nix
-    # sshd
     ./openssh.nix
   ];
 
@@ -11,4 +9,7 @@ _: {
 
   # allow root on live CDs
   services.openssh.settings.PermitRootLogin = "yes";
+
+  # make sure git is available (not part of minimal)
+  programs.git.enable = true;
 }

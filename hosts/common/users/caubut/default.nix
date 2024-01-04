@@ -5,7 +5,7 @@
 }: let
   ifGroupExist = groups: builtins.filter (group: builtins.hasAttr group config.users.groups) groups;
 in {
-  users.mutableUsers = false;
+  # system configuration for user
   users.users.caubut = {
     isNormalUser = true;
     shell = pkgs.zsh;
@@ -27,6 +27,6 @@ in {
     neededForUsers = true;
   };
 
-  # import host specific configuration for all outputs
+  # host specific home-manager configuration for user
   home-manager.users.caubut = import ../../../../home/caubut/${config.networking.hostName}.nix;
 }

@@ -68,7 +68,7 @@ nix run nixpkgs#nvme-cli -- id-ns /dev/nvme0n1 -H | grep "^LBA Format"
 nix run nixpkgs#nvme-cli -- format /dev/nvme0n1 --force --lbaf <BEST>
 
 BRANCH=main
-TARGET=beelink-ser7
+TARGET=vm
 
 # partition disk(s)
 nix run github:nix-community/disko -- --mode disko --flake  \
@@ -84,6 +84,7 @@ findmnt -nt btrfs
 ##
 # REMOTE (ssh): build the config
 
+# clone this config
 git clone -b "$BRANCH" https://github.com/higherorderfunctor/nixos-config.git \
   /mnt/etc/nixos
 

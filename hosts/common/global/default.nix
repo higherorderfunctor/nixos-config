@@ -7,6 +7,7 @@
   imports = [
     inputs.home-manager.nixosModules.home-manager
     ./impermanence.nix
+    ./mutable-users.nix
     ./nix.nix
     ./sops.nix
     ./zsh.nix
@@ -17,7 +18,7 @@
   home-manager.extraSpecialArgs = {inherit inputs outputs;};
 
   # system state version
-  system = import ./stateVersion.nix;
+  system = import ./state-version.nix;
 
   # disable root
   users.users.root.hashedPassword = "!";
