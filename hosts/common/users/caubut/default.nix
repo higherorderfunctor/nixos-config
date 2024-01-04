@@ -2,16 +2,23 @@
   config,
   pkgs,
   ...
-}: {
-  users.mutableUsers = false;
+}: let
+  ifGroupExist = groups: builtins.filter (group: builtins.hasAttr group config.users.groups) groups;
+in {
+  # system configuration for user
   users.users.caubut = {
     isNormalUser = true;
     shell = pkgs.zsh;
-    extraGroups = [
-      "wheel"
-      "video"
-      "audio"
-    ];
+    extraGroups =
+      [
+        "wheel"
+        "video"
+        "audio"
+      ]
+      ++ ifGroupExist [
+        "network"
+      ];
+    openssh.authorizedKeys.keys = [(builtins.readFile ../../../../home/caubut/id_ed25519.pub)];
     hashedPasswordFile = config.sops.secrets.caubut-password.path;
     packages = [pkgs.home-manager];
   };
@@ -20,6 +27,6 @@
     neededForUsers = true;
   };
 
-  # TODO descrypt secrets on login?  user service
-  # TODO: home-manager.users.caubut = import ../../../../home/misterio/${config.networking.hostName}.nix;
+  # host specific home-manager configuration for user
+  home-manager.users.caubut = import ../../../../home/caubut/${config.networking.hostName}.nix;
 }

@@ -10,6 +10,7 @@
     inputs.hardware.nixosModules.common-cpu-amd
     inputs.hardware.nixosModules.common-gpu-amd
     ./disk-config.nix
+    ../common/optional/wireless.nix
   ];
 
   boot = {

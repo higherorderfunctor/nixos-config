@@ -34,13 +34,6 @@ nix build .#nixosConfigurations.live-cd-minimal-x86_64-linux.config.system.build
 
 # graphical
 nix build .#nixosConfigurations.live-cd-graphical-x86_64-linux.config.system.build.isoImage
-
-# mount disks from live CD
-BRANCH=main
-TARGET=beelink-ser7
-
-nix run github:nix-community/disko -- --mode mount --flake  \
-  "github:higherorderfunctor/nixos-config?ref=$BRANCH#$TARGET"
 ```
 
 ## Installing
@@ -75,7 +68,7 @@ nix run nixpkgs#nvme-cli -- id-ns /dev/nvme0n1 -H | grep "^LBA Format"
 nix run nixpkgs#nvme-cli -- format /dev/nvme0n1 --force --lbaf <BEST>
 
 BRANCH=main
-TARGET=beelink-ser7
+TARGET=vm
 
 # partition disk(s)
 nix run github:nix-community/disko -- --mode disko --flake  \
@@ -91,6 +84,7 @@ findmnt -nt btrfs
 ##
 # REMOTE (ssh): build the config
 
+# clone this config
 git clone -b "$BRANCH" https://github.com/higherorderfunctor/nixos-config.git \
   /mnt/etc/nixos
 
@@ -99,6 +93,10 @@ nixos-generate-config --root /mnt --show-hardware-config
 
 # copy wanted configs into hosts/$TARGET/hardware-configuration.nix
 
+
+##
+# HOST: copy secrets key for sops
+
 # virtualbox
 REMOTE=root@localhost
 PORT=2522
@@ -106,7 +104,6 @@ PORT=2522
 REMOTE=root@192.168.9.130
 PORT=22
 
-# copy secrets key for sops
 scp -P "$PORT" -r ~/.ssh/id_ed25519 "$REMOTE":/mnt/etc/nixos/home/caubut/id_ed25519
 
 
@@ -118,10 +115,38 @@ nixos-install --no-root-passwd --flake "/mnt/etc/nixos#$TARGET"
 
 ## Updating
 
+### Updating on the Host
+
 ```sh
-TARGET=beelink-ser7
+BRANCH=main
+TARGET=vm
+
+# update nixos-conig
+cd /etc/nixos
+git fetch && git checkout "$BRANCH" && git pull
 
 nixos-rebuild --flake "/etc/nixos#$TARGET" switch
+```
+
+### Updating from a Live CD
+
+```sh
+BRANCH=main
+TARGET=vm
+
+# mount disk(s)
+nix run github:nix-community/disko -- --mode mount --flake  \
+  "github:higherorderfunctor/nixos-config?ref=$BRANCH#$TARGET"
+
+# update nixos-conig
+cd /mnt/etc/nixos
+git fetch && git checkout "$BRANCH" && git pull
+
+# normally cleared on boot and restored by impermanence
+rm /mnt/etc/machine-id
+
+# install the updated nixos-config
+nixos-install --no-root-passwd --flake "/mnt/etc/nixos#$TARGET"
 ```
 
 ## Managing Secrets
