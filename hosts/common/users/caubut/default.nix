@@ -27,6 +27,6 @@ in {
     neededForUsers = true;
   };
 
-  # TODO: decrypt secrets on login?  user service
-  # TODO: home-manager.users.caubut = import ../../../../home/misterio/${config.networking.hostName}.nix;
+  # import host specific configuration for all outputs
+  home-manager.users.caubut = import ../../../../home/caubut/${config.networking.hostName}.nix;
 }

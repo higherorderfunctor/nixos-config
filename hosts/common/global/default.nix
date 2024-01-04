@@ -1,5 +1,11 @@
-{lib, ...}: {
+{
+  inputs,
+  lib,
+  outputs,
+  ...
+}: {
   imports = [
+    inputs.home-manager.nixosModules.home-manager
     ./impermanence.nix
     ./nix.nix
     ./sops.nix
@@ -7,8 +13,11 @@
     ../users/caubut
   ];
 
+  # home manager
+  home-manager.extraSpecialArgs = {inherit inputs outputs;};
+
   # system state version
-  system.stateVersion = "24.05";
+  system = import ./stateVersion.nix;
 
   # disable root
   users.users.root.hashedPassword = "!";
