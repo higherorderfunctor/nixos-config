@@ -9,6 +9,7 @@
     ./impermanence.nix
     ./mutable-users.nix
     ./nix.nix
+    ./neovim.nix
     ./sops.nix
     ./zsh.nix
     ../users/caubut

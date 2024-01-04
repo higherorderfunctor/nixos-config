@@ -7,8 +7,17 @@
   imports = [
     inputs.impermanence.nixosModules.home-manager.impermanence
     ../features/cli
-    # TODO: ../features/nvim
+    ../features/neovim
   ];
+
+  nixpkgs = {
+    overlays = [
+      inputs.neovim-nightly-overlay.overlay
+    ];
+    config = {
+      allowUnfree = true;
+    };
+  };
 
   systemd.user.startServices = "sd-switch";
 

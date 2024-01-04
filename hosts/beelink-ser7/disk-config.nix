@@ -1,4 +1,4 @@
-{config, ...}: {
+{
   imports = [
     ../common/optional/root-luks-lvm-btrfs.nix
   ];
