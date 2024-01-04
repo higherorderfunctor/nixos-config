@@ -169,6 +169,13 @@ mkpasswd --method=SHA-512 --stdin
 nix-shell -p sops --run "sops hosts/common/secrets.yaml"
 ```
 
+## Home Manager
+
+```ssh
+# show persistent directories
+findmnt -nt fuse
+```
+
 ## Linters, Formatters, and LSPs
 
 ### statix (linter)
