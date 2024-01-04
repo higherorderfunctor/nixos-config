@@ -67,7 +67,7 @@ nix run nixpkgs#nvme-cli -- id-ns /dev/nvme0n1 -H | grep "^LBA Format"
 # update to best LBA format (destructive!)
 nix run nixpkgs#nvme-cli -- format /dev/nvme0n1 --force --lbaf <BEST>
 
-BRANCH=main
+BRANCH=refactor/sshd-service-style
 TARGET=vm
 
 # partition disk(s)
@@ -123,8 +123,8 @@ nixos-rebuild --flake "/etc/nixos#$TARGET" switch
 ### Updating from a Live CD
 
 ```sh
-BRANCH=refactor/shhd-service-style
-TARGET=beelink-ser7
+BRANCH=refactor/sshd-service-style
+TARGET=vm
 
 # mount disk(s)
 nix run github:nix-community/disko -- --mode mount --flake  \
