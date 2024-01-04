@@ -12,9 +12,14 @@ with lib; let
 
     # backup last root
     if [[ -e /btrfs/root ]]; then
-        mkdir -p /btrfs/snapshots
+        mkdir -p /btrfs/snapshots/root
         timestamp=$(date --date="@$(stat -c %Y /btrfs/root)" "+%Y-%m-%-d_%H:%M:%S")
-        mv /btrfs/root "/btrfs/snapshots/$timestamp"
+        mv /btrfs/root "/btrfs/snapshots/root/$timestamp"
+    fi
+    if [[ -e /btrfs/home ]]; then
+        mkdir -p /btrfs/snapshots/home
+        timestamp=$(date --date="@$(stat -c %Y /btrfs/home)" "+%Y-%m-%-d_%H:%M:%S")
+        mv /btrfs/home "/btrfs/snapshots/home/$timestamp"
     fi
 
     # delete old snapshot
@@ -27,7 +32,10 @@ with lib; let
     }
 
     # delete anything older than 30 days
-    for i in $(find /btrfs/snapshots/ -maxdepth 1 -mtime +30); do
+    for i in $(find /btrfs/snapshots/root -maxdepth 1 -mtime +30); do
+        delete_subvolume_recursively "$i"
+    done
+    for i in $(find /btrfs/snapshots/home -maxdepth 1 -mtime +30); do
         delete_subvolume_recursively "$i"
     done
 

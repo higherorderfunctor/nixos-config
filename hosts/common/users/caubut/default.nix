@@ -9,6 +9,7 @@ in {
   users.groups.caubut = {
     gid = 1000;
   };
+
   users.users.caubut = {
     uid = 1000;
     group = "caubut";
