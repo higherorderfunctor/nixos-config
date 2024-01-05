@@ -9,12 +9,12 @@
     coc.enable = false;
   };
 
-  home.file."./nixos-config/" = {
-    source = ../../../../..;
-    recursive = true;
-  };
+  # home.file."./nixos-config/" = {
+  #   source = ../../../../..;
+  #   recursive = true;
+  # };
 
-  home.file."./.config/nvim/".source = config.lib.file.mkOutOfStoreSymlink "nixos-config/home/caubut/features/neovim/nvim-config";
+  # home.file."./.config/nvim/".source = config.lib.file.mkOutOfStoreSymlink "nixos-config/home/caubut/features/neovim/nvim-config";
 }
 # NOTES":
 #   new ssh key for secrets
