@@ -1,1 +1,4 @@
 /result
+ssh_host_ed25519_key
+ssh_host_rsa_key
+id_ed25519
