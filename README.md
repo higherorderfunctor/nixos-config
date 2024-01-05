@@ -48,9 +48,9 @@ nix-shell -p ssh-to-age --run 'cat hosts/beelink-ser7/secrets/ssh_host_ed25519_k
 nix-shell -p ssh-to-age --run 'cat hosts/vm/secrets/ssh_host_ed25519_key.pub | ssh-to-age'
 ```
 
-Secrets are stored in either `home/<USER>/secrets/secrets.yaml` or `hosts/<HOST>/secrets/secrets.yaml`
-Fill out the matrix in `sops.yaml` for which users and hosts should have
-access to which secrets.
+Secrets are stored in either `home/<USER>/secrets/secrets.yaml`, `hosts/<HOST>/secrets/secrets.yaml`,
+or `hosts/common/secrets/<SCOPE>.yaml`.  Fill out the matrix in `sops.yaml` for which
+users and hosts should have access to which secrets.
 
 To start making secrets, on the current host, configure age.  This enables
 decryption of any existing secrets.
@@ -63,16 +63,18 @@ nix-shell -p ssh-to-age --run \
   ~/.config/sops/age/keys.txt"
 ```
 
-Edits the secrets which can be decrypted per the `sops.yaml` matrix.
+Edit the secrets which can be decrypted per the `.sops.yaml` matrix.
 
 ```sh
 nix-shell -p sops --run "sops home/<USER>/secrets/secrets.yaml"
 nix-shell -p sops --run "sops hosts/<HOST>/secrets/secrets.yaml"
+nix-shell -p sops --run "sops hosts/common/secrets/<SCOPE>.yaml"
 
 # example:
 nix-shell -p sops --run "sops home/caubut/secrets/secrets.yaml"
 nix-shell -p sops --run "sops hosts/beelink-ser7/secrets/secrets.yaml"
 nix-shell -p sops --run "sops hosts/vm/secrets/secrets.yaml"
+nix-shell -p sops --run "sops hosts/common/secrets/wireless.yaml"
 ```
 
 User password hashes can be generated with the following.

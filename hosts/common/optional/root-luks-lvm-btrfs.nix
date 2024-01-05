@@ -145,11 +145,6 @@ in {
                     mountpoint = "/nix";
                     mountOptions = ["compress=zstd" "noatime"];
                   };
-                  "/etc/nixos" = {
-                    # managed by this flake, os installed every boot
-                    mountpoint = "/etc/nixos";
-                    mountOptions = ["compress=zstd" "noatime"];
-                  };
                   "/home" = {
                     # managed by home-manager
                     mountpoint = "/home";
@@ -168,7 +163,6 @@ in {
     };
 
     fileSystems = {
-      "/etc/nixos".neededForBoot = true;
       "/home".neededForBoot = true;
       "/persist".neededForBoot = true;
     };
