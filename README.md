@@ -1,28 +1,12 @@
 # nixos-config
 
-## Helpful Commands
+## Preparation
+
+From the root of this repo, generate a key-pair without a password to manage secrets with sops.  Do not lose the private key!
 
 ```sh
-# update lock file
-nix flake update
-
-# refresh flake from remote (e.g. making edits while testing install from ISO)
-BRANCH=main
-
-nix flake update --refresh github:higherorderfunctor/nixos-config?ref=$BRANCH
-
-# show outputs
-nix flake show
-
-# check for errors in outputs
-nix flake check
-
-# inspect outputs
-nix repl
-:lf .
-
-outputs.<tab>
-````
+ssh-keygen -t ed25519 -f secrets/nixos_config_ed25519
+```
 
 ## Building Live CD Installer ISO
 
@@ -118,12 +102,12 @@ nixos-install --no-root-passwd --flake "/mnt/etc/nixos#$TARGET"
 ### Updating on the Host
 
 ```sh
-BRANCH=main
+BRANCH=fix/user-permissions
 TARGET=vm
 
 # update nixos-conig
 cd /etc/nixos
-sudo git fetch && git checkout "$BRANCH" && git pull
+sudo git fetch && sudo git checkout "$BRANCH" && sudo git pull
 
 sudo nixos-rebuild --flake "/etc/nixos#$TARGET" switch
 ```
@@ -168,6 +152,30 @@ mkpasswd --method=SHA-512 --stdin
 # create/edit a secrets file
 nix-shell -p sops --run "sops hosts/common/secrets.yaml"
 ```
+
+## Helpful Commands
+
+```sh
+# update lock file
+nix flake update
+
+# refresh flake from remote (e.g. making edits while testing install from ISO)
+BRANCH=main
+
+nix flake update --refresh github:higherorderfunctor/nixos-config?ref=$BRANCH
+
+# show outputs
+nix flake show
+
+# check for errors in outputs
+nix flake check
+
+# inspect outputs
+nix repl
+:lf .
+
+outputs.<tab>
+````
 
 ## Home Manager
 

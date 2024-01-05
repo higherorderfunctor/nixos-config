@@ -15,6 +15,13 @@
     ../users/caubut
   ];
 
+  # nixpkgs
+  nixpkgs = {
+    config = {
+      allowUnfree = true;
+    };
+  };
+
   # home manager
   home-manager = {
     useGlobalPkgs = true;
