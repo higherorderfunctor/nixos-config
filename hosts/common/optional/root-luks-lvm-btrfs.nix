@@ -138,22 +138,22 @@ in {
                   "/persist" = {
                     # persistent data between boots
                     mountpoint = "/persist";
-                    mountOptions = ["subvol=persist" "compress=zstd" "noatime"];
+                    mountOptions = ["compress=zstd" "noatime"];
                   };
                   "/nix" = {
                     # managed by this flake, os installed every boot
                     mountpoint = "/nix";
-                    mountOptions = ["subvol=nix" "compress=zstd" "noatime"];
+                    mountOptions = ["compress=zstd" "noatime"];
                   };
                   "/etc/nixos" = {
                     # managed by this flake, os installed every boot
                     mountpoint = "/etc/nixos";
-                    mountOptions = ["subvol=nixos" "compress=zstd" "noatime"];
+                    mountOptions = ["compress=zstd" "noatime"];
                   };
                   "/home" = {
                     # managed by home-manager
                     mountpoint = "/home";
-                    mountOptions = ["subvol=home" "compress=zstd" "noatime"];
+                    mountOptions = ["compress=zstd" "noatime"];
                   };
                   "/swap" = {
                     mountpoint = "/.swapvol";
@@ -167,8 +167,11 @@ in {
       };
     };
 
-    fileSystems."/persist".neededForBoot = true;
-    fileSystems."/etc/nixos".neededForBoot = true;
+    fileSystems = {
+      "/etc/nixos".neededForBoot = true;
+      "/home".neededForBoot = true;
+      "/persist".neededForBoot = true;
+    };
 
     boot.kernel.sysctl = {
       "vm.swapiness" = 1;
