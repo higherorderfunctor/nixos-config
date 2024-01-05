@@ -14,7 +14,7 @@
     recursive = true;
   };
 
-  home.file."./.config/nvim/".source = config.lib.file.mkOutOfStoreSymlink "/home/${config.home.username}/nixos-config/home/caubut/features/neovim/nvim-config";
+  home.file."./.config/nvim/".source = config.lib.file.mkOutOfStoreSymlink "~/nixos-config/home/caubut/features/neovim/nvim-config";
 }
 # NOTES":
 #   new ssh key for secrets
