@@ -3,14 +3,12 @@
   pkgs,
   ...
 }: {
-  xdg.enable = true;
   programs.neovim = {
     enable = true;
     package = pkgs.neovim-nightly;
     coc.enable = false;
   };
-  xdg.configFile."nvim"
-
+  xdg.configFile."nvim".source = config.lib.file.mkOutOfStoreSymlink "/home/${config.home.username}/Documents/nixos-config/home/caubut/features/neovim/nvim-config";
 
   # home.file."./nixos-config/" = {
   #   source = ../../../../..;

@@ -26,6 +26,8 @@
     home-manager.enable = true;
   };
 
+  xdg.enable = true;
+
   home =
     # lock system and home-mnager state versions
     (import ../../../hosts/common/global/state-version.nix)
