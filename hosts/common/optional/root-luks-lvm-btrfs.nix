@@ -148,12 +148,12 @@ in {
                   "/etc/nixos" = {
                     # managed by this flake, os installed every boot
                     mountpoint = "/etc/nixos";
-                    mountOptions = ["subvol=nix" "compress=zstd" "noatime"];
+                    mountOptions = ["subvol=nixos" "compress=zstd" "noatime"];
                   };
                   "/home" = {
                     # managed by home-manager
                     mountpoint = "/home";
-                    mountOptions = ["compress=zstd" "noatime"];
+                    mountOptions = ["subvol=home" "compress=zstd" "noatime"];
                   };
                   "/swap" = {
                     mountpoint = "/.swapvol";
