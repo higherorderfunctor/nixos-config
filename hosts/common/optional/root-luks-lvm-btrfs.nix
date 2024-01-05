@@ -10,19 +10,7 @@ with lib; let
     mkdir /btrfs
     mount -t btrfs /dev/mapper/cryptlvm-root /btrfs
 
-    # backup last root
-    if [[ -e /btrfs/root ]]; then
-        mkdir -p /btrfs/snapshots/root
-        timestamp=$(date --date="@$(stat -c %Y /btrfs/root)" "+%Y-%m-%-d_%H:%M:%S")
-        mv /btrfs/root "/btrfs/snapshots/root/$timestamp"
-    fi
-    if [[ -e /btrfs/home ]]; then
-        mkdir -p /btrfs/snapshots/home
-        timestamp=$(date --date="@$(stat -c %Y /btrfs/home)" "+%Y-%m-%-d_%H:%M:%S")
-        mv /btrfs/home "/btrfs/snapshots/home/$timestamp"
-    fi
-
-    # delete old snapshot
+    # helper function to delete old snapshot(s)
     delete_subvolume_recursively() {
         IFS=$'\n'
         for i in $(btrfs subvolume list -o "$1" | cut -f 9- -d ' '); do
@@ -31,16 +19,31 @@ with lib; let
         btrfs subvolume delete "$1"
     }
 
-    # delete anything older than 30 days
-    for i in $(find /btrfs/snapshots/root -maxdepth 1 -mtime +30); do
+    # backup last root
+    if [[ -e /btrfs/root ]]; then
+        mkdir -p /btrfs/snapshots/root
+        timestamp=$(date --date="@$(stat -c %Y /btrfs/root)" "+%Y-%m-%-d_%H:%M:%S")
+        mv /btrfs/root "/btrfs/snapshots/root/$timestamp"
+    fi
+
+    # backup last home
+    if [[ -e /btrfs/home ]]; then
+        mkdir -p /btrfs/snapshots/home
+        timestamp=$(date --date="@$(stat -c %Y /btrfs/home)" "+%Y-%m-%-d_%H:%M:%S")
+        mv /btrfs/home "/btrfs/snapshots/home/$timestamp"
+    fi
+
+    # delete anything older than 30 days but keep the last 5 regardless of age
+    for i in $(find /btrfs/snapshots/root -maxdepth 1 -mtime +30 -printf "%T@ %p\n" | sort | cut -d' ' -f2 | head -n -5); do
         delete_subvolume_recursively "$i"
     done
-    for i in $(find /btrfs/snapshots/home -maxdepth 1 -mtime +30); do
+    for i in $(find /btrfs/snapshots/home -maxdepth 1 -mtime +30 -printf "%T@ %p\n" | sort | cut -d' ' -f2 | head -n -5); do
         delete_subvolume_recursively "$i"
     done
 
     # restore blank root
     btrfs subvolume create /btrfs/root
+    btrfs subvolume create /btrfs/home
 
     # clean up
     umount /btrfs
