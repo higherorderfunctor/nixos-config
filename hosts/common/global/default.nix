@@ -16,7 +16,11 @@
   ];
 
   # home manager
-  home-manager.extraSpecialArgs = {inherit inputs outputs;};
+  home-manager = {
+    useGlobalPkgs = true;
+    useUserPackages = true;
+    extraSpecialArgs = {inherit inputs outputs;};
+  };
 
   # system state version
   system = import ./state-version.nix;

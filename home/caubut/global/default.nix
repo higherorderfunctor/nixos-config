@@ -1,24 +1,24 @@
 {
+  config,
   inputs,
   lib,
-  config,
   ...
 }: {
   imports = [
     inputs.impermanence.nixosModules.home-manager.impermanence
     ../features/cli
-    ../features/legacy-dotfiles
     ../features/neovim
   ];
 
-  nixpkgs = {
-    overlays = [
-      inputs.neovim-nightly-overlay.overlay
-    ];
-    config = {
-      allowUnfree = true;
-    };
-  };
+  # TODO: not needed with global pkgs
+  # nixpkgs = {
+  #   overlays = [
+  #     inputs.neovim-nightly-overlay.overlay
+  #   ];
+  #   config = {
+  #     allowUnfree = true;
+  #   };
+  # };
 
   systemd.user.startServices = "sd-switch";
 
@@ -43,6 +43,10 @@
           ];
           allowOther = true;
         };
+      };
+      file."Documents.personal.nixos-config" = {
+        source = inputs.self.outPath;
+        recursive = true;
       };
     };
 }
