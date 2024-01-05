@@ -27,18 +27,15 @@
     inherit (self) outputs;
     lib = nixpkgs.lib // home-manager.lib;
     systems = ["x86_64-linux" "aarch64-linux"];
-    forEachSystem = f: lib.genAttrs systems (system: f pkgsFor.${system});
+    forAllSystems = f: lib.genAttrs systems (system: f pkgsFor.${system});
     pkgsFor = lib.genAttrs systems (system:
       import nixpkgs {
         inherit system;
         config.allowUnfree = true;
       });
   in {
-    # add custom packages
-    packages = forEachSystem (pkgs: import ./pkgs {inherit pkgs;});
-
     # set formmatter for this flake
-    formatter = forEachSystem (pkgs: pkgs.alejandra);
+    formatter = forAllSystems (pkgs: pkgs.alejandra);
 
     # system configurations
     nixosConfigurations = {

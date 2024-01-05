@@ -12,6 +12,7 @@
     ./neovim.nix
     ./sops.nix
     ./zsh.nix
+    # add users
     ../users/caubut
   ];
 

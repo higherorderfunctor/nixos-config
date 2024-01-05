@@ -4,6 +4,11 @@
     ./openssh.nix
   ];
 
+  # allowed SSH users
+  users.users.root.openssh.authorizedKeys.keys = [
+    (builtins.readFile ../../../home/caubut/secrets/id_ed25519.pub)
+  ];
+
   # image generation
   isoImage.squashfsCompression = "gzip -Xcompression-level 1";
 

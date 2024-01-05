@@ -1,16 +1,92 @@
 # nixos-config
 
-## Preparation
+## Prepare Secrets
 
-From the root of this repo, generate a key-pair without a password to manage secrets with sops.  Do not lose the private key!
+In this setup, secrets are managed with sops.  Users and hosts will use different
+keys to encrypt/decrypt secrets.
+
+### Generate User Keys
+
+To generate a key for the current user on an existing host (NixOS or just Nix),
+generate a key-pair without a password.  Do not lose the private key!  It must
+be manually copied later.  You may have an existing one used for SSH that can be
+reused for sops.
 
 ```sh
-ssh-keygen -t ed25519 -f secrets/nixos_config_ed25519
+# for a new key pair
+ssh-keygen -t ed25519 -f home/caubut/secrets
+
+# for an existing key pair
+cp ~/.ssh/id_ed25519.pub home/caubut/secrets
 ```
 
-## Building Live CD Installer ISO
+### Generate Host Keys
 
-Build a bootable NixOS Live CD Installer ISO with SSH enabled and public key preloaded.
+Same steps as above, just for hosts to decrypt secrets.  Again, no password.  This
+key will also be the host's SSH key.
+
+```sh
+# generate key pair
+ssh-keygen -t ed25519 -f hosts/<HOST>/secrets/ssh_host_ed25519_key
+
+# example
+ssh-keygen -t ed25519 -f hosts/beelink-ser7/secrets/ssh_host_ed25519_key
+ssh-keygen -t ed25519 -f hosts/vm/secrets/ssh_host_ed25519_key
+```
+
+### Setup SOPS
+
+Add all public keys to `sops.yaml` under users or hosts with an age key.
+
+```sh
+# derive a public key from an SSH public key
+nix-shell -p ssh-to-age --run 'cat home/<USER>/secrets/id_ed25519.pub | ssh-to-age'
+
+# example
+nix-shell -p ssh-to-age --run 'cat home/caubut/secrets/id_ed25519.pub | ssh-to-age'
+nix-shell -p ssh-to-age --run 'cat hosts/beelink-ser7/secrets/ssh_host_ed25519_key.pub | ssh-to-age'
+nix-shell -p ssh-to-age --run 'cat hosts/vm/secrets/ssh_host_ed25519_key.pub | ssh-to-age'
+```
+
+Secrets are stored in either `home/<USER>/secrets/secrets.yaml` or `hosts/<HOST>/secrets/secrets.yaml`
+Fill out the matrix in `sops.yaml` for which users and hosts should have
+access to which secrets.
+
+To start making secrets, on the current host, configure age.  This enables
+decryption of any existing secrets.
+
+```sh
+# derive an age private key from an SSH private key
+mkdir -p ~/.config/sops/age
+nix-shell -p ssh-to-age --run \
+  "ssh-to-age -private-key -i ~/.ssh/id_ed25519 > \
+  ~/.config/sops/age/keys.txt"
+```
+
+Edits the secrets which can be decrypted per the `sops.yaml` matrix.
+
+```sh
+nix-shell -p sops --run "sops home/<USER>/secrets/secrets.yaml"
+nix-shell -p sops --run "sops hosts/<HOST>/secrets/secrets.yaml"
+
+# example:
+nix-shell -p sops --run "sops home/caubut/secrets/secrets.yaml"
+nix-shell -p sops --run "sops hosts/beelink-ser7/secrets/secrets.yaml"
+nix-shell -p sops --run "sops hosts/vm/secrets/secrets.yaml"
+```
+
+User password hashes can be generated with the following.
+
+```sh
+nix-shell -p mkpasswd --run 'mkpasswd --method=SHA-512 --stdin'
+```
+
+## Build a Live CD Installer ISO
+
+Build a bootable NixOS Live CD Installer ISO with SSH enabled and the user's public
+key preloaded.
+
+See `hosts/common/optional/openssh.nix` for adding the key.
 
 ```sh
 # minimal
@@ -20,7 +96,9 @@ nix build .#nixosConfigurations.live-cd-minimal-x86_64-linux.config.system.build
 nix build .#nixosConfigurations.live-cd-graphical-x86_64-linux.config.system.build.isoImage
 ```
 
-## Installing
+## Install
+
+Boot from the NixOS Live CD Installer ISO.
 
 ```sh
 ##
@@ -133,25 +211,6 @@ rm /mnt/etc/machine-id
 nixos-install --no-root-passwd --flake "/mnt/etc/nixos#$TARGET"
 ```
 
-## Managing Secrets
-
-```sh
-# generate key pair if needed
-ssh-keygen -t ed25519
-
-# derive a private key from an SSH private key
-mkdir -p ~/.config/sops/age
-nix-shell -p ssh-to-age --run "ssh-to-age -private-key -i ~/.ssh/id_ed25519 > ~/.config/sops/age/keys.txt"
-
-# derive a public key from an SSH public key
-nix-shell -p ssh-to-age --run 'cat ~/.ssh/id_ed25519.pub | ssh-to-age'
-
-# generate password hashes to store
-mkpasswd --method=SHA-512 --stdin
-
-# create/edit a secrets file
-nix-shell -p sops --run "sops hosts/common/secrets.yaml"
-```
 
 ## Helpful Commands
 

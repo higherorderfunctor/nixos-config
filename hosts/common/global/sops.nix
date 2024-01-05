@@ -1,4 +1,8 @@
-{inputs, ...}: {
+{
+  config,
+  inputs,
+  ...
+}: {
   imports = [
     inputs.sops-nix.nixosModules.sops
   ];
@@ -6,7 +10,7 @@
   # https://github.com/Mic92/sops-nix/issues/427
   sops = {
     gnupg.sshKeyPaths = [];
-    age.sshKeyPaths = ["/etc/nixos/home/caubut/id_ed25519"];
-    defaultSopsFile = ../secrets.yaml;
+    age.sshKeyPaths = ["/etc/ssh/ssh_host_ed25519_key"];
+    defaultSopsFile = ../../${config.networking.hostName}/secrets/secrets.yaml;
   };
 }

@@ -3,16 +3,18 @@
   pkgs,
   ...
 }: let
+  username = "caubut";
+  userConfig = ../../../../home/${username};
   ifGroupExist = groups: builtins.filter (group: builtins.hasAttr group config.users.groups) groups;
 in {
   # system configuration for user
-  users.groups.caubut = {
+  users.groups.${username} = {
     gid = 1000;
   };
 
-  users.users.caubut = {
+  users.users.${username} = {
     uid = 1000;
-    group = "caubut";
+    group = "${username}";
     isNormalUser = true;
     shell = pkgs.zsh;
     extraGroups =
@@ -24,15 +26,16 @@ in {
       ++ ifGroupExist [
         "network"
       ];
-    openssh.authorizedKeys.keys = [(builtins.readFile ../../../../home/caubut/id_ed25519.pub)];
-    hashedPasswordFile = config.sops.secrets.caubut-password.path;
+    openssh.authorizedKeys.keys = [(builtins.readFile "${userConfig}/secrets/id_ed25519.pub")];
+    hashedPasswordFile = config.sops.secrets."${username}-password".path;
     packages = [pkgs.home-manager];
   };
 
-  sops.secrets.caubut-password = {
+  sops.secrets."${username}-password" = {
     neededForUsers = true;
+    sopsFile = "${userConfig}/secrets/secrets.yaml";
   };
 
   # host specific home-manager configuration for user
-  home-manager.users.caubut = import ../../../../home/caubut/${config.networking.hostName}.nix;
+  # home-manager.users.caubut = import "${userConfig}/${config.networking.hostName}.nix";
 }
