@@ -1,4 +1,5 @@
 /result
-ssh_host_ed25519_key
-ssh_host_rsa_key
-id_ed25519
+secrets/*
+!secrets/ssh_host_ed25519_key.pub
+!ssh_host_rsa_key.pub
+!secrets/secrets.yaml
