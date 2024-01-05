@@ -37,5 +37,5 @@ in {
   };
 
   # host specific home-manager configuration for user
-  # home-manager.users.caubut = import "${userConfig}/${config.networking.hostName}.nix";
+  home-manager.users.caubut = import ../../../../home/${username}/${config.networking.hostName}.nix;
 }
