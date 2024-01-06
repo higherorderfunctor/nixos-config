@@ -202,13 +202,13 @@ nixos-install --no-root-passwd --flake "github:higherorderfunctor/nixos-config?r
 
 ```sh
 BRANCH=fix/user-permissions
-TARGET=vm
+TARGET=beelink-ser7
 
-# update nixos-conig
-cd /etc/nixos
-sudo git fetch && sudo git checkout "$BRANCH" && sudo git pull
+# update and check the flake if hardware modifications made
+nix flake check --refresh "github:higherorderfunctor/nixos-config?ref=$BRANCH"
 
-sudo nixos-rebuild --flake "/etc/nixos#$TARGET" switch
+# rebuild nixos
+sudo nixos-rebuild --flake "github:higherorderfunctor/nixos-config?ref=$BRANCH" switch
 ```
 
 ### Updating from a Live CD
@@ -238,11 +238,6 @@ nixos-install --no-root-passwd --flake "github:higherorderfunctor/nixos-config?r
 ```sh
 # update lock file
 nix flake update
-
-# refresh flake from remote (e.g. making edits while testing install from ISO)
-BRANCH=main
-
-nix flake update --refresh github:higherorderfunctor/nixos-config?ref=$BRANCH
 
 # show outputs
 nix flake show
