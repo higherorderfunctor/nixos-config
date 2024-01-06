@@ -163,7 +163,7 @@ in {
     };
 
     fileSystems = {
-      "/home".neededForBoot = true;
+      # TODO: "/home".neededForBoot = true;
       "/persist".neededForBoot = true;
     };
 

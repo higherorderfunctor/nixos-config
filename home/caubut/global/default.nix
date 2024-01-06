@@ -26,7 +26,10 @@
     home-manager.enable = true;
   };
 
-  xdg.enable = true;
+  xdg = {
+    enable = true;
+    userDirs.createDirectories = true;
+  };
 
   home =
     # lock system and home-mnager state versions
@@ -46,9 +49,9 @@
           allowOther = true;
         };
       };
-      file."Documents.personal.nixos-config" = {
-        source = inputs.self.outPath;
-        recursive = true;
-      };
+      # file."Documents.personal.nixos-config" = {
+      #   source = inputs.self.outPath;
+      #   recursive = true;
+      # };
     };
 }

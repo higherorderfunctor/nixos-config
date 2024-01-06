@@ -193,7 +193,7 @@ TARGET=beelink-ser7
 nix flake check --refresh "github:higherorderfunctor/nixos-config?ref=$BRANCH"
 
 # install nixos
-nixos-install --no-root-passwd --flake "github:higherorderfunctor/nixos-config?ref=$BRANCH#$TARGET"
+nixos-install --no-root-passwd --refresh --flake "github:higherorderfunctor/nixos-config?ref=$BRANCH#$TARGET"
 ````
 
 ## Updating
@@ -208,7 +208,8 @@ TARGET=beelink-ser7
 nix flake check --refresh "github:higherorderfunctor/nixos-config?ref=$BRANCH"
 
 # rebuild nixos
-sudo nixos-rebuild --flake "github:higherorderfunctor/nixos-config?ref=$BRANCH" switch
+sudo nixos-rebuild --refresh --flake \
+  "github:higherorderfunctor/nixos-config?ref=$BRANCH#$TARGET" switch
 ```
 
 ### Updating from a Live CD
@@ -229,7 +230,7 @@ rm /mnt/etc/machine-id
 rm /mnt/etc/ssh/ssh_host_ed25519_key
 
 # install nixos
-nixos-install --no-root-passwd --flake "github:higherorderfunctor/nixos-config?ref=$BRANCH#$TARGET"
+nixos-install --no-root-passwd --refresh --flake "github:higherorderfunctor/nixos-config?ref=$BRANCH#$TARGET"
 ```
 
 
