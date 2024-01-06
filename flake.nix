@@ -5,9 +5,15 @@
     nixos.url = "github:nixos/nixpkgs/nixos-unstable";
     nixpkgs.url = "github:nixos/nixpkgs?ref=nixos-unstable";
     hardware.url = "github:nixos/nixos-hardware";
-    home-manager.url = "github:nix-community/home-manager";
     impermanence.url = "github:nix-community/impermanence";
-    neovim-nightly-overlay.url = "github:nix-community/neovim-nightly-overlay";
+    home-manager = {
+      url = "github:nix-community/home-manager";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+    neovim-nightly-overlay = {
+      url = "github:nix-community/neovim-nightly-overlay";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
     disko = {
       url = "github:nix-community/disko";
       inputs.nixpkgs.follows = "nixpkgs";

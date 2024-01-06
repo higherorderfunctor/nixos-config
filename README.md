@@ -251,6 +251,9 @@ nix repl
 :lf .
 
 outputs.<tab>
+
+# view dependencies
+nix flake metadata
 ````
 
 ## Home Manager
