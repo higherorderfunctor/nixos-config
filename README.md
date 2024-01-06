@@ -193,7 +193,7 @@ TARGET=vm
 nix flake check --refresh "github:higherorderfunctor/nixos-config?ref=$BRANCH"
 
 # install nixos
-nixos-install --no-root-passwd --refresh --flake "github:higherorderfunctor/nixos-config?ref=$BRANCH#$TARGET"
+nixos-install --no-root-passwd --flake  "github:higherorderfunctor/nixos-config?ref=$BRANCH#$TARGET"
 
 # reboot
 reboot
@@ -233,7 +233,7 @@ rm /mnt/etc/machine-id
 rm /mnt/etc/ssh/ssh_host_ed25519_key
 
 # install nixos
-nixos-install --no-root-passwd --refresh --flake "github:higherorderfunctor/nixos-config?ref=$BRANCH#$TARGET"
+nixos-install --no-root-passwd --flake "github:higherorderfunctor/nixos-config?ref=$BRANCH#$TARGET"
 ```
 
 
