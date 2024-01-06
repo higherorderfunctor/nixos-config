@@ -47,7 +47,7 @@
         postPatch = ''
           # these tests requires internet access
           rm engine/image_test.go \
-            engine/migrate_glyphs_test.go
+            engine/migrate_glyphs_test.go \
             segments/nba_test.go
         '';
       });
