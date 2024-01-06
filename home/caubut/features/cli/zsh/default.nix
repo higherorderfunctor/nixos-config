@@ -33,19 +33,17 @@
     };
     oh-my-posh = {
       enable = true;
-      package = pkgs.oh-my-posh.override (prev: {
-        oh-my-posh = prev.oh-my-posh.overrideAttrs (_: let
-          version = "19.4.0";
-        in {
-          inherit version;
-          src = pkgs.fetchFromGitHub {
-            owner = "jandedobbeleer";
-            repo = "oh-my-posh";
-            rev = "refs/tags/v${version}";
-            hash = "sha256-8MK8YzBplbP1de8QKJJBLgbMd1K+H2sVutwKSskU82Q=";
-          };
-          vendorHash = "sha256-ivd30IEoF9WuGDzufIOXJ8LUqHp3zPaiPgplj9jqzqw=";
-        });
+      package = pkgs.oh-my-posh.overrideAttrs (_: let
+        version = "19.4.0";
+      in {
+        inherit version;
+        src = pkgs.fetchFromGitHub {
+          owner = "jandedobbeleer";
+          repo = "oh-my-posh";
+          rev = "refs/tags/v${version}";
+          hash = "sha256-8MK8YzBplbP1de8QKJJBLgbMd1K+H2sVutwKSskU82Q=";
+        };
+        vendorHash = "sha256-ivd30IEoF9WuGDzufIOXJ8LUqHp3zPaiPgplj9jqzqw=";
       });
       settings =
         builtins.fromJSON
