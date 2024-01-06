@@ -221,15 +221,14 @@ TARGET=vm
 nix run github:nix-community/disko -- --mode mount --flake  \
   "github:higherorderfunctor/nixos-config?ref=$BRANCH#$TARGET"
 
-# update nixos-conig
-cd /mnt/etc/nixos
-git fetch && git checkout "$BRANCH" && git pull
+# update and check the flake
+nix flake check --refresh "github:higherorderfunctor/nixos-config?ref=$BRANCH"
 
 # normally cleared on boot and restored by impermanence
 rm /mnt/etc/machine-id
 
-# install the updated nixos-config
-nixos-install --no-root-passwd --flake "/mnt/etc/nixos#$TARGET"
+# install nixos
+nixos-install --no-root-passwd --flake "github:higherorderfunctor/nixos-config?ref=$BRANCH#$TARGET"
 ```
 
 
