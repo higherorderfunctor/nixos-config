@@ -64,6 +64,6 @@
   };
 
   environment.etc = {
-    "ssh/ssh/ssh_host_ed25519_key.pub".source = "../../${config.networking.hostName}/secrets/ssh_host_ed25519_key.pub";
+    "ssh/ssh_host_ed25519_key.pub".source = "../../${config.networking.hostName}/secrets/ssh_host_ed25519_key.pub";
   };
 }
