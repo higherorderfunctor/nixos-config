@@ -13,7 +13,7 @@
       settings =
         builtins.fromJSON
         (builtins.unsafeDiscardStringContext
-          (builtins.readFile "/catppuccin.omp.json"));
+          (builtins.readFile ./catppuccin.omp.json));
     };
   };
 }
