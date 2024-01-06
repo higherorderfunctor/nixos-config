@@ -189,9 +189,10 @@ scp -P "$PORT" -r hosts/$TARGET/secrets/ssh_host_ed25519_key \
 BRANCH=fix/user-permissions
 TARGET=beelink-ser7
 
+# update and check the flake if hardware modifications made
 nix flake check --refresh "github:higherorderfunctor/nixos-config?ref=$BRANCH"
 
-
+# install nixos
 nixos-install --no-root-passwd --flake "github:higherorderfunctor/nixos-config?ref=$BRANCH#$TARGET"
 ````
 
