@@ -10,7 +10,7 @@
     ../features/neovim
   ];
 
-  # TODO: not needed with global pkgs
+  # TODO: not needed with global pkgs?
   # nixpkgs = {
   #   overlays = [
   #     inputs.neovim-nightly-overlay.overlay

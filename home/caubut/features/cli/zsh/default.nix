@@ -44,6 +44,12 @@
           hash = "sha256-8MK8YzBplbP1de8QKJJBLgbMd1K+H2sVutwKSskU82Q=";
         };
         vendorHash = "sha256-ivd30IEoF9WuGDzufIOXJ8LUqHp3zPaiPgplj9jqzqw=";
+        postPatch = ''
+          # these tests requires internet access
+          rm engine/image_test.go \
+            engine/migrate_glyphs_test.go
+            segments/nba_test.go
+        '';
       });
       settings =
         builtins.fromJSON
