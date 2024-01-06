@@ -226,6 +226,7 @@ nix flake check --refresh "github:higherorderfunctor/nixos-config?ref=$BRANCH"
 
 # normally cleared on boot and restored by impermanence
 rm /mnt/etc/machine-id
+rm /mnt/etc/ssh/ssh_host_ed25519_key
 
 # install nixos
 nixos-install --no-root-passwd --flake "github:higherorderfunctor/nixos-config?ref=$BRANCH#$TARGET"
