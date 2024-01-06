@@ -70,7 +70,7 @@ nix-shell -p sops --run "sops home/<USER>/secrets/secrets.yaml"
 nix-shell -p sops --run "sops hosts/<HOST>/secrets/secrets.yaml"
 nix-shell -p sops --run "sops hosts/common/secrets/<SCOPE>.yaml"
 
-# example:
+# example
 nix-shell -p sops --run "sops home/caubut/secrets/secrets.yaml"
 nix-shell -p sops --run "sops hosts/beelink-ser7/secrets/secrets.yaml"
 nix-shell -p sops --run "sops hosts/vm/secrets/secrets.yaml"
@@ -132,7 +132,7 @@ nix run nixpkgs#nvme-cli -- id-ns /dev/nvme0n1 -H | grep "^LBA Format"
 nix run nixpkgs#nvme-cli -- format /dev/nvme0n1 --force --lbaf <BEST>
 
 BRANCH=fix/user-permissions
-TARGET=vm
+TARGET=beelink-ser7
 
 # partition disk(s)
 nix run github:nix-community/disko -- --mode disko --flake  \
@@ -162,7 +162,6 @@ nixos-generate-config --root /mnt --show-hardware-config
 # restore the host specific private key
 
 # example: copy from host secrets
-
 nix-shell -p sops --run "sops hosts/beelink-ser7/secrets/secrets.yaml"
 vim hosts/beelink-ser7/secrets/ssh_host_ed25519_key
 chmod 600 hosts/beelink-ser7/secrets/ssh_host_ed25519_key
@@ -176,7 +175,7 @@ PORT=2522
 REMOTE=root@192.168.9.130
 PORT=22
 
-TARGET=vm
+TARGET=beelink-ser7
 
 ssh -p "$PORT" "$REMOTE" "mkdir -p /mnt/persist/etc/ssh/"
 scp -P "$PORT" -r hosts/$TARGET/secrets/ssh_host_ed25519_key \
@@ -187,7 +186,7 @@ scp -P "$PORT" -r hosts/$TARGET/secrets/ssh_host_ed25519_key \
 # REMOTE (ssh): run the installation
 
 BRANCH=fix/user-permissions
-TARGET=vm
+TARGET=beelink-ser7
 
 # update and check the flake if hardware modifications made
 nix flake check --refresh "github:higherorderfunctor/nixos-config?ref=$BRANCH"
