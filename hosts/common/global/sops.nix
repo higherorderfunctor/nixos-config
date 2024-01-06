@@ -11,8 +11,8 @@ in {
     inputs.sops-nix.nixosModules.sops
   ];
 
-  # https://github.com/Mic92/sops-nix/issues/427
   sops = {
+    # https://github.com/Mic92/sops-nix/issues/427
     gnupg.sshKeyPaths = [];
     age.sshKeyPaths = map getKeyPath keys;
     defaultSopsFile = ../../${config.networking.hostName}/secrets/secrets.yaml;
