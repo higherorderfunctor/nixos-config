@@ -131,8 +131,8 @@ nix run nixpkgs#nvme-cli -- id-ns /dev/nvme0n1 -H | grep "^LBA Format"
 # update to best LBA format (destructive!)
 nix run nixpkgs#nvme-cli -- format /dev/nvme0n1 --force --lbaf <BEST>
 
-BRANCH=main
-TARGET=vm
+BRANCH=fix/user-permissions
+TARGET=beelink-ser7
 
 # partition disk(s)
 nix run github:nix-community/disko -- --mode disko --flake  \
@@ -148,18 +148,26 @@ findmnt -nt btrfs
 ##
 # REMOTE (ssh): build the config
 
-# clone this config
-git clone -b "$BRANCH" https://github.com/higherorderfunctor/nixos-config.git \
-  /mnt/etc/nixos
-
 # generate hardware config
 nixos-generate-config --root /mnt --show-hardware-config
 
 # copy wanted configs into hosts/$TARGET/hardware-configuration.nix
 
+# commit and push any changes
+
 
 ##
-# HOST: copy secrets key for sops
+# HOST: copy host specific private key to sops
+
+# restore the host specific private key
+
+# example: copy from host secrets
+
+nix-shell -p sops --run "sops hosts/beelink-ser7/secrets/secrets.yaml"
+vim hosts/beelink-ser7/secrets/ssh_host_ed25519_key
+chmod 600 hosts/beelink-ser7/secrets/ssh_host_ed25519_key
+
+# scp key to persistent storage for impermanence
 
 # virtualbox
 REMOTE=root@localhost
@@ -168,13 +176,23 @@ PORT=2522
 REMOTE=root@192.168.9.130
 PORT=22
 
-scp -P "$PORT" -r ~/.ssh/id_ed25519 "$REMOTE":/mnt/etc/nixos/home/caubut/id_ed25519
+TARGET=beelink-ser7
+
+ssh -p "$PORT" "$REMOTE" "mkdir -p /mnt/persist/etc/ssh/"
+scp -P "$PORT" -r hosts/$TARGET/secrets/ssh_host_ed25519_key \
+  "$REMOTE":/mnt/persist/etc/ssh/ssh_host_ed25519_key
 
 
 ##
 # REMOTE (ssh): run the installation
 
-nixos-install --no-root-passwd --flake "/mnt/etc/nixos#$TARGET"
+BRANCH=fix/user-permissions
+TARGET=beelink-ser7
+
+nix flake check --refresh "github:higherorderfunctor/nixos-config?ref=$BRANCH"
+
+
+nixos-install --no-root-passwd --flake "github:higherorderfunctor/nixos-config?ref=$BRANCH#$TARGET"
 ````
 
 ## Updating
