@@ -48,12 +48,12 @@
         custom = {
           os-on-error = {
             format = "($style)";
-            style = "bold fg:#f38ba8";
+            style = "bold red";
             when = "test $status -ne 0";
           };
           os-on-success = {
             format = "($style)";
-            style = "bold fg:#a6e3a1";
+            style = "bold green";
             when = "test $status -eq 0";
           };
         };
@@ -65,6 +65,15 @@
           vimcmd_visual_symbol = "[<<-](bold cyan)";
           vimcmd_replace_symbol = "[<<-](bold purple)";
           vimcmd_replace_one_symbol = "[<<-](bold purple)";
+        };
+        palettes.catppuccin-mocha = {
+          "blue" = "#89B4FA";
+          "closer" = "p=os";
+          "green" = "#a6e3a1";
+          "lavender" = "#B4BEFE";
+          "os" = "#ACB0BE";
+          "pink" = "#F5C2E7";
+          "red" = "#f38ba8";
         };
       };
     };
