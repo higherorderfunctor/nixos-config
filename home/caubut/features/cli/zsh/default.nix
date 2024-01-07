@@ -37,8 +37,8 @@
       enable = true;
       settings = {
         format = ''
-          $os\
-          $username\
+          $os
+          $username
         '';
       };
     };
