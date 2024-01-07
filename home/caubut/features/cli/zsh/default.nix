@@ -58,6 +58,7 @@
             pkgs.buildGoModule (args
               // {
                 inherit version name src postPatch;
+                vendorHash = "sha256-//L0tjM+JELglwCOWkifn39G4JuL/YBmJKBF1Uyno3M=";
               });
         };
       settings =
