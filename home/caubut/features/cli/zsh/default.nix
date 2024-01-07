@@ -1,6 +1,7 @@
 {
   lib,
   pkgs,
+  inputs,
   ...
 }: {
   programs = {
@@ -34,7 +35,7 @@
     };
     oh-my-posh = {
       enable = true;
-      package = pkgs.oh-my-posh.overrideAttrs (_: prev: let
+      package = let
         version = "19.4.0";
         name = "oh-my-posh";
         src = pkgs.fetchFromGitHub {
@@ -51,14 +52,9 @@
             engine/migrate_glyphs_test.go \
             segments/nba_test.go
         '';
-      in {
+      in pkgs.oh-my-posh.override {
+        buildGoModule = args: pkgs.buildGoModule ( args // {
         inherit version name src postPatch;
-        go-modules =
-          (pkgs.buildGoModule {
-            inherit version name src postPatch;
-            vendorHash = lib.fakeSha256;
-          })
-          .go-modules;
       });
       settings =
         builtins.fromJSON
