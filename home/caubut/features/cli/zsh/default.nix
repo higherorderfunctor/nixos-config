@@ -13,6 +13,7 @@
       package = pkgs.fzf;
       enableZshIntegration = true;
       colors = {
+        # https://github.com/catppuccin/fzf
         "bg+" = "#313244";
         bg = "#1e1e2e";
         spinner = "#f5e0dc";
@@ -29,7 +30,7 @@
     };
     oh-my-posh = {
       enable = true;
-      package = pkgs.oh-my-posh.overrideAttrs (_: let
+      package = pkgs.oh-my-posh.overrideAttrs (_: prev: let
         version = "19.4.0";
       in {
         inherit version;
@@ -37,9 +38,9 @@
           owner = "jandedobbeleer";
           repo = "oh-my-posh";
           rev = "refs/tags/v${version}";
-          hash = "sha256-8MK8YzBplbP1de8QKJJBLgbMd1K+H2sVutwKSskU82Q=";
+          hash = prev.lib.fakeHash;
         };
-        vendorHash = "sha256-ivd30IEoF9WuGDzufIOXJ8LUqHp3zPaiPgplj9jqzqw=";
+        vendorHash = prev.lib.fakeHash;
         # TODO: append
         postPatch = ''
           # these tests requires internet access
