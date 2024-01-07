@@ -42,7 +42,7 @@
           owner = "jandedobbeleer";
           repo = "oh-my-posh";
           rev = "refs/tags/v${version}";
-          #hash = "sha256-e3KYqCLbnjDKO4tiL/BssUmxmmsWJFqA1gOvwF9r7jo=";
+          hash = "sha256-e3KYqCLbnjDKO4tiL/BssUmxmmsWJFqA1gOvwF9r7jo=";
         };
         #vendorHash = "sha256-e3KYqCLbnjDKO4tiL/BssUmxmmsWJFqA1gOvwF9r7jo=";
         # TODO: append
