@@ -35,7 +35,12 @@
     };
     starship = {
       enable = true;
-      settings = {};
+      settings = {
+        format = ''
+          $os\
+          $username\
+        '';
+      };
     };
     # oh-my-posh = {
     #   enable = true;
