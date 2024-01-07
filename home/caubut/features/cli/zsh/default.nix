@@ -46,7 +46,8 @@
           hash = "sha256-e3KYqCLbnjDKO4tiL/BssUmxmmsWJFqA1gOvwF9r7jo=";
         };
       in
-        pkgs.oh-my-posh.override (prev: {
+        #       package = pkgs.oh-my-posh.overrideAttrs (_: prev: let
+        pkgs.oh-my-posh.overrideAttrs (_: prev: {
           buildGoModule = args:
             pkgs.buildGoModule (args
               // {
