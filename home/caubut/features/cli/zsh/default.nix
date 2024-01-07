@@ -8,10 +8,10 @@
     zsh = {
       enable = true;
       package = pkgs.zsh;
-      oh-my-zsh = {
-        enable = true;
-        plugins = ["git"];
-      };
+      # oh-my-zsh = {
+      #   enable = true;
+      #   plugins = ["git"];
+      # };
     };
     fzf = {
       enable = true;
