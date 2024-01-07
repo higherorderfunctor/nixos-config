@@ -36,8 +36,7 @@
       enable = true;
       package = pkgs.oh-my-posh.overrideAttrs (_: prev: let
         version = "19.4.0";
-      in {
-        inherit version;
+        name = "oh-my-posh";
         src = pkgs.fetchFromGitHub {
           owner = "jandedobbeleer";
           repo = "oh-my-posh";
@@ -45,8 +44,6 @@
           # hash = lib.fakeSha256;
           hash = "sha256-e3KYqCLbnjDKO4tiL/BssUmxmmsWJFqA1gOvwF9r7jo=";
         };
-        vendorSha256 = lib.fakeSha256;
-        vendorHash = null;
         # TODO: append
         postPatch = ''
           # these tests requires internet access
@@ -54,6 +51,15 @@
             engine/migrate_glyphs_test.go \
             segments/nba_test.go
         '';
+      in {
+        inherit version name src postPatch;
+        go-modules =
+          (pkgs.buildGoModule {
+            inherit version name src postPatch;
+            vendorHash = null;
+            vendorSha256 = lib.fakeSha256;
+          })
+          .go-modules;
       });
       settings =
         builtins.fromJSON
