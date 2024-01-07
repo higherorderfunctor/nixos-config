@@ -44,7 +44,7 @@
           rev = "refs/tags/v${version}";
           hash = "sha256-e3KYqCLbnjDKO4tiL/BssUmxmmsWJFqA1gOvwF9r7jo=";
         };
-        #vendorHash = "sha256-e3KYqCLbnjDKO4tiL/BssUmxmmsWJFqA1gOvwF9r7jo=";
+        vendorHash = lib.fakeSha256;
         # TODO: append
         postPatch = ''
           # these tests requires internet access
