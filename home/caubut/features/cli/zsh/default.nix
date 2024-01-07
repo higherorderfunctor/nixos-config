@@ -1,13 +1,17 @@
 {
+  config,
   lib,
   pkgs,
-  inputs,
   ...
 }: {
   programs = {
     zsh = {
       enable = true;
       package = pkgs.zsh;
+      defaultKeymap = "viins";
+      history = {
+        path = "${config.xdg.dataHome}/zsh/zsh_history";
+      };
       # oh-my-zsh = {
       #   enable = true;
       #   plugins = ["git"];
@@ -36,11 +40,14 @@
     starship = {
       enable = true;
       settings = {
-        format = ''
-          $os
-          $username
-          $character
-        '';
+        format = lib.concatStrings [
+          "$os"
+          "$username"
+          "$character"
+        ];
+        os = {
+          Nix = "";
+        };
         character = {
           error_symbol = "[~~>](bold red)";
           success_symbol = "[->>](bold green)";
