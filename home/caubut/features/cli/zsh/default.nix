@@ -41,23 +41,28 @@
       enable = true;
       settings = {
         format = lib.concatStrings [
-          "\${custom.os-on-error}\${custom.os-on-success} "
+          "$status"
           "$username"
+          "$hostname"
+          "$directory"
           "$character"
         ];
-        custom = {
-          os-on-error = {
-            format = "[]($style)";
-            style = "bold red";
-            when = "test $status -ne 0";
-          };
-          os-on-success = {
-            format = "($style)";
-            style = "bold green";
-            when = "test $status -eq 0";
-          };
-        };
         continuation_prompt = "▶▶ ";
+        status = {
+          format = "$symbol ";
+          success_symbol = "[](green)";
+          symbol = "[](red)";
+          disabled = false;
+        };
+        username = {
+          format = "[$user]($style)";
+          style_user = "blue";
+          style_root = "red";
+        };
+        hostname = {
+          format = "[@$hostname]($style) ";
+          style = "blue";
+        };
         character = {
           error_symbol = "[~~>](bold red)";
           success_symbol = "[->>](bold green)";
@@ -71,46 +76,11 @@
           "blue" = "#89B4FA";
           "green" = "#a6e3a1";
           "lavender" = "#B4BEFE";
-          "os" = "#ACB0BE";
           "pink" = "#F5C2E7";
           "red" = "#f38ba8";
         };
       };
     };
-    # continuation_prompt = "▶▶ "
-    # format = "$status$username$hostname$directory$character"
-    #
-    # [status]
-    # format = "$symbol "
-    # success_symbol = "[](green)"
-    # symbol = "[](red)"
-    # style = "os"
-    # disabled = false
-    #
-    # [username]
-    # style_user = "blue"
-    # style_root = "red"
-    # format = "[$user]($style)"
-    #
-    # [hostname]
-    # format = '[@$hostname]($style) '
-    # style = "blue"
-    #
-    # [character]
-    # error_symbol = "[~~>](bold red)"
-    # success_symbol = "[->>](bold green)"
-    # vimcmd_replace_one_symbol = "[<<-](bold purple)"
-    # vimcmd_replace_symbol = "[<<-](bold purple)"
-    # vimcmd_symbol = "[<<-](bold yellow)"
-    # vimcmd_visual_symbol = "[<<-](bold cyan)"
-    #
-    # [palettes.catppuccin-mocha]
-    # blue = "#89B4FA"
-    # green = "#a6e3a1"
-    # lavender = "#B4BEFE"
-    # os = "#ACB0BE"
-    # pink = "#F5C2E7"
-    # red = "#f38ba8"
 
     # oh-my-posh = {
     #   enable = true;
