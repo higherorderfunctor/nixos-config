@@ -49,12 +49,16 @@
           os-on-error = {
             format = "($style)";
             style = "bold red";
-            when = "test $status -ne 0";
+            when = ''
+              test $status -eq 0
+            '';
           };
           os-on-success = {
             format = "($style)";
             style = "bold green";
-            when = "test $status -eq 0";
+            when = ''
+              test $status -eq 0
+            '';
           };
         };
         continuation_prompt = "▶▶ ";
