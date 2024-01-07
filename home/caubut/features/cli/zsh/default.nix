@@ -33,7 +33,7 @@
         "hl+" = "#f38ba8";
       };
     };
-    programs.starship = {
+    starship = {
       enable = true;
       settings = {};
     };
