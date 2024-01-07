@@ -42,9 +42,11 @@
           owner = "jandedobbeleer";
           repo = "oh-my-posh";
           rev = "refs/tags/v${version}";
+          # hash = lib.fakeSha256;
           hash = "sha256-e3KYqCLbnjDKO4tiL/BssUmxmmsWJFqA1gOvwF9r7jo=";
         };
-        vendorHash = lib.fakeSha256;
+        vendorSha256 = lib.fakeSha256;
+        vendorHash = null;
         # TODO: append
         postPatch = ''
           # these tests requires internet access
