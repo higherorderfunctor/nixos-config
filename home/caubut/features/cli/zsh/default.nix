@@ -45,22 +45,22 @@
           # hash = lib.fakeSha256;
           hash = "sha256-e3KYqCLbnjDKO4tiL/BssUmxmmsWJFqA1gOvwF9r7jo=";
         };
-        # TODO: append
-        postPatch = ''
-          # these tests requires internet access
-          rm engine/image_test.go \
-            engine/migrate_glyphs_test.go \
-            segments/nba_test.go
-        '';
       in
-        pkgs.oh-my-posh.override {
+        pkgs.oh-my-posh.override (prev: {
           buildGoModule = args:
             pkgs.buildGoModule (args
               // {
-                inherit version name src postPatch;
+                inherit version name src;
+                # vendorHash = lib.fakeSha256;
                 vendorHash = "sha256-//L0tjM+JELglwCOWkifn39G4JuL/YBmJKBF1Uyno3M=";
+                postPatch =
+                  prev.postPatch
+                  + ''
+                    # these tests requires internet access
+                    rm segments/nba_test.go
+                  '';
               });
-        };
+        });
       settings =
         builtins.fromJSON
         (builtins.unsafeDiscardStringContext
