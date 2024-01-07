@@ -1,4 +1,8 @@
-{pkgs, ...}: {
+{
+  lib,
+  pkgs,
+  ...
+}: {
   programs = {
     zsh = {
       enable = true;
@@ -38,9 +42,9 @@
           owner = "jandedobbeleer";
           repo = "oh-my-posh";
           rev = "refs/tags/v${version}";
-          hash = prev.lib.fakeHash;
+          hash = lib.fakeHash;
         };
-        vendorHash = prev.lib.fakeHash;
+        vendorHash = lib.fakeHash;
         # TODO: append
         postPatch = ''
           # these tests requires internet access

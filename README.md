@@ -256,6 +256,9 @@ outputs.<tab>
 
 # view dependencies
 nix flake metadata
+
+# list installed packages
+nix-store --query --requisites /run/current-system
 ````
 
 ## Home Manager
