@@ -48,15 +48,16 @@
         custom = {
           os-on-error = {
             format = "($style)";
-            style = "#f38ba8";
+            style = "bold fg:#f38ba8";
             when = "test $status -ne 0";
           };
           os-on-success = {
             format = "($style)";
-            style = "#a6e3a1";
+            style = "bold fg:#a6e3a1";
             when = "test $status -eq 0";
           };
         };
+        continuation_prompt = "▶▶ ";
         character = {
           error_symbol = "[~~>](bold red)";
           success_symbol = "[->>](bold green)";
