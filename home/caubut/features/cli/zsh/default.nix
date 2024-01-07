@@ -54,9 +54,9 @@
       in {
         inherit version name src postPatch;
         go-modules =
-          (pkgs.buildGoModule {
+          (lib.buildGoModule {
             inherit version name src postPatch;
-            vendorSha256 = lib.fakeSha256;
+            vendorHash = lib.fakeSha256;
           })
           .go-modules;
       });
