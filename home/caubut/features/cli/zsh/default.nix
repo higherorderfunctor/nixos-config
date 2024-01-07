@@ -41,25 +41,20 @@
       enable = true;
       settings = {
         format = lib.concatStrings [
-          "\${custom.os-on-error}\${custom.os-on-success}"
+          "\${custom.os-on-error}\${custom.os-on-success} "
           "$username"
           "$character"
         ];
         custom = {
           os-on-error = {
-            format = "$os($style)";
+            format = "($style)";
             style = "#f38ba8";
             when = "test $status -ne 0";
           };
           os-on-success = {
-            format = "$os($style)";
+            format = "($style)";
             style = "#a6e3a1";
             when = "test $status -eq 0";
-          };
-        };
-        os = {
-          symbols = {
-            Nix = "";
           };
         };
         character = {
