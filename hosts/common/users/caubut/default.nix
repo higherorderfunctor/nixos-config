@@ -30,6 +30,8 @@ in {
     packages = [pkgs.home-manager];
   };
 
+  # TODO: ssh agent error in journal
+
   # TODO: # secrets
   # sops = {
   #   defaultSopsFile = ../secrets/secrets.yaml;
