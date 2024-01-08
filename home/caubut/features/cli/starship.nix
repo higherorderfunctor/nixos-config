@@ -36,6 +36,7 @@
       };
       directory = {
         format = "[$read_only]($read_only_style)[$path]($style) ";
+        repo_root_format = "[$read_only]($read_only_style)[$repo_root]($repo_root_style)[$path]($style)";
         style = "directory";
         read_only = " ";
         read_only_style = "error";
