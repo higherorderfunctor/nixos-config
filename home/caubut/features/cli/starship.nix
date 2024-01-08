@@ -40,6 +40,7 @@
         read_only = " ";
         read_only_style = "error";
         truncation_symbol = "...";
+        repo_root_style = "git";
       };
       character = {
         error_symbol = "[>](error)";
