@@ -18,6 +18,7 @@
       };
     in
       pkgs.oh-my-posh.override (_: {
+        inherit version src;
         buildGoModule = args:
           pkgs.buildGoModule (args
             // {
