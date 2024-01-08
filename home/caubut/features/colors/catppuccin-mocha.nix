@@ -6,23 +6,27 @@ in {
     blue = "#89B4FA";
     green = "#a6e3a1";
     red = "#f38ba8";
+    # highlights = {
+    #   text = {
+    #     fg = "#cdd6f4"; # 	Text 	#cdd6f4 	rgb(205, 214, 244) 	hsl(226, 64%, 88%)
+    #   };
+    #   color0 = {fg = "#f5e0dc";}; #  	Rosewater 	#f5e0dc 	rgb(245, 224, 220) 	hsl(10, 56%, 91%)
+    #   color1 = {fg = "#f2cdcd";}; # 	Flamingo 	#f2cdcd;#  	Rosewater 	#f5e0d 	rgb(242, 205, 205) 	hsl(0, 59%, 88%)
+    #   color2 = {fg = "#f5c2e7";}; # 	Pink 	#f5c2e7 	r;#  	Rosewater 	#f5e0dgb(245, 194, 231) 	hsl(316, 72%, 86%)
+    #   color3 = {fg = "#cba6f7";}; # 	Mauve 	#cba6f7  ;#  	Rosewater 	#f5e0d rgb(203, 166, 247) 	hsl(267, 84%, 81%)
+    #   color4 = {fg = cfg.red;}; # 	Red 	#f38ba8 	r;#  	Rosewater 	#f5e0dgb(243, 139, 168) 	hsl(343, 81%, 75%)
+    #   color5 = {fg = "#eba0ac";}; # 	Maroon 	#eba0ac  ;#  	Rosewater 	#f5e0d rgb(235, 160, 172) 	hsl(350, 65%, 77%)
+    #   color6 = {fg = "#fab387";}; # 	Peach 	#fab387  ;#  	Rosewater 	#f5e0d rgb(250, 179, 135) 	hsl(23, 92%, 75%)
+    #   color7 = {fg = "#f9e2af";}; # 	Yellow 	#f9e2af  ;#  	Rosewater 	#f5e0d rgb(249, 226, 175) 	hsl(41, 86%, 83%)
+    #   color8 = {fg = cfg.green;}; # 	Green 	#a6e3a1  ;#  	Rosewater 	#f5e0d rgb(166, 227, 161) 	hsl(115, 54%, 76%)
+    #   color9 = {fg = "#94e2d5";}; # 	Teal 	#94e2d5 	r;#  	Rosewater 	#f5e0dgb(148, 226, 213) 	hsl(170, 57%, 73%)
+    #   color10 = {fg = "#89dceb";}; # 	Sky 	#89dceb 	r;#  	Rosewater 	#f5e0dgb(137, 220, 235) 	hsl(189, 71%, 73%)
+    #   color11 = {fg = "#74c7ec";}; # 	Sapphire 	#74c7ec;#  	Rosewater 	#f5e0d 	rgb(116, 199, 236) 	hsl(199, 76%, 69%)
+    #   color12 = {fg = cfg.blue;}; # 	Blue 	#89b4fa 	r;#  	Rosewater 	#f5e0dgb(137, 180, 250) 	hsl(217, 92%, 76%)
+    #   color13 = {fg = "#b4befe";}; # 	Lavender 	#b4befe;#  	Rosewater 	#f5e0d 	rgb(180, 190, 254) 	hsl(232, 97%, 85%)
+    # };
   };
 }
-#  	Rosewater 	#f5e0dc 	rgb(245, 224, 220) 	hsl(10, 56%, 91%)
-# 	Flamingo 	#f2cdcd 	rgb(242, 205, 205) 	hsl(0, 59%, 88%)
-# 	Pink 	#f5c2e7 	rgb(245, 194, 231) 	hsl(316, 72%, 86%)
-# 	Mauve 	#cba6f7 	rgb(203, 166, 247) 	hsl(267, 84%, 81%)
-# 	Red 	#f38ba8 	rgb(243, 139, 168) 	hsl(343, 81%, 75%)
-# 	Maroon 	#eba0ac 	rgb(235, 160, 172) 	hsl(350, 65%, 77%)
-# 	Peach 	#fab387 	rgb(250, 179, 135) 	hsl(23, 92%, 75%)
-# 	Yellow 	#f9e2af 	rgb(249, 226, 175) 	hsl(41, 86%, 83%)
-# 	Green 	#a6e3a1 	rgb(166, 227, 161) 	hsl(115, 54%, 76%)
-# 	Teal 	#94e2d5 	rgb(148, 226, 213) 	hsl(170, 57%, 73%)
-# 	Sky 	#89dceb 	rgb(137, 220, 235) 	hsl(189, 71%, 73%)
-# 	Sapphire 	#74c7ec 	rgb(116, 199, 236) 	hsl(199, 76%, 69%)
-# 	Blue 	#89b4fa 	rgb(137, 180, 250) 	hsl(217, 92%, 76%)
-# 	Lavender 	#b4befe 	rgb(180, 190, 254) 	hsl(232, 97%, 85%)
-# 	Text 	#cdd6f4 	rgb(205, 214, 244) 	hsl(226, 64%, 88%)
 # 	Subtext1 	#bac2de 	rgb(186, 194, 222) 	hsl(227, 35%, 80%)
 # 	Subtext0 	#a6adc8 	rgb(166, 173, 200) 	hsl(228, 24%, 72%)
 # 	Overlay2 	#9399b2 	rgb(147, 153, 178) 	hsl(228, 17%, 64%)

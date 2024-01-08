@@ -5,6 +5,29 @@
 }:
 with lib; let
   cfg = config.colors;
+  highlights = [
+    "text"
+    "error"
+    "success"
+  ];
+  sixteenColors = [
+    "color0"
+    "color1"
+    "color2"
+    "color3"
+    "color4"
+    "color5"
+    "color6"
+    "color7"
+    "color8"
+    "color9"
+    "color10"
+    "color11"
+    "color12"
+    "color13"
+    "color14"
+    "color15"
+  ];
 in {
   options.colors = let
     mkColorOption = name: {
@@ -39,19 +62,18 @@ in {
         // (listToAttrs (map (name: {
             inherit name;
             value = {
+              fg = mkOption {
+                type = types.strMatching "#[a-fA-F0-9]{6}";
+                description = "Foreground color ${name}.";
+              };
               bg = mkOption {
                 type = types.nullOr (types.strMatching "#[a-fA-F0-9]{6}");
                 description = "Background color ${name}.";
               };
-              fg = mkOption {
-                type = types.nullOr (types.strMatching "#[a-fA-F0-9]{6}");
-                description = "Foreground color ${name}.";
-              };
             };
-          }) [
-            "error"
-            "success"
-          ]));
+          })
+          (highlights
+            ++ sixteenColors)));
     };
 
   config.colors = {
@@ -60,25 +82,27 @@ in {
     green = mkDefault "#00ff00";
     red = mkDefault "#ff0000";
     white = mkDefault "#ffffff";
-    highlights = {
-      text = {
-        fg = cfg.white;
-        bg = null;
-      };
-      error = {
-        fg =
-          if cfg.red != null
-          then cfg.red
-          else cfg.highlights.text;
-        bg = null;
-      };
-      success = {
-        fg =
-          if cfg.green != null
-          then cfg.green
-          else cfg.highlights.text;
-        bg = null;
-      };
-    };
+    highlights =
+      {
+        text = {
+          fg = cfg.white;
+          bg = null;
+        };
+        error = {
+          fg = cfg.red;
+          bg = null;
+        };
+        success = {
+          fg = cfg.green;
+          bg = null;
+        };
+      }
+      // (listToAttrs (map (name: {
+          inherit name;
+          value = {
+            inherit (cfg.highlights) text;
+          };
+        })
+        sixteenColors));
   };
 }
