@@ -62,7 +62,7 @@
               "foreground" = "p:pink";
               "template" = "{{ .Path }} ";
               "properties" = {
-                "folder_icon" = "..\u{e5fe}..";
+                "folder_icon" = "....";
                 "home_icon" = "~";
                 "style" = "agnoster_short";
               };
@@ -73,23 +73,23 @@
               "foreground" = "p:lavender";
               "template" = "{{ .HEAD }} ";
               "properties" = {
-                "branch_icon" = "\u{e725} ";
-                "cherry_pick_icon" = "\u{e29b} ";
-                "commit_icon" = "\u{f417} ";
+                "branch_icon" = " ";
+                "cherry_pick_icon" = " ";
+                "commit_icon" = " ";
                 "fetch_status" = false;
                 "fetch_upstream_icon" = false;
-                "merge_icon" = "\u{e727} ";
-                "no_commits_icon" = "\u{f0c3} ";
-                "rebase_icon" = "\u{e728} ";
-                "revert_icon" = "\u{f0e2} ";
-                "tag_icon" = "\u{f412} ";
+                "merge_icon" = "} ";
+                "no_commits_icon" = " ";
+                "rebase_icon" = " ";
+                "revert_icon" = " ";
+                "tag_icon" = " ";
               };
             }
             {
               "type" = "text";
               "style" = "plain";
               "foreground" = "p:closer";
-              "template" = "\u{f105}";
+              "template" = "";
             }
           ];
         }
