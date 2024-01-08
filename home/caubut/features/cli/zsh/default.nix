@@ -50,22 +50,22 @@
         continuation_prompt = "▶▶ ";
         status = {
           format = "$symbol ";
-          success_symbol = "[](green)";
-          symbol = "[](red)";
+          success_symbol = "[](success)";
+          symbol = "[](error)";
           disabled = false;
         };
         username = {
           format = "[$user]($style)";
-          style_user = "blue";
-          style_root = "red";
+          style_user = config.colors.blue;
+          style_root = "error";
         };
         hostname = {
           format = "[@$hostname]($style) ";
-          style = "blue";
+          style = config.colors.blue;
         };
         character = {
-          error_symbol = "[>](bold red)";
-          success_symbol = "[>](bold green)";
+          error_symbol = "[>](bold error)";
+          success_symbol = "[>](bold success)";
           vimcmd_symbol = "[<](bold yellow)";
           vimcmd_visual_symbol = "[<](bold cyan)";
           vimcmd_replace_symbol = "[<](bold purple)";
@@ -73,11 +73,8 @@
         };
         palette = "catppuccin-mocha";
         palettes.catppuccin-mocha = {
-          "blue" = "#89B4FA";
-          "green" = "#a6e3a1";
-          "lavender" = "#B4BEFE";
-          "pink" = "#F5C2E7";
-          "red" = "#f38ba8";
+          "error" = config.colors.error.fg;
+          "success" = config.colors.success.fg;
         };
       };
     };
