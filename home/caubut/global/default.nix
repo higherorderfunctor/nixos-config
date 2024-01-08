@@ -70,10 +70,7 @@
       };
       file = {
         ".ssh/id_ed25519".source = config.lib.file.mkOutOfStoreSymlink "/run/secrets/caubut-secret-key";
-        "id_ed25519.pub" = {
-          source = ../secrets/id_ed25519.pub;
-          target = "${config.home.homeDirectory}/.ssh/id_ed25519.pub";
-        };
+        ".ssh/id_ed25519.pub".source = ../secrets/id_ed25519.pub;
       };
     };
 }
