@@ -7,9 +7,6 @@
   username = "caubut";
   ifGroupExist = groups: builtins.filter (group: builtins.hasAttr group config.users.groups) groups;
 in {
-  imports = [
-    inputs.sops-nix.nixosModules.sops
-  ];
   # system configuration for user
   users.groups.${username} = {
     gid = 1000;
@@ -77,7 +74,7 @@ in {
   # };
 
   systemd.tmpfiles.rules = [
-    "D /home/${username}/.ssh 0700 ${username} ${username} - -"
+    "z /home/${username}/.ssh 0700 ${username} ${username} - -"
   ];
   sops.secrets = {
     # needs to be defined at the system config to use the system key to decrypt
