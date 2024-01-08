@@ -54,7 +54,6 @@
     // {
       username = "caubut";
       homeDirectory = "/home/${config.home.username}";
-
       persistence = {
         "/persist/home/caubut" = {
           directories = [
@@ -73,9 +72,5 @@
         source = ../secrets/id_ed25519.pub;
         target = "${config.home.homeDirectory}/.ssh/id_ed25519.pub";
       };
-      # file."Documents.personal.nixos-config" = {
-      #   source = inputs.self.outPath;
-      #   recursive = true;
-      # };
     };
 }

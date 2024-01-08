@@ -1,6 +1,5 @@
 {
   config,
-  inputs,
   pkgs,
   ...
 }: let
@@ -33,50 +32,11 @@ in {
 
   # TODO: ssh agent error in journal
 
-  # TODO: # secrets
-  # sops = {
-  #   defaultSopsFile = ../secrets/secrets.yaml;
-  #   secrets = {
-  #     "${config.home.username}-secret-key" = {
-  #       path = "${config.home.homeDirectory}/.ssh/id_ed25519";
-  #       mode = "600";
-  #     };
-  #   };
-  # };
-  # persistence = {
-  #   "/persist/home/caubut" = {
-  #     directories = [
-  #       "Documents"
-  #       "Downloads"
-  #       "Pictures"
-  #       "Videos"
-  #     ];
-  #     files = [
-  #       ".ssh/known_hosts"
-  #     ];
-  #     allowOther = true;
-  #   };
-  # };
-  # environment.persistence."/persist".users.${username} = {
-  #   directories = [
-  #     "Documents"
-  #     "Downloads"
-  #     "Pictures"
-  #     "Videos"
-  #   ];
-  #   files = [
-  #     {
-  #       file = ".ssh/id_ed25519";
-  #       mode = "0600";
-  #       parentDirectory = {mode = "0700";};
-  #     }
-  #   ];
-  # };
-
   # permission fix from sops creating the ~/.ssh directory
   systemd.tmpfiles.rules = [
     "z /home/${username}/.ssh 0700 ${username} ${username} - -"
   ];
+
   # needs to be defined at the system config to use the system key to decrypt
   sops.secrets = {
     "${username}-secret-key" = {

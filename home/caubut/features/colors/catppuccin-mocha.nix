@@ -1,5 +1,4 @@
 {config, ...}: let
-  cfg = config.colors;
   template = {
     rosewater = "#f5e0dc";
     flamingo = "#f2cdcd";
@@ -59,7 +58,7 @@ in {
         fg = template.teal; # 	Text 	#cdd6f4 	rgb(205, 214, 244) 	hsl(226, 64%, 88%)
       };
       directory = {
-        fg = template.blue; # 	Text 	#cdd6f4 	rgb(205, 214, 244) 	hsl(226, 64%, 88%)
+        fg = template.pink; # 	Text 	#cdd6f4 	rgb(205, 214, 244) 	hsl(226, 64%, 88%)
       };
     };
   };

@@ -35,7 +35,10 @@
         style = "hostname";
       };
       directory = {
+        format = "[$read_only ]($read_only_style)[$path]($style)";
         style = "directory";
+        readonly = " ";
+        readonly_style = "error";
       };
       character = {
         error_symbol = "[>](error)";
