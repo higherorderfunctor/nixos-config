@@ -6,7 +6,7 @@
 }: {
   programs.starship = {
     enable = true;
-    package = pkgs.fzf;
+    package = pkgs.starship;
     enableBashIntegration = config.programs.bash.enable;
     enableZshIntegration = config.programs.zsh.enable;
     settings = {
