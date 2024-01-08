@@ -63,6 +63,9 @@
           format = "[@$hostname]($style) ";
           style = config.colors.blue;
         };
+        directory = {
+          style = config.colors.blue;
+        };
         character = {
           error_symbol = "[>](bold error)";
           success_symbol = "[>](bold success)";
