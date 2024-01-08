@@ -42,7 +42,6 @@
     defaultSopsFile = ../secrets/secrets.yaml;
     secrets = {
       "${config.home.username}-secret-key" = {
-        owner = config.home.username;
         path = "${config.home.homeDirectory}/.ssh/id_ed25519";
         mode = "600";
       };
