@@ -58,10 +58,6 @@
       persistence = {
         "/persist/home/caubut" = {
           directories = [
-            {
-              directory = ".ssh";
-              mode = "700";
-            }
             "Documents"
             "Downloads"
             "Pictures"
@@ -79,7 +75,6 @@
       file."id_ed25519.pub" = {
         source = ../secrets/id_ed25519.pub;
         target = "${config.home.homeDirectory}/.ssh/id_ed25519.pub";
-        mode = "644";
       };
       # file."Documents.personal.nixos-config" = {
       #   source = inputs.self.outPath;
