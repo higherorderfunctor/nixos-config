@@ -56,6 +56,9 @@
         format = "[$symbol$branch(:$remote_branch)]($style) ";
         style = "git";
       };
+      git_state = {
+        style = "${config.colors.yellow}";
+      };
       palette = "catppuccin-mocha";
       palettes.catppuccin-mocha = {
         error = config.colors.highlights.error.fg;
