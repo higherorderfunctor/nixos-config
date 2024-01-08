@@ -13,6 +13,7 @@ with lib; let
     "username"
     "hostname"
     "directory"
+    "git"
     "error"
     "success"
   ];
@@ -62,47 +63,20 @@ in {
     red = mkDefault "#ff0000";
     white = mkDefault "#ffffff";
     yellow = mkDefault "#ffff00";
-    highlights = {
-      text = {
+    highlights =
+      (listToAttrs (map (_: {
         fg = mkDefault cfg.white;
         bg = mkDefault null;
+      })) (filter (item: item != "error" && item != "success") highlights))
+      // {
+        error = {
+          fg = mkDefault cfg.red;
+          bg = mkDefault null;
+        };
+        success = {
+          fg = mkDefault cfg.green;
+          bg = mkDefault null;
+        };
       };
-      prompt0 = {
-        fg = mkDefault cfg.white;
-        bg = mkDefault null;
-      };
-      prompt1 = {
-        fg = mkDefault cfg.white;
-        bg = mkDefault null;
-      };
-      prompt2 = {
-        fg = mkDefault cfg.white;
-        bg = mkDefault null;
-      };
-      username = {
-        fg = mkDefault cfg.white;
-        bg = mkDefault null;
-      };
-      hostname = {
-        fg = mkDefault cfg.white;
-        bg = mkDefault null;
-      };
-      directory = {
-        fg = mkDefault cfg.white;
-        bg = mkDefault null;
-      };
-      git = {
-        fg = mkDefault cfg.white;
-        bg = mkDefault null;
-      };
-      error = {
-        fg = mkDefault cfg.red;
-        bg = mkDefault null;
-      };
-      success = {
-        fg = mkDefault cfg.green;
-        bg = mkDefault null;
-      };
-    };
   };
 }
