@@ -24,15 +24,16 @@
           engine/migrate_glyphs_test.go \
           segments/nba_test.go
       '';
-    in (pkgs.oh-my-posh.override
-      (_: {
-        buildGoModule = args:
-          pkgs.buildGoModule (args
-            // {
-              inherit version src vendorHash postPatch;
-            });
-      })
-      .overrideAttrs (_: _: {inherit version;}));
+    in
+      (pkgs.oh-my-posh.override
+        (_: {
+          buildGoModule = args:
+            pkgs.buildGoModule (args
+              // {
+                inherit version src vendorHash postPatch;
+              });
+        }))
+      .overrideAttrs (_: _: {inherit version;});
     settings =
       builtins.fromJSON
       (builtins.unsafeDiscardStringContext
