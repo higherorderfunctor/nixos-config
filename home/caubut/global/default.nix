@@ -6,6 +6,7 @@
 }: {
   imports = [
     inputs.impermanence.nixosModules.home-manager.impermanence
+    ../features/theme
     ../features/cli
     ../features/neovim
   ];
