@@ -73,8 +73,8 @@
         };
         palette = "catppuccin-mocha";
         palettes.catppuccin-mocha = {
-          "error" = config.colors.error.fg;
-          "success" = config.colors.success.fg;
+          "error" = config.colors.highlights.error.fg;
+          "success" = config.colors.highlights.success.fg;
         };
       };
     };

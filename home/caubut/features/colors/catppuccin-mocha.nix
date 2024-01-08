@@ -6,9 +6,6 @@ in {
     blue = "#89B4FA";
     green = "#a6e3a1";
     red = "#f38ba8";
-    highlights = {
-      error = {fg = cfg.red;};
-    };
   };
 }
 #  	Rosewater 	#f5e0dc 	rgb(245, 224, 220) 	hsl(10, 56%, 91%)
