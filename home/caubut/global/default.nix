@@ -37,7 +37,7 @@
     };
   };
 
-  # # secrets
+  # TODO: # secrets
   # sops = {
   #   defaultSopsFile = ../secrets/secrets.yaml;
   #   secrets = {

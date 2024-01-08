@@ -4,7 +4,7 @@
   ...
 }: let
   username = "caubut";
-  userConfig = ../../../../home/${username};
+  userConfig = ../../../../home/caubut;
   ifGroupExist = groups: builtins.filter (group: builtins.hasAttr group config.users.groups) groups;
 in {
   # system configuration for user
@@ -26,12 +26,12 @@ in {
       ++ ifGroupExist [
         "network"
       ];
-    openssh.authorizedKeys.keys = [(builtins.readFile "${userConfig}/secrets/id_ed25519.pub")];
+    openssh.authorizedKeys.keys = [(builtins.readFile ../../../../home/${username}/secrets/id_ed25519.pub)];
     hashedPasswordFile = config.sops.secrets."${username}-password".path;
     packages = [pkgs.home-manager];
   };
 
-  # # secrets
+  # TODO: # secrets
   # sops = {
   #   defaultSopsFile = ../secrets/secrets.yaml;
   #   secrets = {
@@ -41,26 +41,27 @@ in {
   #     };
   #   };
   # };
-  environment.persistence."/persist" = {
-    users.${username} = {
-      files = [
-        {
-          file = ".ssh/id_ed25519";
-          mode = "0600";
-          parentDirectory = {mode = "0700";};
-        }
-      ];
-    };
-  };
+  # environment.persistence."/persist" = {
+  #   users.${username} = {
+  #     files = [
+  #       {
+  #         file = ".ssh/id_ed25519";
+  #         mode = "0600";
+  #         parentDirectory = {mode = "0700";};
+  #       }
+  #     ];
+  #   };
+  # };
 
   sops.secrets = {
-    "${config.home.username}-secret-key" = {
-      path = "${config.home.homeDirectory}/.ssh/id_ed25519";
+    "${username}-secret-key" = {
+      path = "${config.home-manager.users.${username}.home.homeDirectory}/.ssh/id_ed25519";
       mode = "600";
+      sopsFile = ../../../../home/${username}/secrets/secrets.yaml;
     };
     "${username}-password" = {
       neededForUsers = true;
-      sopsFile = "${userConfig}/secrets/secrets.yaml";
+      sopsFile = ../../../../home/${username}/secrets/secrets.yaml;
     };
   };
 
