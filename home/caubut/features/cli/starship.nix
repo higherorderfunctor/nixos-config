@@ -41,6 +41,7 @@
         read_only_style = "error";
         truncation_symbol = "...";
         repo_root_style = "git";
+        before_repo_root_style = "directory";
       };
       character = {
         error_symbol = "[>](error)";
