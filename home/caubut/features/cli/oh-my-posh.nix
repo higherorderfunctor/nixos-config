@@ -25,8 +25,12 @@
           segments/nba_test.go
       '';
     in
-      pkgs.oh-my-posh.overrideAttrs (_: {
-        inherit version src vendorHash postPatch;
+      (pkgs.oh-my-posh.overrideAttrs (_: _: {inherit version;})).override (_: {
+        buildGoModule = args:
+          pkgs.buildGoModule (args
+            // {
+              inherit version src vendorHash postPatch;
+            });
       });
     settings =
       builtins.fromJSON
