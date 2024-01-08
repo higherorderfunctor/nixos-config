@@ -15,8 +15,8 @@
         "$username"
         "$hostname"
         "$directory"
-        "$character"
         "$git_branch"
+        "$character"
       ];
       continuation_prompt = "▶▶ ";
       status = {
@@ -39,6 +39,7 @@
         style = "directory";
         read_only = " ";
         read_only_style = "error";
+        truncation_symbole = "...";
       };
       character = {
         error_symbol = "[>](error)";
