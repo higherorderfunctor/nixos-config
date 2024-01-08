@@ -1,11 +1,15 @@
 {
   config,
+  inputs,
   pkgs,
   ...
 }: let
   username = "caubut";
   ifGroupExist = groups: builtins.filter (group: builtins.hasAttr group config.users.groups) groups;
 in {
+  imports = [
+    inputs.sops-nix.nixosModules.sops
+  ];
   # system configuration for user
   users.groups.${username} = {
     gid = 1000;
