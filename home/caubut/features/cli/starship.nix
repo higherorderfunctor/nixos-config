@@ -4,7 +4,7 @@
   pkgs,
   ...
 }: {
-  starship = {
+  programs.starship = {
     enable = true;
     package = pkgs.fzf;
     enableBashIntegration = config.programs.bash.enable;

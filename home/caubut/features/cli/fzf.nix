@@ -3,7 +3,7 @@
   pkgs,
   ...
 }: {
-  fzf = {
+  programs.fzf = {
     enable = true;
     package = pkgs.fzf;
     enableBashIntegration = config.programs.bash.enable;
