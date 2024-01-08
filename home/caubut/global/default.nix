@@ -66,7 +66,6 @@
           files = [
             {
               file = ".ssh/known_hosts";
-              mode = "600";
             }
           ];
           allowOther = true;
