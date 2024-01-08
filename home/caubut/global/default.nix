@@ -6,6 +6,7 @@
 }: {
   imports = [
     inputs.impermanence.nixosModules.home-manager.impermanence
+    inputs.sops-nix.nixosModules.home-manager.sops
     ../features/cli
     ../features/cli/starship.nix
     ../features/colors/catppuccin-mocha.nix
