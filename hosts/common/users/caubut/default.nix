@@ -70,7 +70,7 @@ in {
   #   ];
   # };
 
-  systemd.user.tmpfiles.rules = [
+  systemd.tmpfiles.rules = [
     "D /home/${username}/.ssh 0700 ${username} ${username} - -"
   ];
   sops.secrets = {
