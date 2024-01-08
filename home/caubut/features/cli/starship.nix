@@ -53,7 +53,7 @@
         prompt2 = config.colors.highlights.prompt2.fg;
         username = config.colors.highlights.username.fg;
         hostname = config.colors.highlights.hostname.fg;
-        directory = config.colors.directory.fg;
+        directory = config.colors.highlights.directory.fg;
       };
     };
   };
