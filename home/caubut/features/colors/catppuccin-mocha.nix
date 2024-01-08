@@ -60,6 +60,9 @@ in {
       directory = {
         fg = template.pink;
       };
+      git = {
+        fg = template.lavender;
+      };
     };
   };
 }

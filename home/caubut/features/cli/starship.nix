@@ -48,6 +48,10 @@
         vimcmd_replace_symbol = "[<](prompt2)";
         vimcmd_replace_one_symbol = "[<](prompt2)";
       };
+      git_branch = {
+        format = "[$symbol$branch(:$remote_branch)]($style) ";
+        style = "git";
+      };
       palette = "catppuccin-mocha";
       palettes.catppuccin-mocha = {
         error = config.colors.highlights.error.fg;
@@ -58,6 +62,7 @@
         username = config.colors.highlights.username.fg;
         hostname = config.colors.highlights.hostname.fg;
         directory = config.colors.highlights.directory.fg;
+        git = config.colors.highlights.git.fg;
       };
     };
   };
