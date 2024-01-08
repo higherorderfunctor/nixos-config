@@ -85,23 +85,21 @@ in {
     highlights =
       {
         text = {
-          fg = cfg.white;
-          bg = null;
+          fg = mkDefault cfg.white;
+          bg = mkDefault null;
         };
         error = {
-          fg = cfg.red;
-          bg = null;
+          fg = mkDefault cfg.red;
+          bg = mkDefault null;
         };
         success = {
-          fg = cfg.green;
-          bg = null;
+          fg = mkDefaut cfg.green;
+          bg = mkDefault null;
         };
       }
       // (listToAttrs (map (name: {
           inherit name;
-          value = {
-            inherit (cfg.highlights) text;
-          };
+          value = mkDefault cfg.highlights.text;
         })
         sixteenColors));
   };
