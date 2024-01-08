@@ -91,6 +91,10 @@ in {
         fg = mkDefault cfg.white;
         bg = mkDefault null;
       };
+      git = {
+        fg = mkDefault cfg.white;
+        bg = mkDefault null;
+      };
       error = {
         fg = mkDefault cfg.red;
         bg = mkDefault null;
