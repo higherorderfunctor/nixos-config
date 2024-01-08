@@ -16,6 +16,7 @@
         "$hostname"
         "$directory"
         "$git_branch"
+        "git_state"
         "$character"
       ];
       continuation_prompt = "▶▶ ";
