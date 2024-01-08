@@ -39,7 +39,7 @@
         style = "directory";
         read_only = " ";
         read_only_style = "error";
-        truncation_symbole = "...";
+        truncation_symbol = "...";
       };
       character = {
         error_symbol = "[>](error)";
