@@ -3,7 +3,9 @@
   inputs,
   lib,
   ...
-}: {
+}: let
+  username = "caubut";
+in {
   imports = [
     inputs.impermanence.nixosModules.home-manager.impermanence
     inputs.sops-nix.homeManagerModules.sops
@@ -48,12 +50,17 @@
   #   };
   # };
 
+  # permission fixes
+  systemd.user.tmpfiles.rules = [
+    "z /home/${username}/.ssh 0700 ${username} ${username} - -"
+  ];
+
   home =
     # lock system and home-mnager state versions
     (import ../../../hosts/common/global/state-version.nix)
     // {
-      username = "caubut";
-      homeDirectory = "/home/${config.home.username}";
+      username = "${username}";
+      homeDirectory = "/home/${username}";
       persistence = {
         "/persist/home/caubut" = {
           directories = [

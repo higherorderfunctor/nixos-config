@@ -32,11 +32,6 @@ in {
 
   # TODO: ssh agent error in journal
 
-  # permission fix from sops creating the ~/.ssh directory
-  # systemd.tmpfiles.rules = [
-  #   "z /home/${username}/.ssh 0700 ${username} ${username} - -"
-  # ];
-
   # needs to be defined at the system config to use the system key to decrypt
   sops.secrets = {
     "${username}-secret-key" = {
