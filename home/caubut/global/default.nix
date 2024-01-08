@@ -55,20 +55,20 @@
       username = "caubut";
       homeDirectory = "/home/${config.home.username}";
 
-      # persistence = {
-      #   "/persist/home/caubut" = {
-      #     directories = [
-      #       "Documents"
-      #       "Downloads"
-      #       "Pictures"
-      #       "Videos"
-      #     ];
-      #     files = [
-      #       ".ssh/known_hosts"
-      #     ];
-      #     allowOther = true;
-      #   };
-      # };
+      persistence = {
+        "/persist/home/caubut" = {
+          directories = [
+            "Documents"
+            "Downloads"
+            "Pictures"
+            "Videos"
+          ];
+          files = [
+            ".ssh/known_hosts"
+          ];
+          allowOther = true;
+        };
+      };
       file."id_ed25519.pub" = {
         source = ../secrets/id_ed25519.pub;
         target = "${config.home.homeDirectory}/.ssh/id_ed25519.pub";
