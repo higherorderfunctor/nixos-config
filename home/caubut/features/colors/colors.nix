@@ -1,4 +1,8 @@
-{lib, ...}:
+{
+  lib,
+  config,
+  ...
+}:
 with lib; {
   options.colors = let
     mkColorOption = name: {
@@ -9,16 +13,27 @@ with lib; {
       };
     };
   in
-    listToAttrs (map mkColorOption [
+    (listToAttrs (map mkColorOption [
       "blue"
       "red"
-    ])
-    // listToAttrs (map
-      (name: [mkColorOption "${name}.fg" mkColorOption "${name}.fg"])
-      [
+    ]))
+    // (listToAttrs (map (name: {
+        inherit name;
+        value = {
+          bg = mkOption {
+            type = types.strMatching "#[a-fA-F0-9]{6}";
+            description = "Background color ${name}.";
+          };
+          fg = mkOption {
+            type = types.strMatching "#[a-fA-F0-9]{6}";
+            description = "Foreground color ${name}.";
+          };
+        };
+      })) [
         "error"
         "success"
       ]);
+
   config.colors = {
     blue = mkDefault "#0000ff";
     green = mkDefault "#00ff00";
