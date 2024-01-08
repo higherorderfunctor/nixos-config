@@ -75,6 +75,7 @@ nix-shell -p sops --run "sops home/caubut/secrets/secrets.yaml"
 nix-shell -p sops --run "sops hosts/beelink-ser7/secrets/secrets.yaml"
 nix-shell -p sops --run "sops hosts/vm/secrets/secrets.yaml"
 nix-shell -p sops --run "sops hosts/common/secrets/wireless.yaml"
+# TODO: update command: nix run nixpkgs#sops -- hosts/common/secrets/wireless.yaml
 ```
 
 User password hashes can be generated with the following.
@@ -204,7 +205,7 @@ reboot
 
 ```sh
 BRANCH=fix/user-permissions
-TARGET=beelink-ser7
+TARGET=vm
 
 # update and check the flake if hardware modifications made
 nix flake check --refresh "github:higherorderfunctor/nixos-config?ref=$BRANCH"
