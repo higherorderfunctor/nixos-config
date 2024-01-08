@@ -26,15 +26,15 @@
       };
       username = {
         format = "[$user]($style)";
-        style_user = config.colors.highlights.color12.fg;
+        style_user = "username";
         style_root = "error";
       };
       hostname = {
         format = "[@$hostname]($style) ";
-        style = config.colors.highlights.color12.fg;
+        style = "hostname";
       };
       directory = {
-        style = config.colors.highlights.color3.fg;
+        style = "directory";
       };
       character = {
         error_symbol = "[>](error)";
@@ -48,9 +48,12 @@
       palettes.catppuccin-mocha = {
         error = config.colors.highlights.error.fg;
         success = config.colors.highlights.success.fg;
-        prompt0 = config.colors.prompt0.fg;
-        prompt1 = config.colors.prompt1.fg;
-        prompt2 = config.colors.prompt2.fg;
+        prompt0 = config.colors.highlights.prompt0.fg;
+        prompt1 = config.colors.highlights.prompt1.fg;
+        prompt2 = config.colors.highlights.prompt2.fg;
+        username = config.colors.highlights.username.fg;
+        hostname = config.colors.highlights.hostname.fg;
+        directory = config.colors.directory.fg;
       };
     };
   };

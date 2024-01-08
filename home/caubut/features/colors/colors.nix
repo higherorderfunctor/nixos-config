@@ -10,6 +10,9 @@ with lib; let
     "prompt0"
     "prompt1"
     "prompt2"
+    "username"
+    "hostname"
+    "directory"
     "error"
     "success"
   ];
@@ -73,6 +76,18 @@ in {
         bg = mkDefault null;
       };
       prompt2 = {
+        fg = mkDefault cfg.white;
+        bg = mkDefault null;
+      };
+      username = {
+        fg = mkDefault cfg.white;
+        bg = mkDefault null;
+      };
+      hostname = {
+        fg = mkDefault cfg.white;
+        bg = mkDefault null;
+      };
+      directory = {
         fg = mkDefault cfg.white;
         bg = mkDefault null;
       };

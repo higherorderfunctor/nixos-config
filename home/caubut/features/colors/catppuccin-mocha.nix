@@ -52,6 +52,15 @@ in {
       prompt2 = {
         fg = template.mauve; # 	Text 	#cdd6f4 	rgb(205, 214, 244) 	hsl(226, 64%, 88%)
       };
+      username = {
+        fg = template.teal; # 	Text 	#cdd6f4 	rgb(205, 214, 244) 	hsl(226, 64%, 88%)
+      };
+      hostname = {
+        fg = template.teal; # 	Text 	#cdd6f4 	rgb(205, 214, 244) 	hsl(226, 64%, 88%)
+      };
+      directory = {
+        fg = template.blue; # 	Text 	#cdd6f4 	rgb(205, 214, 244) 	hsl(226, 64%, 88%)
+      };
     };
   };
 }
