@@ -52,10 +52,10 @@ with lib; let
 in {
   options.root-luks-lvm-btrfs = {
     device = mkOption {
-      type = types.string;
+      type = types.str;
     };
     swapSize = mkOption {
-      type = types.string;
+      type = types.str;
     };
   };
 
