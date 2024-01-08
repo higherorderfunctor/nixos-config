@@ -16,22 +16,17 @@
         # hash = lib.fakeSha256;
         hash = "sha256-e3KYqCLbnjDKO4tiL/BssUmxmmsWJFqA1gOvwF9r7jo=";
       };
+      # vendorHash = lib.fakeSha256;
+      vendorHash = "sha256-//L0tjM+JELglwCOWkifn39G4JuL/YBmJKBF1Uyno3M=";
+      postPatch = ''
+        # these tests requires internet access
+        rm engine/image_test.go \
+          engine/migrate_glyphs_test.go \
+          segments/nba_test.go
+      '';
     in
-      pkgs.oh-my-posh.override (_: {
-        inherit version src;
-        buildGoModule = args:
-          pkgs.buildGoModule (args
-            // {
-              inherit version src;
-              # vendorHash = lib.fakeSha256;
-              vendorHash = "sha256-//L0tjM+JELglwCOWkifn39G4JuL/YBmJKBF1Uyno3M=";
-              postPatch = ''
-                # these tests requires internet access
-                rm engine/image_test.go \
-                  engine/migrate_glyphs_test.go \
-                  segments/nba_test.go
-              '';
-            });
+      pkgs.oh-my-posh.overrideAttrs (_: {
+        inherit version src vendorHash postPatch;
       });
     settings =
       builtins.fromJSON
