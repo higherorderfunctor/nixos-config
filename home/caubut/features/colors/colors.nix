@@ -93,7 +93,7 @@ in {
           bg = mkDefault null;
         };
         success = {
-          fg = mkDefaut cfg.green;
+          fg = mkDefault cfg.green;
           bg = mkDefault null;
         };
       }
