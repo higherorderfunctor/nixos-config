@@ -37,16 +37,16 @@
     };
   };
 
-  # secrets
-  sops = {
-    defaultSopsFile = ../secrets/secrets.yaml;
-    secrets = {
-      "${config.home.username}-secret-key" = {
-        path = "${config.home.homeDirectory}/.ssh/id_ed25519";
-        mode = "600";
-      };
-    };
-  };
+  # # secrets
+  # sops = {
+  #   defaultSopsFile = ../secrets/secrets.yaml;
+  #   secrets = {
+  #     "${config.home.username}-secret-key" = {
+  #       path = "${config.home.homeDirectory}/.ssh/id_ed25519";
+  #       mode = "600";
+  #     };
+  #   };
+  # };
 
   home =
     # lock system and home-mnager state versions

@@ -31,9 +31,37 @@ in {
     packages = [pkgs.home-manager];
   };
 
-  sops.secrets."${username}-password" = {
-    neededForUsers = true;
-    sopsFile = "${userConfig}/secrets/secrets.yaml";
+  # # secrets
+  # sops = {
+  #   defaultSopsFile = ../secrets/secrets.yaml;
+  #   secrets = {
+  #     "${config.home.username}-secret-key" = {
+  #       path = "${config.home.homeDirectory}/.ssh/id_ed25519";
+  #       mode = "600";
+  #     };
+  #   };
+  # };
+  environment.persistence."/persist" = {
+    users.${username} = {
+      files = [
+        {
+          file = ".ssh/id_ed25519";
+          mode = "0600";
+          parentDirectory = {mode = "0700";};
+        }
+      ];
+    };
+  };
+
+  sops.secrets = {
+    "${config.home.username}-secret-key" = {
+      path = "${config.home.homeDirectory}/.ssh/id_ed25519";
+      mode = "600";
+    };
+    "${username}-password" = {
+      neededForUsers = true;
+      sopsFile = "${userConfig}/secrets/secrets.yaml";
+    };
   };
 
   # host specific home-manager configuration for user
