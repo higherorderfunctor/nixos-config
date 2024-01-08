@@ -43,22 +43,22 @@ in {
         fg = template.text;
       };
       prompt0 = {
-        fg = template.yellow; # 	Text 	#cdd6f4 	rgb(205, 214, 244) 	hsl(226, 64%, 88%)
+        fg = template.yellow;
       };
       prompt1 = {
-        fg = template.sky; # 	Text 	#cdd6f4 	rgb(205, 214, 244) 	hsl(226, 64%, 88%)
+        fg = template.sky;
       };
       prompt2 = {
-        fg = template.mauve; # 	Text 	#cdd6f4 	rgb(205, 214, 244) 	hsl(226, 64%, 88%)
+        fg = template.mauve;
       };
       username = {
-        fg = template.teal; # 	Text 	#cdd6f4 	rgb(205, 214, 244) 	hsl(226, 64%, 88%)
+        fg = template.blue;
       };
       hostname = {
-        fg = template.teal; # 	Text 	#cdd6f4 	rgb(205, 214, 244) 	hsl(226, 64%, 88%)
+        fg = template.blue;
       };
       directory = {
-        fg = template.pink; # 	Text 	#cdd6f4 	rgb(205, 214, 244) 	hsl(226, 64%, 88%)
+        fg = template.pink;
       };
     };
   };
