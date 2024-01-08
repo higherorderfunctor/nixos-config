@@ -6,8 +6,8 @@
   fzf = {
     enable = true;
     package = pkgs.fzf;
-    enableBashIntegration = config.packages.zsh.enable;
-    enableZshIntegration = config.packages.zsh.enable;
+    enableBashIntegration = config.zsh.enable;
+    enableZshIntegration = config.zsh.enable;
     colors = {
       # https://github.com/catppuccin/fzf
       "bg+" = "#313244";
