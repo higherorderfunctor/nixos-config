@@ -10,7 +10,6 @@ in {
     inputs.impermanence.nixosModules.home-manager.impermanence
     inputs.sops-nix.homeManagerModules.sops
     ../features/cli
-    ../features/cli/starship.nix
     ../features/colors/catppuccin-mocha.nix
     ../features/neovim
   ];
@@ -29,6 +28,7 @@ in {
 
   programs = {
     home-manager.enable = true;
+    oh-my-posh.enable = true;
   };
 
   xdg = {
