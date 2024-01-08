@@ -218,7 +218,7 @@ sudo nixos-rebuild --refresh --flake \
 
 ```sh
 BRANCH=main
-TARGET=vm
+TARGET=beelink-ser7
 
 # mount disk(s)
 nix run github:nix-community/disko -- --mode mount --flake  \

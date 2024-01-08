@@ -6,8 +6,8 @@
 }: {
   imports = [
     inputs.impermanence.nixosModules.home-manager.impermanence
-    ../features/theme
     ../features/cli
+    ../features/colors/catppuccin-mocha.nix
     ../features/neovim
   ];
 
