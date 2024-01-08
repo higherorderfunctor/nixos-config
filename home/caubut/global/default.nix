@@ -64,9 +64,7 @@
             "Videos"
           ];
           files = [
-            {
-              file = ".ssh/known_hosts";
-            }
+            ".ssh/known_hosts"
           ];
           allowOther = true;
         };
