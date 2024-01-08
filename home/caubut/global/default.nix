@@ -6,7 +6,7 @@
 }: {
   imports = [
     inputs.impermanence.nixosModules.home-manager.impermanence
-    inputs.sops-nix.nixosModules.home-manager.sops
+    inputs.sops-nix.homeManagerModules.sops
     ../features/cli
     ../features/cli/starship.nix
     ../features/colors/catppuccin-mocha.nix
@@ -38,12 +38,14 @@
   };
 
   # secrets
-  sops.secrets = {
-    "${config.home.username}-secret-key" = {
-      owner = config.home.username;
-      path = "${config.home.homeDirectory}/.ssh/id_ed25519";
-      mode = "600";
-      sopsFile = "../secrets/secrets.yaml";
+  sops = {
+    defaultSopsFile = ../secrets/secrets.yaml;
+    secrets = {
+      "${config.home.username}-secret-key" = {
+        owner = config.home.username;
+        path = "${config.home.homeDirectory}/.ssh/id_ed25519";
+        mode = "600";
+      };
     };
   };
 
