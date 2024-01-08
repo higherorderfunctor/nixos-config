@@ -56,7 +56,8 @@ in {
   sops.secrets = {
     "${username}-secret-key" = {
       path = "${config.home-manager.users.${username}.home.homeDirectory}/.ssh/id_ed25519";
-      mode = "600";
+      owner = "${username}";
+      mode = "400";
       sopsFile = ../../../../home/${username}/secrets/secrets.yaml;
     };
     "${username}-password" = {
