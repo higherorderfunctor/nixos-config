@@ -7,6 +7,7 @@
   imports = [
     inputs.impermanence.nixosModules.home-manager.impermanence
     ../features/cli
+    ../features/cli/starship.nix
     ../features/colors/catppuccin-mocha.nix
     ../features/neovim
   ];

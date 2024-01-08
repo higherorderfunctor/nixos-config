@@ -37,51 +37,6 @@
         "hl+" = "#f38ba8";
       };
     };
-    starship = {
-      enable = true;
-      settings = {
-        format = lib.concatStrings [
-          "$status"
-          "$username"
-          "$hostname"
-          "$directory"
-          "$character"
-        ];
-        continuation_prompt = "▶▶ ";
-        status = {
-          format = "$symbol ";
-          success_symbol = "[](success)";
-          symbol = "[](error)";
-          disabled = false;
-        };
-        username = {
-          format = "[$user]($style)";
-          style_user = config.colors.highlights.color12.fg;
-          style_root = "error";
-        };
-        hostname = {
-          format = "[@$hostname]($style) ";
-          style = config.colors.highlights.color12.fg;
-        };
-        directory = {
-          style = config.colors.highlights.color3.fg;
-        };
-        character = {
-          error_symbol = "[>](bold error)";
-          success_symbol = "[>](bold success)";
-          vimcmd_symbol = "[<](bold yellow)";
-          vimcmd_visual_symbol = "[<](bold cyan)";
-          vimcmd_replace_symbol = "[<](bold purple)";
-          vimcmd_replace_one_symbol = "[<](bold purple)";
-        };
-        palette = "catppuccin-mocha";
-        palettes.catppuccin-mocha = {
-          "error" = config.colors.highlights.error.fg;
-          "success" = config.colors.highlights.success.fg;
-        };
-      };
-    };
-
     # oh-my-posh = {
     #   enable = true;
     #   package = let
