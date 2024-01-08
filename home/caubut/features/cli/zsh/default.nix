@@ -56,15 +56,15 @@
         };
         username = {
           format = "[$user]($style)";
-          style_user = config.colors.blue;
+          style_user = config.colors.highlights.color12;
           style_root = "error";
         };
         hostname = {
           format = "[@$hostname]($style) ";
-          style = config.colors.blue;
+          style = config.colors.highlights.color12;
         };
         directory = {
-          style = config.colors.blue;
+          style = config.colors.highlights.color3;
         };
         character = {
           error_symbol = "[>](bold error)";
