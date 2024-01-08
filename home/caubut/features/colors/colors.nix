@@ -65,9 +65,10 @@ in {
     yellow = mkDefault "#ffff00";
     highlights =
       (listToAttrs (map (_: {
-        fg = mkDefault cfg.white;
-        bg = mkDefault null;
-      })) (filter (item: item != "error" && item != "success") highlights))
+          fg = mkDefault cfg.white;
+          bg = mkDefault null;
+        }) (filter (item: item != "error" && item != "success"))
+        highlights))
       // {
         error = {
           fg = mkDefault cfg.red;
