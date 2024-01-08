@@ -62,9 +62,9 @@
             "Pictures"
             "Videos"
           ];
-          # files = [
-          #   ".ssh/known_hosts"
-          # ];
+          files = [
+            ".ssh/known_hosts"
+          ];
           allowOther = true;
         };
       };
