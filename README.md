@@ -218,8 +218,8 @@ sudo nixos-rebuild --refresh --flake \
 ### Updating from a Live CD
 
 ```sh
-BRANCH=main
-TARGET=beelink-ser7
+BRANCH=fix/user-permissions
+TARGET=vm
 
 # mount disk(s)
 nix run github:nix-community/disko -- --mode mount --flake  \
@@ -259,7 +259,10 @@ outputs.<tab>
 nix flake metadata
 
 # list installed packages
-nix-store --query --requisites /run/current-system
+nix-store -q --requisites /run/current-system
+
+# show dependency tree
+nix-store -q --tree /run/current-system
 ````
 
 ## Home Manager

@@ -60,7 +60,7 @@ in {
     # lock system and home-mnager state versions
     (import ../../../hosts/common/global/state-version.nix)
     // {
-      username = "${username}";
+      inherit username;
       homeDirectory = "/home/${username}";
       persistence = {
         "/persist/home/caubut" = {
