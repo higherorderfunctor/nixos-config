@@ -4,7 +4,6 @@
   ...
 }: let
   username = "caubut";
-  userConfig = ../../../../home/caubut;
   ifGroupExist = groups: builtins.filter (group: builtins.hasAttr group config.users.groups) groups;
 in {
   # system configuration for user
@@ -41,19 +40,41 @@ in {
   #     };
   #   };
   # };
-  # environment.persistence."/persist" = {
-  #   users.${username} = {
-  #     files = [
-  #       {
-  #         file = ".ssh/id_ed25519";
-  #         mode = "0600";
-  #         parentDirectory = {mode = "0700";};
-  #       }
+  # persistence = {
+  #   "/persist/home/caubut" = {
+  #     directories = [
+  #       "Documents"
+  #       "Downloads"
+  #       "Pictures"
+  #       "Videos"
   #     ];
+  #     files = [
+  #       ".ssh/known_hosts"
+  #     ];
+  #     allowOther = true;
   #   };
   # };
+  # environment.persistence."/persist".users.${username} = {
+  #   directories = [
+  #     "Documents"
+  #     "Downloads"
+  #     "Pictures"
+  #     "Videos"
+  #   ];
+  #   files = [
+  #     {
+  #       file = ".ssh/id_ed25519";
+  #       mode = "0600";
+  #       parentDirectory = {mode = "0700";};
+  #     }
+  #   ];
+  # };
 
+  systemd.user.tmpfiles.rules = [
+    "D /home/${username}/.ssh 0700 ${username} ${username} - -"
+  ];
   sops.secrets = {
+    # needs to be defined at the system config to use the system key to decrypt
     "${username}-secret-key" = {
       path = "${config.home-manager.users.${username}.home.homeDirectory}/.ssh/id_ed25519";
       owner = "${username}";
