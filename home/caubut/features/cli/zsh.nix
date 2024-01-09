@@ -10,6 +10,7 @@ in {
   programs.zsh = {
     enable = true;
     package = pkgs.zsh;
+    completionEnable = true;
     completionInit = "autoload -U compinit -d ${dataHome}/.zcompdump && compinit -d ${dataHome}/.zcompdump";
     defaultKeymap = "viins";
     dotDir = ".config/zsh";
