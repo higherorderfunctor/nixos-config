@@ -36,9 +36,13 @@
       echo ""''${src[1]}""
       ls -la
       cp -r "''${src[0]}" $(stripHash "''${src[0]}")
+      ls -la
       chmod u+w $(stripHash "''${src[0]}")/themes
+      ls -la
       cp -r "''${src[1]}"/themes/* $(stripHash "''${src[0]}")/themes
+      ls -la
       chmod u-w $(stripHash "''${src[0]}")/themes
+      ls -la
     '';
     # unpackPhase = ''
     #   cp ''${srcs[0]}/* "$out"
