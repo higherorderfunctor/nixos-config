@@ -2,7 +2,7 @@ _: {
   imports = [
     ./global
   ];
-  home.sessionVaraibles = {
+  config.home.sessionVaraibles = {
     NIXOS_HOST = "beelink-ser7";
   };
 }
