@@ -7,5 +7,6 @@
     ./oh-my-zsh.nix
     ./starship.nix
     ./zsh.nix
+    ./zsh-fast-syntax-highlighting.nix
   ];
 }
