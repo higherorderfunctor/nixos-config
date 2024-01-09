@@ -50,7 +50,7 @@
     # '';
 
     installPhase = ''
-      cp -r "${name}/*" "$out"
+      cp -r "fast-syntax-highlighting/*" "$out"
     '';
   };
 in {
