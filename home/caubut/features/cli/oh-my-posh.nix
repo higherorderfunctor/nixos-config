@@ -18,6 +18,12 @@
       };
       # vendorHash = lib.fakeSha256;
       vendorHash = "sha256-//L0tjM+JELglwCOWkifn39G4JuL/YBmJKBF1Uyno3M=";
+      ldflags = [
+        "-s"
+        "-w"
+        "-X github.com/jandedobbeleer/oh-my-posh/src/build.Version=${version}"
+        "-X github.com/jandedobbeleer/oh-my-posh/src/build.Date=1970-01-01T00:00:00Z"
+      ];
       postPatch = ''
         # these tests requires internet access
         rm engine/image_test.go \
@@ -30,7 +36,8 @@
           buildGoModule = args:
             pkgs.buildGoModule (args
               // {
-                inherit version src vendorHash postPatch;
+                inherit version src vendorHash ldflags postPatch;
+                meta.changelog = "https://github.com/JanDeDobbeleer/oh-my-posh/releases/tag/v${version}";
               });
         }))
       .overrideAttrs (_: _: {inherit version;});
