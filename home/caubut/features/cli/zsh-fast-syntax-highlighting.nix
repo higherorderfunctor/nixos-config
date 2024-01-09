@@ -24,7 +24,7 @@
 
     srcs = lib.attrValues sources;
 
-    sourceRoot = ".";
+    sourceRoot = "name";
 
     strictDeps = true;
     dontConfigure = true;
@@ -35,7 +35,9 @@
       echo ""''${src[0]}""
       echo ""''${src[1]}""
       cp -r "''${src[0]}" $(stripHash "''${src[0]}")
+      chmod u+w $(stripHash "''${src[0]}")/themes
       cp -r "''${src[1]}"/themes/* $(stripHash "''${src[0]}")/themes
+      chmod u-w $(stripHash "''${src[0]}")/themes
     '';
     # unpackPhase = ''
     #   cp ''${srcs[0]}/* "$out"
