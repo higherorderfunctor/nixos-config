@@ -23,7 +23,6 @@
         rm engine/image_test.go \
           engine/migrate_glyphs_test.go \
           segments/nba_test.go
-          segments/nba_test.go
       '';
     in
       (pkgs.oh-my-posh.override
