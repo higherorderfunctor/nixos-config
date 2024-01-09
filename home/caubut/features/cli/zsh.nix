@@ -49,6 +49,11 @@ in {
       setopt promptsubst          # enable prompt expansion
     '';
   };
+  # permission fixes
+  systemd.user.tmpfiles.rules = [
+    "z /home/${username}/.local/share/zsh 0700 ${username} ${username} - -"
+    "z /persist/home/${username}/.local/share/zsh 0700 ${username} ${username} - -"
+  ];
   # caching
   home.persistence = {
     "/persist${config.home.homeDirectory}".directories = [

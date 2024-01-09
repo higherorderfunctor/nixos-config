@@ -55,6 +55,11 @@ in {
   # permission fixes
   systemd.user.tmpfiles.rules = [
     "z /home/${username}/.ssh 0700 ${username} ${username} - -"
+    "z /persist/home/${username}/.ssh 0700 ${username} ${username} - -"
+    "z /home/${username}/.local 0700 ${username} ${username} - -"
+    "z /persist/home/${username}/.local 0700 ${username} ${username} - -"
+    "z /home/${username}/.local/share 0700 ${username} ${username} - -"
+    "z /persist/home/${username}/.local/share 0700 ${username} ${username} - -"
   ];
 
   home =
