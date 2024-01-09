@@ -30,10 +30,15 @@
     dontConfigure = true;
     dontBuild = true;
 
-    installPhase = ''
+    unpackPhase = ''
       cp ''${srcs[0]}/* "$out"
       cp ''${srcs[1]}/* "$out/plugins/zsh-fast-syntax-highlighting/themes"
     '';
+
+    # installPhase = ''
+    #   cp ''${srcs[0]}/* "$out"
+    #   cp ''${srcs[1]}/* "$out/plugins/zsh-fast-syntax-highlighting/themes"
+    # '';
   };
 in {
   programs.zsh.initExtra = ''
