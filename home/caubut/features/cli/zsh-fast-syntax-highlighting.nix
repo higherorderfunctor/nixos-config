@@ -31,6 +31,8 @@
     dontBuild = true;
     unpackPhase = ''
       printf '%s\n' "''${srcs[@]}"
+      echo ""''${srcs[0]}""
+      echo ""''${srcs[1]}""
       cp "''${srcs[0]}" $(stripHash "''${srcs[0]}")
       cp "''${srcs[1]}" $(stripHash "''${srcs[0]}")/plugins/zsh-fast-syntax-highlighting/themes
     '';
