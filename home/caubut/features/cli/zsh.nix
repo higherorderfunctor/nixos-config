@@ -1,8 +1,10 @@
 {
   config,
+  lib,
   pkgs,
   ...
-}: let
+}:
+with lib; let
   dataHome = "${config.xdg.dataHome}/zsh";
 in {
   programs.zsh = {
@@ -17,7 +19,9 @@ in {
   };
   # caching
   home.persistence = {
-    "/persist/${config.home.homeDirectory}".directories = [dataHome];
+    "/persist${config.home.homeDirectory}".directories = [
+      (strings.removePrefix "${config.home.homeDirectory}/" dataHome)
+    ];
   };
 }
 # TODO: oh-my-zsh = {
