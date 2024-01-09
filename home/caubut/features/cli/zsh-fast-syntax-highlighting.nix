@@ -29,11 +29,17 @@
     strictDeps = true;
     dontConfigure = true;
     dontBuild = true;
-
     unpackPhase = ''
-      cp ''${srcs[0]}/* "$out"
-      cp ''${srcs[1]}/* "$out/plugins/zsh-fast-syntax-highlighting/themes"
+      cp "''${srcs[0]}/*" "$(stripHash "''${srcs[0]}")"
+      cp "''${srcs[1]}/*" "$(stripHash "''${srcs[1]}/plugins/zsh-fast-syntax-highlighting/themes")"
+      # for _src in $srcs; do
+      #   cp "$_src" $(stripHash "$_src")
+      # done
     '';
+    # unpackPhase = ''
+    #   cp ''${srcs[0]}/* "$out"
+    #   cp ''${srcs[1]}/* "$out/plugins/zsh-fast-syntax-highlighting/themes"
+    # '';
 
     # installPhase = ''
     #   cp ''${srcs[0]}/* "$out"
