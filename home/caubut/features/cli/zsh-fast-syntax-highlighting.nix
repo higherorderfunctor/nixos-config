@@ -51,7 +51,7 @@
 
     installPhase = ''
       ls -la
-      cp -r fast-syntax-highlighting/* "$out"
+      cp -r fast-syntax-highlighting/* "$out"/
     '';
   };
 in {
