@@ -57,6 +57,9 @@ in {
   programs.zsh.initExtra = ''
     # fast-syntax-highlighting
     source "${config.xdg.configHome}/${configDir}/fast-syntax-highlighting.plugin.zsh"
+    if ! fast-theme --show | grep -q 'catppuccin-mocha'; then
+      fast-theme catppuccin-mocha
+    fi
   '';
   xdg.configFile."${configDir}" = {
     source = zsh-fast-syntax-highlighting;
