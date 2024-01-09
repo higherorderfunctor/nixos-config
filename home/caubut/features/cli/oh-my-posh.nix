@@ -4,7 +4,6 @@
   ...
 }: {
   programs.oh-my-posh = {
-    enable = true;
     enableBashIntegration = config.programs.bash.enable;
     enableZshIntegration = config.programs.zsh.enable;
     package = let

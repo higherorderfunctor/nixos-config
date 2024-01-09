@@ -44,7 +44,8 @@ nix-shell -p ssh-to-age --run 'cat home/<USER>/secrets/id_ed25519.pub | ssh-to-a
 
 # example
 nix-shell -p ssh-to-age --run 'cat home/caubut/secrets/id_ed25519.pub | ssh-to-age'
-nix-shell -p ssh-to-age --run 'cat hosts/beelink-ser7/secrets/ssh_host_ed25519_key.pub | ssh-to-age'
+nix-shell -p ssh-to-age --run \
+  'cat hosts/beelink-ser7/secrets/ssh_host_ed25519_key.pub | ssh-to-age'
 nix-shell -p ssh-to-age --run 'cat hosts/vm/secrets/ssh_host_ed25519_key.pub | ssh-to-age'
 ```
 
@@ -236,7 +237,6 @@ rm /mnt/etc/ssh/ssh_host_ed25519_key
 nixos-install --no-root-passwd --flake "github:higherorderfunctor/nixos-config?ref=$BRANCH#$TARGET"
 ```
 
-
 ## Helpful Commands
 
 ```sh
@@ -259,10 +259,27 @@ outputs.<tab>
 nix flake metadata
 
 # list installed packages
+ls /nix/store/
+
+# https://nixos.org/manual/nix/stable/command-ref/nix-store/query.html
+
+# list activate installed packages
 nix-store -q --requisites /run/current-system
 
 # show dependency tree
 nix-store -q --tree /run/current-system
+
+# see which build is keeping a dependency
+nix-store -q --roots /nix/store/...
+
+# show generations
+nix profile history --profile /nix/var/nix/profiles/system
+
+# purge old generations
+sudo nix profile wipe-history --profile /nix/var/nix/profiles/system
+
+# clean the store
+nix store gc
 ````
 
 ## Home Manager

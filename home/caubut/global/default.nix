@@ -28,7 +28,7 @@ in {
 
   programs = {
     home-manager.enable = true;
-    # oh-my-posh.enable = true;
+    oh-my-posh.enable = true;
     # starship.enable = true;
   };
 

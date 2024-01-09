@@ -5,7 +5,7 @@
     ./git.nix
     ./oh-my-posh.nix
     ./oh-my-zsh.nix
-    #./starship.nix
+    ./starship.nix
     ./zsh
   ];
 }
