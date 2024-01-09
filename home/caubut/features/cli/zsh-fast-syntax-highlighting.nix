@@ -35,7 +35,7 @@
       echo ""''${src[0]}""
       echo ""''${src[1]}""
       cp -r "''${src[0]}" $(stripHash "''${src[0]}")
-      cp -r "''${src[1]}" $(stripHash "''${src[0]}")/plugins/zsh-fast-syntax-highlighting/themes
+      cp -r "''${src[1]}" $(stripHash "''${src[0]}")/themes
     '';
     # unpackPhase = ''
     #   cp ''${srcs[0]}/* "$out"
