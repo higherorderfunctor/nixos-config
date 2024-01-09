@@ -6,6 +6,6 @@
     ./oh-my-posh.nix
     ./oh-my-zsh.nix
     ./starship.nix
-    ./zsh
+    ./zsh.nix
   ];
 }
