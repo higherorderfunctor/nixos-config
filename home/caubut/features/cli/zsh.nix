@@ -12,10 +12,10 @@ in {
     enable = true;
     package = pkgs.zsh;
     enableCompletion = true;
-    completionInit = ''
-      "autoload -U compaudit compinit zrecompile"
+    completionInit = strings.concatMapStrings (s: s + " && ") [
+      "autoload -U compinit -d ${dataHome}/.zcompdump"
       "compinit -d ${dataHome}/.zcompdump"
-    '';
+    ];
     defaultKeymap = "viins";
     dotDir = ".config/zsh";
     history = {
