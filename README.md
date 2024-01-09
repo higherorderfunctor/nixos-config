@@ -280,6 +280,9 @@ sudo nix profile wipe-history --profile /nix/var/nix/profiles/system
 
 # clean the store
 nix store gc
+
+# fix build after manual tinkering
+sudo nix-store --verify --check-contents --repair
 ````
 
 ## Home Manager
