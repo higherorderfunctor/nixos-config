@@ -20,11 +20,11 @@
     };
   };
   zsh-fast-syntax-highlighting = pkgs.stdenvNoCC.mkDerivation rec {
-    name = "zsh-fast-syntax-highlighting";
+    pname = "zsh-fast-syntax-highlighting";
 
     srcs = lib.attrValues sources;
 
-    sourceRoot = name;
+    sourceRoot = pname;
 
     strictDeps = true;
     dontConfigure = true;
