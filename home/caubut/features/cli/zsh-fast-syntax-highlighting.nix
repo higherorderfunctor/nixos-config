@@ -24,7 +24,7 @@
 
     srcs = lib.attrValues sources;
 
-    sourceRoot = "fast-syntax-highlighting";
+    #sourceRoot = "fast-syntax-highlighting";
 
     strictDeps = true;
     dontConfigure = true;
