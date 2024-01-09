@@ -8,7 +8,9 @@
     enableBashIntegration = config.programs.bash.enable;
     enableZshIntegration = config.programs.zsh.enable;
     package = let
+      # set wanted version
       version = "19.4.0";
+      # override fetch to use wanted version
       src = pkgs.fetchFromGitHub {
         owner = "jandedobbeleer";
         repo = "oh-my-posh";
@@ -16,31 +18,33 @@
         # hash = lib.fakeSha256;
         hash = "sha256-e3KYqCLbnjDKO4tiL/BssUmxmmsWJFqA1gOvwF9r7jo=";
       };
-      # vendorHash = lib.fakeSha256;
+      # fix verison hash
       vendorHash = "sha256-//L0tjM+JELglwCOWkifn39G4JuL/YBmJKBF1Uyno3M=";
+      # vendorHash = lib.fakeSha256;
+      # fix build.Version; ${version} doesn't seem to re-evaluate
       ldflags = [
         "-s"
         "-w"
         "-X github.com/jandedobbeleer/oh-my-posh/src/build.Version=${version}"
         "-X github.com/jandedobbeleer/oh-my-posh/src/build.Date=1970-01-01T00:00:00Z"
       ];
+      # skip tests that require internet access
       postPatch = ''
-        # these tests requires internet access
         rm engine/image_test.go \
           engine/migrate_glyphs_test.go \
-          segments/nba_test.go && :
+          segments/nba_test.go
       '';
     in
-      (pkgs.oh-my-posh.override
-        (_: {
-          buildGoModule = args:
-            pkgs.buildGoModule (args
-              // {
-                inherit version src vendorHash ldflags postPatch;
-                meta.changelog = "https://github.com/JanDeDobbeleer/oh-my-posh/releases/tag/v${version}";
-              });
-        }))
-      .overrideAttrs (_: _: {inherit version;});
+      pkgs.oh-my-posh.override
+      (_: {
+        buildGoModule = args:
+          pkgs.buildGoModule (args
+            // {
+              inherit version src vendorHash ldflags postPatch;
+              # fix version
+              meta.changelog = "https://github.com/JanDeDobbeleer/oh-my-posh/releases/tag/v${version}";
+            });
+      });
     settings =
       builtins.fromJSON
       (builtins.unsafeDiscardStringContext
