@@ -1,8 +1,6 @@
 {config, ...}: {
   programs.bash = {
     enable = true;
-    historyFile = {
-      path = "${config.xdg.dataHome}/bash/bash_history";
-    };
+    historyFile = "${config.xdg.dataHome}/bash/bash_history";
   };
 }
