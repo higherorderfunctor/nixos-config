@@ -24,13 +24,13 @@
 
     srcs = lib.attrValues sources;
 
-    #sourceRoot = "fast-syntax-highlighting";
+    sourceRoot = name;
 
     strictDeps = true;
     dontConfigure = true;
     dontBuild = true;
-    installPhase = ''
-      IFS=' ' read -r -a src <<< "$out"
+    unpackPhase = ''
+      IFS=' ' read -r -a src <<< "$srcs"
       printf '%s\n' "''${src[@]}"
       echo ""''${src[0]}""
       echo ""''${src[1]}""
