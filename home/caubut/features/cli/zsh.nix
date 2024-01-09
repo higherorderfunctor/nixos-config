@@ -15,8 +15,12 @@ in {
       path = "${dataHome}/zsh_history";
     };
   };
+  # caching
+  home.persistence = {
+    "/persist/${config.home.homeDirectory}".directories = [dataHome];
+  };
 }
-# oh-my-zsh = {
+# TODO: oh-my-zsh = {
 #   enable = true;
 #   plugins = ["git"];
 # };
