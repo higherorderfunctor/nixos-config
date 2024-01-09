@@ -34,6 +34,7 @@
       printf '%s\n' "''${src[@]}"
       echo ""''${src[0]}""
       echo ""''${src[1]}""
+      ls -la
       cp -r "''${src[0]}" $(stripHash "''${src[0]}")
       chmod u+w $(stripHash "''${src[0]}")/themes
       cp -r "''${src[1]}"/themes/* $(stripHash "''${src[0]}")/themes
