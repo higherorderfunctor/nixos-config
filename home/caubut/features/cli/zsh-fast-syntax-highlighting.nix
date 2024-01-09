@@ -8,7 +8,7 @@
 in {
   programs.zsh.initExtra = ''
     # fast-syntax-highlighting
-    source "${config.xdg.configHome}${configDir}/fast-syntax-highlighting.plugin.zsh"
+    source "${config.xdg.configHome}/${configDir}/fast-syntax-highlighting.plugin.zsh"
   '';
   xdg.configFile."${configDir}" = {
     source = fast-syntax-highlighting;
