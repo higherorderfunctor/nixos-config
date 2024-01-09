@@ -30,7 +30,7 @@
     dontConfigure = true;
     dontBuild = true;
     installPhase = ''
-      IFS=' ' read -r -a src <<< "$srcs"
+      IFS=' ' read -r -a src <<< "$out"
       printf '%s\n' "''${src[@]}"
       echo ""''${src[0]}""
       echo ""''${src[1]}""
