@@ -5,6 +5,7 @@
   ...
 }:
 with lib; let
+  inherit (config.home) username;
   dataHome = "${config.xdg.dataHome}/zsh";
 in {
   programs.zsh = {
