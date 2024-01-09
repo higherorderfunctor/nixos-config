@@ -15,24 +15,24 @@
 # fzf plugin
 # [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 
-if [[ ! -d ${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/plugins/fast-syntax-highlighting ]]; then
-  git clone https://github.com/zdharma-continuum/fast-syntax-highlighting.git \
-  ${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/plugins/fast-syntax-highlighting
-fi
+# if [[ ! -d ${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/plugins/fast-syntax-highlighting ]]; then
+#   git clone https://github.com/zdharma-continuum/fast-syntax-highlighting.git \
+#   ${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/plugins/fast-syntax-highlighting
+# fi
 
-plugins+=('fast-syntax-highlighting')
+# plugins+=('fast-syntax-highlighting')
 
 # oh-my-zsh
-source $ZSH/oh-my-zsh.sh
+# source $ZSH/oh-my-zsh.sh
 
 # custom completions
 fpath=("$ZSH_CUSTOM/completions" $fpath)
 
 # vim bindings
-bindkey -v
+# bindkey -v
 
 # history
-setopt HIST_IGNORE_SPACE
+# setopt HIST_IGNORE_SPACE
 
 # envs
 export PATH="$HOME/.local/bin:$PATH"
