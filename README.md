@@ -134,11 +134,11 @@ nix run nixpkgs#nvme-cli -- id-ns /dev/nvme0n1 -H | grep "^LBA Format"
 nix run nixpkgs#nvme-cli -- format /dev/nvme0n1 --force --lbaf <BEST>
 
 BRANCH=fix/user-permissions
-TARGET=beelink-ser7
+NIXOS_HOST=beelink-ser7
 
 # partition disk(s)
 nix run github:nix-community/disko -- --mode disko --flake  \
-  "github:higherorderfunctor/nixos-config?ref=$BRANCH#$TARGET"
+  "github:higherorderfunctor/nixos-config?ref=$BRANCH#$NIXOS_HOST"
 
 # check disk(s)
 fdisk -l
@@ -153,7 +153,7 @@ findmnt -nt btrfs
 # generate hardware config
 nixos-generate-config --root /mnt --show-hardware-config
 
-# copy wanted configs into hosts/$TARGET/hardware-configuration.nix
+# copy wanted configs into hosts/$NIXOS_HOST/hardware-configuration.nix
 
 # commit and push any changes
 
@@ -177,10 +177,10 @@ PORT=2522
 REMOTE=root@192.168.9.130
 PORT=22
 
-TARGET=beelink-ser7
+NIXOS_HOST=beelink-ser7
 
 ssh -p "$PORT" "$REMOTE" "mkdir -p /mnt/persist/etc/ssh/"
-scp -P "$PORT" -r hosts/$TARGET/secrets/ssh_host_ed25519_key \
+scp -P "$PORT" -r hosts/$NIXOS_HOST/secrets/ssh_host_ed25519_key \
   "$REMOTE":/mnt/persist/etc/ssh/ssh_host_ed25519_key
 
 
@@ -188,13 +188,13 @@ scp -P "$PORT" -r hosts/$TARGET/secrets/ssh_host_ed25519_key \
 # REMOTE (ssh): run the installation
 
 BRANCH=fix/user-permissions
-TARGET=beelink-ser7
+NIXOS_HOST=beelink-ser7
 
 # update and check the flake if hardware modifications made
 nix flake check --refresh "github:higherorderfunctor/nixos-config?ref=$BRANCH"
 
 # install nixos
-nixos-install --no-root-passwd --flake  "github:higherorderfunctor/nixos-config?ref=$BRANCH#$TARGET"
+nixos-install --no-root-passwd --flake  "github:higherorderfunctor/nixos-config?ref=$BRANCH#$NIXOS_HOST"
 
 # reboot
 reboot
@@ -206,25 +206,25 @@ reboot
 
 ```sh
 BRANCH=fix/user-permissions
-TARGET=vm
+NIXOS_HOST=vm
 
 # update and check the flake if hardware modifications made
 nix flake check --refresh "github:higherorderfunctor/nixos-config?ref=$BRANCH"
 
 # rebuild nixos
 sudo nixos-rebuild --refresh --flake \
-  "github:higherorderfunctor/nixos-config?ref=$BRANCH#$TARGET" switch
+  "github:higherorderfunctor/nixos-config?ref=$BRANCH#$NIXOS_HOST" switch
 ```
 
 ### Updating from a Live CD
 
 ```sh
 BRANCH=fix/user-permissions
-TARGET=vm
+NIXOS_HOST=vm
 
 # mount disk(s)
 nix run github:nix-community/disko -- --mode mount --flake  \
-  "github:higherorderfunctor/nixos-config?ref=$BRANCH#$TARGET"
+  "github:higherorderfunctor/nixos-config?ref=$BRANCH#$NIXOS_HOST"
 
 # update and check the flake
 nix flake check --refresh "github:higherorderfunctor/nixos-config?ref=$BRANCH"
@@ -234,7 +234,7 @@ rm /mnt/etc/machine-id
 rm /mnt/etc/ssh/ssh_host_ed25519_key
 
 # install nixos
-nixos-install --no-root-passwd --flake "github:higherorderfunctor/nixos-config?ref=$BRANCH#$TARGET"
+nixos-install --no-root-passwd --flake "github:higherorderfunctor/nixos-config?ref=$BRANCH#$NIXOS_HOST"
 ```
 
 ## Helpful Commands
