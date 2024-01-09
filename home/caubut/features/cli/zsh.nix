@@ -11,13 +11,15 @@ in {
     enable = true;
     package = pkgs.zsh;
     enableCompletion = true;
-    completionInit = "autoload -U compinit -d ${dataHome}/.zcompdump && compinit -d ${dataHome}/.zcompdump";
+    completionInit = ''
+      "autoload -U compaudit compinit zrecompile"
+      "compinit -d ${dataHome}/.zcompdump"
+    '';
     defaultKeymap = "viins";
     dotDir = ".config/zsh";
     history = {
       path = "${dataHome}/zsh_history";
     };
-    # TODO: FIX ZCOMPDUMP GOING TO CONFIG
     initExtraBeforeCompInit = ''
       # directory options
       setopt auto_cd
