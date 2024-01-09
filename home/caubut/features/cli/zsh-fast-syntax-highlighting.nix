@@ -24,8 +24,6 @@
 
     srcs = lib.attrValues sources;
 
-    sourceRoot = ".";
-
     strictDeps = true;
     dontConfigure = true;
     dontBuild = true;
