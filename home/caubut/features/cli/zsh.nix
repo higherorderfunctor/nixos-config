@@ -16,6 +16,7 @@ in {
     history = {
       path = "${dataHome}/zsh_history";
     };
+    # TODO: FIX ZCOMPDUMP GOING TO CONFIG
     initExtra = ''
       # directory options
       setopt auto_cd
