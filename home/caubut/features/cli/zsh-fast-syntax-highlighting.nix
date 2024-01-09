@@ -30,11 +30,9 @@
     dontConfigure = true;
     dontBuild = true;
     unpackPhase = ''
+      printf '%s\n' "''${srcs[@]}"
       cp "''${srcs[0]}" $(stripHash "''${srcs[0]}")
       cp "''${srcs[1]}" $(stripHash "''${srcs[0]}")/plugins/zsh-fast-syntax-highlighting/themes
-      # for _src in $srcs; do
-      #   cp "$_src" $(stripHash "$_src")
-      # done
     '';
     # unpackPhase = ''
     #   cp ''${srcs[0]}/* "$out"
