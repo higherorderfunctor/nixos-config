@@ -13,7 +13,7 @@
 [[ -f ~/.local/bin/poetry ]] && plugins+=('poetry')
 
 # fzf plugin
-[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+# [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 
 if [[ ! -d ${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/plugins/fast-syntax-highlighting ]]; then
   git clone https://github.com/zdharma-continuum/fast-syntax-highlighting.git \

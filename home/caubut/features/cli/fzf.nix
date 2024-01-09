@@ -10,8 +10,8 @@
     enableZshIntegration = config.programs.zsh.enable;
     colors = {
       # https://github.com/catppuccin/fzf
-      "bg+" = "#313244";
-      bg = "#1e1e2e";
+      #"bg+" = "#313244";
+      #bg = "#1e1e2e";
       spinner = "#f5e0dc";
       hl = "#f38ba8";
       fg = "#cdd6f4";
