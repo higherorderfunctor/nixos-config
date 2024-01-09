@@ -26,7 +26,7 @@
     dontConfigure = true;
     dontBuild = true;
 
-    unpackPhase = ''
+    installPhase = ''
       cp ''${srcs[0]}/* "$out"
       cp ''${srcs[1]}/* "$out/plugins/zsh-fast-syntax-highlighting/themes"
     '';
