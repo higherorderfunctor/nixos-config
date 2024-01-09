@@ -10,7 +10,7 @@ in {
     package = pkgs.zsh;
     defaultKeymap = "viins";
     dotDir = ".config/zsh";
-    completionInit = "autoload -U compinit -d ${dataHome} && compinit -d ${dataHome}";
+    completionInit = "autoload -U compinit -d ${dataHome}/.zcompdump && compinit -d ${dataHome}/.zcompdump";
     history = {
       path = "${dataHome}/zsh_history";
     };

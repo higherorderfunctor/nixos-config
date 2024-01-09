@@ -206,7 +206,6 @@ reboot
 
 ```sh
 BRANCH=fix/user-permissions
-NIXOS_HOST=vm
 
 # update and check the flake if hardware modifications made
 nix flake check --refresh "github:higherorderfunctor/nixos-config?ref=$BRANCH"
