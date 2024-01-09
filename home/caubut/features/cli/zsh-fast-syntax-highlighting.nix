@@ -50,6 +50,7 @@
     # '';
 
     installPhase = ''
+      ls -la
       cp -r "fast-syntax-highlighting/*" "$out"
     '';
   };
