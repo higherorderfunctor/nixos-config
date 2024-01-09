@@ -5,25 +5,24 @@
   ...
 }: let
   configDir = "zsh/plugins/zsh-fast-syntax-highlighting";
+  sources = {
+    fast-syntax-highlighting = builtins.fetchTarball {
+      url = "https://github.com/zdharma-continuum/fast-syntax-highlighting/archive/master.tar.gz";
+      # sha256 = lib.fakeSha256;
+      sha256 = "1bmrb724vphw7y2gwn63rfssz3i8lp75ndjvlk5ns1g35ijzsma5";
+      name = "fast-syntax-highlighting";
+    };
+    fast-syntax-highlighting-catppuccin = builtins.fetchTarball {
+      url = "https://github.com/catppuccin/zsh-fsh/archive/master.tar.gz";
+      # sha256 = lib.fakeSha256;
+      sha256 = "1044pbfykcm16m7v3vwc6g1f9r3cxxmlaqch670yw6appbw62nfz";
+      name = "fast-syntax-highlighting-catppuccin";
+    };
+  };
   zsh-fast-syntax-highlighting = pkgs.stdenvNoCC.mkDerivation rec {
     name = "zsh-fast-syntax-highlighting";
 
-    srcs = [
-      (builtins.fetchTarball {
-        url = "https://github.com/zdharma-continuum/fast-syntax-highlighting/archive/master.tar.gz";
-        # sha256 = lib.fakeSha256;
-        sha256 = "1bmrb724vphw7y2gwn63rfssz3i8lp75ndjvlk5ns1g35ijzsma5";
-        name = "fast-syntax-highlighting";
-      })
-      (
-        builtins.fetchTarball {
-          url = "https://github.com/catppuccin/zsh-fsh/archive/master.tar.gz";
-          # sha256 = lib.fakeSha256;
-          sha256 = "1044pbfykcm16m7v3vwc6g1f9r3cxxmlaqch670yw6appbw62nfz";
-          name = "fast-syntax-highlighting-catppuccin";
-        }
-      )
-    ];
+    srcs = lib.attrValues sources;
 
     sourceRoot = name;
 
@@ -31,11 +30,12 @@
     dontConfigure = true;
     dontBuild = true;
     unpackPhase = ''
-      printf '%s\n' "''${srcs[@]}"
-      echo ""''${srcs[0]}""
-      echo ""''${srcs[1]}""
-      cp "''${srcs[0]}" $(stripHash "''${srcs[0]}")
-      cp "''${srcs[1]}" $(stripHash "''${srcs[0]}")/plugins/zsh-fast-syntax-highlighting/themes
+      IFS=' ' read -r -a src <<< "$srcs"
+      printf '%s\n' "''${src[@]}"
+      echo ""''${src[0]}""
+      echo ""''${src[1]}""
+      cp "''${src[0]}" $(stripHash "''${src[0]}")
+      cp "''${src[1]}" $(stripHash "''${src[0]}")/plugins/zsh-fast-syntax-highlighting/themes
     '';
     # unpackPhase = ''
     #   cp ''${srcs[0]}/* "$out"
