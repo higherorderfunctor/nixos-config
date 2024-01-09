@@ -49,6 +49,7 @@
 
     installPhase = ''
       ls -la
+      mkdir -p "$out"
       cp -r fast-syntax-highlighting/* "$out"/
     '';
   };
