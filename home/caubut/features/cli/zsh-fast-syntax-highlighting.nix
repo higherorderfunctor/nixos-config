@@ -1,4 +1,4 @@
-{config}: let
+{config, ...}: let
   configDir = "zsh/plugins/fast-syntax-highlighting";
   fast-syntax-highlighting = builtins.fetchTarball {
     url = "https://github.com/zdharma-continuum/fast-syntax-highlighting/archive/master.tar.gz";
