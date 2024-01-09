@@ -1,8 +1,10 @@
 {
   config,
   inputs,
+  specialArgs,
   ...
 }: let
+  inherit (specialArgs) hostname;
   username = "caubut";
 in {
   imports = [
@@ -57,12 +59,15 @@ in {
 
   home =
     # lock system and home-mnager state versions
-    (import ../../../hosts/common/global/state-version.nix)
-    // {
+    {
+      inherit (import ../../../hosts/common/global/state-version.nix) stateVersion;
       inherit username;
+      sessionVariables = {
+        NIXOS_HOST = hostname;
+      };
       homeDirectory = "/home/${username}";
       persistence = {
-        "/persist/home/caubut" = {
+        "/persist/home/${username}" = {
           directories = [
             "Documents"
             "Downloads"
@@ -76,7 +81,7 @@ in {
         };
       };
       file = {
-        ".ssh/id_ed25519".source = config.lib.file.mkOutOfStoreSymlink "/run/secrets/caubut-secret-key";
+        ".ssh/id_ed25519".source = config.lib.file.mkOutOfStoreSymlink "/run/secrets/${username}-secret-key";
         ".ssh/id_ed25519.pub".source = ../secrets/id_ed25519.pub;
       };
     };

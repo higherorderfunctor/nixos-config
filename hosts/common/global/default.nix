@@ -28,7 +28,10 @@
   home-manager = {
     useGlobalPkgs = true;
     useUserPackages = true;
-    extraSpecialArgs = {inherit inputs outputs;};
+    extraSpecialArgs = {
+      inherit inputs outputs;
+      hostname = config.networking.hostName;
+    };
   };
 
   # system state version
