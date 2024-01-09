@@ -29,13 +29,13 @@
     strictDeps = true;
     dontConfigure = true;
     dontBuild = true;
-    unpackPhase = ''
+    installPhase = ''
       IFS=' ' read -r -a src <<< "$srcs"
       printf '%s\n' "''${src[@]}"
       echo ""''${src[0]}""
       echo ""''${src[1]}""
       cp -r "''${src[0]}" $(stripHash "''${src[0]}")
-      cp -r "''${src[1]}"/* $(stripHash "''${src[0]}")/themes
+      cp -r "''${src[1]}"/themes/* $(stripHash "''${src[0]}")/themes
     '';
     # unpackPhase = ''
     #   cp ''${srcs[0]}/* "$out"
