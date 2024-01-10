@@ -17,7 +17,7 @@
         owner = "higherorderfunctor";
         repo = "tmux-which-key";
         rev = "40998ea20cac2802ff5acddb100aeacbd7dfef7b";
-        sha256 = "sha256-cPZCV8xk9QpU49/7H8iGhQYK6JwWjviL29eWabuqruc=";
+        sha256 = "sha256-2lbySzAa/Ux9dbeJKZNOxTO0EKTQt/VZbooyxIxxhEE=";
       };
       rtpFilePath = "plugin.sh.tmux";
     };
