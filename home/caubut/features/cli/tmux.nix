@@ -1,5 +1,6 @@
 {
   config,
+  lib,
   pkgs,
   ...
 }: let
@@ -26,6 +27,10 @@ in {
     # TODO: https://github.com/junegunn/fzf#respecting-gitignore
     # TODO: https://github.com/rothgar/awesome-tmux
     # TODO: https://github.com/sainnhe/tmux-fzf
+    xdg.configFile."tmux-plugins/tmux-which-key/config.yaml".text = lib.generators.toYAML {
+      # config here
+    };
+
     tmux = {
       enable = true;
       package = pkgs.tmux;
