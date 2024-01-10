@@ -8,10 +8,16 @@
     {
       pluginName = "tmux-which-key";
       version = "123"; # short commit hash
-      src = builtins.fetchTarball {
-        url = "https://github.com/higherorderfunctor/tmux-which-key/archive/feat/xdg-dirs.tar.gz";
-        # sha256 = lib.fakeSha256;
-        sha256 = "1zdk6c8sfdagvvmkyxq5fccjch7v505qpfkpkk7rn9wsjrcpdsrs";
+      # src = builtins.fetchTarball {
+      #   url = "https://github.com/higherorderfunctor/tmux-which-key/archive/feat/xdg-dirs.tar.gz";
+      #   # sha256 = lib.fakeSha256;
+      #   sha256 = "1zdk6c8sfdagvvmkyxq5fccjch7v505qpfkpkk7rn9wsjrcpdsrs";
+      # };    version = "unstable-2023-01-06";
+      src = pkgs.fetchFromGitHub {
+        owner = "higherorderfunctor";
+        repo = "tmux-which-key";
+        rev = "40998ea20cac2802ff5acddb100aeacbd7dfef7b";
+        sha256 = "sha256-cPZCV8xk9QpU49/7H8iGhQYK6JwWjviL29eWabuqruc=";
       };
       rtpFilePath = "plugin.sh.tmux";
     };
