@@ -24,7 +24,8 @@
     };
 in {
   xdg.configFile."tmux-plugins/tmux-which-key/config.yaml".text = lib.generators.toYAML {
-    # config here
+    command_alias_start_index = 200;
+    # rest of config here
   };
   programs = {
     # TODO: https://github.com/junegunn/fzf#respecting-gitignore
