@@ -7,7 +7,7 @@
     pkgs.tmuxPlugins.mkTmuxPlugin
     {
       pluginName = "tmux-which-key";
-      version = "asdf"; # short commit hash
+      version = "40998ea"; # short commit hash
       src = builtins.fetchTarball {
         url = "https://github.com/higherorderfunctor/tmux-which-key/archive/feat/xdg-dirs.tar.gz";
         # sha256 = lib.fakeSha256;
