@@ -1,30 +1,46 @@
-{pkgs, ...}: {
-  programs.tmux = {
-    enable = true;
-    package = pkgs.tmux;
-    historyLimit = 10000;
-    plugins = [
-      {
-        plugin = pkgs.tmuxPlugins.catppuccin;
-        extraConfig = ''
-          set -g @catppuccin_window_left_separator "█"
-          set -g @catppuccin_window_right_separator "█ "
-          set -g @catppuccin_window_number_position "right"
-          set -g @catppuccin_window_middle_separator "  █"
+{
+  config,
+  pkgs,
+  ...
+}: {
+  programs = {
+    tmux = {
+      enable = true;
+      package = pkgs.tmux;
+      escapeTime = 10;
+      historyLimit = 10000;
+      keyMode = "vi";
+      mouse = true;
+      terminal = "screen-256color";
+      extraConfig = ''
+        set -as terminal-features ',rxvt-unicode-256color:clipboard'
 
-          set -g @catppuccin_window_default_fill "number"
+        set-option -g focus-events on
+      '';
+      plugins = [
+        {
+          plugin = pkgs.tmuxPlugins.catppuccin;
+          extraConfig = ''
+            set -g @catppuccin_window_left_separator "█"
+            set -g @catppuccin_window_right_separator "█ "
+            set -g @catppuccin_window_number_position "right"
+            set -g @catppuccin_window_middle_separator "  █"
 
-          set -g @catppuccin_window_current_fill "number"
-          set -g @catppuccin_window_current_text "#{pane_current_path}"
+            set -g @catppuccin_window_default_fill "number"
 
-          set -g @catppuccin_status_modules_right "application session date_time"
-          set -g @catppuccin_status_left_separator  ""
-          set -g @catppuccin_status_right_separator " "
-          set -g @catppuccin_status_right_separator_inverse "yes"
-          set -g @catppuccin_status_fill "all"
-          set -g @catppuccin_status_connect_separator "no"
-        '';
-      }
-    ];
+            set -g @catppuccin_window_current_fill "number"
+            set -g @catppuccin_window_current_text "#{pane_current_path}"
+
+            set -g @catppuccin_status_modules_right "application session date_time"
+            set -g @catppuccin_status_left_separator  ""
+            set -g @catppuccin_status_right_separator " "
+            set -g @catppuccin_status_right_separator_inverse "yes"
+            set -g @catppuccin_status_fill "all"
+            set -g @catppuccin_status_connect_separator "no"
+          '';
+        }
+      ];
+    };
+    fzf.tmux.enableShellIntegration = config.programs.fzf.enable;
   };
 }
