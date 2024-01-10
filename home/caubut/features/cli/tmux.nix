@@ -13,6 +13,7 @@
         # sha256 = lib.fakeSha256;
         sha256 = "0dwa22xlaay47iipdrcswh71hl7g1hvsbb3nsfjcdvryq0l5bysy";
       };
+      rtpFilePath = "plugin.sh.tmux";
     };
 in {
   programs = {
