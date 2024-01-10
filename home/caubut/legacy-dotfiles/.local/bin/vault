@@ -1,0 +1,422 @@
+#!/usr/bin/env bash
+
+set -euETo pipefail
+shopt -s inherit_errexit
+
+# shellcheck source="../../Documents/dotfiles/src/_common"
+. "$HOME/Documents/dotfiles/src/_common"
+
+BW_RCLONE_CONF=${BW_RCLONE_CONF:-"rclone - config"}
+
+declare -a NON_REMOTE_ACCESS_COMMANDS=(
+  config
+  unlock
+  rclone
+  imap-backup
+)
+
+declare -a LOCATIONS=(
+  local
+  remote
+)
+
+if [ ! -v 1 ]; then
+  print-error "COMMAND not specified\n"
+elif [[ ! ${NON_REMOTE_ACCESS_COMMANDS[*]} =~ $1 ]] && [[ ! -v 2 ]]; then
+  print-error "LOCATION not specified ('local' or 'remote')\n"
+elif [[ ! ${NON_REMOTE_ACCESS_COMMANDS[*]} =~ $1 ]] && [[ ! ${LOCATIONS[*]} =~ $2 ]]; then
+  print-error "LOCATION unknown: '$2'.  Must be 'local' or 'remote'.\n"
+elif [[ ! ${NON_REMOTE_ACCESS_COMMANDS[*]} =~ $1 ]] && [[ ! -v 3 ]]; then
+  print-error "VAULT not specified\n"
+fi
+
+if [[ "$1" == "unlock" ]]; then
+  BW_STATUS="$(bw status | jq -r '.status')"
+  if [[ -v BW_SESSION ]] && [[ "$BW_STATUS" == "unlocked" ]]; then
+    print-info "Your vault is already unlocked\n"
+    exit
+  fi
+  unset BW_SESSION
+  if [[ "$BW_STATUS" == "unauthenticated" ]]; then
+    SESSION="$(bw login)"
+  elif [[ "$BW_STATUS" == "locked" ]]; then
+    SESSION="$(bw unlock)"
+  else
+    print-error "Unknown vault status: '$BW_STATUS'"
+  fi
+  BW_SESSION=$(echo "$SESSION" | sed -nr 's/^\$ export BW_SESSION=(.*)$/\1/p')
+  if [[ "$(bw status | jq -r '.status')" == "unlocked" ]]; then
+    print-error "Failed to unlock your vault\n"
+  fi
+  print-info "Your vault is unlocked.  Use 'exit' to lock.\n"
+  BW_SESSION=$BW_SESSION $SHELL "${@:2}"
+  BW_SESSION=$BW_SESSION bw lock
+  # TODO deep search
+  for dir in "$HOME/.local/share/rclone/mnt/"*; do
+    if mountpoint "$dir" >/dev/null 2>&1 ; then
+        dir_name=${dir%*/}
+      if fusermount -u "$dir"; then
+        print-info "Unmounted '${dir_name##*/}'\n"
+      else
+        print-warning "Failed to unmount '${dir_name##*/}'\n"
+      fi
+    fi
+  done
+  rm -rf .cache/rclone/vfs/*
+  exit
+fi
+
+if [[ "$(bw status | jq -r '.status')" != "unlocked" ]]; then
+  print-error "Your vault is locked\n"
+fi
+
+# force sync bw once an hour
+bw_last_sync="$(date -d "$(bw status | jq -r '.lastSync')" +%s)"
+if [[ "$bw_last_sync" -le "$(date -d "1 hour ago" +%s)" ]] || [[ ! -f "$HOME/.config/rclone/rclone.conf" ]]; then
+  print-info "Syncing credentials\n"
+  mkdir -p "$HOME/.config/rclone"
+  bw sync
+fi
+
+# test if remote rclone.conf is newer than local rclone.conf
+if [[ ! -f "$HOME/.config/rclone/rclone.conf" ]] || [[ "$(date -d "$(bw get item "$BW_RCLONE_CONF" | jq -r '.revisionDate')" +%s)" -gt "$(date -r "$HOME/.config/rclone/rclone.conf" "+%s")" ]] ; then
+  # replace local rclone.conf with remote rclone.conf
+  print-info "Updating local 'rclone.conf'\n"
+  (
+    set -x
+    # backup local rclone.conf
+    mv "$HOME/.config/rclone/rclone.conf" "$HOME/.config/rclone/rclone.local.conf.bk" || true
+    # pull remote rclone.conf
+    bw get attachment rclone.conf \
+      --itemid "$(bw get item "$BW_RCLONE_CONF" | jq -r '.id')" \
+      --output "$HOME/.config/rclone/rclone.conf"
+    chmod 600 "$HOME/.config/rclone/rclone.conf"
+    touch -d "$(date -Rd "$(bw get item "$BW_RCLONE_CONF" | jq -r '.revisionDate')")" "$HOME/.config/rclone/rclone.conf"
+  )
+fi
+
+NPROC=$(nproc --all)
+RCLONE_PASSWORD_COMMAND="echo $(bw get password "$BW_RCLONE_CONF")"
+RCLONE_ARGS=(--transfers "$((NPROC * 2))" --checkers "$((NPROC * 2))")
+
+export RCLONE_PASSWORD_COMMAND
+export RCLONE_VERBOSE=${RCLONE_VERBOSE:-1}
+
+config() {
+  rclone config "$@"
+  # test if rclone.conf has been updated locally
+  if [[ -f "$HOME/.config/rclone/rclone.conf" ]] && [[ "$(date -d "$(bw get item "$BW_RCLONE_CONF" | jq -r '.revisionDate')" +%s)" -lt "$(date -r "$HOME/.config/rclone/rclone.conf" "+%s")" ]] ; then
+    {
+      set -x
+      # backup remote rclone.conf locally
+      bw get attachment rclone.conf \
+        --itemid "$(bw get item "$BW_RCLONE_CONF" | jq -r '.id')" \
+        --output "$HOME/.config/rclone/rclone.remote.conf.bk"
+      chmod 600 "$HOME/.config/rclone/rclone.remote.conf.bk"
+      # only update if local is different than remote
+      if ! cmp --silent "$HOME/.config/rclone/rclone.conf" "$HOME/.config/rclone/rclone.remote.conf.bk"; then
+        print-info "Updating remote 'rclone.conf'\n"
+        # delete old backup remote rclone.conf
+        if [[ -n "$(bw get item 'rclone - config' | jq -r 'first(.attachments | .[] | select(.fileName=="rclone.remote.conf.bk")) | .id')" ]]; then
+          bw delete attachment \
+          "$(bw get item 'rclone - config' | jq -r 'first(.attachments | .[] | select(.fileName=="rclone.remote.conf.bk")) | .id')" \
+          --itemid "$(bw get item "$BW_RCLONE_CONF" | jq -r '.id')"
+        fi
+        # push new backup remote rclone.conf
+        bw create attachment \
+          --file "$HOME/.config/rclone/rclone.remote.conf.bk" \
+          --itemid "$(bw get item "$BW_RCLONE_CONF" | jq -r '.id')"
+
+        # delete remote rclone.conf
+        bw delete attachment \
+          "$(bw get item 'rclone - config' | jq -r 'first(.attachments | .[] | select(.fileName=="rclone.conf")) | .id')" \
+          --itemid "$(bw get item "$BW_RCLONE_CONF" | jq -r '.id')"
+        # push rclone.conf
+        bw create attachment \
+          --file "$HOME/.config/rclone/rclone.conf" \
+          --itemid "$(bw get item "$BW_RCLONE_CONF" | jq -r '.id')"
+
+        # force sync local and remote timestamps
+        bw get item \
+          "$(bw get item "$BW_RCLONE_CONF" | jq -r '.id')" |
+          bw encode |
+          bw edit item "$(bw get item "$BW_RCLONE_CONF" | jq -r '.id')"
+        touch -d "$(date -Rd "$(bw get item "$BW_RCLONE_CONF" | jq -r '.revisionDate')")" "$HOME/.config/rclone/rclone.conf"
+
+        # sync
+        bw sync
+      else
+        print-info "\nNo changes to 'rclone.conf'\n"
+      fi
+    }
+  else
+    print-info "\nNo changes to 'rclone.conf'\n"
+  fi
+}
+
+get-mount-dir() {
+  echo "$HOME/.local/share/rclone/mnt/${2^}$([[ $1 == 'remote' ]] && echo ' (remote)' || echo '')"
+}
+
+mount() {
+  MOUNT_DIR=$(get-mount-dir "$1" "$2")
+  mkdir -p "$MOUNT_DIR"
+  if mountpoint "$MOUNT_DIR" >/dev/null 2>&1 ; then
+    print-warning "\n  vault already mounted: '${MOUNT_DIR}'\n\n"
+  else
+    rclone mount \
+      "${RCLONE_ARGS[@]}" \
+      "${@:3}" \
+      --progress \
+      "crypt-$1-$2:" "$MOUNT_DIR"
+    sleep 1
+  fi
+  if [[ -d "$MOUNT_DIR/.Trash-$UID" ]]; then
+    rm -r "$MOUNT_DIR/.Trash-$UID"
+  fi
+  if [[ ! -f "$MOUNT_DIR/.Trash-$UID" ]]; then
+    touch "$MOUNT_DIR/.Trash-$UID"
+  fi
+}
+
+unmount() {
+  MOUNT_DIR=$(get-mount-dir "$1" "$2")
+  if mountpoint "$MOUNT_DIR" >/dev/null 2>&1; then
+    if ! fusermount -u "${@:3}" "$MOUNT_DIR"; then
+      print-error "\n$(lsof "$MOUNT_DIR")\n\n"
+    fi
+    rmdir --ignore-fail-on-non-empty "$MOUNT_DIR"
+  else
+    print-warning "\n  vault not mounted: '${MOUNT_DIR}'\n\n"
+  fi
+  MOUNT_CACHE_DIR="$HOME/.cache/rclone/vfs/crypt-$1-$2"
+  if [[ -d "$MOUNT_CACHE_DIR" ]]; then
+    print-info "Cleaning up vault VFS cache: '${MOUNT_CACHE_DIR}'\n"
+    rm -rf "$HOME/.cache/rclone/vfs/crypt-$1-$2"
+  fi
+}
+
+get-scoped-mount-dir() {
+  MOUNT_DIR=$(get-mount-dir "$1" "$2")
+  echo "$HOME/.local/share/rclone/mnt/scopes/${MOUNT_DIR##*/}/$3"
+}
+
+mount-scoped() {
+  MOUNT_DIR=$(get-mount-dir "$1" "$2")
+  SCOPED_MOUNT_DIR=$(get-scoped-mount-dir "$1" "$2" "$3")
+  if mountpoint "$SCOPED_MOUNT_DIR" >/dev/null 2>&1 ; then
+    print-warning "\n  scoped vault already mounted: '${SCOPED_MOUNT_DIR}'\n\n"
+  else
+    mkdir -p "$SCOPED_MOUNT_DIR"
+    bindfs \
+      "${@:4}" \
+      "$MOUNT_DIR/$3" "$SCOPED_MOUNT_DIR"
+    sleep 1
+  fi
+  if [[ -d "$SCOPED_MOUNT_DIR/.Trash-$UID" ]]; then
+    rm -r "$SCOPED_MOUNT_DIR/.Trash-$UID"
+  fi
+  if [[ ! -f "$SCOPED_MOUNT_DIR/.Trash-$UID" ]]; then
+    touch "$SCOPED_MOUNT_DIR/.Trash-$UID"
+  fi
+}
+
+unmount-scoped() {
+  MOUNT_DIR=$(get-mount-dir "$1" "$2")
+  SCOPED_MOUNT_DIR=$(get-scoped-mount-dir "$1" "$2" "$3")
+  if mountpoint "$SCOPED_MOUNT_DIR" >/dev/null 2>&1; then
+    if ! fusermount -u "${@:4}" "$SCOPED_MOUNT_DIR"; then
+      print-error "\n$(lsof "$SCOPED_MOUNT_DIR")\n\n"
+    fi
+    (
+      cd "$MOUNT_DIR"
+      rmdir --ignore-fail-on-non-empty -p "$3"
+    )
+  else
+    print-warning "\n  scope not mounted: '${SCOPED_MOUNT_DIR}'\n\n"
+  fi
+}
+
+check() {
+  RCLONE_VERBOSE=0 rclone cryptcheck \
+    "${RCLONE_ARGS[@]}" \
+    "${@:3}" \
+    --differ - -u --progress \
+    "crypt-$1-$2:" "crypt-$([[ $1 == 'local' ]] && echo 'remote' || echo 'local')-$2:"
+}
+
+copy() {
+  dest="$([[ $1 == 'local' ]] && echo 'remote' || echo 'local')"
+  print-warning "Copying files from '$1' to '$dest'\n\nPress enter to continue or ^-d to abort"
+  read -r
+  rclone copy \
+    "${RCLONE_ARGS[@]}" \
+    "${@:3}" \
+    -u --progress \
+    "crypt-$1-$2:" "crypt-$dest-$2:"
+}
+
+sync() {
+  dest="$([[ $1 == 'local' ]] && echo 'remote' || echo 'local')"
+  print-warning "Syncing files from '$1' to '$dest'\n\nPress enter to continue or ^-d to abort"
+  read -r
+  rclone sync \
+    "${RCLONE_ARGS[@]}" \
+    "${@:3}" \
+    -u --progress \
+    "crypt-$1-$2:" "crypt-$dest-$2:"
+}
+
+show-hidden() {
+  vault rclone ls \
+    "${RCLONE_ARGS[@]}" \
+    "${@:3}" \
+    --b2-versions -q \
+    "crypt-$1-$2" |
+    { grep --color -B1 -P 'v\d{4}-\d{2}-\d{2}-\d{6}-\d{3}(\.[.]*)?' || true; }
+}
+
+cleanup-hidden() {
+  rclone cleanup \
+    "${RCLONE_ARGS[@]}" \
+    "${@:3}" \
+    --progress \
+    "crypt-$1-$2"
+}
+
+imap-backup() {
+  if [ ! -v 1 ]; then
+    print-error "CREDENTIALS not specified\n"
+  fi
+
+  if grep -q '^\s*#\s*user_allow_other\s*$' /etc/fuse.conf; then
+    print-info "==> updating 'fuse.conf' for scoped mounts with docker\n"
+    sudo sed -ir 's@^\s*#\s*user_allow_other\s*$@user_allow_other@' /etc/fuse.conf
+  fi
+
+  # start sub-shell to pickup '/etc/fuse.conf' changes and to not leak exports
+  # if sourced
+  (
+    print-info "==> fetching credentials\n"
+
+    # get secrets from 'bw'
+    MAIL_USERNAME="$(bw get item "$1" | jq -r '.login | .username')"
+    DAVMAIL_KEYSTORE_PASSWORD="$(bw get item "$1" | jq -r '.login | .password')"
+    REMOTE_URI="$(bw get item "$1" | jq -r 'first(.fields | .[] | select(.name=="ref:remote") | .value)')"
+    REMOTE="${REMOTE_URI%%:*}"
+    REMOTE_PATH="${REMOTE_URI#*:}"
+    DAVMAIL_URL="$(bw get item "$1" | jq -r 'first(.login | .uris | .[] | .uri)')"
+    MAIL_PASSWORD="$(bw get item \
+      "$(bw get item "$1" | jq -r 'first(.fields | .[] | select(.name=="ref:password") | .value)')" |
+        jq -r '.login | .password'
+    )"
+
+    docker-compose() {
+      docker compose -f "$HOME/Documents/dotfiles/etc/docker/exchange-backup/docker-compose.yaml" "$@"
+    }
+
+    trap 'docker-compose down; unmount-scoped local "$REMOTE" "$REMOTE_PATH"; unmount local "$REMOTE"; rm -f "$HOME/.config/davmail/davmail.properties" "$HOME/.config/davmail/davmail.properties" || true;' ERR
+
+    print-info "==> mounting vault: '$(get-mount-dir local "$REMOTE")'\n";
+    mount local "$REMOTE" --daemon --vfs-cache-mode writes
+
+    MAIL_SCOPED_DIR=$(get-scoped-mount-dir local "$REMOTE" "$REMOTE_PATH")
+
+    print-info "==> mounting scoped vault: '$MAIL_SCOPED_DIR'\n";
+    mount-scoped local "$REMOTE" "$REMOTE_PATH" -o no-allow-other -o allow_root
+
+    GID="$(id -g)"
+
+    export UID
+    export GID
+    export DAVMAIL_URL
+    export DAVMAIL_KEYSTORE_PASSWORD
+    export MAIL_USERNAME
+    export MAIL_PASSWORD
+    export MAIL_SCOPED_DIR
+
+    if [[ ! -f "$HOME/.local/share/davmail/davmail.p12" ]]; then
+      print-info "==> generating imap certificate\n"
+      if [[ ! -d "$HOME/.local/share/davmail" ]]; then
+        mkdir -m 700 "$HOME/.local/share/davmail" 2>/dev/null || true
+      else
+        chmod 700 "$HOME/.local/share/davmail"
+      fi
+      docker run --rm -it \
+        -u "$UID:$GID" \
+        -v "$HOME/.local/share/davmail:/root:Z" \
+        --workdir /root \
+        openjdk:8-jre-alpine \
+        keytool \
+          -genkey \
+          -keyalg rsa \
+          -keysize 2048 \
+          -storepass "$DAVMAIL_KEYSTORE_PASSWORD" \
+          -keystore davmail.p12 \
+          -storetype pkcs12 \
+          -validity 3650 \
+          -dname cn=davmail,ou=davmail,o=sf,o=net
+      chmod 600 "$HOME/.local/share/davmail/davmail.p12"
+    fi
+
+    print-info "==> refreshing docker images\n"
+    docker-compose build --pull
+
+    print-info "==> setting up imap proxy to exchange\n"
+    mkdir -p "$HOME/.config/davmail"
+    rm -f "$HOME/.config/davmail/davmail.properties" || true
+    mkfifo -m=0600 "$HOME/.config/davmail/davmail.properties"
+    envsubst < "$HOME/Documents/dotfiles/etc/docker/davmail/davmail.template.properties" > "$HOME/.config/davmail/davmail.properties" &
+    docker-compose up --force-recreate -V -d davmail
+
+    # waiting for healthy status
+    docker compose -f "$HOME/Documents/dotfiles/etc/docker/exchange-backup/docker-compose.yaml" events --json |
+      jq -n 'inputs | if .action == "exec_die" and .service == "davmail"  and .attributes.exitCode == "0" then ., halt else empty end' \
+      || true
+
+    print-info "==> backing up email\n"
+    mkdir -p "$HOME/.config/imap-backup"
+    rm -f "$HOME/.config/imap-backup/config.json" || true
+    mkfifo -m=0600 "$HOME/.config/imap-backup/config.json"
+    envsubst < "$HOME/Documents/dotfiles/etc/docker/imap-backup/config.template.json" > "$HOME/.config/imap-backup/config.json" &
+    docker compose -f "$HOME/Documents/dotfiles/etc/docker/exchange-backup/docker-compose.yaml" up --force-recreate -V imap-backup
+
+    print-info "==> cleaning up\n"
+    trap - ERR
+    docker-compose down
+    unmount-scoped local "$REMOTE" "$REMOTE_PATH"
+    unmount local "$REMOTE"
+    rm -f "$HOME/.config/davmail/davmail.properties" "$HOME/.config/davmail/davmail.properties" || true
+  )
+}
+
+case $1 in
+  config) config "${@:2}";;
+  mount)
+    MOUNT_DIR=$(get-mount-dir "$2" "$3")
+    print-info "=> mounting vault: $MOUNT_DIR\n"
+    (
+      while ! mountpoint "$MOUNT_DIR" >/dev/null 2>&1; do
+        sleep 1
+      done
+      xdg-open "$MOUNT_DIR";
+    ) &
+    mount "${@:2}"
+    ;;
+  unmount)
+    MOUNT_DIR=$(get-mount-dir "$2" "$3")
+    print-info "=> unmounting vault: $MOUNT_DIR\n"
+    unmount "${@:2}"
+    ;;
+  check) check "${@:2}";;
+  copy) copy "${@:2}";;
+  sync) sync "${@:2}";;
+  show-hidden) show-hidden "${@:2}";;
+  cleanup-hidden) cleanup-hidden "${@:2}";;
+  imap-backup)
+    print-info "=> imap-backup\n"
+    imap-backup "${@:2}"
+    ;;
+  rclone) RCLONE_VERBOSE=0 rclone "$2" "${RCLONE_ARGS[@]}" "${@:3}";;
+  *) print-error "Unknown COMMAND: '$1'\n";;
+esac

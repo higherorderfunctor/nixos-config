@@ -1,0 +1,22 @@
+#!/usr/bin/env bash
+
+install-arkenfox() {
+curl -fLo "$(find ~/snap/firefox/common/.mozilla/firefox/ -name '*\.default')/user.js" \
+  https://github.com/arkenfox/user.js/raw/master/user.js
+}
+
+# nightly for proton drive support until in main
+update-firefox() {
+  print-info "==> arkenfox\n"
+  if [[ -z "$(find ~/snap/firefox/common/.mozilla/firefox/ -path '*\.default/user.js')" ]]; then
+    print-info "===> installing\n"
+    install-arkenfox
+  elif [[ "$(date -r "$(find ~/snap/firefox/common/.mozilla/firefox/ -path '*\.default/user.js')" +%s)" -lt "$(date -d "yesterday" +%s)" ]]; then
+    print-info "===> upgrading\n"
+    install-arkenfox
+  else
+    print-info "\n  up to date\n\n"
+  fi
+}
+
+run-module true x86_64

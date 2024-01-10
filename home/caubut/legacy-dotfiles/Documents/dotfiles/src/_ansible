@@ -1,0 +1,19 @@
+#!/usr/bin/env bash
+
+update-ansible() (
+  if ! command -v ansible &> /dev/null; then
+    print-info "==> installing\n"
+    python3 -m venv "$HOME/.local/share/ansible"
+    # shellcheck source="../../../.local/share/ansible/bin/activate"
+    .  "$HOME/.local/share/ansible/bin/activate"
+    env VIRTUAL_ENV="$HOME/.local/share/ansible" \
+      "$HOME/.local/share/ansible/bin/python3" -m pip install \
+      ansible
+  else
+    env VIRTUAL_ENV="$HOME/.local/share/ansible" \
+      "$HOME/.local/share/ansible/bin/python3" -m pip install \
+      --upgrade ansible
+  fi
+)
+
+run-module true x86_64

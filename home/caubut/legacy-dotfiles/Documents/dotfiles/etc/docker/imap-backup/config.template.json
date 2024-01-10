@@ -1,0 +1,18 @@
+{
+  "version": "2.0",
+  "accounts": [
+    {
+      "username": "$MAIL_USERNAME",
+      "password": "$MAIL_PASSWORD",
+      "local_path": "/var/lib/imap-backup",
+      "server": "davmail",
+      "reset_seen_flags_after_fetch": true,
+      "connection_options": {
+        "port": 993,
+        "ssl": {
+          "verify_mode": 0
+        }
+      }
+    }
+  ]
+}

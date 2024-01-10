@@ -1,0 +1,29 @@
+version: "3.8"
+
+services:
+
+  davmail:
+    build: ../davmail
+    user: "${UID}:${GID}"
+    environment:
+      - JAVA_OPTS=
+        -Xmx512M
+        -Dsun.net.inetaddr.ttl=30
+    volumes:
+      - ${HOME}/.local/share/davmail/davmail.p12:/etc/davmail/davmail.p12:roZ
+      - ${HOME}/.config/davmail/davmail.properties:/etc/davmail.properties:roZ
+    ports:
+      - 993:993
+
+  imap-backup:
+    build: ../imap-backup
+    user: "${UID}:${GID}"
+    volumes:
+      - ${MAIL_SCOPED_DIR:-/tmp/imap-backup/}:/var/lib/imap-backup:Z
+      - ${HOME}/.config/imap-backup/config.json:/.imap-backup/config.json:roZ
+    depends_on:
+      davmail:
+        condition: service_healthy
+
+networks:
+  default:

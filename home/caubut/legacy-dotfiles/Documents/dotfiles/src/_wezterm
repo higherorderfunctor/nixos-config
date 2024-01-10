@@ -1,0 +1,81 @@
+#!/usr/bin/env bash
+
+WEZTERM="/home/caubut/Downloads/wezterm.deb"
+
+install-wezterm() {
+	architecture=""
+	case $(uname -m) in
+	# i386 | i686)  architecture="386" ;;
+	x86_64) architecture="amd64" ;;
+	# arm)          architecture="arm" ;;
+	# armv6l)       architecture="arm-v6" ;;
+	# armv7l)       architecture="arm-v7" ;;
+	# arm64)        architecture="arm64" ;;
+	*)
+		echo "Unable to determine system architecture."
+		exit 1
+		;;
+	esac
+
+	{
+		set -x
+		curl -fLo "$WEZTERM" https://github.com/wez/wezterm/releases/download/20230712-072601-f4abf8fd/wezterm-20230712-072601-f4abf8fd.Ubuntu22.04.deb
+		sudo dpkg -i "$WEZTERM"
+		sudo update-alternatives --config x-terminal-emulator
+		# curl -fLo "$WEZTERM" https://github.com/wez/wezterm/releases/download/20230712-072601-f4abf8fd/WezTerm-20230712-072601-f4abf8fd-Ubuntu20.04.AppImage
+		# chmod u+x "$WEZTERM"
+	}
+	# print-info "===> updating desktop shortcut\n"
+	# {
+	#   set -x
+	#   # mount app image
+	#   rm -f /tmp/fifo || true
+	#   mkfifo /tmp/fifo
+	#   exec 3<> /tmp/fifo
+	#   $WEZTERM --appimage-mount >&3 &
+	#   WEZTERM_MOUNT_PID=$!
+	#   # handle clean up on error
+	#   trap 'kill "$WEZTERM_MOUNT_PID"; exec 3>&-; rm -f /tmp/fifo' ERR
+	#   read -r WEZTERM_MOUNT_DIR <&3
+	#   # update icon
+	#   {
+	#     set +x && print-info "====> updating wezterm.png\n"
+	#   }
+	#   mkdir -p "$HOME/.local/share/icons"
+	#   cp "$WEZTERM_MOUNT_DIR/usr/share/icons/hicolor/128x128/apps/org.wezfurlong.wezterm.png" "$HOME/.local/share/icons/wezterm.png"
+	#   # update desktop shortcut
+	#   {
+	#     set +x && print-info "====> updating wezterm.desktop\n"
+	#   }
+	#   mkdir -p "$HOME/.local/share/applications/"
+	#   sed \
+	#     -e "s@^TryExec=.*@TryExec=$WEZTERM@" \
+	#     -e "s@^Exec=.*@Exec=$WEZTERM start --cwd .@" \
+	#     -e "s@^Icon=.*@Icon=$HOME/.local/share/icons/wezterm.png@" \
+	#     < "$WEZTERM_MOUNT_DIR/wezterm.desktop" \
+	#     > "$HOME/.local/share/applications/wezterm.desktop"
+	#   # clean up
+	#   {
+	#     set +x && print-info "====> cleaning up\n"
+	#   }
+	#   kill "$WEZTERM_MOUNT_PID"
+	#   trap - ERR
+	#   exec 3>&-
+	#   rm /tmp/fifo
+	# }
+}
+
+update-wezterm() {
+	if ! command -v wezterm; then
+		print-info "==> installing\n"
+		install-wezterm
+	fi
+	# if [[ ! -d /tmp/monaspace ]]; then
+	#   cd /tmp
+	#   git clone --depth 1 https://github.com/githubnext/monaspace.git
+	#   cd monaspace
+	#   bash ./util/install_linux.sh
+	# fi
+}
+
+run-module true x86_64

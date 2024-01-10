@@ -1,0 +1,56 @@
+#!/usr/bin/env bash
+
+update-bitwarden() {
+  # install binary
+  if [[ ! -f $HOME/.local/bin/bitwarden ]]; then
+    "==> installing\n"
+    (
+      set -x
+      curl -fLo "$HOME/.local/bin/bitwarden" \
+        --create-dirs \
+        'https://func.bitwarden.com/api/dl/?app=desktop&platform=linux'
+      chmod u+x "$HOME/.local/bin/bitwarden"
+    )
+  # update desktop shortcut
+  elif [[ "$(date -r "$HOME/.local/bin/bitwarden" +%s)" -ge "$(date -r "$HOME/.local/share/applications/bitwarden.desktop" +%s)" ]]; then
+    print-info "===> updating desktop shortcut\n"
+    {
+      set -x
+      # mount app image
+      rm -f /tmp/fifo || true
+      mkfifo /tmp/fifo
+      exec 3<> /tmp/fifo
+      bitwarden --appimage-mount >&3 &
+      BITWARDEN_MOUNT_PID=$!
+      # handle clean up on error
+      trap 'kill "$BITWARDEN_MOUNT_PID"; exec 3>&-; rm -f /tmp/fifo' ERR
+      read -r BITWARDEN_MOUNT_DIR <&3
+      # update icon
+      {
+        set +x && print-info "====> updating bitwarden.png\n"
+      }
+      mkdir -p "$HOME/.local/share/icons"
+      cp "$BITWARDEN_MOUNT_DIR/bitwarden.png" "$HOME/.local/share/icons/"
+      # update desktop shortcut
+      {
+        set +x && print-info "====> updating bitwarden.desktop\n"
+      }
+      mkdir -p "$HOME/.local/share/applications/"
+      sed \
+        -e "s@^Exec=.*@Exec=$HOME/.local/bin/bitwarden --no-sandbox %U@" \
+        -e "s@^Icon=.*@Icon=$HOME/.local/share/icons/bitwarden.png@" \
+        < "$BITWARDEN_MOUNT_DIR/bitwarden.desktop" \
+        > "$HOME/.local/share/applications/bitwarden.desktop"
+      # clean up
+      {
+        set +x && print-info "====> cleaning up\n"
+      }
+      kill "$BITWARDEN_MOUNT_PID"
+      trap - ERR
+      exec 3>&-
+      rm /tmp/fifo
+    }
+  fi
+}
+
+run-module true x86_64

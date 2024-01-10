@@ -1,0 +1,52 @@
+#!/usr/bin/env bash
+
+install-rclone() {
+  architecture=""
+  case $(uname -m) in
+    # i386 | i686)  architecture="386" ;;
+    x86_64)       architecture="amd64" ;;
+    # arm)          architecture="arm" ;;
+    # armv6l)       architecture="arm-v6" ;;
+    # armv7l)       architecture="arm-v7" ;;
+    # arm64)        architecture="arm64" ;;
+    *)            echo "Unable to determine system architecture."; exit 1 ;;
+  esac
+
+  {
+    set -x
+    curl -fLo "$HOME/rclone.zip" \
+      "$(curl -L \
+        -H "Accept: application/vnd.github+json" \
+        -H "X-GitHub-Api-Version: 2022-11-28" \
+        https://api.github.com/repos/rclone/rclone/releases | \
+          jq -r 'first(.[] | select(.draft==false and .prerelease==false) | .assets |= first(map(select(.name | test("linux-'"${architecture}"'.zip$"))))) | .assets[0].browser_download_url')"
+
+    unzip -j "$HOME/rclone.zip" -d "$HOME/rclone"
+
+    mkdir -p "$HOME/.local/bin"
+    mv "$HOME/rclone/rclone" "$HOME/.local/bin"
+
+    mkdir -p "$HOME/.local/man"
+    mv "$HOME/rclone/rclone.1" "$HOME/.local/man"
+
+    rm -r "$HOME/rclone"
+    rm "$HOME/rclone.zip"
+  }
+}
+
+# nightly for proton drive support until in main
+update-rclone() {
+  if ! command -v rclone; then
+    print-info "==> installing\n"
+    install-rclone
+  elif [[ "$(rclone --version | head -n 1)" != "$(curl -L \
+    -H "Accept: application/vnd.github+json" \
+    -H "X-GitHub-Api-Version: 2022-11-28" \
+    https://api.github.com/repos/rclone/rclone/releases | \
+      jq -r 'first(.[] | select(.draft==false and .prerelease==false)) | .name')" ]]; then
+    print-info "==> upgrading\n"
+    install-rclone
+  fi
+}
+
+run-module true x86_64

@@ -1,0 +1,73 @@
+#!/usr/bin/env bash
+
+BRUNO="$HOME/.local/bin/bruno"
+
+install-bruno() {
+	architecture=""
+	case $(uname -m) in
+	# i386 | i686)  architecture="386" ;;
+	x86_64) architecture="amd64" ;;
+	# arm)          architecture="arm" ;;
+	# armv6l)       architecture="arm-v6" ;;
+	# armv7l)       architecture="arm-v7" ;;
+	# arm64)        architecture="arm64" ;;
+	*)
+		echo "Unable to determine system architecture."
+		exit 1
+		;;
+	esac
+
+	{
+		set -x
+		curl -fLo "$BRUNO" https://github.com/usebruno/bruno/releases/download/v1.4.0/bruno_1.4.0_x86_64_linux.AppImage
+		chmod u+x "$BRUNO"
+
+	}
+	print-info "===> updating desktop shortcut\n"
+	{
+		set -x
+		# mount app image
+		rm -f /tmp/fifo || true
+		mkfifo /tmp/fifo
+		exec 3<>/tmp/fifo
+		$BRUNO --appimage-mount >&3 &
+		BRUNO_MOUNT_PID=$!
+		# handle clean up on error
+		trap 'kill "$BRUNO_MOUNT_PID"; exec 3>&-; rm -f /tmp/fifo' ERR
+		read -r BRUNO_MOUNT_DIR <&3
+		# update icon
+		{
+			set +x && print-info "====> updating bruno.png\n"
+		}
+		mkdir -p "$HOME/.local/share/icons"
+		cp "$BRUNO_MOUNT_DIR/usr/share/icons/hicolor/1024x1024/apps/bruno.png" "$HOME/.local/share/icons/bruno.png"
+		# update desktop shortcut
+		{
+			set +x && print-info "====> updating bruno.desktop\n"
+		}
+		mkdir -p "$HOME/.local/share/applications/"
+		sed \
+			-e "s@^TryExec=.*@TryExec=$BRUNO@" \
+			-e "s@^Exec=.*@Exec=$BRUNO %F@" \
+			-e "s@^Icon=.*@Icon=$HOME/.local/share/icons/bruno.png@" \
+			<"$BRUNO_MOUNT_DIR/bruno.desktop" \
+			>"$HOME/.local/share/applications/bruno.desktop"
+		# clean up
+		{
+			set +x && print-info "====> cleaning up\n"
+		}
+		kill "$BRUNO_MOUNT_PID"
+		trap - ERR
+		exec 3>&-
+		rm /tmp/fifo
+	}
+}
+
+update-bruno() {
+	#if ! command -v bruno; then
+	print-info "==> installing\n"
+	install-bruno
+	#fi
+}
+
+run-module true x86_64

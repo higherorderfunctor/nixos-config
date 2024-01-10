@@ -1,0 +1,138 @@
+#!/usr/bin/env bash
+
+set -euETo pipefail
+shopt -s inherit_errexit
+shopt -s expand_aliases
+
+# shellcheck source="_common"
+. "$HOME/Documents/dotfiles/src/_common"
+
+DOTFILES_SECURE=true
+
+POSITIONAL_ARGS=()
+
+while [[ $# -gt 0 ]]; do
+	case $1 in
+	-s | --secure)
+		DOTFILES_SECURE=true
+		shift
+		;;
+	-S | --no-secure)
+		DOTFILES_SECURE=false
+		shift
+		;;
+	--* | -*)
+		echo "Unknown argument: '$1'"
+		exit 1
+		;;
+	*)
+		POSITIONAL_ARGS+=("$1") # save positional arg
+		shift                   # past argument
+		;;
+	esac
+done
+
+export DOTFILES_SECURE
+
+# TODO
+# # define command which will be used when "nvim" is set as a merge tool
+# [mergetool "nvim"]
+#   cmd = nvim -f -c \"Gdiffsplit!\" \"$MERGED\"
+# # set "nvim" as tool for merging
+# [merge]
+#   tool = nvim
+# # automatically launch merge tool without displaying a prompt
+# [mergetool]
+#   prompt = false
+
+declare -a ppas=(
+	ppa:mooltipass/moolticute
+)
+
+declare -a packages=(
+	antiword # for recoll
+	aspell   # for recoll
+	bindfs
+	bugwarrior
+	colorized-logs # for ansi2txt to remove stupid color when deep searching logs
+	fd-find
+	gajim
+	gajim-omemo
+	gawk
+	jq
+	libimage-exiftool-perl # for recoll
+	moolticute
+	poppler-utils # for recoll
+	python3.11-venv
+	recollcmd
+	shellcheck
+	sxiv # image viewer
+	taskwarrior
+	tmux
+	wl-clipboard
+	build-essential
+	libreadline-dev
+	unzip
+	wv # for recoll
+	xclip
+	zsh
+)
+
+sudo apt-get update && sudo apt-get upgrade && sudo snap refresh
+
+ln -snf $(which fdfind) ~/.local/bin/fd
+
+(
+	UBUNTU_CODENAME="$(grep -oE "UBUNTU_CODENAME=\S+" </etc/os-release | cut -d'=' -f2)"
+	for ppa in "${ppas[@]}"; do
+		if ! add-apt-repository -L | grep -qe "${ppa#ppa:}.*$UBUNTU_CODENAME"; then
+			(set -x && sudo add-apt-repository -y "$ppa")
+		fi
+	done
+	for package in "${packages[@]}"; do
+		if ! dpkg-query -W -f='${Status}' "$package" | sed -r "s/.*(installed).*/\1: $package\n/"; then
+			(set -x && sudo apt-get update && sudo apt-get install -y "${packages[@]}")
+			break
+		fi
+	done
+)
+
+PATH=".local/bin:$PATH"
+
+set -x
+
+"$HOME/.fzf/install" --completion --key-bindings --no-update-rc
+
+## gnome-terminal
+
+# install font
+if [ ! -f ~/.local/share/fonts/'DejaVu Sans Mono for Powerline.ttf' ]; then
+	curl -fLo ~/.local/share/fonts/'DejaVu Sans Mono for Powerline.ttf' --create-dirs https://github.com/powerline/fonts/raw/master/DejaVuSansMono/DejaVu%20Sans%20Mono%20for%20Powerline.ttf
+	fc-cache -f -v
+fi
+
+# load config
+dconf load /org/gnome/terminal/ <~/.config/gnome-terminal/gnome-terminal.conf
+
+# save config
+# dconf dump /org/gnome/terminal/ > .config/gnome-terminal/gnome-terminal.conf
+
+# shellcheck source="_zsh"
+. "$HOME/Documents/dotfiles/src/_zsh"
+# shellcheck source="_nvim"
+. "$HOME/Documents/dotfiles/src/_nvim"
+# shellcheck source="_bitwarden_cli"
+. "$HOME/Documents/dotfiles/src/_bitwarden_cli"
+# shellcheck source="_bitwarden"
+. "$HOME/Documents/dotfiles/src/_bitwarden"
+# shellcheck source="_rclone"
+. "$HOME/Documents/dotfiles/src/_rclone"
+# shellcheck source="_firefox"
+. "$HOME/Documents/dotfiles/src/_firefox"
+# shellcheck source="_wezterm"
+. "$HOME/Documents/dotfiles/src/_wezterm"
+# shellcheck source="_bruno"
+. "$HOME/Documents/dotfiles/src/_bruno"
+# # shellcheck source="_keybase"
+# . "$HOME/Documents/dotfiles/src/_keybase"
+# TODO https://github.com/prettier/vim-prettier for bash?

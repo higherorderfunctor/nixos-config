@@ -1,0 +1,55 @@
+#!/usr/bin/env bash
+#
+
+set -euETo pipefail
+shopt -s inherit_errexit
+
+dotfiles() {
+	/usr/bin/git --git-dir="$HOME/.dotfiles/" --work-tree="$HOME" "$@"
+}
+
+# DOTFILES_SECURE=true
+# . "$HOME/Documents/dotfiles/src/_common"
+# . "$HOME/Documents/dotfiles/src/_bruno"
+# exit
+
+dotfiles config --global user.name "Christopher Aubut"
+dotfiles config --local user.email "christopher@aubut.me"
+dotfiles config --local remote.origin.fetch "+refs/heads/*:refs/remotes/origin/*"
+dotfiles config --local status.showUntrackedFiles no
+
+set -x
+
+# pull latest upstream changes to this branch
+dotfiles fetch -j8 origin
+dotfiles merge --ff --no-edit origin/"$(dotfiles rev-parse --abbrev-ref HEAD)"
+
+# reset changes to submodules
+dotfiles submodule foreach --recursive git reset --hard
+dotfiles submodule foreach --recursive git clean -fdx --exclude="bin/fzf"
+dotfiles submodule update --init --recursive
+
+# add new dotfiles
+dotfiles add "$HOME/Documents/dotfiles" -f
+dotfiles add "$HOME/.config/nvim" -f
+
+# commit dotfiles if changed
+dotfiles commit ~/.local/bin/dotfiles-update "$HOME/Documents/dotfiles" -m 'chore(bot): dotfiles-update updated' || true
+
+# determine no pending changes that will be lost
+dotfiles update-index --refresh
+dotfiles diff-index --quiet HEAD -- ||
+	echo "ERROR: commit or revert changes or they will be lost"
+
+# update each submodule to HEAD of default branch
+# shellcheck disable=SC2016
+dotfiles submodule foreach 'git checkout $(git rev-parse --abbrev-ref HEAD); git pull origin $(git rev-parse --abbrev-ref HEAD); git submodule update --recursive'
+
+# commit
+dotfiles commit -am 'chore(bot): submodules updated' || true
+dotfiles push origin "$(dotfiles rev-parse --abbrev-ref HEAD)"
+
+set +x
+
+# shellcheck source="../../Documents/dotfiles/src/_legacy"
+. "$HOME/Documents/dotfiles/src/_legacy"
