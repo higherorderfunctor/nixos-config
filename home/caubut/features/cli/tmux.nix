@@ -57,6 +57,9 @@ in {
         }
         {
           plugin = tmux-which-key;
+          extraConfig = ''
+            set -g @@tmux-which-key-enable-xdg-dirs 1;
+          '';
         }
       ];
     };
