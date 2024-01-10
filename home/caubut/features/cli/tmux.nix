@@ -23,7 +23,7 @@
       rtpFilePath = "plugin.sh.tmux";
     };
 in {
-  xdg.configFile."tmux-plugins/tmux-which-key/config.yaml".text = lib.generators.toYAML {
+  xdg.configFile."tmux-plugins/tmux-which-key/config.yaml".text = lib.generators.toYAML {} {
     command_alias_start_index = 200;
     # rest of config here
   };
