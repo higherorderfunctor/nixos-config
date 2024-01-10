@@ -1,6 +1,5 @@
 {
   config,
-  lib,
   pkgs,
   ...
 }: let
@@ -11,8 +10,8 @@
       version = "2bc2471"; # short commit hash
       src = builtins.fetchTarball {
         url = "https://github.com/higherorderfunctor/tmux-which-key/archive/feat/xdg-dirs.tar.gz";
-        sha256 = lib.fakeSha256;
-        # sha256 = "0dwa22xlaay47iipdrcswh71hl7g1hvsbb3nsfjcdvryq0l5bysy";
+        # sha256 = lib.fakeSha256;
+        sha256 = "1zdk6c8sfdagvvmkyxq5fccjch7v505qpfkpkk7rn9wsjrcpdsrs";
       };
       rtpFilePath = "plugin.sh.tmux";
     };
