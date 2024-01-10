@@ -11,7 +11,7 @@
       src = builtins.fetchTarball {
         url = "https://github.com/alexwforsythe/tmux-which-key/archive/master.tar.gz";
         # sha256 = lib.fakeSha256;
-        sha256 = "1044pbfykcm16m7v3vwc6g1f9r3cxxmlaqch670yw6appbw62nfz";
+        sha256 = "0dwa22xlaay47iipdrcswh71hl7g1hvsbb3nsfjcdvryq0l5bysy";
       };
     };
 in {
