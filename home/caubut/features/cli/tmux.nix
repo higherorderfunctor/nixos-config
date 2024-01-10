@@ -2,7 +2,19 @@
   config,
   pkgs,
   ...
-}: {
+}: let
+  tmux-which-key =
+    pkgs.tmuxPlugins.mkTmuxPlugin
+    {
+      pluginName = "tmux-which-key";
+      version = "33f29e4"; # short commit hash
+      src = builtins.fetchTarball {
+        url = "https://github.com/alexwforsythe/tmux-which-key/archive/master.tar.gz";
+        # sha256 = lib.fakeSha256;
+        sha256 = "1044pbfykcm16m7v3vwc6g1f9r3cxxmlaqch670yw6appbw62nfz";
+      };
+    };
+in {
   programs = {
     # TODO: https://github.com/junegunn/fzf#respecting-gitignore
     # TODO: https://github.com/rothgar/awesome-tmux
@@ -41,6 +53,9 @@
             set -g @catppuccin_status_fill "all"
             set -g @catppuccin_status_connect_separator "no"
           '';
+        }
+        {
+          plugin = tmux-which-key;
         }
       ];
     };
