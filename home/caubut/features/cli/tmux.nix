@@ -1,5 +1,6 @@
 {
   config,
+  lib,
   pkgs,
   ...
 }: let
@@ -7,11 +8,11 @@
     pkgs.tmuxPlugins.mkTmuxPlugin
     {
       pluginName = "tmux-which-key";
-      version = "8cca7d5"; # short commit hash
+      version = "2bc2471"; # short commit hash
       src = builtins.fetchTarball {
         url = "https://github.com/higherorderfunctor/tmux-which-key/archive/feat/xdg-dirs.tar.gz";
-        # sha256 = lib.fakeSha256;
-        sha256 = "0dwa22xlaay47iipdrcswh71hl7g1hvsbb3nsfjcdvryq0l5bysy";
+        sha256 = lib.fakeSha256;
+        # sha256 = "0dwa22xlaay47iipdrcswh71hl7g1hvsbb3nsfjcdvryq0l5bysy";
       };
       rtpFilePath = "plugin.sh.tmux";
     };
