@@ -4,11 +4,14 @@
   ...
 }: {
   programs = {
+    # TODO: https://github.com/junegunn/fzf#respecting-gitignore
+    # TODO: https://github.com/rothgar/awesome-tmux
+    # TODO: https://github.com/sainnhe/tmux-fzf
     tmux = {
       enable = true;
       package = pkgs.tmux;
       escapeTime = 10;
-      historyLimit = 10000;
+      historyLimit = 50000;
       keyMode = "vi";
       mouse = true;
       terminal = "screen-256color";
@@ -41,6 +44,9 @@
         }
       ];
     };
-    fzf.tmux.enableShellIntegration = config.programs.fzf.enable;
+    fzf.tmux = {
+      enableShellIntegration = config.programs.fzf.enable;
+      shellIntegrationOptions = ["-p 80%,60%"];
+    };
   };
 }
