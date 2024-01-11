@@ -8,22 +8,17 @@
     pkgs.tmuxPlugins.mkTmuxPlugin
     {
       pluginName = "tmux-which-key";
-      version = "123"; # short commit hash
-      # src = builtins.fetchTarball {
-      #   url = "https://github.com/higherorderfunctor/tmux-which-key/archive/feat/xdg-dirs.tar.gz";
-      #   # sha256 = lib.fakeSha256;
-      #   sha256 = "1zdk6c8sfdagvvmkyxq5fccjch7v505qpfkpkk7rn9wsjrcpdsrs";
-      # };    version = "unstable-2023-01-06";
+      version = "2024-01-10";
       src = pkgs.fetchFromGitHub {
         owner = "higherorderfunctor";
         repo = "tmux-which-key";
-        rev = "40998ea20cac2802ff5acddb100aeacbd7dfef7b";
+        rev = "61db8ba0a0978b2d7901073099b49da57e9965b7";
         sha256 = "sha256-2lbySzAa/Ux9dbeJKZNOxTO0EKTQt/VZbooyxIxxhEE=";
       };
       rtpFilePath = "plugin.sh.tmux";
     };
 in {
-  xdg.configFile."tmux-plugins/tmux-which-key/config.yaml".text = lib.generators.toYAML {} {
+  xdg.configFile."tmux/plugins/tmux-which-key/config.yaml".text = lib.generators.toYAML {} {
     command_alias_start_index = 200;
     # rest of config here
   };
