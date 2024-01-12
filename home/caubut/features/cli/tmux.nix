@@ -8,7 +8,7 @@
     pkgs.tmuxPlugins.mkTmuxPlugin
     {
       pluginName = "tmux-which-key";
-      version = "2024-01-11";
+      version = "2024-01-11-1";
       src = pkgs.fetchFromGitHub {
         owner = "higherorderfunctor";
         repo = "tmux-which-key";
