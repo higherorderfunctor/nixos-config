@@ -13,7 +13,7 @@
         owner = "higherorderfunctor";
         repo = "tmux-which-key";
         rev = "a6a460e587ef5006e10ac372ad9dbbcd286b11cc";
-        sha256 = "sha256-4O/L7mCCKJSal/R5rtUjXcUXK3HQ25a7pxC1trcE=";
+        sha256 = "sha256-EvBehGaxMHJq68qdhsfEnTeUTR4G29vyIw0YJmqbwrc=";
       };
       rtpFilePath = "plugin.sh.tmux";
     };
