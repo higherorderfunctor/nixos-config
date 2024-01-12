@@ -12,7 +12,7 @@
       src = pkgs.fetchFromGitHub {
         owner = "higherorderfunctor";
         repo = "tmux-which-key";
-        rev = "39411b5215c9ec5107a3d9bafd2a22391fd8a537";
+        rev = "a6a460e587ef5006e10ac372ad9dbbcd286b11cc";
         sha256 = "sha256-4O/L7mCCKJSal/R5rtUjXVGNcUXK3HQ25a7pxC1trcE=";
       };
       rtpFilePath = "plugin.sh.tmux";
