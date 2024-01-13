@@ -69,7 +69,7 @@
   environment.etc = {
     "nixos" = {
       source = builtins.fetchGit {
-        url = "git@github.com:higherorderfunctor/nixos-config.git";
+        url = "github:higherorderfunctor/nixos-config.git";
         inherit (inputs.self.sourceInfo) rev;
       };
     };
