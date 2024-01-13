@@ -69,6 +69,7 @@ in {
       inherit username;
       sessionVariables = {
         NIXOS_HOST = hostname;
+        EDITOR = "nvim";
       };
       homeDirectory = "/home/${username}";
       persistence = {
