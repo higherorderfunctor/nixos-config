@@ -4,7 +4,7 @@
     package = pkgs.neovim-nightly;
   };
   home.file."./.config/nvim/" = {
-    source = ./neovim-config;
+    source = ./nvim-config;
     recursive = true;
   };
 }
