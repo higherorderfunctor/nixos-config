@@ -15,7 +15,7 @@
         repo = "oh-my-posh";
         rev = "refs/tags/v${version}";
         # hash = lib.fakeSha256;
-        hash = "sha256-e3KYqCLbnjDKO4tiL/BssUmxmmsWJFqA1gOvwF9r7jo=";
+        hash = "sha256-2Ju9fKHCvI+fKnqxGVzLPLElNOSg2txBUcuYy9gbXJc=";
       };
       # fix verison hash
       vendorHash = "sha256-//L0tjM+JELglwCOWkifn39G4JuL/YBmJKBF1Uyno3M=";
