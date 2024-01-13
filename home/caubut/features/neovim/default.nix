@@ -24,12 +24,13 @@ in {
       source = ./nvim-config;
       recursive = true;
     };
-    "nvim/lazy-lock.json" = {
-      source = config.lib.file.mkOutOfStoreSymlink "${config.xdg.configHome}/nvim/lazy-lock.json";
-    };
+    # "nvim/lazy-lock.json" = {
+    #   source = config.lib.file.mkOutOfStoreSymlink "${config.xdg.configHome}/nvim/lazy-lock.json";
+    # };
   };
   home.activation = {
     nvim = inputs.home-manager.lib.hm.dag.entryAfter ["installPackages"] ''
+      cp ../${config.xdg.configFile.nvim}/lazy-lock.json ${config.xdg.configHome}/nvim/
       PATH="${config.home.path}/bin:$PATH" $DRY_RUN_CMD nvim --headless "+Lazy! restore" +qa
     '';
   };
