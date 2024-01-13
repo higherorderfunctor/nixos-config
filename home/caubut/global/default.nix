@@ -89,15 +89,15 @@ in {
         ".ssh/id_ed25519".source = config.lib.file.mkOutOfStoreSymlink "/run/secrets/${username}-secret-key";
         ".ssh/id_ed25519.pub".source = ../secrets/id_ed25519.pub;
       };
-      # activation = {
-      #   nixos-config = ''
-      #     if [ ! -d "${config.xdg.userDirs.documents}/projects/nixos-config" ]; then
-      #       mkdir -p "${config.xdg.userDirs.documents}/projects/nixos-config"
-      #       cd "${config.xdg.userDirs.documents}/projects/nixos-config"
-      #       git clone git@github.com:higherorderfunctor/nixos-config.git .
-      #       git checkout ${inputs.self.sourceInfo.rev}
-      #     fi
-      #   '';
-      # };
+      activation = {
+        nixos-config = ''
+          if [ ! -d "${config.xdg.userDirs.documents}/projects/nixos-config" ]; then
+            mkdir -p "${config.xdg.userDirs.documents}/projects/nixos-config"
+            cd "${config.xdg.userDirs.documents}/projects/nixos-config"
+            git clone git@github.com:higherorderfunctor/nixos-config.git .
+            git checkout ${inputs.self.sourceInfo.rev}
+          fi
+        '';
+      };
     };
 }
