@@ -67,8 +67,12 @@
   };
 
   environment.etc = {
-    "nixos".source = inputs.gitignore.lib.gitignoreSource ../../..;
-    "nixos/.git".source = inputs.gitignore.lib.gitignoreSource ../../../.git;
+    "nixos" = {
+      source = builtins.fetchGit {
+        url = "git@github.com:higherorderfunctor/nixos-config.git";
+        inherit (inputs.self.sourceInfo) rev;
+      };
+    };
     "ssh/ssh_host_ed25519_key.pub".source = ../../${config.networking.hostName}/secrets/ssh_host_ed25519_key.pub;
   };
 }
