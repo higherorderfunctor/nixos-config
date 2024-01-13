@@ -1,5 +1,5 @@
 {
-  home-manager,
+  inputs,
   pkgs,
   ...
 }: {
@@ -12,8 +12,8 @@
     recursive = true;
   };
   activation = {
-    lazyVim = home-manager.lib.hm.dag.entryAfter ["writeBoundary"] ''
-      $DRY_RUN_CMD nvim --headless "+Lazy! sync" +qa
+    lazyVim = inputs.home-manager.lib.hm.dag.entryAfter ["writeBoundary"] ''
+      $DRY_RUN_CMD nvim --headless "+Lazy! restore" +qa
     '';
   };
 }
