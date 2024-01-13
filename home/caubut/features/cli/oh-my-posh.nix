@@ -8,7 +8,7 @@
     enableZshIntegration = config.programs.zsh.enable;
     package = let
       # set wanted version
-      version = "19.4.0";
+      version = "19.5.1";
       # override fetch to use wanted version
       src = pkgs.fetchFromGitHub {
         owner = "jandedobbeleer";
