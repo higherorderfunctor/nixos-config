@@ -1,4 +1,5 @@
 {
+  config,
   inputs,
   pkgs,
   ...
@@ -12,8 +13,8 @@
     recursive = true;
   };
   home.activation = {
-    lazyVim = inputs.home-manager.lib.hm.dag.entryAfter ["writeBoundary"] ''
-      $DRY_RUN_CMD nvim --headless "+Lazy! restore" +qa
+    lazyVim = inputs.home-manager.lib.hm.dag.entryAfter ["installPackages"] ''
+      PATH="${config.home.path}/bin:$PATH" $DRY_RUN_CMD nvim --headless "+Lazy! restore" +qa
     '';
   };
 }
