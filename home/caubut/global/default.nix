@@ -98,9 +98,10 @@ in {
           fi
           $DRY_RUN_CMD cd "${config.xdg.userDirs.documents}/projects/nixos-config"
           if [ ! -d .git ]; then
-            PATH="${pkgs.git}/bin:${pkgs.openssh}/bin::$PATH" $DRY_RUN_CMD git clone git@github.com:higherorderfunctor/nixos-config.git .
+            GIT_SSH_COMMAND="ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no" PATH="${pkgs.git}/bin:${pkgs.openssh}/bin::$PATH" $DRY_RUN_CMD git clone git@github.com:higherorderfunctor/nixos-config.git .
+          else
+            GIT_SSH_COMMAND="ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no" PATH="${config.home.path}/bin:$PATH" $DRY_RUN_CMD git pull
           fi
-          PATH="${config.home.path}/bin:$PATH" $DRY_RUN_CMD git pull
           PATH="${config.home.path}/bin:$PATH" $DRY_RUN_CMD git checkout ${inputs.self.sourceInfo.rev}
         '';
       };
