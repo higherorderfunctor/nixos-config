@@ -1,6 +1,7 @@
 {
   config,
   inputs,
+  pkgs,
   specialArgs,
   ...
 }: let
@@ -97,7 +98,7 @@ in {
           fi
           $DRY_RUN_CMD cd "${config.xdg.userDirs.documents}/projects/nixos-config"
           if [ ! -d .git ]; then
-            PATH="${config.home.path}/bin:$PATH" $DRY_RUN_CMD git clone git@github.com:higherorderfunctor/nixos-config.git .
+            PATH="${pkgs.git}/bin:${pkgs.openssh}/bin::$PATH" $DRY_RUN_CMD git clone git@github.com:higherorderfunctor/nixos-config.git .
           fi
           PATH="${config.home.path}/bin:$PATH" $DRY_RUN_CMD git pull
           PATH="${config.home.path}/bin:$PATH" $DRY_RUN_CMD git checkout ${inputs.self.sourceInfo.rev}
