@@ -90,13 +90,16 @@ in {
         ".ssh/id_ed25519.pub".source = ../secrets/id_ed25519.pub;
       };
       activation = {
-        nixos-config = ''
+        nixos-config = inputs.home-manager.lib.hm.dag.entryAfter ["installPackages"] ''
           if [ ! -d "${config.xdg.userDirs.documents}/projects/nixos-config" ]; then
             mkdir -p "${config.xdg.userDirs.documents}/projects/nixos-config"
-            cd "${config.xdg.userDirs.documents}/projects/nixos-config"
-            git clone git@github.com:higherorderfunctor/nixos-config.git .
-            git checkout ${inputs.self.sourceInfo.rev}
           fi
+          cd "${config.xdg.userDirs.documents}/projects/nixos-config"
+          if [ -d .git ]; then
+            git clone git@github.com:higherorderfunctor/nixos-config.git .
+          fi
+          git pull
+          git checkout ${inputs.self.sourceInfo.rev}
         '';
       };
     };
