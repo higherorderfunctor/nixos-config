@@ -67,9 +67,8 @@
   };
 
   environment.etc = {
-    "nixos" = {
-      source = inputs.gitignore.lib.gitignoreSource ../../..;
-    };
+    "nixos".source = inputs.gitignore.lib.gitignoreSource ../../..;
+    "nixos/.git".source = inputs.gitignore.lib.gitignoreSource ../../../.git;
     "ssh/ssh_host_ed25519_key.pub".source = ../../${config.networking.hostName}/secrets/ssh_host_ed25519_key.pub;
   };
 }
