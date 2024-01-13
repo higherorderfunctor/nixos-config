@@ -30,7 +30,7 @@ in {
   };
   home.activation = {
     nvim = inputs.home-manager.lib.hm.dag.entryAfter ["installPackages"] ''
-      cp ../${config.xdg.configFile.nvim}/lazy-lock.json ${config.xdg.configHome}/nvim/
+      cp ../${config.xdg.configFile.nvim.source}/lazy-lock.json ${config.xdg.configHome}/nvim/
       PATH="${config.home.path}/bin:$PATH" $DRY_RUN_CMD nvim --headless "+Lazy! restore" +qa
     '';
   };
