@@ -31,6 +31,7 @@ in {
     home-manager.enable = true;
     oh-my-posh.enable = true;
     # starship.enable = true;
+    ssh.enable = true;
   };
 
   xdg = {
