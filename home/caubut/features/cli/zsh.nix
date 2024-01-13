@@ -17,7 +17,7 @@ in {
       "compinit -d ${dataHome}/.zcompdump"
     ];
     defaultKeymap = "viins";
-    dotDir = ".config/zsh";
+    dotDir = "${config.xdg.configHome}/zsh";
     history = {
       path = "${dataHome}/zsh_history";
     };
