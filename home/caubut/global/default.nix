@@ -92,14 +92,14 @@ in {
       activation = {
         nixos-config = inputs.home-manager.lib.hm.dag.entryAfter ["installPackages"] ''
           if [ ! -d "${config.xdg.userDirs.documents}/projects/nixos-config" ]; then
-            mkdir -p "${config.xdg.userDirs.documents}/projects/nixos-config"
+            $DRY_RUN_CMD mkdir -p "${config.xdg.userDirs.documents}/projects/nixos-config"
           fi
-          cd "${config.xdg.userDirs.documents}/projects/nixos-config"
+          $DRY_RUN_CMD cd "${config.xdg.userDirs.documents}/projects/nixos-config"
           if [ -d .git ]; then
-            git clone git@github.com:higherorderfunctor/nixos-config.git .
+            PATH="${config.home.path}/bin:$PATH" $DRY_RUN_CMD git clone git@github.com:higherorderfunctor/nixos-config.git .
           fi
-          git pull
-          git checkout ${inputs.self.sourceInfo.rev}
+          PATH="${config.home.path}/bin:$PATH" $DRY_RUN_CMD git pull
+          PATH="${config.home.path}/bin:$PATH" $DRY_RUN_CMD git checkout ${inputs.self.sourceInfo.rev}
         '';
       };
     };
