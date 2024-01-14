@@ -96,8 +96,7 @@ in {
         nixos-config = "${config.xdg.userDirs.documents}/projects/nixos-config";
         git-cmd = lib.concatStrings [
           "GIT_SSH_COMMAND=\"${pkgs.openssh}/bin/ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no\""
-          "PATH=\"${pkgs.git}/bin:${pkgs.openssh}/bin:''$PATH\""
-          "''$DRY_RUN_CMD git"
+          "''$DRY_RUN_CMD ${pkgs.git}/bin/git"
         ];
       in {
         nixos-config = inputs.home-manager.lib.hm.dag.entryAfter ["installPackages"] ''
