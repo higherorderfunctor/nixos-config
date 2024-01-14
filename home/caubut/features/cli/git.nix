@@ -31,9 +31,7 @@ in {
     user.email = "christopher.aubut@charter.com";
   };
   systemd.user.tmpfiles.rules = [
+    # TODO: fix permissions on other files
     "d ${config.xdg.userDirs.documents}/work 0700 ${username} ${username} - -"
   ];
 }
-# TODO: checkout modern diff tool
-# [includeIf "gitdir:~/Documents/work/"]
-#  path = ~/Documents/work/.gitconfig
