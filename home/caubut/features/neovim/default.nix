@@ -17,6 +17,7 @@ in {
     defaultEditor = true;
     extraPackages = with pkgs; [
       cargo
+      cmake
       gcc
       luajit
       luajitPackages.luarocks
