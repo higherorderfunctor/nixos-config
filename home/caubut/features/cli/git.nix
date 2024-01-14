@@ -23,7 +23,7 @@ in {
     includes = [
       {
         path = "${config.xdg.configHome}/git/work.inc";
-        condition = "gitdir:${config.xdg.userDirs.documents}/work";
+        condition = "gitdir:${config.xdg.userDirs.documents}/work/";
       }
     ];
   };
@@ -35,3 +35,5 @@ in {
   ];
 }
 # TODO: checkout modern diff tool
+# [includeIf "gitdir:~/Documents/work/"]
+#  path = ~/Documents/work/.gitconfig
