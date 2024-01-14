@@ -18,6 +18,8 @@ in {
     extraPackages = with pkgs; [
       cargo
       gcc
+      luajit
+      luajitPackages.luarocks
       nodejs_21
       unzip
     ];
