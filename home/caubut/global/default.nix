@@ -1,6 +1,7 @@
 {
   config,
   inputs,
+  lib,
   pkgs,
   specialArgs,
   ...
@@ -91,18 +92,25 @@ in {
         ".ssh/id_ed25519".source = config.lib.file.mkOutOfStoreSymlink "/run/secrets/${username}-secret-key";
         ".ssh/id_ed25519.pub".source = ../secrets/id_ed25519.pub;
       };
-      activation = {
+      activation = let
+        nixos-config = "${config.xdg.userDirs.documents}/projects/nixos-config";
+        git-cmd = lib.concatStrings [
+          "GIT_SSH_COMMAND=\"${pkgs.openssh}/bin/ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no"
+          "PATH=\"${pkgs.git}/bin:${pkgs.openssh}/bin:''$PATH\""
+          "''$DRY_RUN_CMD git"
+        ];
+      in {
         nixos-config = inputs.home-manager.lib.hm.dag.entryAfter ["installPackages"] ''
-          if [ ! -d "${config.xdg.userDirs.documents}/projects/nixos-config" ]; then
-            $DRY_RUN_CMD mkdir -p "${config.xdg.userDirs.documents}/projects/nixos-config"
+          if [ ! -d "${nixos-config}" ]; then
+            $DRY_RUN_CMD mkdir -p ${nixos-config}
           fi
           $DRY_RUN_CMD cd "${config.xdg.userDirs.documents}/projects/nixos-config"
           if [ ! -d .git ]; then
-            GIT_SSH_COMMAND="ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no" PATH="${pkgs.git}/bin:${pkgs.openssh}/bin::$PATH" $DRY_RUN_CMD git clone git@github.com:higherorderfunctor/nixos-config.git .
+             ${git-cmd} clone git@github.com:higherorderfunctor/nixos-config.git .
           else
-            GIT_SSH_COMMAND="ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no" PATH="${config.home.path}/bin:$PATH" $DRY_RUN_CMD git pull
+            ${git-cmd} pull
           fi
-          PATH="${config.home.path}/bin:$PATH" $DRY_RUN_CMD git checkout ${inputs.self.sourceInfo.rev}
+          ${git-cmd} checkout ${inputs.self.sourceInfo.rev}
         '';
       };
     };

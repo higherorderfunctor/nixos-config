@@ -24,8 +24,8 @@ in {
     #   source = builtins.filterSource (path: _: baseNameOf path != "lazy-lock.json") ./nvim-config;
     #   recursive = true;
     # };
-    "nvim/lazy-lock.json" = {
-      source = config.lib.file.mkOutOfStoreSymlink "${config.xdg.userDirs.documents}/projects/nixos-config/home/${config.home.username}/nvim/features/neovim/nvim-config/lazy-lock.json";
+    "nvim" = {
+      source = config.lib.file.mkOutOfStoreSymlink "${config.xdg.userDirs.documents}/projects/nixos-config/home/${config.home.username}/features/neovim/nvim-config/lazy-lock.json";
     };
   };
   # home.activation = {
