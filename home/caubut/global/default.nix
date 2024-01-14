@@ -95,7 +95,7 @@ in {
       activation = let
         nixos-config = "${config.xdg.userDirs.documents}/projects/nixos-config";
         git-cmd = lib.concatStrings [
-          "GIT_SSH_COMMAND=\"${pkgs.openssh}/bin/ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no"
+          "GIT_SSH_COMMAND=\"${pkgs.openssh}/bin/ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no\""
           "PATH=\"${pkgs.git}/bin:${pkgs.openssh}/bin:''$PATH\""
           "''$DRY_RUN_CMD git"
         ];
