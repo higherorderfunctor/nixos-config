@@ -65,6 +65,7 @@ in {
     "z /persist/home/${username}/.local/share 0700 ${username} ${username} - -"
   ];
 
+  # TODO: cachix
   home =
     # lock system and home-mnager state versions
     {

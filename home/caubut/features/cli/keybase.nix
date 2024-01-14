@@ -1,0 +1,3 @@
+{
+  programs.keybase.enable = true;
+}

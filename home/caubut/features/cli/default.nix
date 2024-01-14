@@ -4,6 +4,7 @@
     ./bitwarden-cli.nix
     ./fzf.nix
     ./git.nix
+    ./keybase.nix
     ./less.nix
     ./oh-my-posh.nix
     ./rclone.nix
