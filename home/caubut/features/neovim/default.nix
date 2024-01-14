@@ -16,7 +16,10 @@ in {
     package = pkgs.neovim-nightly;
     defaultEditor = true;
     extraPackages = with pkgs; [
+      cargo
       gcc
+      nodejs_21
+      unzip
     ];
   };
   xdg.configFile.nvim.source =
