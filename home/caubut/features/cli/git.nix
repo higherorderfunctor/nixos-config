@@ -28,7 +28,7 @@ in {
     ];
   };
   xdg.configFile."git/work.inc".text = lib.generators.toGitINI {
-    userEmail = "christopher.aubut@charter.com";
+    user.email = "christopher.aubut@charter.com";
   };
   systemd.user.tmpfiles.rules = [
     "d ${config.xdg.userDirs.documents}/work 0700 ${username} ${username} - -"
