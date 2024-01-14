@@ -27,6 +27,18 @@ in {
     # TODO: https://github.com/junegunn/fzf#respecting-gitignore
     # TODO: https://github.com/rothgar/awesome-tmux
     # TODO: https://github.com/sainnhe/tmux-fzf
+    # set-option -g default-terminal "screen-256color"
+    # set -g default-terminal "wezterm"
+    # set -as terminal-features ",gnome*:RGB"
+    # set -ag terminal-overrides ",xterm-256color:RGB"
+    #
+    # bind-key -T copy-mode-vi MouseDragEnd1Pane send-keys -X copy-pipe-and-cancel "xclip -i -f -selection primary | xclip -i -selection clipboard"
+    # bind-key -T copy-mode-vi Enter             send-keys -X copy-pipe-and-cancel "xclip -i -f -selection primary | xclip -i -selection clipboard"
+    # bind-key -T copy-mode-vi 'y'               send-keys -X copy-pipe-and-cancel "xclip -i -f -selection primary | xclip -i -selection clipboard"
+    # bind-key -T copy-mode-vi 'v' send -X       begin-selection
+    #
+    # bind-key ! break-pane -d -n _hidden_pane
+    # bind-key @ join-pane -s $.0
     tmux = {
       enable = true;
       package = pkgs.tmux;

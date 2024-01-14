@@ -6,9 +6,10 @@
     ./git.nix
     ./less.nix
     ./oh-my-posh.nix
+    ./rclone.nix
     ./starship.nix
     ./tmux.nix
-    ./zsh.nix
     ./zsh-fast-syntax-highlighting.nix
+    ./zsh.nix
   ];
 }
