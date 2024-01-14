@@ -1,6 +1,7 @@
 {
   imports = [
     ./bash.nix
+    ./bitwarden-cli.nix
     ./fzf.nix
     ./git.nix
     ./less.nix
