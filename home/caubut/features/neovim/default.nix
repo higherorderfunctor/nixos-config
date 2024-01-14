@@ -21,6 +21,7 @@ in {
       cmake
       luajit
       luajitPackages.luarocks
+      make
       nodejs_21
       sqlite
       unzip
