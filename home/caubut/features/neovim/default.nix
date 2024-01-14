@@ -18,8 +18,12 @@ in {
     extraPackages = with pkgs; [
       cargo
       clang
+      alejandra
+      beautysh
       cmake
       fd
+      deadnix
+      fish
       gnumake
       lazygit
       luajit
@@ -28,6 +32,7 @@ in {
       ripgrep
       sqlite
       unzip
+      tree-sitter
       wget
     ];
   };
