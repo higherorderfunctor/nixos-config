@@ -19,9 +19,9 @@ in {
       cargo
       clang
       cmake
+      gnumake
       luajit
       luajitPackages.luarocks
-      make
       nodejs_21
       sqlite
       unzip
