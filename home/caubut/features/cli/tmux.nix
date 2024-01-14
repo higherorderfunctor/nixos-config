@@ -17,6 +17,7 @@
       };
       rtpFilePath = "plugin.sh.tmux";
     };
+  # TODO: python build step
 in {
   xdg.configFile."tmux/plugins/tmux-which-key/config.yaml".text = lib.generators.toYAML {} {
     command_alias_start_index = 200;

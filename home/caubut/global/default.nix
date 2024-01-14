@@ -7,7 +7,7 @@
   ...
 }: let
   inherit (specialArgs) hostname;
-  username = "caubut";
+  username = "caubut"; # TODO: get from system
 in {
   imports = [
     inputs.impermanence.nixosModules.home-manager.impermanence
@@ -73,7 +73,7 @@ in {
       sessionVariables = {
         NIXOS_HOST = hostname;
       };
-      homeDirectory = "/home/${username}";
+      homeDirectory = "/home/${username}"; # TODO: get from system
       persistence = {
         "/persist/home/${username}" = {
           directories = [
