@@ -27,11 +27,11 @@ in {
       }
     ];
   };
+  xdg.configFile."git/work.inc".text = lib.generators.toGitINI {
+    userEmail = "christopher.aubut@charter.com";
+  };
   systemd.user.tmpfiles.rules = [
     "d ${config.xdg.userDirs.documents}/work 0700 ${username} ${username} - -"
   ];
-  xdg.configFile."git/work.inc".source = lib.generators.toGitINI {
-    userEmail = "christopher.aubut@charter.com";
-  };
 }
 # TODO: checkout modern diff tool

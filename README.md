@@ -213,6 +213,11 @@ nix flake check --refresh "github:higherorderfunctor/nixos-config?ref=$BRANCH"
 # rebuild nixos
 sudo nixos-rebuild --refresh --flake \
   "github:higherorderfunctor/nixos-config?ref=$BRANCH#$NIXOS_HOST" switch
+
+# rebuild nixos with full stack trace
+sudo nixos-rebuild --refresh --flake \
+  "github:higherorderfunctor/nixos-config?ref=$BRANCH#$NIXOS_HOST" switch \
+  --show-trace --option eval-cache false
 ```
 
 ### Updating from a Live CD
