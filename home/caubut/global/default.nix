@@ -107,7 +107,7 @@ in {
           if [ ! -d .git ]; then
              ${git-cmd} clone git@github.com:higherorderfunctor/nixos-config.git .
           else
-            ${git-cmd} pull
+            ${git-cmd} fetch
           fi
           ${git-cmd} checkout ${inputs.self.sourceInfo.rev}
         '';
