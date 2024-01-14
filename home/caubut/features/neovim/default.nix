@@ -18,7 +18,7 @@ in {
     extraPackages = with pkgs; [
       cargo
       clang
-      gcc
+      cmake
       luajit
       luajitPackages.luarocks
       nodejs_21
