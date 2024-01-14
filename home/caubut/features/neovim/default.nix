@@ -23,7 +23,13 @@ in {
       luajit
       luajitPackages.luarocks
       nodejs_21
+      ripgrep
+      fd
+      lazygit
       sqlite
+      go
+      python3
+      wget
       unzip
     ];
   };
