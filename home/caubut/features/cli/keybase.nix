@@ -1,3 +1,3 @@
 {
-  programs.keybase.enable = true;
+  services.keybase.enable = true;
 }
