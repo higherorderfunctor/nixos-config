@@ -19,15 +19,9 @@ in {
       gcc
     ];
   };
-  xdg.configFile = {
-    # nvim = {
-    #   source = builtins.filterSource (path: _: baseNameOf path != "lazy-lock.json") ./nvim-config;
-    #   recursive = true;
-    # };
-    "nvim" = {
-      source = config.lib.file.mkOutOfStoreSymlink "${config.xdg.userDirs.documents}/projects/nixos-config/home/${config.home.username}/features/neovim/nvim-config/lazy-lock.json";
-    };
-  };
+  xdg.configFile.nvim.source =
+    config.lib.file.mkOutOfStoreSymlink
+    "${config.xdg.userDirs.documents}/projects/nixos-config/home/${config.home.username}/features/neovim/nvim-config/lazy-lock.json";
   # home.activation = {
   #   nvim = inputs.home-manager.lib.hm.dag.entryAfter ["installPackages"] ''
   #     ### cp ${config.xdg.configFile.nvim.source}/../lazy-lock.json ${config.xdg.configHome}/nvim/
