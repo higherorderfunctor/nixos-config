@@ -17,11 +17,12 @@ in {
     defaultEditor = true;
     extraPackages = with pkgs; [
       cargo
-      cmake
+      clang
       gcc
       luajit
       luajitPackages.luarocks
       nodejs_21
+      sqlite
       unzip
     ];
   };
