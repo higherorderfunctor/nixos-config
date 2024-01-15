@@ -331,3 +331,16 @@ nvim: `neovim/nvim-lspconfig`
 ```sh
 nix profile install github:nix-community/nixd#
 ```
+
+## Other
+
+```sh
+journalctl --user -b -x
+journalctl --user -b -x -p3
+journalctl -b -x -p3
+fwupdmgr refresh
+fwupdmgr get-devices
+fwupdmgr get-updates
+modinfo iwlwifi
+sudo lspci -v | less
+````
