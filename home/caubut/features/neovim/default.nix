@@ -11,6 +11,8 @@
     postBuild = "wrapProgram $out/bin/nvim --prefix PATH : $out/bin";
   };
 in {
+  # TODO tree sitter just needs gcc, remove extra package
+  # TODO: tree sitter no vector
   programs.neovim = {
     enable = true;
     package = pkgs.neovim-nightly;
@@ -18,6 +20,7 @@ in {
     extraPackages = with pkgs; [
       cargo
       clang
+      clangStdenv
       alejandra
       beautysh
       cmake
@@ -32,7 +35,7 @@ in {
       ripgrep
       sqlite
       unzip
-      tree-sitter
+      # tree-sitter
       wget
     ];
   };
