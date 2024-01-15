@@ -56,7 +56,7 @@ in {
   # };
 
   # permission fixes
-  systemd.user.tmpfiles.rules = [
+  systemd.user={tmpfiles.rules = [
     "z /home/${username}/.ssh 0700 ${username} ${username} - -"
     "z /persist/home/${username}/.ssh 0700 ${username} ${username} - -"
     "z /home/${username}/.local 0700 ${username} ${username} - -"
@@ -64,6 +64,11 @@ in {
     "z /home/${username}/.local/share 0700 ${username} ${username} - -"
     "z /persist/home/${username}/.local/share 0700 ${username} ${username} - -"
   ];
+services = {  nixos-config = {
+  Unit = {      Description = "Example description";      Documentation = [ "man:example(1)" "man:example(5)" ];    };    Service = {      …    };
+};};
+
+
 
   # TODO: cachix
   home =
@@ -113,5 +118,4 @@ in {
           ${git-cmd} checkout ${inputs.self.sourceInfo.rev}
         '';
       };
-    };
 }
