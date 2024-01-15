@@ -27,8 +27,6 @@ in {
   #   };
   # };
 
-  systemd.user.startServices = "sd-switch";
-
   programs = {
     home-manager.enable = true;
     oh-my-posh.enable = true;
@@ -55,67 +53,116 @@ in {
   #   };
   # };
 
-  # permission fixes
-  systemd.user={tmpfiles.rules = [
-    "z /home/${username}/.ssh 0700 ${username} ${username} - -"
-    "z /persist/home/${username}/.ssh 0700 ${username} ${username} - -"
-    "z /home/${username}/.local 0700 ${username} ${username} - -"
-    "z /persist/home/${username}/.local 0700 ${username} ${username} - -"
-    "z /home/${username}/.local/share 0700 ${username} ${username} - -"
-    "z /persist/home/${username}/.local/share 0700 ${username} ${username} - -"
-  ];
-services = {  nixos-config = {
-  Unit = {      Description = "Example description";      Documentation = [ "man:example(1)" "man:example(5)" ];    };    Service = {      …    };
-};};
-
-
-
-  # TODO: cachix
-  home =
-    # lock system and home-mnager state versions
-    {
-      inherit (import ../../../hosts/common/global/state-version.nix) stateVersion;
-      inherit username;
-      sessionVariables = {
-        NIXOS_HOST = hostname;
-      };
-      homeDirectory = "/home/${username}"; # TODO: get from system
-      persistence = {
-        "/persist/home/${username}" = {
-          directories = [
-            "Documents"
-            "Downloads"
-            "Pictures"
-            "Videos"
-          ];
-          files = [
-            ".ssh/known_hosts"
-          ];
-          allowOther = true;
+  systemd.user = {
+    # switches services on rebuilds
+    startServices = "sd-switch";
+    # permission fixes
+    tmpfiles.rules = [
+      "z /home/${username}/.ssh 0700 ${username} ${username} - -"
+      "z /persist/home/${username}/.ssh 0700 ${username} ${username} - -"
+      "z /home/${username}/.local 0700 ${username} ${username} - -"
+      "z /persist/home/${username}/.local 0700 ${username} ${username} - -"
+      "z /home/${username}/.local/share 0700 ${username} ${username} - -"
+      "z /persist/home/${username}/.local/share 0700 ${username} ${username} - -"
+    ];
+    services = {
+      nixos-config = {
+        Unit = {
+          Description = "Clones nixos-config";
+          After = ["network.target" "paths.target"];
+        };
+        Install = {
+          WantedBy = ["default.target"];
+        };
+        Service = {
+          Type = "oneshot";
+          ExecStart = let
+            nixos-config-dir = "${config.xdg.userDirs.documents}/projects/nixos-config";
+            nixos-config-repo = "git@github.com:higherorderfunctor/nixos-config.git";
+            git-cmd = lib.concatMapStrings (s: s + " ") [
+              "GIT_SSH_COMMAND=\"${pkgs.openssh}/bin/ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no\""
+              "''${pkgs.git}/bin/git"
+            ];
+          in "${pkgs.writeShellScriptBin "nixos-config" ''
+            # check if directory exists
+            if [ ! -d "${nixos-config-dir}" ]; then
+              # create directory if no
+              mkdir -p "${nixos-config-dir}"
+            fi
+            # enter directory
+            cd "${nixos-config-dir}"
+            # check if git repo
+            if [ ! -d .git ]; then
+              # clone repo if no
+              ${git-cmd} clone "${nixos-config-repo}" .
+            else
+              # fetch if yes
+              ${git-cmd} fetch
+            fi
+            # reset frequently updated lock file
+            git checkout HEAD -- home/caubut/features/neovim/nvim-config/lazy-lock.json
+            # check if dirty
+            if ${git-cmd} diff-index --quiet HEAD --; then
+              # update to this build if no
+              ${git-cmd} checkout "${inputs.self.sourceInfo.rev}"
+            else
+              # fail if yet
+              echo "Failed to setup nixos-config" >&2
+              logger -p user.err "Failed to setup nixos-config"
+              exit 1
+            fi
+          ''}/bin/nixos-config";
         };
       };
-      file = {
-        ".ssh/id_ed25519".source = config.lib.file.mkOutOfStoreSymlink "/run/secrets/${username}-secret-key";
-        ".ssh/id_ed25519.pub".source = ../secrets/id_ed25519.pub;
-      };
-      activation = let
-        nixos-config = "${config.xdg.userDirs.documents}/projects/nixos-config";
-        git-cmd = lib.concatStrings [
-          "GIT_SSH_COMMAND=\"${pkgs.openssh}/bin/ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no\""
-          "''$DRY_RUN_CMD ${pkgs.git}/bin/git"
+    };
+  };
+
+  home = {
+    # pin system and home-manager state versions
+    inherit (import ../../../hosts/common/global/state-version.nix) stateVersion;
+    inherit username;
+    sessionVariables = {
+      NIXOS_HOST = hostname;
+    };
+    homeDirectory = "/home/${username}"; # TODO: get from system
+    persistence = {
+      "/persist/home/${username}" = {
+        directories = [
+          "Documents"
+          "Downloads"
+          "Pictures"
+          "Videos"
         ];
-      in {
-        nixos-config = inputs.home-manager.lib.hm.dag.entryAfter ["installPackages"] ''
-          if [ ! -d "${nixos-config}" ]; then
-            $DRY_RUN_CMD mkdir -p ${nixos-config}
-          fi
-          $DRY_RUN_CMD cd "${config.xdg.userDirs.documents}/projects/nixos-config"
-          if [ ! -d .git ]; then
-             ${git-cmd} clone git@github.com:higherorderfunctor/nixos-config.git .
-          else
-            ${git-cmd} fetch
-          fi
-          ${git-cmd} checkout ${inputs.self.sourceInfo.rev}
-        '';
+        files = [
+          ".ssh/known_hosts"
+        ];
+        allowOther = true;
       };
+    };
+    file = {
+      ".ssh/id_ed25519".source = config.lib.file.mkOutOfStoreSymlink "/run/secrets/${username}-secret-key";
+      ".ssh/id_ed25519.pub".source = ../secrets/id_ed25519.pub;
+    };
+    # TODO:
+    # activation = let
+    #   nixos-config = "${config.xdg.userDirs.documents}/projects/nixos-config";
+    #   git-cmd = lib.concatStrings [
+    #     "GIT_SSH_COMMAND=\"${pkgs.openssh}/bin/ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no\""
+    #     "''$DRY_RUN_CMD ${pkgs.git}/bin/git"
+    #   ];
+    # in {
+    #   nixos-config = inputs.home-manager.lib.hm.dag.entryAfter ["installPackages"] ''
+    #     if [ ! -d "${nixos-config}" ]; then
+    #       $DRY_RUN_CMD mkdir -p ${nixos-config}
+    #     fi
+    #     $DRY_RUN_CMD cd "${config.xdg.userDirs.documents}/projects/nixos-config"
+    #     if [ ! -d .git ]; then
+    #        ${git-cmd} clone git@github.com:higherorderfunctor/nixos-config.git .
+    #     else
+    #       ${git-cmd} fetch
+    #     fi
+    #     ${git-cmd} checkout ${inputs.self.sourceInfo.rev}
+    #   '';
+    # };
+  };
 }
