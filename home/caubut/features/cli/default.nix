@@ -8,6 +8,7 @@
     ./less.nix
     ./nix-index.nix
     ./oh-my-posh.nix
+    ./pciutils.nix
     ./rclone.nix
     ./starship.nix
     ./tmux.nix
