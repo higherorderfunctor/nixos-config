@@ -69,6 +69,7 @@ in {
       nixos-config = {
         Unit = {
           Description = "Clones nixos-config";
+          # need networking and bind mounts to be ready
           After = ["network.target" "paths.target"];
         };
         Install = {

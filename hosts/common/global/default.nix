@@ -66,6 +66,9 @@
     useDHCP = true;
   };
 
+  # TODO:
+  services.fwupd.enable = true;
+
   environment.etc = {
     # "nixos" = {
     #   source = builtins.fetchGit {
