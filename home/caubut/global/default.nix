@@ -101,7 +101,7 @@ in {
               ${git-cmd} fetch
             fi
             # reset frequently updated lock file
-            git checkout HEAD -- home/caubut/features/neovim/nvim-config/lazy-lock.json
+            ${git-cmd} checkout HEAD -- home/caubut/features/neovim/nvim-config/lazy-lock.json
             # check if dirty
             if ${git-cmd} diff-index --quiet HEAD --; then
               # update to this build if no
@@ -109,7 +109,7 @@ in {
             else
               # fail if yet
               echo "Failed to setup nixos-config" >&2
-              logger -p user.err "Failed to setup nixos-config"
+              >&2 echo "Failed to setup nixos-config"
               exit 1
             fi
           ''}/bin/nixos-config";
