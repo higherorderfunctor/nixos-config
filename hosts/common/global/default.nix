@@ -68,6 +68,8 @@
 
   # TODO:
   services.fwupd.enable = true;
+  # https://nixos.wiki/wiki/Fwupd
+  hardware.enableAllFirmware = lib.mkDefault true;
 
   environment.etc = {
     # "nixos" = {
