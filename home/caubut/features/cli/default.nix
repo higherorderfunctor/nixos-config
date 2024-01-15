@@ -6,6 +6,7 @@
     ./git.nix
     ./keybase.nix
     ./less.nix
+    ./nix-index.nix
     ./oh-my-posh.nix
     ./rclone.nix
     ./starship.nix
