@@ -1,3 +1,3 @@
 {pkgs, ...}: {
-  home.packages = [pkgs.pciutils];
+  home.packages = [pkgs.pciutils pkgs.usbutils]; # TODO
 }
