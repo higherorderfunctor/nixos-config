@@ -13,6 +13,8 @@
     ../common/optional/wireless.nix
   ];
 
+  hardware.opengl.enable = true;
+
   boot = {
     initrd = {
       availableKernelModules = [
