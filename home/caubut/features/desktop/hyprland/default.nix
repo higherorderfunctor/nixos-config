@@ -12,6 +12,10 @@
     extraPortals = [inputs.hyprland.packages.${pkgs.system}.xdg-desktop-portal-hyprland];
     configPackages = [inputs.hyprland.packages.${pkgs.system}.hyprland];
   };
+  programs = {
+    eww.enable = true;
+    packge = inputs.eww.packages.${pkgs.system}.eww;
+  };
   wayland.windowManager.hyprland = {
     enable = true;
     package = inputs.hyprland.packages.${pkgs.system}.hyprland;

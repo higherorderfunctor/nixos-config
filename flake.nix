@@ -24,6 +24,16 @@
     };
     nix-index-database.url = "github:Mic92/nix-index-database";
     hyprland.url = "github:hyprwm/Hyprland";
+    rust-overlay.url = "github:oxalica/rust-overlay";
+    hyprland-eww.url = "github:elkowar/eww";
+    eww = {
+      url = "github:elkowar/eww";
+      # tmp fix https://github.com/elkowar/eww/issues/817
+      inputs = {
+        nixpkgs.follows = "nixpkgs";
+        rust-overlay.follows = "rust-overlay";
+      };
+    };
   };
 
   outputs = {
