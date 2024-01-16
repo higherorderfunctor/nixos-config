@@ -110,6 +110,7 @@ in {
               # fail if yet
               echo "Failed to setup nixos-config" >&2
               >&2 echo "Failed to setup nixos-config"
+              # TODO: Logger
               exit 1
             fi
           ''}/bin/nixos-config";
