@@ -17,6 +17,7 @@
     package = inputs.hyprland.packages.${pkgs.system}.hyprland;
     settings = {
       "$mod" = "SUPER";
+      exec-once = "eww daemon";
     };
     systemd = {
       enable = true;
