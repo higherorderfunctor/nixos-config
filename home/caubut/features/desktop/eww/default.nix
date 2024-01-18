@@ -8,7 +8,7 @@
   programs = {
     eww = {
       enable = true;
-      package = inputs.eww.packages.${pkgs.system}.eww;
+      package = inputs.eww.packages.${pkgs.system}.eww-wayland;
       # Required to be set to something symlinked to .config/eww by the eww module.
       # Not needed as .config/eww will be populated through xdg to load the files.
       configDir =
