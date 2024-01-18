@@ -1,5 +1,7 @@
 {
+  config,
   inputs,
+  lib,
   pkgs,
   ...
 }: {
@@ -7,11 +9,10 @@
     eww = {
       enable = true;
       package = inputs.eww.packages.${pkgs.system}.eww;
-      configDir = ./.config/eww; # TODO:
+      configDir = {
+        source = ./eww-config;
+        recursive = true;
+      }; # TODO:
     };
-  };
-  xdg.configFile.eww = {
-    source = ./eww-config;
-    recursive = true;
   };
 }
