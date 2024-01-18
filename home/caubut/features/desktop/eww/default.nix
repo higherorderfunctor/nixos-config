@@ -16,7 +16,7 @@
           "${config.xdg.configHome}/eww");
     };
   };
-  xdg.configFile.eww = lib.mForce {
+  xdg.configFile.eww = lib.mkForce {
     source = ./eww-config;
     recursive = true;
   };
