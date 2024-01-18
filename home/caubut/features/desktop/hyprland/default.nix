@@ -220,6 +220,7 @@
     systemd = {
       enable = true;
       # Same as default, but stop graphical-session too
+      # TODO:need this?
       extraCommands = lib.mkBefore [
         "systemctl --user stop graphical-session.target"
         "systemctl --user start hyprland-session.target"
