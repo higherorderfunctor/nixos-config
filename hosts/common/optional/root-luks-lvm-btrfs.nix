@@ -1,5 +1,6 @@
 # {disk ? "/dev/nvme0n1", ...}: {
 {
+  inputs,
   lib,
   config,
   ...
@@ -50,6 +51,9 @@ with lib; let
     rmdir /btrfs
   '';
 in {
+  imports = [
+    inputs.disko.nixosModules.disko
+  ];
   options.root-luks-lvm-btrfs = {
     device = mkOption {
       type = types.str;

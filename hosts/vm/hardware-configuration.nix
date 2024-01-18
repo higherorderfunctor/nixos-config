@@ -1,20 +1,27 @@
-{inputs, ...}: {
+{
+  inputs,
+  lib,
+  ...
+}: {
   imports = [
-    ../common/optional/minimal-x86_64-linux-hardware-configuration.nix
     inputs.hardware.nixosModules.common-pc-ssd
     ./disk-config.nix
   ];
+
+  nixpkgs.hostPlatform = lib.mkDefault "x86_64-linux";
 
   boot = {
     initrd = {
       availableKernelModules = [
         "ata_piix"
-        "mptspi"
-        "uhci_hcd"
+        "ohci_pci"
+        "ehci_pci"
         "nvme"
         "sr_mod"
       ];
       kernelModules = ["dm-snapshot"];
     };
   };
+
+  virtualisation.virtualbox.guest.enable = true;
 }

@@ -134,7 +134,7 @@ nix run nixpkgs#nvme-cli -- id-ns /dev/nvme0n1 -H | grep "^LBA Format"
 nix run nixpkgs#nvme-cli -- format /dev/nvme0n1 --force --lbaf <BEST>
 
 BRANCH=fix/user-permissions
-NIXOS_HOST=beelink-ser7
+NIXOS_HOST=vm
 
 # partition disk(s)
 nix run github:nix-community/disko -- --mode disko --flake  \

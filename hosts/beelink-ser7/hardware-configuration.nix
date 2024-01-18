@@ -1,10 +1,10 @@
 {
   inputs,
+  lib,
   modulesPath,
   ...
 }: {
   imports = [
-    ../common/optional/minimal-x86_64-linux-hardware-configuration.nix
     (modulesPath + "/installer/scan/not-detected.nix")
     inputs.hardware.nixosModules.common-pc-ssd
     inputs.hardware.nixosModules.common-cpu-amd
@@ -12,6 +12,8 @@
     ./disk-config.nix
     ../common/optional/wireless.nix
   ];
+
+  nixpkgs.hostPlatform = lib.mkDefault "x86_64-linux";
 
   hardware.opengl.enable = true;
 
