@@ -17,7 +17,7 @@
     extraPackages = [pkgs.libsoup_3];
   };
 
-  xdg.configFile.aws = lib.mkForce {
+  xdg.configFile.ags = lib.mkForce {
     source = ./ags-config;
     recursive = true;
   };
