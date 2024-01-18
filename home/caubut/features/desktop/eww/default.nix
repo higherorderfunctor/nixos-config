@@ -11,7 +11,7 @@
     };
   };
   xdg.configFile.eww.source = {
-    path = ./eww;
+    path = ./eww-config;
     recursive = true;
   };
 }
