@@ -10,8 +10,8 @@
       configDir = ./.config/eww; # TODO:
     };
   };
-  xdg.configFile.eww.source = {
-    path = ./eww-config;
+  xdg.configFile.eww = {
+    source = ./eww-config;
     recursive = true;
   };
 }
