@@ -18,7 +18,7 @@
   };
 
   xdg.configFile.aws = lib.mkForce {
-    source = ./aws-config;
+    source = ./ags-config;
     recursive = true;
   };
 }
