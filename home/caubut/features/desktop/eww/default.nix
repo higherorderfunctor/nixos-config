@@ -9,10 +9,14 @@
     eww = {
       enable = true;
       package = inputs.eww.packages.${pkgs.system}.eww;
-      configDir = {
-        source = ./eww-config;
-        recursive = true;
-      }; # TODO:
+      configDir =
+        lib.strings.removePrefix
+        "${config.home.homeDirectory}"
+        "${config.xdg.configHome}/eww";
     };
+  };
+  xdg.configFile.eww = {
+    source = ./eww-config;
+    recursive = true;
   };
 }
