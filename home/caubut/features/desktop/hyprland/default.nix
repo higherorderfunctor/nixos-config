@@ -3,7 +3,13 @@
   lib,
   pkgs,
   ...
-}: {
+}: let
+  nerdfonts = pkgs.nerdfonts.override {
+    fonts = [
+      "Monaspice"
+    ];
+  };
+in {
   imports = [
     inputs.hyprland.homeManagerModules.default
   ];
@@ -12,6 +18,10 @@
     extraPortals = [inputs.hyprland.packages.${pkgs.system}.xdg-desktop-portal-hyprland];
     configPackages = [inputs.hyprland.packages.${pkgs.system}.hyprland];
   };
+  fonts.fontconfig.enable = true; # TODO
+  packages = with pkgs; [
+    nerdfonts
+  ];
   wayland.windowManager.hyprland = {
     enable = true;
     package = inputs.hyprland.packages.${pkgs.system}.hyprland;
