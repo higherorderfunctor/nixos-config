@@ -10,7 +10,12 @@
 
   nixpkgs.hostPlatform = lib.mkDefault "x86_64-linux";
 
-  hardware.opengl.enable = true;
+  hardware.opengl = {
+    enable = true;
+    driSupport = true;
+    driSupport32Bit = true;
+    # TODO all
+  };
 
   boot = {
     initrd = {
