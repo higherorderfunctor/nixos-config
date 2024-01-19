@@ -343,4 +343,5 @@ fwupdmgr get-devices
 fwupdmgr get-updates
 modinfo iwlwifi
 sudo lspci -v | less
+journalctl -x --user -u nixos-config
 ````

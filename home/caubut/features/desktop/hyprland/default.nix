@@ -19,7 +19,6 @@
       exec-once = [
         "ags -b hypr"
         # "hyprctl setcursor Qogir 24"
-        # "transmission-gtk"
       ];
 
       monitor = [
@@ -34,9 +33,9 @@
       };
 
       misc = {
-        layers_hog_keyboard_focus = false;
-        disable_splash_rendering = true;
-        force_default_wallpaper = 0;
+        layers_hog_keyboard_focus = false; # TODO:
+        disable_splash_rendering = true; # disable startup splash screen
+        force_default_wallpaper = 0; # use the default non-anime wallpaper
       };
 
       input = {
