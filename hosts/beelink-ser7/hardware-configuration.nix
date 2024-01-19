@@ -1,6 +1,5 @@
 {
   inputs,
-  lib,
   modulesPath,
   ...
 }: {
@@ -13,7 +12,7 @@
     ../common/optional/wireless.nix
   ];
 
-  nixpkgs.hostPlatform = lib.mkDefault "x86_64-linux";
+  nixpkgs.hostPlatform = "x86_64-linux";
 
   hardware.opengl.enable = true;
 

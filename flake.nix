@@ -43,32 +43,31 @@
         inherit system;
         config.allowUnfree = true;
       });
-    pkgs = import nixpkgs {
-      config.allowUnfree = true;
-    };
   in {
-    nixpkgs.config.allowUnfree = true;
     # set formmatter for this flake
     formatter = forAllSystems (pkgs: pkgs.alejandra);
 
     # system configurations
     nixosConfigurations = {
-      live-cd-minimal = lib.nixosSystem {
+      live-cd-minimal-x86_64-linux = lib.nixosSystem {
         modules = [./hosts/live-cd-minimal];
         specialArgs = {inherit inputs outputs;};
+        pkgs = pkgsFor.x86_64-linux;
       };
-      live-cd-graphical = lib.nixosSystem {
+      live-cd-graphical-x86_64-linux = lib.nixosSystem {
         modules = [./hosts/live-cd-graphical];
         specialArgs = {inherit inputs outputs;};
-      };
-      vm = lib.nixosSystem {
-        inherit pkgs;
-        modules = [./hosts/vm];
-        specialArgs = {inherit inputs outputs;};
+        pkgs = pkgsFor.x86_64-linux;
       };
       beelink-ser7 = lib.nixosSystem {
         modules = [./hosts/beelink-ser7];
         specialArgs = {inherit inputs outputs;};
+        pkgs = pkgsFor.x86_64-linux;
+      };
+      vm = lib.nixosSystem {
+        modules = [./hosts/vm];
+        specialArgs = {inherit inputs outputs;};
+        pkgs = pkgsFor.x86_64-linux;
       };
     };
   };
