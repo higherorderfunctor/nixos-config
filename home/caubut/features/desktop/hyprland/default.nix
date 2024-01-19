@@ -123,7 +123,7 @@ in {
           "SHIFT,Print,    ${e} -r 'recorder.screenshot(true)'"
           "SUPER, Return, exec, xterm" # xterm is a symlink, not actually xterm
           "SUPER, W, exec, firefox"
-          "SUPER, E, exec, wezterm -e lf"
+          "SUPER, E, exec, wezterm"
 
           # youtube
           ", XF86Launch1,  exec, ${yt}/bin/yt"
@@ -233,7 +233,8 @@ in {
     systemd = {
       enable = true;
       # Same as default, but stop graphical-session too
-      # TODO:need this?
+      # TODO:need this? see xsession
+      # https://github.com/nix-community/home-manager/blob/master/modules/xsession.nix
       extraCommands = lib.mkBefore [
         "systemctl --user stop graphical-session.target"
         "systemctl --user start hyprland-session.target"
