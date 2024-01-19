@@ -8,7 +8,7 @@
     pname = "wezterm";
     version = "721fbdf5dc39aaeacc0517e0422d06f0cf81561b";
 
-    src = lib.fetchFromGitHub {
+    src = pkgs.fetchFromGitHub {
       owner = "wez";
       repo = pname;
       rev = version;
