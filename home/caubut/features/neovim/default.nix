@@ -17,6 +17,7 @@ in {
       cargo
       clang
       clangStdenv
+      cmake
       deadnix
       fd
       gcc
