@@ -2,6 +2,6 @@
   imports = [
     ./ags
     ./hyprland
-    ./wezterm.nix
+    ./wezterm
   ];
 }

@@ -41,15 +41,15 @@
     buildInputs = with pkgs; [
       fontconfig
       zlib
-      libX11
-      libxcb
+      xorg.libX11
+      xorg.libxcb
       libxkbcommon
       openssl
       wayland
-      xcbutil
-      xcbutilimage
-      xcbutilkeysyms
-      xcbutilwm # contains xcb-ewmh among others
+      xorg.xcbutil
+      xorg.xcbutilimage
+      xorg.xcbutilkeysyms
+      xorg.xcbutilwm # contains xcb-ewmh among others
     ];
 
     buildFeatures = ["distro-defaults"];
