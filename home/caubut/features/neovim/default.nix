@@ -6,8 +6,7 @@
 }: let
   inherit (config.home) username;
 in {
-  # TODO tree sitter just needs gcc, remove extra package
-  # TODO: tree sitter no vector
+  # TODO move some of these to system
   programs.neovim = {
     enable = true;
     package = pkgs.neovim-nightly;
