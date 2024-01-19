@@ -32,6 +32,8 @@
     self,
     nixpkgs,
     home-manager,
+    neovim-nightly-overlay,
+    rust-overlay,
     ...
   } @ inputs: let
     inherit (self) outputs;
@@ -42,6 +44,7 @@
       import nixpkgs {
         inherit system;
         config.allowUnfree = true;
+        overlays = [rust-overlay.overlays.default neovim-nightly-overlay.overlays.default];
       });
   in {
     # set formmatter for this flake

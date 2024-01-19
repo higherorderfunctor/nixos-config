@@ -1,5 +1,5 @@
 {inputs, ...}: {
-  nixpkgs.overlays = [inputs.neovim-nightly-overlay.overlay];
+  # nixpkgs.overlays = [inputs.neovim-nightly-overlay.overlay];
   programs.neovim = {
     enable = true;
     defaultEditor = true;
