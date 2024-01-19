@@ -106,6 +106,7 @@
     };
   };
 in {
+  home.packages = [pkgs.vulkan-tools];
   programs.wezterm = {
     enable = true;
     package = wezterm;
