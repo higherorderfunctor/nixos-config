@@ -81,42 +81,48 @@ in {
             nixos-config-dir = "${config.xdg.userDirs.documents}/projects/nixos-config";
             nixos-config-repo = "git@github.com:higherorderfunctor/nixos-config.git";
             git-cmd = lib.concatMapStrings (s: s + " ") [
-              "GIT_SSH_COMMAND=\"${pkgs.openssh}/bin/ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no\""
-              "''${pkgs.git}/bin/git"
+              "GIT_SSH_COMMAND=\"ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no\""
+              "git"
             ];
-          in "${pkgs.writeShellScriptBin "nixos-config" ''
-            set -euETo pipefail
-            shopt -s inherit_errexit
+          in "${pkgs.writeShellApplication {
+            name = "nixos-config";
+            runtimeInputs = [pkgs.git pkgs.openssh];
+            text = ''
+              set -euETo pipefail
+              shopt -s inherit_errexit
 
-            # check if directory exists
-            if [ ! -d "${nixos-config-dir}" ]; then
-              # create directory if no
-              mkdir -p "${nixos-config-dir}"
-            fi
-            # enter directory
-            cd "${nixos-config-dir}"
-            # check if git repo
-            if [ ! -d .git ]; then
-              # clone repo if no
-              ${git-cmd} clone "${nixos-config-repo}" .
-            else
-              # fetch if yes
-              ${git-cmd} fetch
-            fi
-            # reset frequently updated lock file
-            ${git-cmd} checkout HEAD -- home/caubut/features/neovim/nvim-config/lazy-lock.json
-            # check if dirty
-            if ${git-cmd} diff-index --quiet HEAD --; then
-              # update to this build if no
-              ${git-cmd} checkout "${inputs.self.sourceInfo.rev}"
-            else
-              # fail if yet
-              echo "Failed to setup nixos-config" >&2
-              >&2 echo "Failed to setup nixos-config"
-              # TODO: Logger
-              exit 1
-            fi
-          ''}/bin/nixos-config";
+              # check if directory exists
+              if [ ! -d "${nixos-config-dir}" ]; then
+                # create directory if no
+                mkdir -p "${nixos-config-dir}"
+              fi
+              # enter directory
+              cd "${nixos-config-dir}"
+              # check if git repo
+              if [ ! -d .git ]; then
+                # clone repo if no
+                ${git-cmd} clone "${nixos-config-repo}" .
+              else
+                # fetch if yes
+                ${git-cmd} fetch
+              fi
+              # reset frequently updated lock file
+              if [ ${git-cmd} status --porcelain | grep -q '^ M home/caubut/features/neovim/nvim-config/lazy-lock.json' ]; then
+              ${git-cmd} checkout HEAD -- home/caubut/features/neovim/nvim-config/lazy-lock.json
+              fi
+              # check if dirty
+              if ${git-cmd} diff-index --quiet HEAD --; then
+                # update to this build if no
+                ${git-cmd} checkout "${inputs.self.sourceInfo.rev}"
+              else
+                # fail if yet
+                echo "Failed to setup nixos-config" >&2
+                >&2 echo "Failed to setup nixos-config"
+                # TODO: Logger
+                exit 1
+              fi
+            '';
+          }}/bin/nixos-config";
         };
       };
     };
