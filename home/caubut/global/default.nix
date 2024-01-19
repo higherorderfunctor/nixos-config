@@ -85,8 +85,6 @@ in {
               "''${pkgs.git}/bin/git"
             ];
           in "${pkgs.writeShellScriptBin "nixos-config" ''
-            #!/usr/bin/env bash
-
             set -euETo pipefail
             shopt -s inherit_errexit
 
