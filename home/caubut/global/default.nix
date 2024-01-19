@@ -88,7 +88,12 @@ in {
             ];
           in "${pkgs.writeShellApplication {
             name = "nixos-config";
-            runtimeInputs = [pkgs.coreutils-full pkgs.git pkgs.openssh];
+            runtimeInputs = with pkgs; [
+              coreutils-full
+              git
+              gnugrap
+              openssh
+            ];
             text = ''
               set -euETo pipefail
               shopt -s inherit_errexit
