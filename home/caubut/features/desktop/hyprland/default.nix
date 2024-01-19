@@ -52,18 +52,18 @@ in {
         force_default_wallpaper = 0; # use the default non-anime wallpaper
       };
 
-      input = {
-        kb_layout = "hu";
-        kb_model = "pc104";
-        follow_mouse = 1;
-        touchpad = {
-          natural_scroll = "yes";
-          disable_while_typing = true;
-          drag_lock = true;
-        };
-        sensitivity = 0;
-        float_switch_override_focus = 2;
-      };
+      # input = {
+      #   kb_layout = "hu";
+      #   kb_model = "pc104";
+      #   follow_mouse = 1;
+      #   touchpad = {
+      #     natural_scroll = "yes";
+      #     disable_while_typing = true;
+      #     drag_lock = true;
+      #   };
+      #   sensitivity = 0;
+      #   float_switch_override_focus = 2;
+      # };
 
       binds = {
         allow_workspace_cycles = true;
@@ -114,15 +114,15 @@ in {
         '';
       in
         [
-          "CTRL SHIFT, R,  ${e} quit; ags -b hypr"
-          "SUPER, R,       ${e} -t applauncher"
-          ", XF86PowerOff, ${e} -t powermenu"
-          "SUPER, Tab,     ${e} -t overview"
-          ", XF86Launch4,  ${e} -r 'recorder.start()'"
-          ",Print,         ${e} -r 'recorder.screenshot()'"
-          "SHIFT,Print,    ${e} -r 'recorder.screenshot(true)'"
-          "SUPER, Return, exec, xterm" # xterm is a symlink, not actually xterm
-          "SUPER, W, exec, firefox"
+          # "CTRL SHIFT, R,  ${e} quit; ags -b hypr"
+          # "SUPER, R,       ${e} -t applauncher"
+          # ", XF86PowerOff, ${e} -t powermenu"
+          # "SUPER, Tab,     ${e} -t overview"
+          # ", XF86Launch4,  ${e} -r 'recorder.start()'"
+          # ",Print,         ${e} -r 'recorder.screenshot()'"
+          # "SHIFT,Print,    ${e} -r 'recorder.screenshot(true)'"
+          # "SUPER, Return, exec, xterm" # xterm is a symlink, not actually xterm
+          # "SUPER, W, exec, firefox"
           "SUPER, E, exec, wezterm"
 
           # youtube
