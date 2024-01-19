@@ -18,11 +18,11 @@
   ];
 
   # nixpkgs
-  nixpkgs = {
-    config = {
-      allowUnfree = true;
-    };
-  };
+  # nixpkgs = {
+  #   config = {
+  #     allowUnfree = true;
+  #   };
+  # };
 
   # home manager
   home-manager = {

@@ -25,16 +25,7 @@
     nix-index-database.url = "github:Mic92/nix-index-database";
     hyprland.url = "github:hyprwm/Hyprland";
     rust-overlay.url = "github:oxalica/rust-overlay";
-    hyprland-eww.url = "github:elkowar/eww";
     ags.url = "github:Aylur/ags";
-    # eww = {
-    #   url = "github:elkowar/eww";
-    #   # tmp fix https://github.com/elkowar/eww/issues/817
-    #   inputs = {
-    #     nixpkgs.follows = "nixpkgs";
-    #     rust-overlay.follows = "rust-overlay";
-    #   };
-    # };
   };
 
   outputs = {
@@ -52,7 +43,11 @@
         inherit system;
         config.allowUnfree = true;
       });
+    pkgs = import nixpkgs {
+      config.allowUnfree = true;
+    };
   in {
+    nixpkgs.config.allowUnfree = true;
     # set formmatter for this flake
     formatter = forAllSystems (pkgs: pkgs.alejandra);
 
@@ -67,6 +62,7 @@
         specialArgs = {inherit inputs outputs;};
       };
       vm = lib.nixosSystem {
+        inherit pkgs;
         modules = [./hosts/vm];
         specialArgs = {inherit inputs outputs;};
       };
