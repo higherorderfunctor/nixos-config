@@ -24,6 +24,4 @@
       kernelModules = ["dm-snapshot"];
     };
   };
-
-  # virtualisation.virtualbox.guest.enable = true;
 }

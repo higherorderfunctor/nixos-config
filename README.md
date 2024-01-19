@@ -347,4 +347,7 @@ journalctl -x --user -u nixos-config
 systemctl --user status
 systemctl --user list-dependencies
 journalctl -ex -b
+
+# for in a vm
+WLR_RENDERER_ALLOW_SOFTWARE=1 WLR_NO_HARDWARE_CURSORS=1 Hyprland
 ````
