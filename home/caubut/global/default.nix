@@ -73,7 +73,7 @@ in {
           After = ["network.target" "paths.target"];
         };
         Install = {
-          WantedBy = ["multi-user.target"];
+          WantedBy = ["default.target"];
         };
         Service = {
           Type = "oneshot";

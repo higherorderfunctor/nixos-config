@@ -344,4 +344,7 @@ fwupdmgr get-updates
 modinfo iwlwifi
 sudo lspci -v | less
 journalctl -x --user -u nixos-config
+systemctl --user status
+systemctl --user list-dependencies
+journalctl -ex -b
 ````
