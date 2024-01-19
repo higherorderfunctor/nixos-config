@@ -71,13 +71,14 @@
   # https://nixos.wiki/wiki/Fwupd
   hardware.enableAllFirmware = lib.mkDefault true;
 
+  security.sudo = {
+    execWheelOnly = true;
+    extraConfig = ''
+      Defaults lecture="never"
+    '';
+  };
+
   environment.etc = {
-    # "nixos" = {
-    #   source = builtins.fetchGit {
-    #     url = "github:higherorderfunctor/nixos-config.git";
-    #     inherit (inputs.self.sourceInfo) rev;
-    #   };
-    # };
     "ssh/ssh_host_ed25519_key.pub".source = ../../${config.networking.hostName}/secrets/ssh_host_ed25519_key.pub;
   };
 }

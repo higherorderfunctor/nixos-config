@@ -10,6 +10,8 @@
 
   nixpkgs.hostPlatform = lib.mkDefault "x86_64-linux";
 
+  hardware.opengl.enable = true;
+
   boot = {
     initrd = {
       availableKernelModules = [
