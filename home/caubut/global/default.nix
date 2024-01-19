@@ -88,7 +88,7 @@ in {
             ];
           in "${pkgs.writeShellApplication {
             name = "nixos-config";
-            runtimeInputs = [pkgs.git pkgs.openssh];
+            runtimeInputs = [pkgs.coreutils-full pkgs.git pkgs.openssh];
             text = ''
               set -euETo pipefail
               shopt -s inherit_errexit
@@ -156,26 +156,5 @@ in {
       ".ssh/id_ed25519".source = config.lib.file.mkOutOfStoreSymlink "/run/secrets/${username}-secret-key";
       ".ssh/id_ed25519.pub".source = ../secrets/id_ed25519.pub;
     };
-    # TODO:
-    # activation = let
-    #   nixos-config = "${config.xdg.userDirs.documents}/projects/nixos-config";
-    #   git-cmd = lib.concatStrings [
-    #     "GIT_SSH_COMMAND=\"${pkgs.openssh}/bin/ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no\""
-    #     "''$DRY_RUN_CMD ${pkgs.git}/bin/git"
-    #   ];
-    # in {
-    #   nixos-config = inputs.home-manager.lib.hm.dag.entryAfter ["installPackages"] ''
-    #     if [ ! -d "${nixos-config}" ]; then
-    #       $DRY_RUN_CMD mkdir -p ${nixos-config}
-    #     fi
-    #     $DRY_RUN_CMD cd "${config.xdg.userDirs.documents}/projects/nixos-config"
-    #     if [ ! -d .git ]; then
-    #        ${git-cmd} clone git@github.com:higherorderfunctor/nixos-config.git .
-    #     else
-    #       ${git-cmd} fetch
-    #     fi
-    #     ${git-cmd} checkout ${inputs.self.sourceInfo.rev}
-    #   '';
-    # };
   };
 }
