@@ -1,15 +1,10 @@
 {
   config,
-  inputs,
+  lib,
   pkgs,
   ...
 }: let
-  neovimWrapper = pkgs.symlinkJoin {
-    name = "nvim";
-    paths = [pkgs.neovim-nightly];
-    buildInputs = [pkgs.makeWrapper];
-    postBuild = "wrapProgram $out/bin/nvim --prefix PATH : $out/bin";
-  };
+  inherit (config.home) username;
 in {
   # TODO tree sitter just needs gcc, remove extra package
   # TODO: tree sitter no vector
@@ -18,15 +13,14 @@ in {
     package = pkgs.neovim-nightly;
     defaultEditor = true;
     extraPackages = with pkgs; [
+      alejandra
+      beautysh
       cargo
       clang
       clangStdenv
-      alejandra
-      beautysh
-      cmake
-      fd
       deadnix
-      fish
+      fd
+      gcc
       gnumake
       lazygit
       luajit
@@ -35,17 +29,18 @@ in {
       ripgrep
       sqlite
       unzip
-      # tree-sitter
       wget
     ];
   };
+  # symlink to clone of project to allow for easy editing
   xdg.configFile.nvim.source =
     config.lib.file.mkOutOfStoreSymlink
-    "${config.xdg.userDirs.documents}/projects/nixos-config/home/${config.home.username}/features/neovim/nvim-config";
-  # home.activation = {
-  #   nvim = inputs.home-manager.lib.hm.dag.entryAfter ["installPackages"] ''
-  #     ### cp ${config.xdg.configFile.nvim.source}/../lazy-lock.json ${config.xdg.configHome}/nvim/
-  #     PATH="${config.home.path}/bin:$PATH" $DRY_RUN_CMD nvim --headless "+Lazy! restore" +qa
-  #   '';
-  # };
+    "${config.xdg.userDirs.documents}/projects/nixos-config/home/${username}/features/neovim/nvim-config";
+  # persistence
+  home.persistence = {
+    "/persist${config.home.homeDirectory}".directories = [
+      (lib.strings.removePrefix "${config.home.homeDirectory}/" "${config.xdg.dataHome}/nvim")
+      (lib.strings.removePrefix "${config.home.homeDirectory}/" "${config.xdg.stateHome}/nvim")
+    ];
+  };
 }

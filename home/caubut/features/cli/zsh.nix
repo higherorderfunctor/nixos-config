@@ -50,6 +50,7 @@ in {
       setopt promptsubst          # enable prompt expansion
     '';
   };
+  # TODO use xdg everywhere
   # permission fixes
   systemd.user.tmpfiles.rules = [
     "z /home/${username}/.local/share/zsh 0700 ${username} ${username} - -"
@@ -57,8 +58,9 @@ in {
   ];
   # caching
   home.persistence = {
+    # add zsh specific
     "/persist${config.home.homeDirectory}".directories = [
-      (strings.removePrefix "${config.home.homeDirectory}/" dataHome)
+      (strings.removePrefix "${config.home.homeDirectory}/" dataHome) # TODO: clean up
     ];
   };
 }
