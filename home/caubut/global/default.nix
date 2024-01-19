@@ -91,7 +91,7 @@ in {
             runtimeInputs = with pkgs; [
               coreutils-full
               git
-              gnugrap
+              gnugrep
               openssh
             ];
             text = ''
