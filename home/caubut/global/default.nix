@@ -77,6 +77,8 @@ in {
         };
         Service = {
           Type = "oneshot";
+          StandardOutput = "syslog+console";
+          StandardError = "syslog+console";
           ExecStart = let
             nixos-config-dir = "${config.xdg.userDirs.documents}/projects/nixos-config";
             nixos-config-repo = "git@github.com:higherorderfunctor/nixos-config.git";
