@@ -107,7 +107,7 @@ in {
                 ${git-cmd} fetch
               fi
               # reset frequently updated lock file
-              if [ ${git-cmd} status --porcelain | grep -q '^ M home/caubut/features/neovim/nvim-config/lazy-lock.json' ]; then
+              if ${git-cmd} status --porcelain | grep -q '^ M home/caubut/features/neovim/nvim-config/lazy-lock.json'; then
               ${git-cmd} checkout HEAD -- home/caubut/features/neovim/nvim-config/lazy-lock.json
               fi
               # check if dirty
