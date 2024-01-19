@@ -4,7 +4,12 @@
   pkgs,
   ...
 }: let
-  wezterm = pkgs.rustPlatform.buildRustPackage rec {
+  toolchain = pkgs.rust-bin.stable.latest.default;
+  rustPlatform = pkgs.makeRustPlatform {
+    rustc = toolchain;
+    cargo = toolchain;
+  };
+  wezterm = rustPlatform.buildRustPackage rec {
     pname = "wezterm";
     version = "721fbdf5dc39aaeacc0517e0422d06f0cf81561b";
 
