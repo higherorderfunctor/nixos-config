@@ -19,9 +19,13 @@ in {
     configPackages = [inputs.hyprland.packages.${pkgs.system}.hyprland];
   };
   fonts.fontconfig.enable = true; # TODO
-  packages = with pkgs; [
-    nerdfonts
+  home.packages = [
+    pkgs.nerdfonts
   ];
+  qt = {
+    enable = true;
+    platformTheme = "kde";
+  }; # TODO
   wayland.windowManager.hyprland = {
     enable = true;
     package = inputs.hyprland.packages.${pkgs.system}.hyprland;
