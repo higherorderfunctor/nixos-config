@@ -52,18 +52,14 @@ in {
     # autoload zsh/terminfo
     # TODO fix backpsace after DD and other binds from ZSH
     initExtra = ''
-      # https://github.com/ohmyzsh/ohmyzsh/blob/d43f03ba91c47934a40b436a6ea9e79449a4583a/lib/key-bindings.zsh#L121
-      # "^[OA" up-line-or-beginning-search
-      # "^[OB" down-line-or-beginning-search
-      # "^[OC" vi-forward-char
-      # "^[OD" vi-backward-char
-      # "^[[1;5C" forward-word # +
-      # "^[[1;5D" backward-word #+
-      # "^[[3;5~" kill-word #+
-      # "^[[5~" up-line-or-history
-      # "^[[6~" down-line-or-history
-      # "^[[Z" reverse-menu-complete #+
-      # "^?" backward-delete-char
+      "^[OA" up-line-or-beginning-search   # up arrow
+      "^[OB" down-line-or-beginning-search # down arrow
+      "^[OC" vi-forward-char               # right arrow
+      "^[OD" vi-backward-char              # left arrow
+      "^[[1;5C" forward-word               # ctrl + right arrow
+      "^[[1;5D" backward-word              # ctrl + left arrow
+      "^[[Z" reverse-menu-complete         # shift + tab
+      "^?" backward-delete-char            # backspace
     '';
   };
   # TODO use xdg everywhere
