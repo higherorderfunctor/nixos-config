@@ -35,10 +35,6 @@
       url = "github:Aylur/ags";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    nixpkgs-mozilla = {
-      url = "github:mozilla/nixpkgs-mozilla";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
   };
 
   outputs = {
@@ -47,7 +43,6 @@
     home-manager,
     neovim-nightly-overlay,
     rust-overlay,
-    nixpkgs-mozilla,
     ...
   } @ inputs: let
     inherit (self) outputs;
@@ -59,9 +54,8 @@
         inherit system;
         config.allowUnfree = true;
         overlays = [
-          rust-overlay.overlays.default
           neovim-nightly-overlay.overlays.default
-          nixpkgs-mozilla.overlays.firefox
+          rust-overlay.overlays.default
         ];
       });
   in {
