@@ -52,6 +52,11 @@ in {
     # autoload zsh/terminfo
     # TODO fix backpsace after DD and other binds from ZSH
     initExtra = ''
+      autoload -U up-line-or-beginning-search
+      zle -N up-line-or-beginning-search
+      autoload -U down-line-or-beginning-search
+      zle -N down-line-or-beginning-search
+
       bindkey "^[OA" up-line-or-beginning-search   # up arrow
       bindkey "^[OB" down-line-or-beginning-search # down arrow
       bindkey "^[OC" vi-forward-char               # right arrow
