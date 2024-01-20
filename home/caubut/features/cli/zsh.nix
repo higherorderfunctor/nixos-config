@@ -51,6 +51,7 @@ in {
     '';
     # autoload zsh/terminfo
     # TODO fix backpsace after DD and other binds from ZSH
+    # TODO shift tab / tab menu thinggy not working like ubuntu
     initExtra = ''
       autoload -U up-line-or-beginning-search
       zle -N up-line-or-beginning-search
