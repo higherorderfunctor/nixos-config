@@ -10,8 +10,8 @@
   home.packages = [
     (pkgs.linkFarm "firefox" [
       {
-        name = "firefox";
-        path = inputs.firefox-nightly.packages.${pkgs.system}.firefox-nightly-bin;
+        name = "bin/firefox";
+        path = "${inputs.firefox-nightly.packages.${pkgs.system}.firefox-nightly-bin}/bin/firefox-nightly";
       }
     ])
   ];
