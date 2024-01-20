@@ -5,13 +5,16 @@
 }: {
   programs.firefox = {
     enable = true;
-    package = pkgs.linkFarm "firefox" [
+    package = inputs.firefox-nightly.packages.${pkgs.system}.firefox-nightly-bin;
+  };
+  home.packages = [
+    (pkgs.linkFarm "firefox" [
       {
         name = "firefox";
         path = inputs.firefox-nightly.packages.${pkgs.system}.firefox-nightly-bin;
       }
-    ];
-  };
+    ])
+  ];
   # TODO: command-not-found db error
   #
   # why 115?
