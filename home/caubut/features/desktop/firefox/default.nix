@@ -5,6 +5,6 @@
 }: {
   programs.firefox = {
     enable = true;
-    package = inputs.firefox.packages.${pkgs.system}.firefox-nightly-bin;
+    package = inputs.firefox-nightly.packages.${pkgs.system}.firefox-nightly-bin;
   };
 }
