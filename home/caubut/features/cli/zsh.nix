@@ -49,6 +49,22 @@ in {
       setopt interactivecomments  # recognize comments
       setopt promptsubst          # enable prompt expansion
     '';
+    # autoload zsh/terminfo
+    # TODO fix backpsace after DD and other binds from ZSH
+    initExtra = ''
+      # https://github.com/ohmyzsh/ohmyzsh/blob/d43f03ba91c47934a40b436a6ea9e79449a4583a/lib/key-bindings.zsh#L121
+      # "^[OA" up-line-or-beginning-search
+      # "^[OB" down-line-or-beginning-search
+      # "^[OC" vi-forward-char
+      # "^[OD" vi-backward-char
+      # "^[[1;5C" forward-word # +
+      # "^[[1;5D" backward-word #+
+      # "^[[3;5~" kill-word #+
+      # "^[[5~" up-line-or-history
+      # "^[[6~" down-line-or-history
+      # "^[[Z" reverse-menu-complete #+
+      # "^?" backward-delete-char
+    '';
   };
   # TODO use xdg everywhere
   # permission fixes

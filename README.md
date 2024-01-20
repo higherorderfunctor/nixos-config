@@ -273,7 +273,13 @@ nix-store -q --requisites /run/current-system
 # show dependency tree
 nix-store -q --tree /run/current-system
 
-# see which build is keeping a dependency
+# see why a package is a dependency
+nix why-depends /run/current-system /nix/store/...
+
+# see why a package is a build dependency (not in tree)
+nix why-depends --derivation /run/current-system /nix/store/...
+
+# see which build is keeping a dependency (current and past)
 nix-store -q --roots /nix/store/...
 
 # show generations
