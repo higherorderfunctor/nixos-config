@@ -123,7 +123,7 @@ in {
           # ",Print,         ${e} -r 'recorder.screenshot()'"
           # "SHIFT,Print,    ${e} -r 'recorder.screenshot(true)'"
           # "SUPER, Return, exec, xterm" # xterm is a symlink, not actually xterm
-          # "SUPER, W, exec, firefox"
+          "SUPER, W, exec, firefox"
           "SUPER, E, exec, wezterm"
 
           # # youtube
