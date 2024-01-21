@@ -28,9 +28,9 @@
       name = "Ubuntu Nerd Font Regular";
     };
     theme = {
-      name = "Catppuccin-Macchiato-Compact-Green-Dark";
+      name = "Catppuccin-Macchiato-Compact-Sky-Dark";
       package = pkgs.catppuccin-gtk.override {
-        accents = ["green"];
+        accents = ["sky"];
         size = "compact";
         tweaks = ["rimless" "black"];
         variant = "macchiato";
