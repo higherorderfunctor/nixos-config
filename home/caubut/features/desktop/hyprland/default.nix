@@ -59,7 +59,7 @@
       general = {
         layout = "dwindle";
         resize_on_border = true;
-        col.active_border = "0x00000000";
+        "col.active_border" = "0x00000000";
       };
 
       misc = {
@@ -99,30 +99,9 @@
 
       windowrule = let
         f = regex: "float, ^(${regex})$";
-      in [
-        (f "org.gnome.Calculator")
-        (f "org.gnome.Nautilus")
-        (f "pavucontrol")
-        (f "nm-connection-editor")
-        (f "blueberry.py")
-        (f "org.gnome.Settings")
-        (f "org.gnome.design.Palette")
-        (f "Color Picker")
-        (f "xdg-desktop-portal")
-        (f "xdg-desktop-portal-gnome")
-        (f "transmission-gtk")
-        (f "com.github.Aylur.ags")
-        "workspace 7, title:Spotify"
-      ];
-
+      in [(f "org.gnome.Calculator") (f "org.gnome.Nautilus") (f "pavucontrol") (f "nm-connection-editor") (f "blueberry.py") (f "org.gnome.Settings") (f "org.gnome.design.Palette") (f "Color Picker") (f "xdg-desktop-portal") (f "xdg-desktop-portal-gnome") (f "transmission-gtk") (f "com.github.Aylur.ags") "workspace 7, title:Spotify"];
       bind =
-        # let
-        #   binding = mod: cmd: key: arg: "${mod}, ${key}, ${cmd}, ${arg}";
-        #   mvfocus = binding "SUPER" "movefocus";
-        #   ws = binding "SUPER" "workspace";
-        #   resizeactive = binding "SUPER CTRL" "resizeactive";
-        #   mvactive = binding "SUPER ALT" "moveactive";
-        #   mvtows = binding "SUPER SHIFT" "movetoworkspace";
+        # let binding = mod: cmd: key: arg: "${mod}, ${key}, ${cmd}, ${arg}"; mvfocus = binding "SUPER" "movefocus"; ws = binding "SUPER" "workspace"; resizeactive = binding "SUPER CTRL" "resizeactive"; mvactive = binding "SUPER ALT" "moveactive"; mvtows = binding "SUPER SHIFT" "movetoworkspace";
         #   e = "exec, ags -b hypr";
         #   arr = [1 2 3 4 5 6 7 8 9];
         #   yt = pkgs.writeShellScriptBin "yt" ''
