@@ -23,10 +23,10 @@ in {
     sessionVariables = {
       FREETYPE_PROPERTIES = "cff:no-stem-darkening=0 autofitter:no-stem-darkening=0";
     };
+    packages = [
+      pkgs.nerdfonts
+    ];
   };
-  packages = [
-    pkgs.nerdfonts
-  ];
   gtk = {
     enable = true;
     font = {
