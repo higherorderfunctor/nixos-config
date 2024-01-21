@@ -25,6 +25,7 @@ in {
     };
     packages = [
       pkgs.nerdfonts
+      pkgs.dconf
     ];
   };
   gtk = {
