@@ -7,7 +7,7 @@ import SystemTray from 'resource:///com/github/Aylur/ags/service/systemtray.js';
 import App from 'resource:///com/github/Aylur/ags/app.js';
 import Widget from 'resource:///com/github/Aylur/ags/widget.js';
 import { exec, execAsync } from 'resource:///com/github/Aylur/ags/utils.js';
-import { applauncher } from './app-launcher.js';
+import { applauncher } from './app-launcher/index.js';
 
 // widgets can be only assigned as a child in one container
 // so to make a reuseable widget, make it a function
