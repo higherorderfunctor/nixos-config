@@ -21,6 +21,7 @@ in {
     history = {
       path = "${dataHome}/zsh_history";
     };
+    # TODO: https://thevaluable.dev/zsh-completion-guide-examples/
     initExtraBeforeCompInit = ''
       # directory options
       setopt auto_cd
@@ -53,6 +54,8 @@ in {
     # TODO fix backpsace after DD and other binds from ZSH
     # TODO shift tab / tab menu thinggy not working like ubuntu
     initExtra = ''
+      zstyle ':completion:*:*:*:*:*' menu select
+
       autoload -U up-line-or-beginning-search
       zle -N up-line-or-beginning-search
       autoload -U down-line-or-beginning-search
