@@ -19,12 +19,32 @@ in {
     configPackages = [inputs.hyprland.packages.${pkgs.system}.hyprland];
   };
   fonts.fontconfig.enable = true; # TODO
-  home.packages = [
+  home = {
+    sessionVariables = {
+      FREETYPE_PROPERTIES = "cff:no-stem-darkening=0 autofitter:no-stem-darkening=0";
+    };
+  };
+  packages = [
     pkgs.nerdfonts
   ];
+  gtk = {
+    enable = true;
+    font = {
+      name = "Ubuntu Nerd Font Regular";
+    };
+    theme = {
+      name = "Catppuccin-Macchiato-Compact-Pink-Dark";
+      package = pkgs.catppuccin-gtk.override {
+        accents = ["pink"];
+        size = "compact";
+        tweaks = ["rimless" "black"];
+        variant = "macchiato";
+      };
+    };
+  };
   qt = {
     enable = true;
-    platformTheme = "kde";
+    platformTheme = "gtk3";
   }; # TODO
   wayland.windowManager.hyprland = {
     enable = true;

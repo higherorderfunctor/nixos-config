@@ -50,9 +50,6 @@ in {
       setopt interactivecomments  # recognize comments
       setopt promptsubst          # enable prompt expansion
     '';
-    # autoload zsh/terminfo
-    # TODO fix backpsace after DD and other binds from ZSH
-    # TODO shift tab / tab menu thinggy not working like ubuntu
     initExtra = ''
       zstyle ':completion:*:*:*:*:*' menu select
 
