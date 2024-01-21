@@ -3,13 +3,7 @@
   lib,
   pkgs,
   ...
-}: let
-  nerdfonts = pkgs.nerdfonts.override {
-    fonts = [
-      "Monaspice"
-    ];
-  };
-in {
+}: {
   imports = [
     inputs.hyprland.homeManagerModules.default
   ];
@@ -36,7 +30,7 @@ in {
     theme = {
       name = "Catppuccin-Macchiato-Compact-Pink-Dark";
       package = pkgs.catppuccin-gtk.override {
-        accents = ["pink"];
+        accents = ["green"];
         size = "compact";
         tweaks = ["rimless" "black"];
         variant = "macchiato";
@@ -65,6 +59,7 @@ in {
       general = {
         layout = "dwindle";
         resize_on_border = true;
+        col.active_border = "0x00000000";
       };
 
       misc = {
