@@ -30,8 +30,5 @@
     "typeRoots": [
       "node_modules/@girs"
     ],
-  },
-  "include": [
-    "lib"
-  ]
+  }
 }

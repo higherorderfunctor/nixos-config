@@ -157,27 +157,27 @@
       # ++ (map (i: ws (toString i) (toString i)) arr)
       # ++ (map (i: mvtows (toString i) (toString i)) arr);
 
-      bindle = let
-        e = "exec, ags -b hypr -r";
-      in [
-        ",XF86MonBrightnessUp,   ${e} 'brightness.screen += 0.05; indicator.display()'"
-        ",XF86MonBrightnessDown, ${e} 'brightness.screen -= 0.05; indicator.display()'"
-        ",XF86KbdBrightnessUp,   ${e} 'brightness.kbd++; indicator.kbd()'"
-        ",XF86KbdBrightnessDown, ${e} 'brightness.kbd--; indicator.kbd()'"
-        ",XF86AudioRaiseVolume,  ${e} 'audio.speaker.volume += 0.05; indicator.speaker()'"
-        ",XF86AudioLowerVolume,  ${e} 'audio.speaker.volume -= 0.05; indicator.speaker()'"
-      ];
+      # bindle = let
+      #   e = "exec, ags -b hypr -r";
+      # in [
+      #   ",XF86MonBrightnessUp,   ${e} 'brightness.screen += 0.05; indicator.display()'"
+      #   ",XF86MonBrightnessDown, ${e} 'brightness.screen -= 0.05; indicator.display()'"
+      #   ",XF86KbdBrightnessUp,   ${e} 'brightness.kbd++; indicator.kbd()'"
+      #   ",XF86KbdBrightnessDown, ${e} 'brightness.kbd--; indicator.kbd()'"
+      #   ",XF86AudioRaiseVolume,  ${e} 'audio.speaker.volume += 0.05; indicator.speaker()'"
+      #   ",XF86AudioLowerVolume,  ${e} 'audio.speaker.volume -= 0.05; indicator.speaker()'"
+      # ];
 
-      bindl = let
-        e = "exec, ags -b hypr -r";
-      in [
-        ",XF86AudioPlay,    ${e} 'mpris?.playPause()'"
-        ",XF86AudioStop,    ${e} 'mpris?.stop()'"
-        ",XF86AudioPause,   ${e} 'mpris?.pause()'"
-        ",XF86AudioPrev,    ${e} 'mpris?.previous()'"
-        ",XF86AudioNext,    ${e} 'mpris?.next()'"
-        ",XF86AudioMicMute, ${e} 'audio.microphone.isMuted = !audio.microphone.isMuted'"
-      ];
+      # bindl = let
+      #   e = "exec, ags -b hypr -r";
+      # in [
+      #   ",XF86AudioPlay,    ${e} 'mpris?.playPause()'"
+      #   ",XF86AudioStop,    ${e} 'mpris?.stop()'"
+      #   ",XF86AudioPause,   ${e} 'mpris?.pause()'"
+      #   ",XF86AudioPrev,    ${e} 'mpris?.previous()'"
+      #   ",XF86AudioNext,    ${e} 'mpris?.next()'"
+      #   ",XF86AudioMicMute, ${e} 'audio.microphone.isMuted = !audio.microphone.isMuted'"
+      # ];
 
       bindm = [
         "SUPER, mouse:273, resizewindow"

@@ -4,55 +4,197 @@ settings:
   autoInstallPeers: true
   excludeLinksFromLockfile: false
 
-dependencies:
-  '@girs/gjs':
-    specifier: ^3.2.7
-    version: 3.2.7
-  '@girs/glib-2.0':
-    specifier: 2.78.0-3.2.7
-    version: 2.78.0-3.2.7
-  '@girs/gobject-2.0':
-    specifier: 2.78.0-3.2.7
-    version: 2.78.0-3.2.7
-  '@girs/gtk-4.0':
-    specifier: 4.12.4-3.2.7
-    version: 4.12.4-3.2.7
-  '@typescript-eslint/eslint-plugin':
-    specifier: ^6.19.0
-    version: 6.19.0(@typescript-eslint/parser@6.19.0)(eslint@8.56.0)(typescript@5.3.3)
-  '@typescript-eslint/parser':
-    specifier: ^6.19.0
-    version: 6.19.0(eslint@8.56.0)(typescript@5.3.3)
-  '@typescript/lib-dom':
-    specifier: '@girs/gjs'
-    version: link:@girs/gjs
-  effect:
-    specifier: ^2.1.2
-    version: 2.1.2
-  esbuild:
-    specifier: ^0.19.11
-    version: 0.19.11
-  eslint:
-    specifier: ^8.56.0
-    version: 8.56.0
-  eslint-config-prettier:
-    specifier: ^9.1.0
-    version: 9.1.0(eslint@8.56.0)
-  eslint-plugin-prettier:
-    specifier: ^5.1.3
-    version: 5.1.3(eslint-config-prettier@9.1.0)(eslint@8.56.0)(prettier@3.2.4)
-  prettier:
-    specifier: ^3.2.4
-    version: 3.2.4
-  typescript:
-    specifier: ^5.3.3
-    version: 5.3.3
+importers:
+
+  .:
+    dependencies:
+      '@girs/gjs':
+        specifier: ^3.2.7
+        version: 3.2.7
+      '@girs/glib-2.0':
+        specifier: 2.78.0-3.2.7
+        version: 2.78.0-3.2.7
+      '@girs/gobject-2.0':
+        specifier: 2.78.0-3.2.7
+        version: 2.78.0-3.2.7
+      '@girs/gtk-4.0':
+        specifier: 4.12.4-3.2.7
+        version: 4.12.4-3.2.7
+      '@typescript-eslint/eslint-plugin':
+        specifier: ^6.19.0
+        version: 6.19.0(@typescript-eslint/parser@6.19.0)(eslint@8.56.0)(typescript@5.3.3)
+      '@typescript-eslint/parser':
+        specifier: ^6.19.0
+        version: 6.19.0(eslint@8.56.0)(typescript@5.3.3)
+      '@typescript/lib-dom':
+        specifier: '@girs/gjs'
+        version: link:@girs/gjs
+      effect:
+        specifier: ^2.1.2
+        version: 2.1.2
+      esbuild:
+        specifier: ^0.19.11
+        version: 0.19.11
+      eslint:
+        specifier: ^8.56.0
+        version: 8.56.0
+      eslint-config-prettier:
+        specifier: ^9.1.0
+        version: 9.1.0(eslint@8.56.0)
+      eslint-plugin-prettier:
+        specifier: ^5.1.3
+        version: 5.1.3(eslint-config-prettier@9.1.0)(eslint@8.56.0)(prettier@3.2.4)
+      prettier:
+        specifier: ^3.2.4
+        version: 3.2.4
+      typescript:
+        specifier: ^5.3.3
+        version: 5.3.3
+
+  packages/demo:
+    dependencies:
+      '@girs/gjs':
+        specifier: ^3.2.7
+        version: 3.2.7
+      '@girs/glib-2.0':
+        specifier: 2.78.0-3.2.7
+        version: 2.78.0-3.2.7
+      '@girs/gobject-2.0':
+        specifier: 2.78.0-3.2.7
+        version: 2.78.0-3.2.7
+      '@girs/gtk-4.0':
+        specifier: 4.12.4-3.2.7
+        version: 4.12.4-3.2.7
+      '@typescript-eslint/eslint-plugin':
+        specifier: ^6.19.0
+        version: 6.19.0(@typescript-eslint/parser@6.19.0)(eslint@8.56.0)(typescript@5.3.3)
+      '@typescript-eslint/parser':
+        specifier: ^6.19.0
+        version: 6.19.0(eslint@8.56.0)(typescript@5.3.3)
+      '@typescript/lib-dom':
+        specifier: '@girs/gjs'
+        version: link:@girs/gjs
+      effect:
+        specifier: ^2.1.2
+        version: 2.1.2
+      esbuild:
+        specifier: ^0.19.11
+        version: 0.19.11
+      eslint:
+        specifier: ^8.56.0
+        version: 8.56.0
+      eslint-config-prettier:
+        specifier: ^9.1.0
+        version: 9.1.0(eslint@8.56.0)
+      eslint-plugin-prettier:
+        specifier: ^5.1.3
+        version: 5.1.3(eslint-config-prettier@9.1.0)(eslint@8.56.0)(prettier@3.2.4)
+      prettier:
+        specifier: ^3.2.4
+        version: 3.2.4
+      typescript:
+        specifier: ^5.3.3
+        version: 5.3.3
+
+  packages/egs:
+    dependencies:
+      '@effect/cli':
+        specifier: ^0.30.3
+        version: 0.30.3(@effect/platform@0.42.6)(@effect/printer-ansi@0.31.8)(@effect/printer@0.30.8)(@effect/schema@0.60.6)(effect@2.1.2)
+      '@effect/platform':
+        specifier: ^0.42.6
+        version: 0.42.6(@effect/schema@0.60.6)(effect@2.1.2)
+      '@girs/gio-2.0':
+        specifier: 2.78.0-3.2.7
+        version: 2.78.0-3.2.7
+      '@girs/gjs':
+        specifier: ^3.2.7
+        version: 3.2.7
+      '@girs/glib-2.0':
+        specifier: 2.78.0-3.2.7
+        version: 2.78.0-3.2.7
+      effect:
+        specifier: ^2.1.2
+        version: 2.1.2
+
+  packages/jsx-runtime: {}
 
 packages:
 
   /@aashutoshrathi/word-wrap@1.2.6:
     resolution: {integrity: sha512-1Yjs2SvM8TflER/OD3cOjhWWOZb58A2t7wpE2S9XfBYTiIl+XFhQG2bjy4Pu1I+EAlCNUzRDYDdFwFYUKvXcIA==}
     engines: {node: '>=0.10.0'}
+    dev: false
+
+  /@effect/cli@0.30.3(@effect/platform@0.42.6)(@effect/printer-ansi@0.31.8)(@effect/printer@0.30.8)(@effect/schema@0.60.6)(effect@2.1.2):
+    resolution: {integrity: sha512-zO7wVH/mjMtgpXZ+KUu5+9JSiz0UMi2DN9VR8RrCpfDYgfIjq22HsS6oAnJouxjo7rzw6UYWllhLrRmtXyZZ7A==}
+    peerDependencies:
+      '@effect/platform': ^0.42.6
+      '@effect/printer': ^0.30.8
+      '@effect/printer-ansi': ^0.31.8
+      '@effect/schema': ^0.60.6
+      effect: ^2.1.2
+    dependencies:
+      '@effect/platform': 0.42.6(@effect/schema@0.60.6)(effect@2.1.2)
+      '@effect/printer': 0.30.8(@effect/typeclass@0.22.8)(effect@2.1.2)
+      '@effect/printer-ansi': 0.31.8(@effect/typeclass@0.22.8)(effect@2.1.2)
+      '@effect/schema': 0.60.6(effect@2.1.2)(fast-check@3.15.0)
+      effect: 2.1.2
+      ini: 4.1.1
+      toml: 3.0.0
+      yaml: 2.3.4
+    dev: false
+
+  /@effect/platform@0.42.6(@effect/schema@0.60.6)(effect@2.1.2):
+    resolution: {integrity: sha512-GiyPd3q/n3bRxn5h+Y763Ung3O7jkLw3mKZfckUpG4E6l+pMdAg7cftswkyg0Jop+EXm6mxUs+pXKVR67EJXOw==}
+    peerDependencies:
+      '@effect/schema': ^0.60.6
+      effect: ^2.1.2
+    dependencies:
+      '@effect/schema': 0.60.6(effect@2.1.2)(fast-check@3.15.0)
+      effect: 2.1.2
+      find-my-way-ts: 0.1.1
+      multipasta: 0.1.21
+      path-browserify: 1.0.1
+    dev: false
+
+  /@effect/printer-ansi@0.31.8(@effect/typeclass@0.22.8)(effect@2.1.2):
+    resolution: {integrity: sha512-BKwYq6sHKDTmeo1Fs1bxGjwq49CqtmpdGteXU7km1pM5pJ7pZV1ctD+M5p3G0bI3rIJGYfrlovT+PPLF6JCeGg==}
+    peerDependencies:
+      '@effect/typeclass': ^0.22.8
+      effect: ^2.1.2
+    dependencies:
+      '@effect/printer': 0.30.8(@effect/typeclass@0.22.8)(effect@2.1.2)
+      '@effect/typeclass': 0.22.8(effect@2.1.2)
+      effect: 2.1.2
+    dev: false
+
+  /@effect/printer@0.30.8(@effect/typeclass@0.22.8)(effect@2.1.2):
+    resolution: {integrity: sha512-oIbmX8S1m6Eq3WhixB4zSj7fsGEE7BdMzKqqtMPa0lgMNi/59tEUMpg2cHdI482J2Fq4lEi2u+1T/oqjSEMoSA==}
+    peerDependencies:
+      '@effect/typeclass': ^0.22.8
+      effect: ^2.1.2
+    dependencies:
+      '@effect/typeclass': 0.22.8(effect@2.1.2)
+      effect: 2.1.2
+    dev: false
+
+  /@effect/schema@0.60.6(effect@2.1.2)(fast-check@3.15.0):
+    resolution: {integrity: sha512-M9DE/7fE0pVRVt8ytMpbRFqyTSHG08Ww6vAj/4x710++kA9ijgAtRuDgzQTTa3dwoJnCX+78kAKTEAsZpdKB0A==}
+    peerDependencies:
+      effect: ^2.1.2
+      fast-check: ^3.13.2
+    dependencies:
+      effect: 2.1.2
+      fast-check: 3.15.0
+    dev: false
+
+  /@effect/typeclass@0.22.8(effect@2.1.2):
+    resolution: {integrity: sha512-Vkxs5EH0Dp47tFJZ1hecsl7637XxObVfCPOj5aa7dAf9WeXkmoGvV5K5qWm/Bz4fkve4NETMJ4iFw7y/AV1sOg==}
+    peerDependencies:
+      effect: ^2.1.2
+    dependencies:
+      effect: 2.1.2
     dev: false
 
   /@esbuild/aix-ppc64@0.19.11:
@@ -944,6 +1086,17 @@ packages:
     engines: {node: '>=0.10.0'}
     dev: false
 
+  /fast-check@3.15.0:
+    resolution: {integrity: sha512-iBz6c+EXL6+nI931x/sbZs1JYTZtLG6Cko0ouS8LRTikhDR7+wZk4TYzdRavlnByBs2G6+nuuJ7NYL9QplNt8Q==}
+    engines: {node: '>=8.0.0'}
+    dependencies:
+      pure-rand: 6.0.4
+    dev: false
+
+  /fast-decode-uri-component@1.0.1:
+    resolution: {integrity: sha512-WKgKWg5eUxvRZGwW8FvfbaH7AXSh2cL+3j5fMGzUMCxWBJ3dV3a7Wz8y2f/uQ0e3B6WmodD3oS54jTQ9HVTIIg==}
+    dev: false
+
   /fast-deep-equal@3.1.3:
     resolution: {integrity: sha512-f3qQ9oQy9j2AhBe/H9VC91wLmKBCCU/gDOnKNAYG5hswO7BLKj09Hc5HYNz9cGI++xlpDCIgDaitVs03ATR84Q==}
     dev: false
@@ -971,6 +1124,12 @@ packages:
     resolution: {integrity: sha512-DCXu6Ifhqcks7TZKY3Hxp3y6qphY5SJZmrWMDrKcERSOXWQdMhU9Ig/PYrzyw/ul9jOIyh0N4M0tbC5hodg8dw==}
     dev: false
 
+  /fast-querystring@1.1.2:
+    resolution: {integrity: sha512-g6KuKWmFXc0fID8WWH0jit4g0AGBoJhCkJMb1RmbsSEUNvQ+ZC8D6CUZ+GtF8nMzSPXnhiePyyqqipzNNEnHjg==}
+    dependencies:
+      fast-decode-uri-component: 1.0.1
+    dev: false
+
   /fastq@1.16.0:
     resolution: {integrity: sha512-ifCoaXsDrsdkWTtiNJX5uzHDsrck5TzfKKDcuFFTIrrc/BS076qgEIfoIy1VeZqViznfKiysPYTh/QeHtnIsYA==}
     dependencies:
@@ -989,6 +1148,12 @@ packages:
     engines: {node: '>=8'}
     dependencies:
       to-regex-range: 5.0.1
+    dev: false
+
+  /find-my-way-ts@0.1.1:
+    resolution: {integrity: sha512-nXUdq29JRQ1tYa1/n+DHTVChMARJHz+gi7sDZibwQukzHP7Hrr6s+sxKbaIM8xB3LzhSBJy5yLb0JhIUmHmOiA==}
+    dependencies:
+      fast-querystring: 1.1.2
     dev: false
 
   /find-up@5.0.0:
@@ -1098,6 +1263,11 @@ packages:
     resolution: {integrity: sha512-k/vGaX4/Yla3WzyMCvTQOXYeIHvqOKtnqBduzTHpzpQZzAskKMhZ2K+EnBiSM9zGSoIFeMpXKxa4dYeZIQqewQ==}
     dev: false
 
+  /ini@4.1.1:
+    resolution: {integrity: sha512-QQnnxNyfvmHFIsj7gkPcYymR8Jdw/o7mp5ZFihxn6h8Ci6fh3Dx4E1gPjpQEpIuPo9XVNY/ZUwh4BPMjGyL01g==}
+    engines: {node: ^14.17.0 || ^16.13.0 || >=18.0.0}
+    dev: false
+
   /is-extglob@2.1.1:
     resolution: {integrity: sha512-SbKbANkN603Vi4jEZv49LeVJMn4yGwsbzZworEoyEiutsN3nJYdbO36zfhGJ6QEDpOZIFkDtnq5JRxmvl3jsoQ==}
     engines: {node: '>=0.10.0'}
@@ -1205,6 +1375,10 @@ packages:
     resolution: {integrity: sha512-sGkPx+VjMtmA6MX27oA4FBFELFCZZ4S4XqeGOXCv68tT+jb3vk/RyaKWP0PTKyWtmLSM0b+adUTEvbs1PEaH2w==}
     dev: false
 
+  /multipasta@0.1.21:
+    resolution: {integrity: sha512-HpF9156uifsQu1L8KKW1EqXIt3DacHJTzQ+JSm6IShkcyyf+krOWzfOgT3OLHzesM40hbs6/QW5CJWSEdDPQag==}
+    dev: false
+
   /natural-compare@1.4.0:
     resolution: {integrity: sha512-OWND8ei3VtNC9h7V60qff3SVobHr996CTwgxubgyQYEpg290h9J0buyECNNJexkFm5sOajh5G116RYA1c8ZMSw==}
     dev: false
@@ -1246,6 +1420,10 @@ packages:
     engines: {node: '>=6'}
     dependencies:
       callsites: 3.1.0
+    dev: false
+
+  /path-browserify@1.0.1:
+    resolution: {integrity: sha512-b7uo2UCUOYZcnF/3ID0lulOJi/bafxa1xPe7ZPsammBSpjSWQkjNxlt635YGS2MiR9GjvuXCtz2emr3jbsz98g==}
     dev: false
 
   /path-exists@4.0.0:
@@ -1294,6 +1472,10 @@ packages:
   /punycode@2.3.1:
     resolution: {integrity: sha512-vYt7UD1U9Wg6138shLtLOvdAu+8DsC/ilFtEVHcH+wydcSpNE20AfSOduf6MkRFahL5FY7X1oU7nKVZFtfq8Fg==}
     engines: {node: '>=6'}
+    dev: false
+
+  /pure-rand@6.0.4:
+    resolution: {integrity: sha512-LA0Y9kxMYv47GIPJy6MI84fqTd2HmYZI83W/kM/SkKfDlajnZYfmXFTxkbY+xSBPkLJxltMa9hIkmdc29eguMA==}
     dev: false
 
   /queue-microtask@1.2.3:
@@ -1386,6 +1568,10 @@ packages:
       is-number: 7.0.0
     dev: false
 
+  /toml@3.0.0:
+    resolution: {integrity: sha512-y/mWCZinnvxjTKYhJ+pYxwD0mRLVvOtdS2Awbgxln6iEnt4rk0yBxeSBHkGJcPucRiG0e55mwWp+g/05rsrd6w==}
+    dev: false
+
   /ts-api-utils@1.0.3(typescript@5.3.3):
     resolution: {integrity: sha512-wNMeqtMz5NtwpT/UZGY5alT+VoKdSsOOP/kqHFcUW1P/VRhH2wJ48+DN2WwUliNbQ976ETwDL0Ifd2VVvgonvg==}
     engines: {node: '>=16.13.0'}
@@ -1437,6 +1623,11 @@ packages:
 
   /yallist@4.0.0:
     resolution: {integrity: sha512-3wdGidZyq5PB084XLES5TpOSRA3wjXAlIWMhum2kRcv/41Sn2emQ0dycQW4uZXLejwKvg6EsvbdlVL+FYEct7A==}
+    dev: false
+
+  /yaml@2.3.4:
+    resolution: {integrity: sha512-8aAvwVUSHpfEqTQ4w/KMlf3HcRdt50E5ODIQJBw1fQ5RL34xabzxtUlzTXVqc4rkZsPbvrXKWnABCD7kWSmocA==}
+    engines: {node: '>= 14'}
     dev: false
 
   /yocto-queue@0.1.0:

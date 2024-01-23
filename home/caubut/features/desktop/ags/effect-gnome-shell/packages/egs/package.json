@@ -1,0 +1,20 @@
+{
+  "name": "@egs/egs",
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "build": "node esbuild.config.js",
+    "lint:tsc": "tsc --skipLibCheck --noemit --project tsconfig.json"
+  },
+  "workspaces": [
+    "packages/*"
+  ],
+  "dependencies": {
+    "@effect/cli": "^0.30.3",
+    "@effect/platform": "^0.42.6",
+    "@girs/gio-2.0": "2.78.0-3.2.7",
+    "@girs/gjs": "^3.2.7",
+    "@girs/glib-2.0": "2.78.0-3.2.7",
+    "effect": "^2.1.2"
+  }
+}

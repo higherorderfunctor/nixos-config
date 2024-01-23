@@ -6,6 +6,9 @@ import Gtk from 'gi://Gtk?version=4.0';
 import GLib from 'gi://GLib';
 import GObject from 'gi://GObject';
 
+export const test = <div>hi</div>
+console.log(test);
+
 const loop = GLib.MainLoop.new(null, false);
 
 class App extends Gtk.Application {
@@ -13,6 +16,7 @@ class App extends Gtk.Application {
     const window = new Gtk.ApplicationWindow({ application: this });
     const label = new Gtk.Label({ label: 'Hello World!' });
     window.child = label;
+    // TODO does not work
     window.connect('close-request', () => loop.quit());
     window.present();
   }
