@@ -2,7 +2,7 @@ import { effectify } from '@effect/platform/Effectify';
 import * as Error from '@effect/platform/Error';
 import * as FileSystem from '@effect/platform/FileSystem';
 import * as Effect from 'effect/Effect';
-import { pipe } from 'effect/Function';
+import { pipe, identity } from 'effect/Function';
 import * as Layer from 'effect/Layer';
 import * as Option from 'effect/Option';
 import * as Struct from 'effect/Struct';
@@ -12,6 +12,7 @@ import '@girs/glib-2.0';
 import '@girs/gio-2.0';
 import GLib from 'gi://GLib';
 import Gio from 'gi://Gio';
+import { ReadonlyArray, ReadonlyRecord, TMap } from 'effect';
 
 const handleBadArgument = (method: string) => (err: unknown) =>
   Error.BadArgument({
@@ -83,27 +84,72 @@ const handleBadArgument = (method: string) => (err: unknown) =>
 //   };
 // })();
 
-Gio._promisify(Gio.File.prototype, 'query_info_async');
-const access = (path: string, options?: FileSystem.AccessFileOptions) => {
-  const file = Gio.File.new_for_path(path);
-  const query = [
-    options?.readable ? Gio.FILE_ATTRIBUTE_ACCESS_CAN_READ : '',
-    options?.writable ? Gio.FILE_ATTRIBUTE_ACCESS_CAN_WRITE : '',
-  ].join(',');
-  const fileInfo = Effect.tryPromise({
-    try: (signal) => file.query_info_async(query, Gio.FileQueryInfoFlags.NONE, GLib.PRIORITY_DEFAULT, null),
-    catch: (error) => error,
-  }).pipe(Effect.map((info) => info.has_attribute(Gio.FILE_ATTRIBUTE_ACCESS_CAN_READ)));
-  console.log('!', fileInfo);
-  let mode = NFS.constants.F_OK;
-  if (options?.readable) {
-    mode |= NFS.constants.R_OK;
-  }
-  if (options?.writable) {
-    mode |= NFS.constants.W_OK;
-  }
-  return nodeAccess(path, mode);
-};
+const access = (() => {
+  Gio._promisify(Gio.File.prototype, 'query_info_async');
+  const makeQuery = (attr: string) => (path: string) => ({
+    query: attr,
+    getAttribute: (fileInfo: Gio.FileInfo): Effect.Effect<never, Error.SystemError, void> => {
+      if (!fileInfo.has_attribute(attr))
+        return Effect.fail(
+          Error.SystemError({
+            module: 'FileSystem',
+            method: 'access',
+            reason: 'NotFound',
+            pathOrDescriptor: path,
+            message: `Attribute missing: ${attr}`,
+          }),
+        );
+      if (!fileInfo.get_attribute_boolean(attr))
+        return Effect.fail(
+          Error.SystemError({
+            module: 'FileSystem',
+            method: 'access',
+            reason: 'PermissionDenied',
+            pathOrDescriptor: path,
+            message: `Permission denied: ${attr}`,
+          }),
+        );
+      return Effect.unit;
+    },
+  });
+  const canRead = makeQuery(Gio.FILE_ATTRIBUTE_ACCESS_CAN_READ);
+  const canWrite = makeQuery(Gio.FILE_ATTRIBUTE_ACCESS_CAN_WRITE);
+  return (path: string, options?: FileSystem.AccessFileOptions) =>
+    pipe(
+      [
+        options?.readable && options.readable ? Option.some(canRead(path)) : Option.none(),
+        options?.writable && options.writable ? Option.some(canWrite(path)) : Option.none(),
+      ],
+      ReadonlyArray.getSomes,
+      ReadonlyArray.reduce(
+        {
+          query: '',
+          hasAttributes: (_: Gio.FileInfo) => Effect.unit as Effect.Effect<never, Error.SystemError, void>,
+        },
+        ({ query, hasAttributes }, attr) => ({
+          query: `${query},${attr.query}`,
+          hasAttributes: (fileInfo: Gio.FileInfo) =>
+            hasAttributes(fileInfo).pipe(Effect.flatMap(() => attr.getAttribute(fileInfo))),
+        }),
+      ),
+      ({ query, hasAttributes }) =>
+        Effect.tryPromise({
+          try: (signal) => {
+            const cancellable = Gio.Cancellable.new();
+            signal.addEventListener('abort', () => {
+              cancellable.cancel();
+            });
+            return Gio.File.new_for_path(path).query_info_async(
+              query,
+              Gio.FileQueryInfoFlags.NONE,
+              GLib.PRIORITY_DEFAULT,
+              cancellable,
+            );
+          },
+          catch: (error) => error,
+        }).pipe(Effect.flatMap(hasAttributes)),
+    );
+})();
 
 // // == copy
 //
@@ -550,31 +596,31 @@ const access = (path: string, options?: FileSystem.AccessFileOptions) => {
 //     }
 //   });
 //
-// const fileSystemImpl = FileSystem.make({
-//   access,
-//   chmod,
-//   chown,
-//   copy,
-//   copyFile,
-//   link,
-//   makeDirectory,
-//   makeTempDirectory,
-//   makeTempDirectoryScoped,
-//   makeTempFile,
-//   makeTempFileScoped,
-//   open,
-//   readDirectory,
-//   readFile,
-//   readLink,
-//   realPath,
-//   remove,
-//   rename,
-//   stat,
-//   symlink,
-//   truncate,
-//   utimes,
-//   writeFile,
-// });
-//
-// /** @internal */
-// export const layer = Layer.succeed(FileSystem.FileSystem, fileSystemImpl);
+const fileSystemImpl = FileSystem.make({
+  access,
+  //   chmod,
+  //   chown,
+  //   copy,
+  //   copyFile,
+  //   link,
+  //   makeDirectory,
+  //   makeTempDirectory,
+  //   makeTempDirectoryScoped,
+  //   makeTempFile,
+  //   makeTempFileScoped,
+  //   open,
+  //   readDirectory,
+  //   readFile,
+  //   readLink,
+  //   realPath,
+  //   remove,
+  //   rename,
+  //   stat,
+  //   symlink,
+  //   truncate,
+  //   utimes,
+  //   writeFile,
+});
+
+/** @internal */
+export const layer = Layer.succeed(FileSystem.FileSystem, fileSystemImpl);

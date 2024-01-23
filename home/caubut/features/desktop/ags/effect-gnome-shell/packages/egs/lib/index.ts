@@ -26,9 +26,27 @@ try {
     null,
     //(...args: any[]) => console.log('!', args),
   );
-} catch (e: Gio.IOErrorEnum) {
-  console.log(Object.getPrototypeOf(e));
-  console.log(e.matches(Gio.IOErrorEnum, Gio.IOErrorEnum.NOT_FOUND));
+} catch (e) {
+  if (e instanceof GLib.Error) {
+    console.log(e.line);
+    console.log({
+      arguments: e.arguments,
+      message: e.message,
+      code: e.code,
+      line: e.line,
+      domain: e.domain,
+      name: e.name,
+      stack: e.stack,
+      caller: e.caller,
+      column: e.column,
+      length: e.length,
+      source: e.source,
+      fileName: e.fileName,
+    });
+    console.log('###', e.message.match(/(?<=^Error when getting information for file “).*(?=”:)/));
+    console.log(e.domain, e.code, Gio.io_error_quark());
+    console.log(e.matches(Gio.IOErrorEnum, Gio.IOErrorEnum.NOT_FOUND));
+  }
   console.log('@@', e);
 }
 // console.log('!', z.has_attribute(Gio.FILE_ATTRIBUTE_ACCESS_CAN_READ));
@@ -44,10 +62,8 @@ import { Effect, Console, Schedule } from 'effect';
 const barJob = Effect.repeat(Console.log('Bar: still running!'), Schedule.fixed('1 seconds'));
 
 const fooJob = Effect.gen(function* (_) {
-  console.log('Foo: started!');
   yield* _(Effect.forkDaemon(barJob));
   yield* _(Effect.sleep('3 seconds'));
-  console.log('Foo: finished!');
 });
 
 await Effect.runPromise(fooJob);
