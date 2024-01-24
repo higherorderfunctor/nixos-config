@@ -146,23 +146,62 @@ const access = (() => {
               cancellable,
             );
           },
-          catch: (error) => error,
+          catch: (error) => error, // TODO:
         }).pipe(Effect.flatMap(hasAttributes)),
     );
 })();
 
-// // == copy
-//
-// const copy = (() => {
-//   const nodeCp = effectify(NFS.cp, handleErrnoException('FileSystem', 'copy'), handleBadArgument('copy'));
-//   return (fromPath: string, toPath: string, options?: FileSystem.CopyOptions) =>
-//     nodeCp(fromPath, toPath, {
-//       force: options?.overwrite ?? false,
-//       preserveTimestamps: options?.preserveTimestamps ?? false,
-//       recursive: true,
-//     });
-// })();
-//
+// == copy
+function copyDirectory(srcDir, destDir) {
+  let srcFile = Gio.File.new_for_path(srcDir);
+  let destFile = Gio.File.new_for_path(destDir);
+
+  try {
+    if (!destFile.query_exists(null)) {
+      destFile.make_directory_with_parents(null);
+    }
+
+    let enumerator = srcFile.enumerate_children('standard::name,standard::type', Gio.FileQueryInfoFlags.NONE, null);
+    let fileInfo;
+
+    while ((fileInfo = enumerator.next_file(null)) !== null) {
+      let childSrcFile = srcFile.get_child(fileInfo.get_name());
+      let childDestFile = destFile.get_child(fileInfo.get_name());
+
+      if (fileInfo.get_file_type() === Gio.FileType.DIRECTORY) {
+        copyDirectory(childSrcFile.get_path(), childDestFile.get_path());
+      } else {
+        childSrcFile.copy(childDestFile, Gio.FileCopyFlags.NONE, null, null);
+      }
+    }
+  } catch (e) {
+    print(`Failed to copy directory: ${e.message}`);
+  }
+}
+const copy = (() => {
+  Gio._promisify(Gio.File.prototype, 'copy');
+  return (fromPath: string, toPath: string, options?: FileSystem.CopyOptions) => {
+    return Effect.tryPromise({
+      try: (signal) => {
+        const cancellable = Gio.Cancellable.new();
+        signal.addEventListener('abort', () => {
+          cancellable.cancel();
+        });
+        // TODO: error boolean
+        return Gio.File.new_for_path(fromPath).copy_async(
+          Gio.File.new_for_path(toPath),
+          (options?.overwrite ? Gio.FileCopyFlags.OVERWRITE : Gio.FileCopyFlags.NONE) |
+            (options?.preserveTimestamps ? Gio.FileCopyFlags.ALL_METADATA : Gio.FileCopyFlags.NONE), // TODO:
+          GLib.PRIORITY_DEFAULT,
+          cancellable,
+          null,
+        );
+      },
+      catch: (error) => error,
+    });
+  };
+})();
+
 // // == copyFile
 //
 // const copyFile = (() => {
@@ -175,7 +214,18 @@ const access = (() => {
 // })();
 //
 // // == chmod
-//
+function changePermissions(filePath, permissions) {
+  let file = Gio.File.new_for_path(filePath);
+
+  try {
+    let info = file.query_info('unix::mode', Gio.FileQueryInfoFlags.NONE, null);
+    info.set_attribute_uint32('unix::mode', permissions);
+    file.set_attributes_from_info(info, Gio.FileQueryInfoFlags.NONE, null);
+  } catch (e) {
+    print(`Failed to change permissions: ${e.message}`);
+  }
+}
+changePermissions('/path/to/file', 0o755);
 // const chmod = (() => {
 //   const nodeChmod = effectify(NFS.chmod, handleErrnoException('FileSystem', 'chmod'), handleBadArgument('chmod'));
 //   return (path: string, mode: number) => nodeChmod(path, mode);
@@ -183,6 +233,18 @@ const access = (() => {
 //
 // // == chown
 //
+function changeOwnerGroup(filePath, ownerId, groupId) {
+  let file = Gio.File.new_for_path(filePath);
+
+  try {
+    let info = file.query_info('unix::uid,unix::gid', Gio.FileQueryInfoFlags.NONE, null);
+    info.set_attribute_uint32('unix::uid', ownerId);
+    info.set_attribute_uint32('unix::gid', groupId);
+    file.set_attributes_from_info(info, Gio.FileQueryInfoFlags.NONE, null);
+  } catch (e) {
+    print(`Failed to change owner/group: ${e.message}`);
+  }
+}
 // const chown = (() => {
 //   const nodeChown = effectify(NFS.chown, handleErrnoException('FileSystem', 'chown'), handleBadArgument('chown'));
 //   return (path: string, uid: number, gid: number) => nodeChown(path, uid, gid);
