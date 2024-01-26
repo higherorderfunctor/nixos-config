@@ -412,14 +412,14 @@ const eslintConfig = [
         'error',
         {
           includeTypes: true,
-          devDependencies: ['eslint.config.js', 'packages/aws-cdk/**/*.ts', 'packages/*/tests/**/*.ts'],
+          devDependencies: ['eslint.config.js'],
         },
       ],
       // default is off; set custom sort order
       'simple-import-sort/imports': [
         'error',
         {
-          groups: [['^\\u0000'], ['^node:'], ['^@?\\w'], ['^@cdp'], ['^#'], ['^\\.']],
+          groups: [['^\\u0000'], ['^@?\\w'], ['^#'], ['^\\.']],
         },
       ],
       // default is off

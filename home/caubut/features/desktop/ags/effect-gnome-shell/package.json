@@ -4,7 +4,7 @@
   "type": "module",
   "scripts": {
     "build": "pnpm run -r --reporter=append-only --reporter-hide-prefix build",
-    "lint:tsc": "tsc --skipLibCheck --noemit --project tsconfig.json",
+    "lint:tsc": "pnpm run -r lint:tsc",
     "lint:eslint": "eslint --cache ."
   },
   "workspaces": [
@@ -33,6 +33,9 @@
     "eslint-plugin-sort-destructure-keys": "^1.5.0",
     "jsonc-eslint-parser": "^2.4.0",
     "prettier": "^3.2.4",
+    "ts-loader": "^9.5.1",
+    "ts-node": "^10.9.2",
+    "tsconfig-paths": "^4.2.0",
     "typescript": "^5.3.3"
   },
   "prettier": {

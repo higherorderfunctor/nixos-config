@@ -18,7 +18,7 @@
     "noUnusedParameters": true,
     "exactOptionalPropertyTypes": true,
     "typeRoots": [
-      "node_modules/@girs"
+      "node_modules/@types"
     ],
     "composite": true,
     "sourceMap": true,
