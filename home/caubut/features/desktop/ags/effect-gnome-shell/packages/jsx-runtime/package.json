@@ -3,7 +3,6 @@
   "version": "1.0.0",
   "type": "module",
   "scripts": {
-    "build": "node esbuild.config.js",
     "lint:tsc": "tsc --skipLibCheck --noemit --project tsconfig.json"
   },
   "workspaces": [

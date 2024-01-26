@@ -4,8 +4,7 @@
     "module": "nodenext",
     "target": "esnext",
     "lib": [
-      "esnext",
-      "dom",
+      "ESNext"
     ],
     "moduleResolution": "nodenext",
     "removeComments": true,
@@ -18,6 +17,9 @@
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "exactOptionalPropertyTypes": true,
+    "typeRoots": [
+      "node_modules/@girs"
+    ],
     "composite": true,
     "sourceMap": true,
     "declaration": true,
@@ -26,9 +28,13 @@
     "noErrorTruncation": true,
     "downlevelIteration": true,
     "baseUrl": ".",
-    "types": [],
-    "typeRoots": [
-      "node_modules/@girs"
+  },
+  "ts-node": {
+    "esm": true,
+    "require": [
+      "tsconfig-paths/register"
     ],
+    "experimentalSpecifierResolution": "node",
+    "preferTsExts": true
   }
 }

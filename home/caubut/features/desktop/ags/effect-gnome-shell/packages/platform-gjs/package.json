@@ -1,0 +1,8 @@
+{
+  "name": "@egs/platform-gjs",
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "lint:tsc": "tsc --skipLibCheck --noemit --project tsconfig.json"
+  }
+}
