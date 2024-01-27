@@ -4,6 +4,7 @@
   "main": "config.js",
   "type": "module",
   "scripts": {
+    "update": "mkdir -p tmp &&curl -fsSL https://raw.githubusercontent.com/Aylur/ags/main/example/starter-config/setup.sh | bash -s -- \"$PWD/tmp\"",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {
