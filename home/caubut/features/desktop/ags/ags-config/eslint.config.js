@@ -2,7 +2,7 @@ import { FlatCompat } from '@eslint/eslintrc';
 import js from '@eslint/js';
 import EslintPluginStylistic from '@stylistic/eslint-plugin';
 import TypescriptEslintParser from '@typescript-eslint/parser';
-import EslintPluginCodegen, { processors as EslintPluginCodegenProcessors } from 'eslint-plugin-codegen';
+import EslintPluginCodegen from 'eslint-plugin-codegen';
 import EslintPluginDeprecation from 'eslint-plugin-deprecation';
 import EslintPluginImport from 'eslint-plugin-import';
 import EslintPluginPreferArrowFunctions from 'eslint-plugin-prefer-arrow-functions';
@@ -135,7 +135,7 @@ const eslintPlugPromise = [
   })),
 ];
 
-const eslintPuginCodegen = [
+const eslintPluginCodegen = [
   {
     rules: { 'codegen/codegen': 'error' },
     plugins: {
@@ -160,7 +160,7 @@ const eslintPluginStylistic = [
 const eslintConfig = [
   ...eslintRecommended,
   ...eslintPluginStylistic,
-  ...eslintPuginCodegen,
+  ...eslintPluginCodegen,
   ...airbnbBase,
   ...airbnbWhitespace,
   ...airbnbTypescriptBase,
@@ -338,14 +338,14 @@ const eslintConfig = [
         'error',
         {
           includeTypes: true,
-          devDependencies: ['eslint.config.js', 'packages/aws-cdk/**/*.ts', 'packages/*/tests/**/*.ts'],
+          devDependencies: ['eslint.config.js', 'packages/*/esbuild.config.js'],
         },
       ],
       // default is off; set custom sort order
       'simple-import-sort/imports': [
         'error',
         {
-          groups: [['^\\u0000'], ['^node:'], ['^@?\\w'], ['^@cdp'], ['^#'], ['^\\.']],
+          groups: [['^\\u0000'], ['^@girs'], ['^@?\\w'], ['^\\.']],
         },
       ],
       // default is off

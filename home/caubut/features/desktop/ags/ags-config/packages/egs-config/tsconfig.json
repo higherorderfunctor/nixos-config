@@ -1,0 +1,13 @@
+{
+  "extends": "../../tsconfig.json",
+  "include": [
+    "src"
+  ],
+  "compilerOptions": {
+    "tsBuildInfoFile": "dist/esm/tsconfig.tsbuildinfo",
+    "rootDirs": [
+      "src"
+    ],
+    "outDir": "dist/esm"
+  }
+}

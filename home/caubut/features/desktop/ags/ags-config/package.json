@@ -1,19 +1,26 @@
 {
-  "name": "ags-config",
-  "version": "1.0.0",
+  "name": "effect-gnome-shell",
+  "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "update": "pnpm up --latest && scripts/update-types",
-    "lint:tsc": "tsc --skipLibCheck --noemit --project tsconfig.json",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build": "pnpm run -r --reporter=append-only --reporter-hide-prefix build",
+    "start": "gjs -m packages/egs/dist/esm/index.js",
+    "lint": "pnpm run lint:tsc; pnpm run lint:eslint;",
+    "lint:tsc": "pnpm run -r lint:tsc",
+    "lint:eslint": "ESLINT_USE_FLAT_CONFIG=true eslint_d --cache --max-warnings=0 .",
+    "lint:eslint:fix": "pnpm run lint:eslint --fix",
+    "lint:eslint:restart": "ESLINT_USE_FLAT_CONFIG=true eslint_d restart",
+    "lint:eslint:stop": "eslint_d stop"
   },
+  "workspaces": [
+    "packages/*"
+  ],
   "devDependencies": {
     "@eslint/eslintrc": "^3.0.0",
     "@eslint/js": "^8.56.0",
     "@stylistic/eslint-plugin": "^1.5.4",
     "@typescript-eslint/eslint-plugin": "^6.19.1",
     "@typescript-eslint/parser": "^6.19.1",
-    "esbuild": "^0.19.12",
     "eslint": "^8.56.0",
     "eslint-config-airbnb-base": "^15.0.0",
     "eslint-config-airbnb-typescript": "^17.1.0",
@@ -27,6 +34,7 @@
     "eslint-plugin-promise": "^6.1.1",
     "eslint-plugin-simple-import-sort": "^10.0.0",
     "eslint-plugin-sort-destructure-keys": "^1.5.0",
+    "eslint_d": "^13.1.2",
     "prettier": "^3.2.4",
     "typescript": "^5.3.3"
   },

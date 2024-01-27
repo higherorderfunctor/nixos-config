@@ -19,7 +19,6 @@
     "exactOptionalPropertyTypes": true,
     "typeRoots": [
       "node_modules/@girs",
-      "./types/ags.d.ts"
     ],
     "composite": true,
     "sourceMap": true,
