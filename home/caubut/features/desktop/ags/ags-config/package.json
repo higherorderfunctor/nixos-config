@@ -1,17 +1,34 @@
 {
   "name": "ags-config",
   "version": "1.0.0",
-  "main": "config.js",
   "type": "module",
   "scripts": {
-    "update": "mkdir -p tmp &&curl -fsSL https://raw.githubusercontent.com/Aylur/ags/main/example/starter-config/setup.sh | bash -s -- \"$PWD/tmp\"",
+    "update": "pnpm up --latest && scripts/update-types",
+    "lint:tsc": "tsc --skipLibCheck --noemit --project tsconfig.json",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "dependencies": {
+  "devDependencies": {
+    "@eslint/eslintrc": "^3.0.0",
+    "@eslint/js": "^8.56.0",
+    "@stylistic/eslint-plugin": "^1.5.4",
+    "@typescript-eslint/eslint-plugin": "^6.19.1",
+    "@typescript-eslint/parser": "^6.19.1",
+    "esbuild": "^0.19.12",
     "eslint": "^8.56.0",
+    "eslint-config-airbnb-base": "^15.0.0",
+    "eslint-config-airbnb-typescript": "^17.1.0",
     "eslint-config-prettier": "^9.1.0",
+    "eslint-import-resolver-typescript": "^3.6.1",
+    "eslint-plugin-codegen": "^0.22.1",
+    "eslint-plugin-deprecation": "^2.0.0",
+    "eslint-plugin-import": "^2.29.1",
+    "eslint-plugin-prefer-arrow-functions": "^3.2.4",
     "eslint-plugin-prettier": "^5.1.3",
-    "prettier": "^3.2.4"
+    "eslint-plugin-promise": "^6.1.1",
+    "eslint-plugin-simple-import-sort": "^10.0.0",
+    "eslint-plugin-sort-destructure-keys": "^1.5.0",
+    "prettier": "^3.2.4",
+    "typescript": "^5.3.3"
   },
   "prettier": {
     "semi": true,

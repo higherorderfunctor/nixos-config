@@ -5,11 +5,13 @@ shopt -s inherit_errexit 2>/dev/null || :
 
 cd "$(dirname "$0")/.."
 
-mkdir -p /tmp/ags
+rm -rf /tmp/ags
+mkdir /tmp/ags
+
 curl -fsSL https://raw.githubusercontent.com/Aylur/ags/main/example/starter-config/setup.sh |
 head -n -5 | # remove last 'npm i'
 bash -s -- "/tmp/ags"
 
-cp -TRv /tmp/ags ./types
+cp -TRv /tmp/ags/types ./types
 
-#rm -rf /tmp/ags-config
+rm -rf /tmp/ags
