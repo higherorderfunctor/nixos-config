@@ -8,7 +8,7 @@ await esbuild.build({
   minify: true,
   minifySyntax: true,
   outdir: 'dist/esm',
-  external: ['gi://*'],
+  external: ['gi://*', 'system'],
   tsconfig: 'tsconfig.json',
   jsx: 'automatic',
 });

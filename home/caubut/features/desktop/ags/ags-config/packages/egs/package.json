@@ -2,18 +2,17 @@
   "name": "@egs/egs",
   "version": "0.0.0",
   "type": "module",
-  "exports": {
-    ".": "./lib/index.ts",
-    "./*": "./lib/*"
-  },
   "scripts": {
     "build": "node esbuild.config.js",
     "lint:tsc": "tsc --skipLibCheck --noemit --project tsconfig.json"
   },
   "dependencies": {
+    "@effect/cli": "^0.31.3",
+    "@effect/platform-gjs": "workspace:*",
     "@girs/glib-2.0": "2.78.0-3.2.7",
     "@girs/gobject-2.0": "2.78.0-3.2.7",
-    "@girs/gtk-4.0": "4.12.4-3.2.7"
+    "@girs/gtk-4.0": "4.12.4-3.2.7",
+    "effect": "^2.2.2"
   },
   "devDependencies": {
     "esbuild": "^0.19.12"

@@ -3,14 +3,15 @@
   "version": "0.0.0",
   "type": "module",
   "exports": {
-    ".": "./lib/index.ts",
-    "./*": "./lib/*"
+    ".": "./src/index.ts",
+    "./*": "./src/*"
   },
   "scripts": {
     "lint:tsc": "tsc --skipLibCheck --noemit --project tsconfig.json"
   },
   "dependencies": {
     "@effect/platform": "^0.43.3",
+    "@girs/gio-2.0": "2.78.0-3.2.7",
     "@girs/gjs": "^3.2.7",
     "@girs/glib-2.0": "2.78.0-3.2.7",
     "effect": "^2.2.2"
