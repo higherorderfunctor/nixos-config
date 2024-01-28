@@ -47,17 +47,18 @@ const program = Effect.gen(function* (_) {
 });
 
 const configs = Options.keyValueMap('c').pipe(Options.optional);
-const egs = Command.make('minigit', { configs }, ({ configs }) =>
-  Option.match(configs, {
-    onNone: () => Console.log("Running 'minigit'"),
+const egs = Command.make('effect-gnome-shell', { configs }, ({ configs }) => {
+  console.log('!!', configs);
+  return Option.match(configs, {
+    onNone: () => Console.log("Running 'effect-gnome-shel'"),
     onSome: (configs) => {
       const keyValuePairs = Array.from(configs)
         .map(([key, value]) => `${key}=${value}`)
         .join(', ');
       return Console.log(`Running 'minigit' with the following configs: ${keyValuePairs}`);
     },
-  }),
-);
+  });
+});
 
 const command = egs;
 
@@ -66,7 +67,12 @@ const cli = Command.run(command, {
   version: 'v1.0.0',
 });
 
-Effect.suspend(() => cli(process.argv)).pipe(Effect.provide(NodeContext.layer), Runtime.runMain);
+console.log(ARGV);
+console.log(['test', ...ARGV]);
+Effect.suspend(() => cli(['effect-gnome-shell', ...ARGV])).pipe(
+  Effect.withConfigProvider(ConfigProvider.nested(ConfigProvider.fromEnv(), 'GIT')),
+  Runtime.runMain,
+);
 
 // export const main = () => new FbrApplication({ application_id: 'egs' }).run(null);
 // loop.run();
