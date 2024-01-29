@@ -359,7 +359,7 @@ const eslintConfig = [
         'error',
         {
           includeTypes: true,
-          devDependencies: ['eslint.config.js', 'packages/*/esbuild.config.js'],
+          devDependencies: ['eslint.config.js', 'packages/*/esbuild.*.js', 'packages/*/test/*test.ts'],
         },
       ],
       // default is off; set custom sort order

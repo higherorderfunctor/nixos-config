@@ -1,8 +1,10 @@
+import '@girs/gjs/dom';
+
 import { GObject } from '@girs/gobject-2.0';
 import { Gtk } from '@girs/gtk-4.0';
 
 import { Args, Command, Options } from '@effect/cli';
-import { Runtime } from '@effect/platform-gjs';
+import { NodeContext, Runtime } from '@effect/platform-gjs';
 import { Config, ConfigProvider, Console, Effect, Option, ReadonlyArray } from 'effect';
 
 // const loop = GLib.MainLoop.new(null, false);
@@ -71,6 +73,7 @@ console.log(ARGV);
 console.log(['test', ...ARGV]);
 Effect.suspend(() => cli(['effect-gnome-shell', ...ARGV])).pipe(
   Effect.withConfigProvider(ConfigProvider.nested(ConfigProvider.fromEnv(), 'GIT')),
+  Effect.provide(NodeContext.layer),
   Runtime.runMain,
 );
 

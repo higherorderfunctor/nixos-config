@@ -9,9 +9,12 @@
   "dependencies": {
     "@effect/cli": "^0.31.3",
     "@effect/platform-gjs": "workspace:*",
+    "@girs/gjs": "^3.2.7",
     "@girs/glib-2.0": "2.78.0-3.2.7",
     "@girs/gobject-2.0": "2.78.0-3.2.7",
     "@girs/gtk-4.0": "4.12.4-3.2.7",
+    "@gjsify/assert": "^0.0.4",
+    "@gjsify/deno_std": "^0.0.4",
     "effect": "^2.2.2"
   },
   "devDependencies": {

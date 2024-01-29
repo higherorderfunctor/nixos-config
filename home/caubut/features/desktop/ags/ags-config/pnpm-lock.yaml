@@ -80,6 +80,9 @@ importers:
       '@effect/platform-gjs':
         specifier: workspace:*
         version: link:../platform-gjs
+      '@girs/gjs':
+        specifier: ^3.2.7
+        version: 3.2.7
       '@girs/glib-2.0':
         specifier: 2.78.0-3.2.7
         version: 2.78.0-3.2.7
@@ -89,6 +92,12 @@ importers:
       '@girs/gtk-4.0':
         specifier: 4.12.4-3.2.7
         version: 4.12.4-3.2.7
+      '@gjsify/assert':
+        specifier: ^0.0.4
+        version: 0.0.4
+      '@gjsify/deno_std':
+        specifier: ^0.0.4
+        version: 0.0.4
       effect:
         specifier: ^2.2.2
         version: 2.2.2
@@ -116,6 +125,16 @@ importers:
       effect:
         specifier: ^2.2.2
         version: 2.2.2
+    devDependencies:
+      '@gjsify/assert':
+        specifier: ^0.0.4
+        version: 0.0.4
+      '@gjsify/unit':
+        specifier: ^0.0.4
+        version: 0.0.4
+      esbuild:
+        specifier: ^0.19.12
+        version: 0.19.12
 
 packages:
 
@@ -704,6 +723,13 @@ packages:
       '@girs/gobject-2.0': 2.78.0-3.2.7
     dev: false
 
+  /@girs/gio-2.0@2.78.0-3.2.6:
+    resolution: {integrity: sha512-MmPAB3gB5V2I5sfrbsj9D5/+iIcbkfqDYq8fAgLXav558xSDNjux+lNykxawL1oCNcxr+kC2PguYhnLEFCgxmA==}
+    dependencies:
+      '@girs/gjs': 3.2.7
+      '@girs/glib-2.0': 2.78.0-3.2.7
+      '@girs/gobject-2.0': 2.78.0-3.2.7
+
   /@girs/gio-2.0@2.78.0-3.2.7:
     resolution: {integrity: sha512-88GNniBwxAsXrfA+T1wNUxoQk8HivDZUVq1KF3ZsomrQyRDcwCgQLcLyC6c5ZAkg6xwnHZmTIWoYgITiee/lLA==}
     dependencies:
@@ -717,14 +743,18 @@ packages:
     dependencies:
       '@girs/glib-2.0': 2.78.0-3.2.7
       '@girs/gobject-2.0': 2.78.0-3.2.7
-    dev: false
+
+  /@girs/glib-2.0@2.78.0-3.2.6:
+    resolution: {integrity: sha512-grdCdAH+mfdzoz5iMNKsvu+BSaJWaCdLcMyoa0tq/+Rz84D/2GmLslyomjFXzA7Xr6BrIXOzgHaTuRrCZNtnmw==}
+    dependencies:
+      '@girs/gjs': 3.2.7
+      '@girs/gobject-2.0': 2.78.0-3.2.7
 
   /@girs/glib-2.0@2.78.0-3.2.7:
     resolution: {integrity: sha512-h1zGUd58VnQn93Xws91E0mwio8weBWdqDn6sm5Q0xzPmhGGH8+9h/z9JGc7YKj32PnlWrPJ8r9lxeyvO57zT6A==}
     dependencies:
       '@girs/gjs': 3.2.7
       '@girs/gobject-2.0': 2.78.0-3.2.7
-    dev: false
 
   /@girs/gmodule-2.0@2.0.0-3.2.7:
     resolution: {integrity: sha512-7B+rAZ6grSYwSOz2p4h8hSKoK5QIuSVHEM7qGUTC6qpPiLvREcaBNGJSGgAMgxtRhyXPYVsUyLhMgUokrFUC+g==}
@@ -739,7 +769,6 @@ packages:
     dependencies:
       '@girs/gjs': 3.2.7
       '@girs/glib-2.0': 2.78.0-3.2.7
-    dev: false
 
   /@girs/graphene-1.0@1.0.0-3.2.7:
     resolution: {integrity: sha512-WVhfoZq2G7mpXSGjI65VzmCLYWIqlFJMHwsgG0nBYZig2zKdle4c4hm5SQu9HrTQWTTPpbt8BM3qPCH2rFISXg==}
@@ -819,6 +848,42 @@ packages:
       '@girs/harfbuzz-0.0': 8.2.1-3.2.7
       '@girs/pango-1.0': 1.51.0-3.2.7
     dev: false
+
+  /@gjsify/assert@0.0.4:
+    resolution: {integrity: sha512-tX08EIgDY+Kj6+NWaE4vypemTNwGK1SPnS7EhCoIzIkPRcgsNk1b83HUcjI6HwgJj5BjYokj47edQu1haukVFw==}
+    dependencies:
+      '@gjsify/deno_std': 0.0.4
+
+  /@gjsify/deno-runtime@0.0.4:
+    resolution: {integrity: sha512-aMBP1XAOQyhefsNcgmj/hVMneJiK6hWMEZyUhpO24w+NM9r1Rc1yKFKRxNIRFqhk8ayVUXKOhLqNGn7v/ouN0Q==}
+    dependencies:
+      '@gjsify/utils': 0.0.4
+
+  /@gjsify/deno_std@0.0.4:
+    resolution: {integrity: sha512-NZWdo5VUk745yaB0PCQoregnRMXIBIC4fg4arq5P/OY43mntxpZZOm6kt88oq7pEw0MGkf5WaJWUeZmiaSMj3w==}
+    dependencies:
+      '@gjsify/deno-runtime': 0.0.4
+
+  /@gjsify/process@0.0.4:
+    resolution: {integrity: sha512-AMW7PYiJDVY3RP9dIPZt0x0GqHYowXAlLQwClCvkPlcYTFQNzX6tvgmACCew8q+Yo8W6MaEUQewALMwWz9Mt0Q==}
+    dependencies:
+      '@girs/gjs': 3.2.7
+      '@gjsify/utils': 0.0.4
+    dev: true
+
+  /@gjsify/unit@0.0.4:
+    resolution: {integrity: sha512-Qfx/nYk4sxJ5j42e+XdlBmC5GQXqDkK0n3sIoPpwTcU7sxpW+oORV1e/fdTg3bPzs/QGu4ONfLyHNBiayrqXyg==}
+    dependencies:
+      '@gjsify/assert': 0.0.4
+      '@gjsify/process': 0.0.4
+    dev: true
+
+  /@gjsify/utils@0.0.4:
+    resolution: {integrity: sha512-iTsj9+rRIrcVyfsxWIN4e1ICWklpEQ2nS4jlTJmZ7INHbWcvhGFOv4lhSc1iHF1AAyAuBDUUMD+ftMYPJy6ZnA==}
+    dependencies:
+      '@girs/gio-2.0': 2.78.0-3.2.6
+      '@girs/gjs': 3.2.7
+      '@girs/glib-2.0': 2.78.0-3.2.6
 
   /@humanwhocodes/config-array@0.11.14:
     resolution: {integrity: sha512-3T8LkOmg45BV5FICb15QQMsyUSWrQ8AygVfC7ZG32zOalnqrilm018ZVCw0eapXux8FtA33q8PSRSstjee3jSg==}
