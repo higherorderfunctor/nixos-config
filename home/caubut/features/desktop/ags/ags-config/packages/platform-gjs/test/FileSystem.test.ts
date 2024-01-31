@@ -7,7 +7,7 @@ const runPromise = <E, A>(self: Effect.Effect<Fs.FileSystem, E, A>) =>
 
 export const testSuite = async () => {
   await describe('FileSystem', async () => {
-    await it('readFile', async () =>
+    await it('readFile', () =>
       runPromise(
         Effect.gen(function* (_) {
           const fs = yield* _(Fs.FileSystem);
@@ -17,23 +17,23 @@ export const testSuite = async () => {
         }),
       ));
 
-    // it('makeTempDirectory', () =>
-    //   runPromise(
-    //     Effect.gen(function* (_) {
-    //       const fs = yield* _(Fs.FileSystem);
-    //       let dir = '';
-    //       yield* _(
-    //         Effect.gen(function* (_) {
-    //           dir = yield* _(fs.makeTempDirectory());
-    //           const stat = yield* _(fs.stat(dir));
-    //           expect(stat.type).toEqual('Directory');
-    //         }),
-    //         Effect.scoped,
-    //       );
-    //       const stat = yield* _(fs.stat(dir));
-    //       expect(stat.type).toEqual('Directory');
-    //     }),
-    //   ));
+    await it('makeTempDirectory', () =>
+      runPromise(
+        Effect.gen(function* (_) {
+          const fs = yield* _(Fs.FileSystem);
+          let dir = '';
+          yield* _(
+            Effect.gen(function* (_) {
+              dir = yield* _(fs.makeTempDirectory());
+              const stat = yield* _(fs.stat(dir));
+              expect(stat.type).toEqual('Directory');
+            }),
+            Effect.scoped,
+          );
+          const stat = yield* _(fs.stat(dir));
+          expect(stat.type).toEqual('Directory');
+        }),
+      ));
 
     // it('makeTempDirectoryScoped', () =>
     //   runPromise(

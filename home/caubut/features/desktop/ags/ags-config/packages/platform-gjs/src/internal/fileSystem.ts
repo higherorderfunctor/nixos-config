@@ -8,11 +8,11 @@ import * as Error from '@effect/platform/Error';
 import * as FileSystem from '@effect/platform/FileSystem';
 import { ReadonlyArray } from 'effect';
 import * as Effect from 'effect/Effect';
-import { pipe } from 'effect/Function';
+import { constVoid, pipe } from 'effect/Function';
 import * as Layer from 'effect/Layer';
 import * as Option from 'effect/Option';
 
-import { handleIOErrorException } from './err.js';
+import { handleIOErrorException } from './error.js';
 
 // const handleBadArgument = (method: string) => (err: unknown) =>
 //   Error.BadArgument({
@@ -151,19 +151,38 @@ const access = (() => {
 // //   );
 // //   return (fromPath: string, toPath: string) => nodeCopyFile(fromPath, toPath);
 // // })();
-// //
-// // // == chmod
-// const changePermissions = (filePath, permissions) => {
-//   const file = Gio.File.new_for_path(filePath);
-//
-//   try {
-//     const info = file.query_info('unix::mode', Gio.FileQueryInfoFlags.NONE, null);
-//     info.set_attribute_uint32('unix::mode', permissions);
-//     file.set_attributes_from_info(info, Gio.FileQueryInfoFlags.NONE, null);
-//   } catch (e) {
-//     print(`Failed to change permissions: ${e.message}`);
-//   }
-// };
+
+// == chmod
+
+const chmod = (path: string, mode: number) => {
+  const file = Gio.File.new_for_path(path);
+  const cancellable = Gio.Cancellable.new();
+  return Effect.tryPromise({
+    try: (signal) => {
+      signal.addEventListener('abort', () => {
+        cancellable.cancel();
+      });
+      return file.query_info_async('unix::mode', Gio.FileQueryInfoFlags.NONE, GLib.PRIORITY_DEFAULT, cancellable);
+    },
+    catch: handleIOErrorException('FileSystem', 'readFile', path),
+  }).pipe(
+    Effect.map((info) => {
+      info.set_attribute_uint32('unix::mode', mode);
+      return info;
+    }),
+    Effect.flatMap((info) =>
+      Effect.tryPromise({
+        try: async (signal) => {
+          signal.addEventListener('abort', () => {
+            cancellable.cancel();
+          });
+          file.set_attributes_from_info(info, Gio.FileQueryInfoFlags.NONE, null);
+        },
+        catch: handleIOErrorException('FileSystem', 'readFile', path),
+      }),
+    ),
+  );
+};
 // changePermissions('/path/to/file', 0o755);
 // // const chmod = (() => {
 // //   const nodeChmod = effectify(NFS.chmod, handleErrnoException('FileSystem', 'chmod'), handleBadArgument('chmod'));
@@ -195,9 +214,9 @@ const access = (() => {
 //   const nodeLink = effectify(NFS.link, handleErrnoException('FileSystem', 'link'), handleBadArgument('link'));
 //   return (existingPath: string, newPath: string) => nodeLink(existingPath, newPath);
 // })();
-//
-// // == makeDirectory
-//
+
+// == makeDirectory
+
 // const makeDirectory = (() => {
 //   const nodeMkdir = effectify(
 //     NFS.mkdir,
@@ -211,8 +230,39 @@ const access = (() => {
 //     });
 // })();
 //
-// // == makeTempDirectory
-//
+Gio._promisify(Gio.File.prototype, 'make_directory_async');
+
+const makeDirectory = (path: string, options?: FileSystem.MakeDirectoryOptions) => {
+  const file = Gio.File.new_for_path(path);
+  if (options?.recursive) {
+    const result = GLib.mkdir_with_parents(path, options.mode ?? 0o755);
+    if (result === 0) {
+      return Effect.unit;
+    }
+    const message = GLib.strerror(errno);
+    const code = Gio.io_error_from_errno(errno);
+    return Effect.fail(
+      handleIOErrorException(
+        'FileSystem',
+        'makeDirectory',
+        path,
+      )(GLib.Error.new_literal(Gio.io_error_quark(), code, message)),
+    );
+  }
+  return Effect.tryPromise({
+    try: (signal) => {
+      const cancellable = Gio.Cancellable.new();
+      signal.addEventListener('abort', () => {
+        cancellable.cancel();
+      });
+      return file.make_directory_async(GLib.PRIORITY_DEFAULT, cancellable);
+    },
+    catch: handleIOErrorException('FileSystem', 'makeDirectory', path),
+  }).pipe(Effect.flatMap(() => (options?.mode ? chmod(path, options.mode) : Effect.unit)));
+};
+
+// == makeTempDirectory
+
 // const makeTempDirectoryFactory = (method: string) => {
 //   const nodeMkdtemp = effectify(NFS.mkdtemp, handleErrnoException('FileSystem', method), handleBadArgument(method));
 //   return (options?: FileSystem.MakeTempDirectoryOptions) =>
@@ -224,6 +274,11 @@ const access = (() => {
 //     });
 // };
 // const makeTempDirectory = makeTempDirectoryFactory('makeTempDirectory');
+const makeTempDirectory = (options?: FileSystem.MakeTempDirectoryOptions) => {
+  const path = options?.directory ? options.directory : GLib.get_tmp_dir();
+  const tmpDir = `${path}/${options?.prefix ?? ''}${GLib.random_int().toString(16)}`;
+  return makeDirectory(tmpDir).pipe(Effect.map(() => tmpDir));
+};
 //
 // // == remove
 //
@@ -521,7 +576,70 @@ const readFile = (path: string) => {
 // })();
 //
 // // == stat
-//
+const stat = (path: string): FileSystem.File.Info => {
+  const file = Gio.File.new_for_path(path);
+  return Effect.tryPromise({
+    try: (signal) => {
+      const cancellable = Gio.Cancellable.new();
+      signal.addEventListener('abort', () => {
+        cancellable.cancel();
+      });
+      return Gio.File.new_for_path(path).query_info_async(
+        'standard::*',
+        Gio.FileQueryInfoFlags.NONE,
+        GLib.PRIORITY_DEFAULT,
+        cancellable,
+      );
+    },
+    catch: handleIOErrorException('FileSystem', 'stat', path),
+  }).pipe(
+    Effect.map((fileInfo) => ({
+      // type: Type fileInfo.
+      mtime: Option.fromNullable(fileInfo.get_modification_date_time()?.to_unix()).pipe(
+        Option.map((epoch) => new Date(epoch)),
+      ),
+      atime: Option.fromNullable(fileInfo.get_access_date_time()?.to_unix()).pipe(
+        Option.map((epoch) => new Date(epoch)),
+      ),
+      birthtime: Option.fromNullable(fileInfo.get_creation_date_time()?.to_unix()).pipe(
+        Option.map((epoch) => new Date(epoch)),
+      ),
+      // dev: number
+      // ino: Option<number>
+      // mode: number
+      // nlink: Option<number>
+      // uid: Option<number>
+      // gid: Option<number>
+      // rdev: Option<number>
+      // size: Size
+      // blksize: Option<Size>
+      // blocks: Option<number>
+    })),
+  );
+
+  file.query_info_async(
+    'standard::*', // Attributes to retrieve
+    Gio.FileQueryInfoFlags.NONE, // Flags
+    GLib.PRIORITY_DEFAULT, // Priority
+    null, // Cancellable
+    (source, result) => {
+      // Callback function
+      try {
+        const info = source.query_info_finish(result);
+        const stats = {
+          size: info.get_size(),
+          modificationTime: info.get_modification_date_time()?.to_unix(),
+          type: info.get_file_type(),
+          isDirectory: info.get_file_type() === Gio.FileType.DIRECTORY,
+          isRegularFile: info.get_file_type() === Gio.FileType.REGULAR,
+        };
+        callback(null, stats);
+      } catch (error) {
+        callback(error, null);
+      }
+    },
+  );
+};
 // const makeFileInfo = (stat: NFS.Stats): FileSystem.File.Info => ({
 //   type: stat.isFile()
 //     ? 'File'
@@ -615,13 +733,13 @@ const readFile = (path: string) => {
 //
 const fileSystemImpl = FileSystem.make({
   access,
-  //   chmod,
+  chmod,
   //   chown,
   //   copy,
   //   copyFile,
   //   link,
-  //   makeDirectory,
-  //   makeTempDirectory,
+  makeDirectory,
+  makeTempDirectory,
   //   makeTempDirectoryScoped,
   //   makeTempFile,
   //   makeTempFileScoped,

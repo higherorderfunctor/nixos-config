@@ -6,5 +6,9 @@ import { run } from '@gjsify/unit';
 import { testSuite } from './FileSystem.test.js';
 
 const loop = new GLib.MainLoop(null, false);
-run({ testSuite });
+
+run({ testSuite }).then(() => {
+  loop.quit();
+});
+
 loop.run();
