@@ -14,7 +14,7 @@ const isIOError = (err: unknown): err is GLib.Error & { code: Gio.IOErrorEnum } 
 
 export const handleIOErrorException =
   (module: SystemError['module'], method: string, path: string) =>
-  (err: unknown): PlatformError => {
+  (err: unknown): SystemError => {
     logError(err, 'An error occurred');
     let reason: SystemErrorReason = 'Unknown';
     let message: string | null = null;

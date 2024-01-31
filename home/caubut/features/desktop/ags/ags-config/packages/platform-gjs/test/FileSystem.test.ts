@@ -1,5 +1,6 @@
 import * as Fs from '@effect/platform-gjs/FileSystem.js';
-import { describe, expect, it, run } from '@gjsify/unit';
+import { describe, expect, it } from '@gjsify/unit';
+import assert from 'assert';
 import * as Effect from 'effect/Effect';
 
 const runPromise = <E, A>(self: Effect.Effect<Fs.FileSystem, E, A>) =>
@@ -35,23 +36,23 @@ export const testSuite = async () => {
         }),
       ));
 
-    // it('makeTempDirectoryScoped', () =>
-    //   runPromise(
-    //     Effect.gen(function* (_) {
-    //       const fs = yield* _(Fs.FileSystem);
-    //       let dir = '';
-    //       yield* _(
-    //         Effect.gen(function* (_) {
-    //           dir = yield* _(fs.makeTempDirectoryScoped());
-    //           const stat = yield* _(fs.stat(dir));
-    //           expect(stat.type).toEqual('Directory');
-    //         }),
-    //         Effect.scoped,
-    //       );
-    //       const error = yield* _(Effect.flip(fs.stat(dir)));
-    //       assert(error._tag === 'SystemError' && error.reason === 'NotFound');
-    //     }),
-    //   ));
+    await it('makeTempDirectoryScoped', () =>
+      runPromise(
+        Effect.gen(function* (_) {
+          const fs = yield* _(Fs.FileSystem);
+          let dir = '';
+          yield* _(
+            Effect.gen(function* (_) {
+              dir = yield* _(fs.makeTempDirectoryScoped());
+              const stat = yield* _(fs.stat(dir));
+              expect(stat.type).toEqual('Directory');
+            }),
+            Effect.scoped,
+          );
+          const error = yield* _(Effect.flip(fs.stat(dir)));
+          assert(error._tag === 'SystemError' && error.reason === 'NotFound');
+        }),
+      ));
 
     // it('truncate', () =>
     //   runPromise(

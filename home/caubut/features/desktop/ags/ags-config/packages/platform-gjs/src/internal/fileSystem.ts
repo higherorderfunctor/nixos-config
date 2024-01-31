@@ -8,7 +8,7 @@ import * as Error from '@effect/platform/Error';
 import * as FileSystem from '@effect/platform/FileSystem';
 import { ReadonlyArray } from 'effect';
 import * as Effect from 'effect/Effect';
-import { constVoid, pipe } from 'effect/Function';
+import { pipe } from 'effect/Function';
 import * as Layer from 'effect/Layer';
 import * as Option from 'effect/Option';
 
@@ -234,8 +234,9 @@ Gio._promisify(Gio.File.prototype, 'make_directory_async');
 
 const makeDirectory = (path: string, options?: FileSystem.MakeDirectoryOptions) => {
   const file = Gio.File.new_for_path(path);
+  file.make_directory_async(io_priority, cancellable, callback);
   if (options?.recursive) {
-    const result = GLib.mkdir_with_parents(path, options.mode ?? 0o755);
+    const result = file.make_directory_with_parents(path, options.mode ?? 0o755);
     if (result === 0) {
       return Effect.unit;
     }
@@ -263,41 +264,164 @@ const makeDirectory = (path: string, options?: FileSystem.MakeDirectoryOptions) 
 
 // == makeTempDirectory
 
-// const makeTempDirectoryFactory = (method: string) => {
-//   const nodeMkdtemp = effectify(NFS.mkdtemp, handleErrnoException('FileSystem', method), handleBadArgument(method));
-//   return (options?: FileSystem.MakeTempDirectoryOptions) =>
-//     Effect.suspend(() => {
-//       const prefix = options?.prefix ?? '';
-//       const directory = typeof options?.directory === 'string' ? Path.join(options.directory, '.') : OS.tmpdir();
-//
-//       return nodeMkdtemp(prefix ? Path.join(directory, prefix) : directory + '/');
-//     });
-// };
-// const makeTempDirectory = makeTempDirectoryFactory('makeTempDirectory');
-const makeTempDirectory = (options?: FileSystem.MakeTempDirectoryOptions) => {
+const makeTempDirectoryFactory = (method: string) => (options?: FileSystem.MakeTempDirectoryOptions) => {
   const path = options?.directory ? options.directory : GLib.get_tmp_dir();
   const tmpDir = `${path}/${options?.prefix ?? ''}${GLib.random_int().toString(16)}`;
-  return makeDirectory(tmpDir).pipe(Effect.map(() => tmpDir));
+
+  logError(null, tmpDir);
+  return makeDirectory(tmpDir).pipe(
+    Effect.mapBoth({
+      onFailure: (error) =>
+        Error.SystemError({
+          reason: error.reason,
+          module: error.module,
+          method,
+          pathOrDescriptor: tmpDir,
+          message: error.message,
+        }),
+      onSuccess: () => tmpDir,
+    }),
+  );
 };
-//
-// // == remove
-//
-// const removeFactory = (method: string) => {
-//   const nodeRm = effectify(NFS.rm, handleErrnoException('FileSystem', method), handleBadArgument(method));
-//   return (path: string, options?: FileSystem.RemoveOptions) => nodeRm(path, { recursive: options?.recursive ?? false });
-// };
-// const remove = removeFactory('remove');
-//
-// // == makeTempDirectoryScoped
-//
-// const makeTempDirectoryScoped = (() => {
-//   const makeDirectory = makeTempDirectoryFactory('makeTempDirectoryScoped');
-//   const removeDirectory = removeFactory('makeTempDirectoryScoped');
-//   return (options?: FileSystem.MakeTempDirectoryOptions) =>
-//     Effect.acquireRelease(makeDirectory(options), (directory) =>
-//       Effect.orDie(removeDirectory(directory, { recursive: true })),
-//     );
-// })();
+
+const makeTempDirectory = makeTempDirectoryFactory('makeTempDirectory');
+
+// == remove
+
+Gio._promisify(Gio.FileEnumerator.prototype, 'next_files_async');
+Gio._promisify(Gio.FileEnumerator.prototype, 'close_async');
+Gio._promisify(Gio.File.prototype, 'enumerate_children_async');
+Gio._promisify(Gio.File.prototype, 'delete_async');
+
+const enumerateChildrenFactory =
+  (method: string) =>
+  (path: string, batchSize = 1) => {
+    const cancellable = Gio.Cancellable.new();
+    const dir = Gio.File.new_for_path(path);
+    return Effect.tryPromise({
+      try: (signal) => {
+        signal.addEventListener('abort', () => {
+          cancellable.cancel();
+        });
+        return dir.enumerate_children_async(
+          'standard::*',
+          Gio.FileQueryInfoFlags.NONE,
+          GLib.PRIORITY_DEFAULT,
+          cancellable,
+        );
+      },
+      catch: handleIOErrorException('FileSystem', method, path),
+    }).pipe(
+      Effect.flatMap((enumerator) =>
+        Effect.iterate(
+          { enumerator: enumerator as Gio.FileEnumerator | null, acc: [] as Gio.FileInfo[] },
+          {
+            while: ({ enumerator }) => enumerator !== null,
+            body: ({ acc, enumerator }) => {
+              if (enumerator === null) return Effect.succeed({ enumerator, acc });
+              return Effect.tryPromise({
+                try: (signal) => {
+                  signal.addEventListener('abort', () => {
+                    cancellable.cancel();
+                  });
+                  return enumerator.next_files_async(batchSize, GLib.PRIORITY_DEFAULT, cancellable);
+                },
+                catch: handleIOErrorException('FileSystem', method, path),
+              }).pipe(
+                Effect.flatMap((files) => {
+                  if (files.length === 0)
+                    return Effect.tryPromise({
+                      try: (signal) => {
+                        signal.addEventListener('abort', () => {
+                          cancellable.cancel();
+                        });
+                        return enumerator.close_async(GLib.PRIORITY_DEFAULT, cancellable);
+                      },
+                      catch: handleIOErrorException('FileSystem', method, path),
+                    }).pipe(Effect.map(() => ({ enumerator: null as Gio.FileEnumerator | null, acc })));
+                  return Effect.succeed({ enumerator, acc: [...acc, ...files] });
+                }),
+              );
+            },
+          },
+        ),
+      ),
+      Effect.map(({ acc }) => acc),
+    );
+  };
+
+const removeFactory =
+  (method: string) =>
+  (path: string, options?: FileSystem.RemoveOptions): Effect.Effect<never, Error.SystemError, void> => {
+    const file = Gio.File.new_for_path(path);
+    const cancellable = Gio.Cancellable.new();
+    return Effect.tryPromise({
+      try: (signal) => {
+        signal.addEventListener('abort', () => {
+          cancellable.cancel();
+        });
+        return Gio.File.new_for_path(path).query_info_async(
+          Gio.FILE_ATTRIBUTE_UNIX_MODE,
+          Gio.FileQueryInfoFlags.NONE,
+          GLib.PRIORITY_DEFAULT,
+          cancellable,
+        );
+      },
+      catch: handleIOErrorException('FileSystem', method, path),
+    }).pipe(
+      Effect.flatMap((fileInfo) => {
+        const stMode = fileInfo.get_attribute_uint32(Gio.FILE_ATTRIBUTE_UNIX_MODE);
+        const S_IFDIR = 0x4000;
+        if (stMode & S_IFDIR) {
+          return enumerateChildrenFactory(method)(path).pipe(
+            Effect.flatMap((children) =>
+              Effect.all(
+                children.map((child) => {
+                  const childPath = file.get_child(child.get_name()).get_path();
+                  if (childPath) return removeFactory(method)(childPath, options);
+                  return Effect.unit;
+                }),
+              ),
+            ),
+            Effect.flatMap(() =>
+              Effect.tryPromise({
+                try: (signal) => {
+                  signal.addEventListener('abort', () => {
+                    cancellable.cancel();
+                  });
+                  return file.delete_async(GLib.PRIORITY_DEFAULT, cancellable);
+                },
+                catch: handleIOErrorException('FileSystem', method, path),
+              }),
+            ),
+          );
+        }
+        return Effect.tryPromise({
+          try: (signal) => {
+            signal.addEventListener('abort', () => {
+              cancellable.cancel();
+            });
+            return file.delete_async(GLib.PRIORITY_DEFAULT, cancellable);
+          },
+          catch: handleIOErrorException('FileSystem', method, path),
+        });
+      }),
+    );
+  };
+
+const remove = removeFactory('remove');
+
+// == makeTempDirectoryScoped
+
+const makeTempDirectoryScoped = (() => {
+  const makeDirectory = makeTempDirectoryFactory('makeTempDirectoryScoped');
+  // const removeDirectory = removeFactory('makeTempDirectoryScoped');
+  return (options?: FileSystem.MakeTempDirectoryOptions) =>
+    Effect.acquireRelease(
+      makeDirectory(options),
+      (directory) => Effect.unit, // Effect.orDie(removeDirectory(directory, { recursive: true })),
+    );
+})();
 //
 // // == open
 //
@@ -574,9 +698,10 @@ const readFile = (path: string) => {
 //   const nodeRename = effectify(NFS.rename, handleErrnoException('FileSystem', 'rename'), handleBadArgument('rename'));
 //   return (oldPath: string, newPath: string) => nodeRename(oldPath, newPath);
 // })();
-//
-// // == stat
-const stat = (path: string): FileSystem.File.Info => {
+
+// == stat
+
+const stat = (path: string) => {
   const file = Gio.File.new_for_path(path);
   return Effect.tryPromise({
     try: (signal) => {
@@ -585,7 +710,7 @@ const stat = (path: string): FileSystem.File.Info => {
         cancellable.cancel();
       });
       return Gio.File.new_for_path(path).query_info_async(
-        'standard::*',
+        ['standard::*', Gio.FILE_ATTRIBUTE_UNIX_MODE].join(','),
         Gio.FileQueryInfoFlags.NONE,
         GLib.PRIORITY_DEFAULT,
         cancellable,
@@ -593,51 +718,63 @@ const stat = (path: string): FileSystem.File.Info => {
     },
     catch: handleIOErrorException('FileSystem', 'stat', path),
   }).pipe(
-    Effect.map((fileInfo) => ({
-      // type: Type fileInfo.
-      mtime: Option.fromNullable(fileInfo.get_modification_date_time()?.to_unix()).pipe(
-        Option.map((epoch) => new Date(epoch)),
-      ),
-      atime: Option.fromNullable(fileInfo.get_access_date_time()?.to_unix()).pipe(
-        Option.map((epoch) => new Date(epoch)),
-      ),
-      birthtime: Option.fromNullable(fileInfo.get_creation_date_time()?.to_unix()).pipe(
-        Option.map((epoch) => new Date(epoch)),
-      ),
-      // dev: number
-      // ino: Option<number>
-      // mode: number
-      // nlink: Option<number>
-      // uid: Option<number>
-      // gid: Option<number>
-      // rdev: Option<number>
-      // size: Size
-      // blksize: Option<Size>
-      // blocks: Option<number>
-    })),
-  );
+    Effect.map(
+      (fileInfo): FileSystem.File.Info => ({
+        // type: Type fileInfo.
+        type: (() => {
+          const stMode = fileInfo.get_attribute_uint32(Gio.FILE_ATTRIBUTE_UNIX_MODE);
+          const S_IFIFO = 0x1000;
+          const S_IFCHR = 0x2000;
+          const S_IFDIR = 0x4000;
+          const S_IFBLK = 0x6000;
+          const S_IFREG = 0x8000;
+          const S_IFLNK = 0xa000;
+          const S_IFSOCK = 0xc000;
+          if (stMode & S_IFIFO) return 'FIFO';
+          if (stMode & S_IFCHR) return 'CharacterDevice';
+          if (stMode & S_IFDIR) return 'Directory';
+          if (stMode & S_IFBLK) return 'BlockDevice';
+          if (stMode & S_IFREG) return 'File';
+          if (stMode & S_IFLNK) return 'SymbolicLink';
+          if (stMode & S_IFSOCK) return 'Socket';
+          return 'Unknown';
+        })(),
 
-  file.query_info_async(
-    'standard::*', // Attributes to retrieve
-    Gio.FileQueryInfoFlags.NONE, // Flags
-    GLib.PRIORITY_DEFAULT, // Priority
-    null, // Cancellable
-    (source, result) => {
-      // Callback function
-      try {
-        const info = source.query_info_finish(result);
-        const stats = {
-          size: info.get_size(),
-          modificationTime: info.get_modification_date_time()?.to_unix(),
-          type: info.get_file_type(),
-          isDirectory: info.get_file_type() === Gio.FileType.DIRECTORY,
-          isRegularFile: info.get_file_type() === Gio.FileType.REGULAR,
-        };
-        callback(null, stats);
-      } catch (error) {
-        callback(error, null);
-      }
-    },
+        mtime: Option.fromNullable(fileInfo.get_modification_date_time()?.to_unix()).pipe(
+          Option.map((epoch) => new Date(epoch)),
+        ),
+        atime: Option.fromNullable(fileInfo.get_access_date_time()?.to_unix()).pipe(
+          Option.map((epoch) => new Date(epoch)),
+        ),
+        birthtime: Option.fromNullable(fileInfo.get_creation_date_time()?.to_unix()).pipe(
+          Option.map((epoch) => new Date(epoch)),
+        ),
+        dev: fileInfo.get_attribute_uint32(Gio.FILE_ATTRIBUTE_UNIX_DEVICE),
+        ino: Option.some(fileInfo.get_attribute_uint32(Gio.FILE_ATTRIBUTE_UNIX_INODE)).pipe(
+          Option.flatMap((uid) => (uid === 0 ? Option.none() : Option.some(uid))),
+        ),
+        mode: fileInfo.get_attribute_uint32(Gio.FILE_ATTRIBUTE_UNIX_MODE) & 0x777,
+        nlink: Option.some(fileInfo.get_attribute_uint32(Gio.FILE_ATTRIBUTE_UNIX_NLINK)).pipe(
+          Option.flatMap((uid) => (uid === 0 ? Option.none() : Option.some(uid))),
+        ),
+        uid: Option.some(fileInfo.get_attribute_uint32(Gio.FILE_ATTRIBUTE_UNIX_UID)).pipe(
+          Option.flatMap((uid) => (uid === 0 ? Option.none() : Option.some(uid))),
+        ),
+        gid: Option.some(fileInfo.get_attribute_uint32(Gio.FILE_ATTRIBUTE_UNIX_GID)).pipe(
+          Option.flatMap((uid) => (uid === 0 ? Option.none() : Option.some(uid))),
+        ),
+        rdev: Option.some(fileInfo.get_attribute_uint32(Gio.FILE_ATTRIBUTE_UNIX_RDEV)).pipe(
+          Option.flatMap((uid) => (uid === 0 ? Option.none() : Option.some(uid))),
+        ),
+        size: FileSystem.Size(fileInfo.get_attribute_uint64(Gio.FILE_ATTRIBUTE_FILESYSTEM_SIZE)),
+        blksize: Option.some(fileInfo.get_attribute_uint32(Gio.FILE_ATTRIBUTE_UNIX_BLOCK_SIZE)).pipe(
+          Option.flatMap((uid) => (uid === 0 ? Option.none() : Option.some(FileSystem.Size(uid)))),
+        ),
+        blocks: Option.some(fileInfo.get_attribute_uint32(Gio.FILE_ATTRIBUTE_UNIX_BLOCKS)).pipe(
+          Option.flatMap((uid) => (uid === 0 ? Option.none() : Option.some(uid))),
+        ),
+      }),
+    ),
   );
 };
 // const makeFileInfo = (stat: NFS.Stats): FileSystem.File.Info => ({
@@ -740,7 +877,7 @@ const fileSystemImpl = FileSystem.make({
   //   link,
   makeDirectory,
   makeTempDirectory,
-  //   makeTempDirectoryScoped,
+  makeTempDirectoryScoped,
   //   makeTempFile,
   //   makeTempFileScoped,
   //   open,
@@ -748,9 +885,9 @@ const fileSystemImpl = FileSystem.make({
   readFile,
   //   readLink,
   //   realPath,
-  //   remove,
+  remove,
   //   rename,
-  //   stat,
+  stat,
   //   symlink,
   //   truncate,
   //   utimes,
