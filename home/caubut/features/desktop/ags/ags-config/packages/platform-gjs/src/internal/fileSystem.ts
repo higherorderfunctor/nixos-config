@@ -12,6 +12,8 @@ import { pipe } from 'effect/Function';
 import * as Layer from 'effect/Layer';
 import * as Option from 'effect/Option';
 
+import { handleIOErrorException } from './err.js';
+
 // const handleBadArgument = (method: string) => (err: unknown) =>
 //   Error.BadArgument({
 //     module: 'FileSystem',
@@ -455,25 +457,41 @@ const access = (() => {
 //   return (path: string, options?: FileSystem.ReadDirectoryOptions) =>
 //     nodeReadDirectory(path, options) as Effect.Effect<never, Error.PlatformError, ReadonlyArray<string>>;
 // })();
-//
-// // == readFile
-//
+
+// == readFile
+
 // const readFile = (path: string) =>
-//   Effect.async<never, Error.PlatformError, Uint8Array>((resume, signal) => {
-//     try {
-//       NFS.readFile(path, { signal }, (err, data) => {
-//         if (err) {
-//           resume(Effect.fail(handleErrnoException('FileSystem', 'readFile')(err, [path])));
-//         } else {
-//           resume(Effect.succeed(data));
-//         }
-//       });
-//     } catch (err) {
-//       resume(Effect.fail(handleBadArgument('readFile')(err)));
-//     }
-//   });
-//
-// // == readLink
+//  Effect.async<never, Error.PlatformError, Uint8Array>((resume, signal) => {
+//    try {
+//      NFS.readFile(path, { signal }, (err, data) => {
+//        if (err) {
+//          resume(Effect.fail(handleErrnoException('FileSystem', 'readFile')(err, [path])));
+//        } else {
+//          resume(Effect.succeed(data));
+//        }
+//      });
+//    } catch (err) {
+//      resume(Effect.fail(handleBadArgument('readFile')(err)));
+//    }
+//  });
+
+Gio._promisify(Gio.File.prototype, 'load_contents_async');
+
+const readFile = (path: string) => {
+  const file = Gio.File.new_for_path(path);
+  return Effect.tryPromise({
+    try: (signal) => {
+      const cancellable = Gio.Cancellable.new();
+      signal.addEventListener('abort', () => {
+        cancellable.cancel();
+      });
+      return file.load_contents_async(cancellable);
+    },
+    catch: handleIOErrorException('FileSystem', 'readFile', path),
+  }).pipe(Effect.map(([contents]) => contents));
+};
+
+// == readLink
 //
 // const readLink = (() => {
 //   const nodeReadLink = effectify(
@@ -609,7 +627,7 @@ const fileSystemImpl = FileSystem.make({
   //   makeTempFileScoped,
   //   open,
   //   readDirectory,
-  //   readFile,
+  readFile,
   //   readLink,
   //   realPath,
   //   remove,

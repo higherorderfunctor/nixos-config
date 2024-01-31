@@ -1,13 +1,12 @@
 {
-  "extends": "../../tsconfig.json",
-  "include": [
-    "src"
-  ],
-  "compilerOptions": {
-    "tsBuildInfoFile": "dist/esm/tsconfig.tsbuildinfo",
-    "rootDirs": [
-      "src"
-    ],
-    "outDir": "dist/esm"
-  }
+  "extends": "../../tsconfig.base.json",
+  "include": [],
+  "references": [
+    {
+      "path": "tsconfig.src.json"
+    },
+    {
+      "path": "tsconfig.test.json"
+    },
+  ]
 }

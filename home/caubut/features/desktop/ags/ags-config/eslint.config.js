@@ -414,7 +414,7 @@ const eslintConfig = [
       'no-new-object': 'error',
       'no-new-wrappers': 'error',
       'no-proto': 'error',
-      'no-shadow': 'warn',
+      'no-shadow': 'off',
       'no-unused-vars': [
         'error',
         {

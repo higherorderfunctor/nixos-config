@@ -19,8 +19,9 @@
     "effect": "^2.2.2"
   },
   "devDependencies": {
-    "@gjsify/assert": "^0.0.4",
     "@gjsify/unit": "^0.0.4",
+    "abort-controller": "^3.0.0",
+    "assert": "^2.1.0",
     "esbuild": "^0.19.12"
   }
 }

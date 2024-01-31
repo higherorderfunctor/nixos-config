@@ -1,0 +1,40 @@
+{
+  "compilerOptions": {
+    "strict": true,
+    "module": "nodenext",
+    "target": "esnext",
+    "lib": [
+      "ESNext"
+    ],
+    "moduleResolution": "nodenext",
+    "removeComments": true,
+    "preserveConstEnums": true,
+    "esModuleInterop": true,
+    "resolveJsonModule": true,
+    "allowSyntheticDefaultImports": true,
+    "forceConsistentCasingInFileNames": true,
+    "noFallthroughCasesInSwitch": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "exactOptionalPropertyTypes": true,
+    "typeRoots": [
+      "node_modules/@girs",
+    ],
+    "composite": true,
+    "sourceMap": true,
+    "declaration": true,
+    "declarationMap": true,
+    "experimentalDecorators": true,
+    "noErrorTruncation": true,
+    "downlevelIteration": true,
+    "baseUrl": ".",
+  },
+  "ts-node": {
+    "esm": true,
+    "require": [
+      "tsconfig-paths/register"
+    ],
+    "experimentalSpecifierResolution": "node",
+    "preferTsExts": true
+  }
+}
