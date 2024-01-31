@@ -268,7 +268,7 @@ const makeTempDirectoryFactory = (method: string) => (options?: FileSystem.MakeT
   const path = options?.directory ? options.directory : GLib.get_tmp_dir();
   const tmpDir = `${path}/${options?.prefix ?? ''}${GLib.random_int().toString(16)}`;
 
-  logError(null, tmpDir);
+  logError(new globalThis.Error(), tmpDir);
   return makeDirectory(tmpDir).pipe(
     Effect.mapBoth({
       onFailure: (error) =>
@@ -314,7 +314,7 @@ const enumerateChildrenFactory =
     }).pipe(
       Effect.flatMap((enumerator) =>
         Effect.iterate(
-          { enumerator: enumerator as Gio.FileEnumerator | null, acc: [] as Gio.FileInfo[] },
+          { enumerator, acc: [] as Gio.FileInfo[] },
           {
             while: ({ enumerator }) => enumerator !== null,
             body: ({ acc, enumerator }) => {

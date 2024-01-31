@@ -4,7 +4,8 @@
     "module": "nodenext",
     "target": "esnext",
     "lib": [
-      "ESNext"
+      "ESNext",
+      "dom"
     ],
     "moduleResolution": "nodenext",
     "removeComments": true,
@@ -28,13 +29,5 @@
     "noErrorTruncation": true,
     "downlevelIteration": true,
     "baseUrl": ".",
-  },
-  "ts-node": {
-    "esm": true,
-    "require": [
-      "tsconfig-paths/register"
-    ],
-    "experimentalSpecifierResolution": "node",
-    "preferTsExts": true
   }
 }

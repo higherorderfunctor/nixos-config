@@ -30,6 +30,7 @@ await esbuild.build({
   outfile: 'dist/test/test.gjs.js',
   external: ['gi://*', 'system'],
   tsconfig: 'tsconfig.test.json',
+  sourcemap: true,
   plugins: [injectGjsPolyfill],
   define: {
     process: JSON.stringify({

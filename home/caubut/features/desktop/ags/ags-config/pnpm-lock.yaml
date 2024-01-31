@@ -122,6 +122,9 @@ importers:
       '@girs/glib-2.0':
         specifier: 2.78.0-3.2.7
         version: 2.78.0-3.2.7
+      '@typescript/lib-dom':
+        specifier: pnpm:@girs/gjs
+        version: link:pnpm:@girs/gjs
       effect:
         specifier: ^2.2.2
         version: 2.2.2
