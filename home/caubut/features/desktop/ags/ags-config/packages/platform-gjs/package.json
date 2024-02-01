@@ -8,8 +8,9 @@
   },
   "scripts": {
     "build:test": "node esbuild.test.js",
-    "lint:tsc": "tsc --skipLibCheck --noemit --project tsconfig.json",
-    "test": "gjs -m dist/test/test.gjs.js"
+    "build:run:test": "pnpm run build:test && pnpm run test",
+    "test": "gjs -m dist/test/test.gjs.js",
+    "lint:tsc": "tsc --skipLibCheck --noemit --project tsconfig.json"
   },
   "dependencies": {
     "@effect/platform": "^0.43.3",
@@ -23,6 +24,7 @@
     "@gjsify/unit": "^0.0.4",
     "abort-controller": "^3.0.0",
     "assert": "^2.1.0",
-    "esbuild": "^0.19.12"
+    "esbuild": "^0.19.12",
+    "vitest": "^1.2.2"
   }
 }

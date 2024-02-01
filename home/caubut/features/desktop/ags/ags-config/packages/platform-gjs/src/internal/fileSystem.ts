@@ -268,7 +268,7 @@ const makeTempDirectoryFactory = (method: string) => (options?: FileSystem.MakeT
   const path = options?.directory ? options.directory : GLib.get_tmp_dir();
   const tmpDir = `${path}/${options?.prefix ?? ''}${GLib.random_int().toString(16)}`;
 
-  logError(new globalThis.Error(), tmpDir);
+  // logError(new globalThis.Error(), tmpDir);
   return makeDirectory(tmpDir).pipe(
     Effect.mapBoth({
       onFailure: (error) =>

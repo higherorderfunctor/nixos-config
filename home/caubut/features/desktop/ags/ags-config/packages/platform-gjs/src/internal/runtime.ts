@@ -25,7 +25,7 @@ export const runMain: RunMain = <E, A>(effect: Effect.Effect<never, E, A>, teard
       if (Cause.isInterruptedOnly(cause)) {
         return Effect.unit;
       }
-      return Effect.logError(cause);
+      // Effect.logError(cause);
     }),
   );
 
@@ -38,9 +38,9 @@ export const runMain: RunMain = <E, A>(effect: Effect.Effect<never, E, A>, teard
 
   let sigintSource = 0;
   let sigtermSource = 0;
-  console.log('here');
+  // console.log('here');
   const onSigint = (source: number) => () => {
-    console.log(`Received signal ${source}`);
+    // console.log(`Received signal ${source}`);
     // remove the other signal listeners that did not trigger this handler
     if (source === SIGINT && sigtermSource) {
       GLib.source_remove(sigtermSource);

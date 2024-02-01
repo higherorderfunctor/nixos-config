@@ -7,7 +7,7 @@ const injectGjsPolyfill = {
   setup: (build) => {
     build.onLoad({ filter: /.*/ }, async (args) => {
       const contents = await fs.promises.readFile(args.path, 'utf8');
-      let modifiedContents = contents.replace(/__dirname/g, `'${path.dirname(args.path)}'`);
+      let modifiedContents = contents; // .replace(/__dirname/g, `'${path.dirname(args.path)}'`);
       if (
         modifiedContents.includes('AbortController') &&
         !modifiedContents.includes('import AbortController from "abort-controller/dist/abort-controller.mjs"')
@@ -20,23 +20,41 @@ const injectGjsPolyfill = {
 };
 
 await esbuild.build({
-  entryPoints: ['test/test-runner.test.ts'],
-  // entryPoints: ['vitest.gjs.ts'],
+  // entryPoints: ['test/test-runner.test.ts'],
+  entryPoints: ['test/vitest.ts'],
   bundle: true,
   format: 'esm',
   treeShaking: true,
-  // minify: true,
-  // minifySyntax: true,
+  minify: true,
+  minifySyntax: true,
   outfile: 'dist/test/test.gjs.js',
-  external: ['gi://*', 'system'],
+  external: [
+    'gi://*',
+    'system',
+    'console',
+    'node:*',
+    'buffer',
+    'child_process',
+    'crypto',
+    'events',
+    'fs',
+    'http',
+    'https',
+    'module',
+    'net',
+    'os',
+    'path',
+    'querystring',
+    'stream',
+    'tls',
+    'tty',
+    'url',
+    'util',
+    'worker_threads',
+    'zlib',
+  ],
   tsconfig: 'tsconfig.test.json',
   sourcemap: true,
+  inject: ['test/process.env.shim.ts'],
   plugins: [injectGjsPolyfill],
-  define: {
-    process: JSON.stringify({
-      env: {
-        NODE_ENV: 'test',
-      },
-    }),
-  },
 });

@@ -49,9 +49,8 @@ const program = Effect.gen(function* (_) {
 });
 
 const configs = Options.keyValueMap('c').pipe(Options.optional);
-const egs = Command.make('effect-gnome-shell', { configs }, ({ configs }) => {
-  console.log('!!', configs);
-  return Option.match(configs, {
+const egs = Command.make('effect-gnome-shell', { configs }, ({ configs }) =>
+  Option.match(configs, {
     onNone: () => Console.log("Running 'effect-gnome-shel'"),
     onSome: (configs) => {
       const keyValuePairs = Array.from(configs)
@@ -59,8 +58,8 @@ const egs = Command.make('effect-gnome-shell', { configs }, ({ configs }) => {
         .join(', ');
       return Console.log(`Running 'minigit' with the following configs: ${keyValuePairs}`);
     },
-  });
-});
+  }),
+);
 
 const command = egs;
 
