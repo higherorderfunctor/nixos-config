@@ -2,8 +2,7 @@
 
 import { GLib } from '@girs/glib-2.0';
 
-import { run } from '@gjsify/unit';
-
+// import { run } from '@gjsify/unit';
 import { testSuite } from './FileSystem.test.js';
 
 const decoder = new TextDecoder('utf-8');

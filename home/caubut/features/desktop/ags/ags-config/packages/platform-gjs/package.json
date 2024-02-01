@@ -9,6 +9,7 @@
   "scripts": {
     "build:test": "node esbuild.test.js",
     "build:run:test": "pnpm run build:test && pnpm run test",
+    "test:unit": "gjs -m dist/test/test.gjs.js",
     "test": "gjs -m dist/test/test.gjs.js",
     "lint:tsc": "tsc --skipLibCheck --noemit --project tsconfig.json"
   },

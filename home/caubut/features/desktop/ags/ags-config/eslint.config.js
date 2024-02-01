@@ -308,6 +308,8 @@ const eslintConfig = [
           multilineDetection: 'brackets',
         },
       ],
+      // allow console for gjs
+      'no-console': 'off',
       /**
        * Custom arrow function style enforcement rules
        */
@@ -359,7 +361,12 @@ const eslintConfig = [
         'error',
         {
           includeTypes: true,
-          devDependencies: ['eslint.config.js', 'packages/*/esbuild.*.js', 'packages/*/test/*test.ts'],
+          devDependencies: [
+            'eslint.config.js',
+            'packages/*/vitest.*.ts',
+            'packages/*/esbuild.*.js',
+            'packages/*/test/*test.ts',
+          ],
         },
       ],
       // default is off; set custom sort order

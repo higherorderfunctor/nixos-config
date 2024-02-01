@@ -1,27 +1,24 @@
 import * as esbuild from 'esbuild';
-import fs from 'node:fs';
-import path from 'node:path';
-
-const injectGjsPolyfill = {
-  name: 'inject-dirname',
-  setup: (build) => {
-    build.onLoad({ filter: /.*/ }, async (args) => {
-      const contents = await fs.promises.readFile(args.path, 'utf8');
-      let modifiedContents = contents; // .replace(/__dirname/g, `'${path.dirname(args.path)}'`);
-      if (
-        modifiedContents.includes('AbortController') &&
-        !modifiedContents.includes('import AbortController from "abort-controller/dist/abort-controller.mjs"')
-      ) {
-        modifiedContents = `import AbortController from "abort-controller/dist/abort-controller.mjs";\n${modifiedContents}`;
-      }
-      return { contents: modifiedContents, loader: 'ts' };
-    });
-  },
-};
+// const injectGjsPolyfill = {
+//   name: 'inject-dirname',
+//   setup: (build) => {
+//     build.onLoad({ filter: /.*\.(js|ts)x?$/ }, async (args) => {
+//       console.log(args);
+//       const contents = await fs.promises.readFile(args.path, 'utf8');
+//       let modifiedContents = contents; // .replace(/__dirname/g, `'${path.dirname(args.path)}'`);
+//       if (
+//         modifiedContents.includes('AbortController') &&
+//         !modifiedContents.includes('import AbortController from "abort-controller/dist/abort-controller.mjs"')
+//       ) {
+//         modifiedContents = `import AbortController from "abort-controller/dist/abort-controller.mjs";\n${modifiedContents}`;
+//       }
+//       return { contents: modifiedContents, loader: 'ts' };
+//     });
+//   },
+// };
 
 await esbuild.build({
-  // entryPoints: ['test/test-runner.test.ts'],
-  entryPoints: ['test/vitest.ts'],
+  entryPoints: ['vitest.config.ts'],
   bundle: true,
   format: 'esm',
   treeShaking: true,
@@ -32,6 +29,10 @@ await esbuild.build({
     'gi://*',
     'system',
     'console',
+    //
+    'lightningcss',
+    //
+    '@effect/*',
     'node:*',
     'buffer',
     'child_process',
@@ -42,8 +43,17 @@ await esbuild.build({
     'https',
     'module',
     'net',
+    '@edge-runtime/vm',
+    'readline',
+    'async_hooks',
+    'jsdom',
+    'happy-dom',
     'os',
     'path',
+    '@vitest/ui',
+    'process',
+    '@vitest/browser',
+    'perf_hooks',
     'querystring',
     'stream',
     'tls',
@@ -56,5 +66,6 @@ await esbuild.build({
   tsconfig: 'tsconfig.test.json',
   sourcemap: true,
   inject: ['test/process.env.shim.ts'],
-  plugins: [injectGjsPolyfill],
+  resolveExtensions: ['.tsx', '.ts', '.jsx', '.js', '.json'],
+  // plugins: [injectGjsPolyfill],
 });
