@@ -1,21 +1,37 @@
 import * as esbuild from 'esbuild';
-// const injectGjsPolyfill = {
-//   name: 'inject-dirname',
-//   setup: (build) => {
-//     build.onLoad({ filter: /.*\.(js|ts)x?$/ }, async (args) => {
-//       console.log(args);
-//       const contents = await fs.promises.readFile(args.path, 'utf8');
-//       let modifiedContents = contents; // .replace(/__dirname/g, `'${path.dirname(args.path)}'`);
-//       if (
-//         modifiedContents.includes('AbortController') &&
-//         !modifiedContents.includes('import AbortController from "abort-controller/dist/abort-controller.mjs"')
-//       ) {
-//         modifiedContents = `import AbortController from "abort-controller/dist/abort-controller.mjs";\n${modifiedContents}`;
-//       }
-//       return { contents: modifiedContents, loader: 'ts' };
-//     });
-//   },
-// };
+import * as fs from 'node:fs';
+import * as path from 'node:path';
+
+/** @type {import('esbuild').Plugin} */
+const injectGjsPolyfill = {
+  name: 'inject-dirname',
+  setup: (build) => {
+    build.onResolve({ filter: /^(node:)?path$/ }, async (args) => ({
+      path: path.resolve('./test/polyfills/path.ts'),
+    }));
+    build.onResolve({ filter: /^(node:)?readline$/ }, async (args) => ({
+      path: path.resolve('./test/polyfills/readline.ts'),
+    }));
+    build.onResolve({ filter: /^@effect\/platform-gjs\/.*$/ }, async (args) => ({
+      path:
+        args.path === '@effect/platform-gjs'
+          ? path.resolve('./src/index.ts')
+          : path.resolve(args.path.replace('@effect/platform-gjs', './src')),
+    }));
+    build.onLoad({ filter: /.*\.(js|ts)x?$/ }, async (args) => {
+      console.log(args);
+      const contents = await fs.promises.readFile(args.path, 'utf8');
+      let modifiedContents = contents; // .replace(/__dirname/g, `'${path.dirname(args.path)}'`);
+      if (
+        modifiedContents.includes('AbortController') &&
+        !modifiedContents.includes('import AbortController from "abort-controller/dist/abort-controller.mjs"')
+      ) {
+        modifiedContents = `import AbortController from "abort-controller/dist/abort-controller.mjs";\n${modifiedContents}`;
+      }
+      return { contents: modifiedContents, loader: 'ts' };
+    });
+  },
+};
 
 await esbuild.build({
   entryPoints: ['vitest.config.ts'],
@@ -32,7 +48,6 @@ await esbuild.build({
     //
     'lightningcss',
     //
-    '@effect/*',
     'node:*',
     'buffer',
     'child_process',
@@ -67,5 +82,5 @@ await esbuild.build({
   sourcemap: true,
   inject: ['test/process.env.shim.ts'],
   resolveExtensions: ['.tsx', '.ts', '.jsx', '.js', '.json'],
-  // plugins: [injectGjsPolyfill],
+  plugins: [injectGjsPolyfill],
 });

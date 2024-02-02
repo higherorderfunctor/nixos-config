@@ -16,7 +16,7 @@ const extname = (path: string) => {
   return index > 0 ? base.substring(index) : '';
 };
 
-const format(pathObject: string) {
+const format = (pathObject: string) => {
     // If the pathObject has a `dir`, use it; otherwise, use `root` for the directory part
     let dir = pathObject.dir || pathObject.root || '';
 
@@ -59,7 +59,8 @@ const parse = (path: string) => ({
 
 const relative = (from: string, to: string) => Gio.File.new_for_uri(from).get_relative_path(Gio.File.new_for_uri(to));
 
-const resolve = (...pathSegments: readonly string[]) =>  Gio.File.new_for_uri(path).resolve_relative_path(pathSegments[0]),
+const resolve = (...pathSegments: readonly string[]) =>
+   normalize(pathSegments.length === 0 ? GLib.get_current_dir() : join(...pathSegments) )
 
 const toFileUrl = (path: string): Effect.Effect<never, BadArgument, URL> =>
   Effect.try({
