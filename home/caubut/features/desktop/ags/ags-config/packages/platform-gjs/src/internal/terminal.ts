@@ -1,3 +1,6 @@
+import { Gio } from '@girs/gio-2.0';
+import { GLib } from '@girs/glib-2.0';
+
 import * as Error from '@effect/platform/Error';
 import * as Terminal from '@effect/platform/Terminal';
 import * as Effect from 'effect/Effect';
@@ -11,7 +14,8 @@ const defaultShouldQuit = (input: Terminal.UserInput): boolean =>
 /** @internal */
 export const make = (shouldQuit: (input: Terminal.UserInput) => boolean = defaultShouldQuit) =>
   Effect.gen(function* (_) {
-    const input = yield* _(Effect.sync(() => globalThis.process.stdin));
+    const input = new Gio.DataInputStream({ base_stream: new Gio.UnixInputStream({ fd: 0 }), close_base_stream: true });
+
     const output = yield* _(Effect.sync(() => globalThis.process.stdout));
 
     // Acquire a readline interface
