@@ -8,13 +8,26 @@ import * as Layer from 'effect/Layer';
 import * as Option from 'effect/Option';
 import * as readline from 'node:readline';
 
+import { effectify } from './effectify.js';
+
+const z = { a: 1, b: 2 };
+
 const defaultShouldQuit = (input: Terminal.UserInput): boolean =>
   input.key.ctrl && (input.key.name === 'c' || input.key.name === 'd');
 
 /** @internal */
+
+Gio._promisify(Gio.DataInputStream.prototype, 'read_bytes_async');
 export const make = (shouldQuit: (input: Terminal.UserInput) => boolean = defaultShouldQuit) =>
   Effect.gen(function* (_) {
-    const input = new Gio.DataInputStream({ base_stream: new Gio.UnixInputStream({ fd: 0 }), close_base_stream: true });
+    const input = new Gio.DataInputStream(new Gio.UnixInputStream({ fd: 0, close_fd: false })); // .create_source(null); // TODO cancel;
+    const readBytes = effectify(input.read_bytes_async);
+    readBytes(1, GLib.PRIORITY_DEFAULT_IDLE, null, (err: Error | null, result: any)
+    input.read_bytes_async(1, GLib.PRIORITY_DEFAULT_IDLE, cancellable, callback);
+
+    // const input = Gio.pollable_source_new(
+    //   new Gio.DataInputStream({ base_stream: new Gio.UnixInputStream({ fd: 0 }), close_base_stream: true }),
+    // );
 
     const output = yield* _(Effect.sync(() => globalThis.process.stdout));
 
