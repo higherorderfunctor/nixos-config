@@ -26,6 +26,7 @@
     "abort-controller": "^3.0.0",
     "assert": "^2.1.0",
     "esbuild": "^0.19.12",
+    "source-map": "^0.7.4",
     "vitest": "^1.2.2"
   }
 }

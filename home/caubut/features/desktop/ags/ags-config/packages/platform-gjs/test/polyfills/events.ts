@@ -1,5 +1,7 @@
-export class EventEmitter {}
+export const EventEmitter = () => {
+  throw new Error('Not implemeneted');
+};
 
-export const once = () => {};
-
-export default {};
+export const once = () => {
+  throw new Error('Not implemeneted');
+};

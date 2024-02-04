@@ -12,6 +12,7 @@ import { pipe } from 'effect/Function';
 import * as Layer from 'effect/Layer';
 import * as Option from 'effect/Option';
 
+import { effectify } from '../Effectify.js';
 import { handleIOErrorException } from './error.js';
 
 // const handleBadArgument = (method: string) => (err: unknown) =>
@@ -654,20 +655,11 @@ const makeTempDirectoryScoped = (() => {
 //    }
 //  });
 
-Gio._promisify(Gio.File.prototype, 'load_contents_async');
-
 const readFile = (path: string) => {
   const file = Gio.File.new_for_path(path);
-  return Effect.tryPromise({
-    try: (signal) => {
-      const cancellable = Gio.Cancellable.new();
-      signal.addEventListener('abort', () => {
-        cancellable.cancel();
-      });
-      return file.load_contents_async(cancellable);
-    },
-    catch: handleIOErrorException('FileSystem', 'readFile', path),
-  }).pipe(Effect.map(([contents]) => contents));
+  const cancellable = Gio.Cancellable.new();
+  const readFile = effectify(Gio.File, 'load_contents_async', handleIOErrorException('FileSystem', 'readFile', path));
+  return readFile(file, cancellable).pipe(Effect.map(([contents]) => contents));
 };
 
 // == readLink

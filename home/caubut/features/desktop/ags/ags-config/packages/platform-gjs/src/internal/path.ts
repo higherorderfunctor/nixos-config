@@ -28,7 +28,9 @@ const format = (pathObject: string) => {
         dir += '/';
     }
 
-    return join(dir, base);
+    const z = join(dir, base);
+  print('@@@@@@@', z)
+  return z
 }
 
 export const fromFileUrl = (url: URL): Effect.Effect<never, BadArgument, string> =>
@@ -43,7 +45,12 @@ export const fromFileUrl = (url: URL): Effect.Effect<never, BadArgument, string>
   });
 const isAbsolute = (path: string) => GLib.path_is_absolute(path);
 
-const join = (...paths: readonly string[]) => GLib.build_filenamev([...paths]);
+const join = (...paths: readonly string[]) => {
+  print('hi', paths);
+  const z = GLib.build_filenamev([...paths]);
+  print(z);
+  return z
+}
 
 const normalize = (path: string) => Gio.File.new_for_uri(path).get_path();
 
@@ -79,7 +86,7 @@ const toNamespacedPath = (path: string) => path;
 export const layer = Layer.succeed(
   Path,
   Path.of({
-    sep: string,
+    sep: String.fromCharCode(GLib.DIR_SEPARATOR),
     basename,
     dirname,
     extname,

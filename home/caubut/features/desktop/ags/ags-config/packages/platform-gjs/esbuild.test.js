@@ -104,15 +104,17 @@ const injectGjsPolyfill = {
     }));
     build.onLoad({ filter: /.*\.(js|ts)x?$/ }, async (args) => {
       console.log(args);
-      const contents = await fs.promises.readFile(args.path, 'utf8');
-      let modifiedContents = contents; // .replace(/__dirname/g, `'${path.dirname(args.path)}'`);
-      if (
-        modifiedContents.includes('AbortController') &&
-        !modifiedContents.includes('import AbortController from "abort-controller/dist/abort-controller.mjs"')
-      ) {
-        modifiedContents = `import AbortController from "abort-controller/dist/abort-controller.mjs";\n${modifiedContents}`;
+      let contents = await fs.promises.readFile(args.path, 'utf8');
+      if (args.path.includes('source-map')) {
+        contents = contents.replace(/'?__dirname'?/g, `'${path.dirname(args.path)}'`);
       }
-      return { contents: modifiedContents, loader: 'ts' };
+      if (
+        contents.includes('AbortController') &&
+        !contents.includes('import AbortController from "abort-controller/dist/abort-controller.mjs"')
+      ) {
+        contents = `import AbortController from "abort-controller/dist/abort-controller.mjs";\n${contents}`;
+      }
+      return { contents, loader: 'ts' };
     });
   },
 };
@@ -133,34 +135,34 @@ await esbuild.build({
     'lightningcss',
     //
     'node:*',
-    'buffer',
-    'child_process',
-    'crypto',
-    'events',
-    'fs',
-    'http',
-    'https',
-    'module',
-    'net',
+    // 'buffer',
+    // 'child_process',
+    // 'crypto',
+    // 'events',
+    // 'fs',
+    // 'http',
+    // 'https',
+    // 'module',
+    // 'net',
     '@edge-runtime/vm',
-    'readline',
-    'async_hooks',
+    // 'readline',
+    // 'async_hooks',
     'jsdom',
     'happy-dom',
-    'os',
-    'path',
+    // 'os',
+    // 'path',
     '@vitest/ui',
-    'process',
+    // 'process',
     '@vitest/browser',
-    'perf_hooks',
-    'querystring',
-    'stream',
-    'tls',
-    'tty',
-    'url',
-    'util',
-    'worker_threads',
-    'zlib',
+    // 'perf_hooks',
+    // 'querystring',
+    // 'stream',
+    // 'tls',
+    // 'tty',
+    // 'url',
+    // 'util',
+    // 'worker_threads',
+    // 'zlib',
   ],
   tsconfig: 'tsconfig.test.json',
   sourcemap: true,

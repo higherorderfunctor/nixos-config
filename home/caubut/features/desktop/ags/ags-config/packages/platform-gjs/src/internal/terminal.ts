@@ -12,15 +12,14 @@ import { effectify } from '../Effectify.js';
 // const defaultShouldQuit = (input: Terminal.UserInput): boolean =>
 //   input.key.ctrl && (input.key.name === 'c' || input.key.name === 'd');
 
-Gio._promisify(Gio.DataInputStream.prototype, 'read_bytes_async');
 export const make = () => {
   const stdin = new Gio.DataInputStream(new Gio.UnixInputStream({ fd: 0, close_fd: false }));
-  const readBytesAsync = effectify(Gio.DataInputStream, 'read_bytes_async', identity);
+  // const readBytesAsync = effectify(Gio.DataInputStream, 'read_bytes_async', identity);
   const readLineAsync = effectify(Gio.DataInputStream, 'read_line_async', identity);
-  const readInput = readBytesAsync(stdin, 1, GLib.PRIORITY_DEFAULT).pipe(
+  const readInput = Effect.sync(() => stdin.read_byte(null)).pipe(
     Effect.catchAll(Effect.die),
-    Effect.map((bytes): Terminal.UserInput => {
-      const input = String.fromCharCode.apply(null, Array.from(bytes.toArray()));
+    Effect.map((byte): Terminal.UserInput => {
+      const input = String.fromCharCode(byte);
       return {
         input: Option.some(input),
         key: { name: input, ctrl: false, meta: false, shift: false },

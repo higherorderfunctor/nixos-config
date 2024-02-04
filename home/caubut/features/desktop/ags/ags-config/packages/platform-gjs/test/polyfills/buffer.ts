@@ -1,2 +1,3 @@
-export class Buffer {}
-export default {};
+export const Buffer = () => {
+  throw new Error('Not implemeneted');
+};

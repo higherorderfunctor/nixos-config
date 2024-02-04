@@ -40,7 +40,7 @@ export const effectify: <T extends abstract new (...args: any[]) => any, K exten
   method: K,
   onError: (e: unknown, args: [obj: InstanceType<T>, ...Parameters<InstanceType<T>[K]>]) => E,
 ) => {
-  Gio._promisify(proto, method as string);
+  Gio._promisify(proto.prototype, method as string);
   return (...args: [obj: InstanceType<T>, ...args: Parameters<InstanceType<T>[K]>]) => {
     const obj = args[0];
     const cancellable = (args[args.length - 1] as Gio.Cancellable | null)

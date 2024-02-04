@@ -1,3 +1,3 @@
-export class Writable {}
-
-export default {};
+export const Writable = () => {
+  throw new Error('Not implemeneted');
+};
