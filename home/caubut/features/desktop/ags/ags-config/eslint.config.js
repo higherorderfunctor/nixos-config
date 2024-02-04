@@ -422,6 +422,7 @@ const eslintConfig = [
       'no-new-wrappers': 'error',
       'no-proto': 'error',
       'no-shadow': 'off',
+      '@typescript-eslint/no-shadow': 'off',
       'no-unused-vars': [
         'error',
         {

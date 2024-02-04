@@ -44,3 +44,5 @@ export const readFile = (path: string) =>
 export const Stats = () => {
   throw new Error('Not implemeneted');
 };
+
+export default { require };

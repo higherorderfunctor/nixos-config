@@ -1,31 +1,14 @@
 import { Path } from '@effect/platform-gjs';
 import { Effect } from 'effect';
 
-export const resolve = (paths: string[]) =>
-  Effect.runSync(
-    Effect.gen(function* (_) {
-      const { resolve } = yield* _(Path.Path);
-      return resolve(...paths);
-    }).pipe(Effect.provide(Path.layer)),
-  );
+export const resolve = (...paths: readonly string[]) =>
+  Effect.map(Path.Path, ({ resolve }) => resolve(...paths)).pipe(Effect.provide(Path.layer), Effect.runSync);
 
-export const join = (paths: readonly string[]) =>
-  Effect.runSync(
-    Effect.gen(function* (_) {
-      const { join } = yield* _(Path.Path);
-      print(paths.length, '@@');
-      print(paths);
-      return join(paths);
-    }).pipe(Effect.provide(Path.layer)),
-  );
+export const join = (...paths: readonly string[]) =>
+  Effect.map(Path.Path, ({ join }) => join(...paths)).pipe(Effect.provide(Path.layer), Effect.runSync);
 
 export const normalize = (path: string) =>
-  Effect.runSync(
-    Effect.gen(function* (_) {
-      const { normalize } = yield* _(Path.Path);
-      return normalize(path);
-    }).pipe(Effect.provide(Path.layer)),
-  );
+  Effect.map(Path.Path, ({ normalize }) => normalize(path)).pipe(Effect.provide(Path.layer), Effect.runSync);
 
 export const win32 = () => {
   throw new Error('Not implemented');
@@ -58,3 +41,5 @@ export const isAbsolute = () => {
 export const basename = () => {
   throw new Error('Not implemented');
 };
+
+export default { resolve, join, normalize };

@@ -6,6 +6,52 @@ import { Effect } from 'effect';
 import type { RawSourceMap } from 'source-map';
 import { SourceMapConsumer } from 'source-map';
 
+const findOriginalPositionAndFile = (sourceMap, line, column) => {
+  // Assuming sourceMap is already the parsed JSON object of the source map
+  const { mappings } = sourceMap;
+  const { sources } = sourceMap;
+
+  // Split the mappings into lines
+  const lines = mappings.split(';');
+
+  // Check if the requested line is within the range
+  if (line >= lines.length) {
+    return null; // Line out of range
+  }
+
+  // Decode the VLQ encoded mappings for the requested line (simplified, real decoding is more complex)
+  // This is a very simplified parser and does not fully implement VLQ decoding
+  const segments = lines[line].split(',').map((segment) =>
+    // Placeholder for demonstration, in reality, you would decode the segment
+    ({
+      length: segment.length, // Simplified, not actual logic
+      sourceIndex: 0, // Assuming all segments belong to the first source file
+    }),
+  );
+
+  // Find the closest segment to the requested column
+  let closestSegment = null;
+  let closestDistance = Number.MAX_VALUE;
+  for (let i = 0; i < segments.length; i++) {
+    const distance = Math.abs(column - segments[i].length); // Simplified, not actual logic
+    if (distance < closestDistance) {
+      closestDistance = distance;
+      closestSegment = segments[i]; // Placeholder, would be the decoded original position
+    }
+  }
+
+  // Assuming the first source file for demonstration purposes
+  // In a real implementation, you would use the sourceIndex from the decoded segment
+  const originalFile = sources[closestSegment.sourceIndex];
+
+  // Return the found position and file (this is a simplified placeholder)
+  return {
+    file: originalFile, // This would be the original file name from the source map
+    line, // This would be the original line from the source map
+    column: closestSegment.length, // This would be the original column from the source map
+  };
+};
+
 const logLevelToString = (logLevel) => {
   switch (logLevel) {
     case GLib.LogLevelFlags.LEVEL_ERROR:
@@ -38,11 +84,27 @@ const program = Effect.Do.pipe(
   Effect.bind('sourceMap', () =>
     Effect.flatMap(FileSystem.FileSystem, (fs) => fs.readFile('./dist/test/test.gjs.js.map')).pipe(
       Effect.flatMap((bytes) =>
-        Effect.tryPromise({
-          try: () => new SourceMapConsumer(JSON.parse(decoder.decode(bytes)) as RawSourceMap),
-          catch: (error) => error,
+        Effect.try({
+          try: () => {
+            const sourceMap = JSON.parse(decoder.decode(bytes)) as RawSourceMap;
+            return (line: number, column: number) => findOriginalPositionAndFile(sourceMap, line, column);
+          },
+          catch: (error) => {
+            print('111', error);
+            return error;
+          },
         }),
       ),
+      Effect.tapBoth({
+        onFailure: (error) =>
+          Effect.sync(() => {
+            print('E', error);
+          }),
+        onSuccess: (error) =>
+          Effect.sync(() => {
+            print('S', error);
+          }),
+      }),
     ),
   ),
   Effect.tap(({ getPid, sourceMap }) => {
@@ -64,12 +126,22 @@ const program = Effect.Do.pipe(
         ) => GLib.LogWriterOutput,
       ) => void
     )((_logLlevel, fields) => {
-      const message = decoder.decode(fields.MESSAGE); // .replace(/(?<=@file:).*/, (match, path, line, column) => '');
+      const message = decoder
+        .decode(fields.MESSAGE)
+        .replace(/(?<=@file:\/\/)(.*):(\d+):(\d+)$/gm, (match, path, line, column) => {
+          try {
+            const zz = sourceMap(Number(line), Number(column));
+            if (zz) return `${zz.file}:${zz.line}:${zz.column}`;
+          } catch (error) {
+            console.error(error);
+          }
+          return `!${path}:${line}:${column}`;
+        });
       const priority = Number(decoder.decode(fields.PRIORITY));
       const domain = decoder.decode(fields.GLIB_DOMAIN);
       const codeFile = decoder.decode(fields.CODE_FILE);
       const line = Number(decoder.decode(fields.CODE_LINE));
-      // const v = sourceMap.originalPositionFor({ line, columnn });
+      // const v = sourceMap(line, columnn);
       // SourceMapConsumer.with(sourceMap, null, (consumer) => {
       //   consumer.originalPositionFor({
       //     line,
@@ -80,12 +152,12 @@ const program = Effect.Do.pipe(
       return GLib.LogWriterOutput.HANDLED;
     });
   }),
-  // Effect.bind('defineConfig', () =>
-  //   Effect.tryPromise({
-  //     try: () => import('vitest/config').then(({ defineConfig }) => defineConfig),
-  //     catch: (error) => error,
-  //   }),
-  // ),
+  Effect.bind('defineConfig', () =>
+    Effect.tryPromise({
+      try: () => import('vitest/config').then(({ defineConfig }) => defineConfig),
+      catch: (error) => error,
+    }),
+  ),
   Effect.tapError((error) => {
     console.error('##', error);
     return Effect.unit;

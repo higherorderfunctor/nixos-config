@@ -17,3 +17,5 @@ export const debuglog = () => {
 export const promisify = () => {
   throw new Error('Not implemeneted');
 };
+
+export default {};

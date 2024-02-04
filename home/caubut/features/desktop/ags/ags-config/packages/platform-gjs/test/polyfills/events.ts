@@ -5,3 +5,5 @@ export const EventEmitter = () => {
 export const once = () => {
   throw new Error('Not implemeneted');
 };
+
+export default {};
