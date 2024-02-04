@@ -144,6 +144,9 @@ importers:
       source-map:
         specifier: ^0.7.4
         version: 0.7.4
+      sourcemap-lookup:
+        specifier: ^0.0.5
+        version: 0.0.5
       vitest:
         specifier: ^1.2.2
         version: 1.2.2
@@ -1764,6 +1767,11 @@ packages:
 
   /color-name@1.1.4:
     resolution: {integrity: sha512-dOy+3AuW3a2wNbZHIuMZpTcgjGuLU/uBL/ubcZF9OXbDo8ff4O8yVp5Bf0efS8uEoYo5q4Fx7dY9OgQGXgAsQA==}
+    dev: true
+
+  /colors@1.4.0:
+    resolution: {integrity: sha512-a+UqTh4kgZg/SlGvfbzDHpgRu7AAQOmmqRHJnxhRZICKFUT91brVhNNt58CMWU9PsBbv3PDCZUHbVxuDiH2mtA==}
+    engines: {node: '>=0.1.90'}
     dev: true
 
   /concat-map@0.0.1:
@@ -3783,6 +3791,16 @@ packages:
   /source-map@0.7.4:
     resolution: {integrity: sha512-l3BikUxvPOcn5E74dZiq5BGsTb5yEwhaTSzccU6t4sDOH8NWJCstKO5QT2CvtFoK6F0saL7p9xHAqHOlCPJygA==}
     engines: {node: '>= 8'}
+    dev: true
+
+  /sourcemap-lookup@0.0.5:
+    resolution: {integrity: sha512-8bTPRLGbwOs8OR7BP/mmt0gTLTkF8PhLsAsP52Xkms7AeBkAd/FDtyDgLdAPb4kiW2DmWA1COk/VJik2/n7j2g==}
+    engines: {node: '>=0.10'}
+    hasBin: true
+    dependencies:
+      colors: 1.4.0
+      minimist: 1.2.8
+      source-map: 0.5.7
     dev: true
 
   /spdx-correct@3.2.0:

@@ -6,51 +6,108 @@ import { Effect } from 'effect';
 import type { RawSourceMap } from 'source-map';
 import { SourceMapConsumer } from 'source-map';
 
-const findOriginalPositionAndFile = (sourceMap, line, column) => {
-  // Assuming sourceMap is already the parsed JSON object of the source map
-  const { mappings } = sourceMap;
-  const { sources } = sourceMap;
-
-  // Split the mappings into lines
-  const lines = mappings.split(';');
-
-  // Check if the requested line is within the range
-  if (line >= lines.length) {
-    return null; // Line out of range
-  }
-
-  // Decode the VLQ encoded mappings for the requested line (simplified, real decoding is more complex)
-  // This is a very simplified parser and does not fully implement VLQ decoding
-  const segments = lines[line].split(',').map((segment) =>
-    // Placeholder for demonstration, in reality, you would decode the segment
-    ({
-      length: segment.length, // Simplified, not actual logic
-      sourceIndex: 0, // Assuming all segments belong to the first source file
-    }),
-  );
-
-  // Find the closest segment to the requested column
-  let closestSegment = null;
-  let closestDistance = Number.MAX_VALUE;
-  for (let i = 0; i < segments.length; i++) {
-    const distance = Math.abs(column - segments[i].length); // Simplified, not actual logic
-    if (distance < closestDistance) {
-      closestDistance = distance;
-      closestSegment = segments[i]; // Placeholder, would be the decoded original position
-    }
-  }
-
-  // Assuming the first source file for demonstration purposes
-  // In a real implementation, you would use the sourceIndex from the decoded segment
-  const originalFile = sources[closestSegment.sourceIndex];
-
-  // Return the found position and file (this is a simplified placeholder)
-  return {
-    file: originalFile, // This would be the original file name from the source map
-    line, // This would be the original line from the source map
-    column: closestSegment.length, // This would be the original column from the source map
-  };
-};
+// const decodeVLQ = (encoded: string) => {
+//   const BASE64_DIGITS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
+//   const VLQ_BASE_SHIFT = 5;
+//   const VLQ_BASE = 1 << VLQ_BASE_SHIFT;
+//   const VLQ_BASE_MASK = VLQ_BASE - 1;
+//   const VLQ_CONTINUATION_BIT = VLQ_BASE;
+//
+//   const values = [];
+//   let currentIndex = 0;
+//
+//   while (currentIndex < encoded.length) {
+//     let value = 0;
+//     let shift = 0;
+//     let continuation;
+//     let digit;
+//
+//     do {
+//       if (currentIndex >= encoded.length) {
+//         throw new Error('Invalid VLQ sequence');
+//       }
+//
+//       digit = BASE64_DIGITS.indexOf(encoded.charAt(currentIndex++));
+//       if (digit === -1) {
+//         throw new Error('Invalid base64 digit');
+//       }
+//
+//       continuation = !!(digit & VLQ_CONTINUATION_BIT);
+//       digit &= VLQ_BASE_MASK;
+//       value += digit << shift;
+//       shift += VLQ_BASE_SHIFT;
+//     } while (continuation);
+//
+//     // Convert from a two's complement value to a value where the sign bit is
+//     // placed in the least significant bit. For example, as decimals:
+//     // 1 becomes 2 (10 binary), -1 becomes 3 (11 binary)
+//     // 2 becomes 4 (100 binary), -2 becomes 5 (101 binary)
+//     const shouldNegate = value & 1;
+//     value >>= 1;
+//     if (shouldNegate) {
+//       value = -value;
+//     }
+//
+//     values.push(value);
+//   }
+//
+//   return values;
+// };
+//
+// const findOriginalPositionAndFile = (sourceMap: RawSourceMap, generatedLine: number, generatedColumn: number) => {
+//   // Assuming sourceMap is already the parsed JSON object of the source map
+//   const { mappings } = sourceMap;
+//   const { sources } = sourceMap;
+//
+//   // Split the mappings into lines
+//   const lines = mappings.split(';');
+//
+//   print(lines.length);
+//
+//   // Find the closest line
+//   if (generatedLine >= lines.length) {
+//     throw new Error('Line out of range');
+//   }
+//
+//   const lineMappings = lines[generatedLine];
+//
+//   // Decode the VLQ encoded mappings for the requested line (simplified, real decoding is more complex)
+//   // This is a very simplified parser and does not fully implement VLQ decoding
+//   const segments = lineMappings.split(',').map(decodeVLQ);
+//
+//   // Initialize variables to store the closest match
+//   let closestSegment = null;
+//   let closestDistance = Number.MAX_VALUE;
+//
+//   for (const segment of segments) {
+//     // A segment is [generatedColumn, sourceIndex, sourceLine, sourceColumn, nameIndex]
+//     // For simplicity, we're assuming segments are already decoded by decodeVLQ
+//     if (segment.length < 4) continue; // Incomplete segment
+//
+//     const [segmentGeneratedColumn, , segmentSourceLine, segmentSourceColumn] = segment;
+//
+//     // Find the segment with the closest column number to the generatedColumn
+//     const distance = Math.abs(generatedColumn - segmentGeneratedColumn);
+//     if (distance < closestDistance) {
+//       closestDistance = distance;
+//       closestSegment = segment;
+//     }
+//   }
+//
+//   if (!closestSegment) {
+//     throw new Error('No matching segment found');
+//   }
+//
+//   // Extract the original position information
+//   const [, sourceIndex, sourceLine, sourceColumn] = closestSegment;
+//   const originalFile = sourceMap.sources[sourceIndex];
+//
+//   return {
+//     file: originalFile,
+//     line: sourceLine,
+//     column: sourceColumn,
+//   };
+// };
 
 const logLevelToString = (logLevel) => {
   switch (logLevel) {
@@ -83,28 +140,37 @@ const program = Effect.Do.pipe(
   }),
   Effect.bind('sourceMap', () =>
     Effect.flatMap(FileSystem.FileSystem, (fs) => fs.readFile('./dist/test/test.gjs.js.map')).pipe(
-      Effect.flatMap((bytes) =>
-        Effect.try({
-          try: () => {
-            const sourceMap = JSON.parse(decoder.decode(bytes)) as RawSourceMap;
-            return (line: number, column: number) => findOriginalPositionAndFile(sourceMap, line, column);
-          },
-          catch: (error) => {
-            print('111', error);
-            return error;
-          },
-        }),
-      ),
-      Effect.tapBoth({
-        onFailure: (error) =>
-          Effect.sync(() => {
-            print('E', error);
-          }),
-        onSuccess: (error) =>
-          Effect.sync(() => {
-            print('S', error);
-          }),
+      Effect.map((bytes) => JSON.parse(decoder.decode(bytes)) as RawSourceMap),
+      Effect.map((sourceMap) => {
+        const lines = sourceMap.mappings.split(';');
+        const lc = lines.map((line) => line.split(','));
+        print('Source Map Lines:', lc.length);
+        print('Source Map Lines:', lc[0][0]);
+        loop.quit();
+        return () => '';
       }),
+      // Effect.flatMap((bytes) =>
+      //   Effect.try({
+      //     try: () => {
+      //       const sourceMap = JSON.parse(decoder.decode(bytes)) as RawSourceMap;
+      //       return (line: number, column: number) => findOriginalPositionAndFile(sourceMap, line, column);
+      //     },
+      //     catch: (error) => {
+      //       print('111', error);
+      //       return error;
+      //     },
+      //   }),
+      // ),
+      // Effect.tapBoth({
+      //   onFailure: (error) =>
+      //     Effect.sync(() => {
+      //       print('E', error);
+      //     }),
+      //   onSuccess: (error) =>
+      //     Effect.sync(() => {
+      //       print('S', error);
+      //     }),
+      // }),
     ),
   ),
   Effect.tap(({ getPid, sourceMap }) => {

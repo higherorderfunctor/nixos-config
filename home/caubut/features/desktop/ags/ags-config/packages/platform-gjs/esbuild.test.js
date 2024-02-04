@@ -105,9 +105,12 @@ const injectGjsPolyfill = {
     build.onLoad({ filter: /.*\.(js|ts)x?$/ }, async (args) => {
       console.log(args);
       let contents = await fs.promises.readFile(args.path, 'utf8');
-      if (args.path.includes('source-map')) {
-        contents = contents.replace(/'?__dirname'?/g, `'${path.dirname(args.path)}'`);
+      // if (args.path.includes('source-map')) {
+      // contents = contents.replace(/\${__dirname}/g, `'${path.dirname(args.path)}'`);
+      if (contents.includes('__dirname') && !contents.includes('const __dirname')) {
+        contents = `const __dirname = "${args.path}"\n${contents}`;
       }
+      // }
       if (
         contents.includes('AbortController') &&
         !contents.includes('import AbortController from "abort-controller/dist/abort-controller.mjs"')
