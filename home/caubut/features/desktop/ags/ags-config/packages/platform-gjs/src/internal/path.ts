@@ -31,7 +31,7 @@ const format = (pathObject: string) => {
     return join(dir, base);
 }
 
-const fromFileUrl = (url: URL): Effect.Effect<never, BadArgument, string> =>
+export const fromFileUrl = (url: URL): Effect.Effect<never, BadArgument, string> =>
   Effect.try({
     try: () => Gio.File.new_for_uri(url),
     catch: (error) =>
@@ -49,7 +49,7 @@ const normalize = (path: string) => Gio.File.new_for_uri(path).get_path();
 
 const root = (path: string) => Gio.File.new_for_uri(path).get_path()?.lastIndexOf(GLib.path_skip_root(path));
 
-const parse = (path: string) => ({
+export const parse = (path: string) => ({
   root: root(path),
   dir: dirname(path),
   base: basename(path),

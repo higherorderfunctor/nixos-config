@@ -1,142 +1,49 @@
 import { Gio } from '@girs/gio-2.0';
 import { GLib } from '@girs/glib-2.0';
 
-import * as Error from '@effect/platform/Error';
 import * as Terminal from '@effect/platform/Terminal';
 import * as Effect from 'effect/Effect';
+import { identity } from 'effect/Function';
 import * as Layer from 'effect/Layer';
 import * as Option from 'effect/Option';
-import * as readline from 'node:readline';
 
-import { effectify } from './effectify.js';
+import { effectify } from '../Effectify.js';
 
-const z = { a: 1, b: 2 };
-
-const defaultShouldQuit = (input: Terminal.UserInput): boolean =>
-  input.key.ctrl && (input.key.name === 'c' || input.key.name === 'd');
-
-/** @internal */
+// const defaultShouldQuit = (input: Terminal.UserInput): boolean =>
+//   input.key.ctrl && (input.key.name === 'c' || input.key.name === 'd');
 
 Gio._promisify(Gio.DataInputStream.prototype, 'read_bytes_async');
-export const make = (shouldQuit: (input: Terminal.UserInput) => boolean = defaultShouldQuit) =>
-  Effect.gen(function* (_) {
-    const input = new Gio.DataInputStream(new Gio.UnixInputStream({ fd: 0, close_fd: false })); // .create_source(null); // TODO cancel;
-    const readBytes = effectify(input.read_bytes_async);
-    readBytes(1, GLib.PRIORITY_DEFAULT_IDLE, null, (err: Error | null, result: any)
-    input.read_bytes_async(1, GLib.PRIORITY_DEFAULT_IDLE, cancellable, callback);
-
-    // const input = Gio.pollable_source_new(
-    //   new Gio.DataInputStream({ base_stream: new Gio.UnixInputStream({ fd: 0 }), close_base_stream: true }),
-    // );
-
-    const output = yield* _(Effect.sync(() => globalThis.process.stdout));
-
-    // Acquire a readline interface
-    const acquireReadlineInterface = Effect.sync(() =>
-      readline.createInterface({
-        input,
-        escapeCodeTimeout: 50,
-      }),
-    );
-
-    // Uses the readline interface to force `stdin` to emit keypress events
-    const emitKeypressEvents = (rl: readline.Interface): readline.Interface => {
-      readline.emitKeypressEvents(input, rl);
-      if (input.isTTY) {
-        input.setRawMode(true);
-      }
-      return rl;
-    };
-
-    // Close the `readline` interface
-    const releaseReadlineInterface = (rl: readline.Interface) =>
-      Effect.sync(() => {
-        if (input.isTTY) {
-          input.setRawMode(false);
-        }
-        rl.close();
-      });
-
-    // Handle the `"keypress"` event emitted by `stdin` (forced by readline)
-    const handleKeypressEvent = (input: typeof globalThis.process.stdin) =>
-      Effect.async<never, Terminal.QuitException, Terminal.UserInput>((resume) => {
-        const handleKeypress = (input: string | undefined, key: readline.Key) => {
-          const userInput: Terminal.UserInput = {
-            input: Option.fromNullable(input),
-            key: {
-              name: key.name || '',
-              ctrl: key.ctrl || false,
-              meta: key.meta || false,
-              shift: key.shift || false,
-            },
-          };
-          if (shouldQuit(userInput)) {
-            resume(Effect.fail(new Terminal.QuitException()));
-          } else {
-            resume(Effect.succeed(userInput));
-          }
-        };
-        input.once('keypress', handleKeypress);
-        return Effect.sync(() => {
-          input.removeListener('keypress', handleKeypress);
-        });
-      });
-
-    // Handle the `"line"` event emitted by the readline interface
-    const handleLineEvent = (rl: readline.Interface) =>
-      Effect.async<never, Terminal.QuitException, string>((resume) => {
-        const handleLine = (line: string) => {
-          resume(Effect.succeed(line));
-        };
-        rl.on('line', handleLine);
-        return Effect.sync(() => {
-          rl.removeListener('line', handleLine);
-        });
-      });
-
-    const readInput = Effect.acquireUseRelease(
-      acquireReadlineInterface.pipe(Effect.map(emitKeypressEvents)),
-      () => handleKeypressEvent(input),
-      releaseReadlineInterface,
-    );
-
-    const readLine = Effect.acquireUseRelease(
-      acquireReadlineInterface,
-      (rl) => handleLineEvent(rl),
-      releaseReadlineInterface,
-    );
-
-    const display = (prompt: string): Effect.Effect<never, Error.PlatformError, void> =>
-      Effect.uninterruptible(
-        Effect.async((resume) => {
-          output.write(prompt, (err) => {
-            if (err) {
-              resume(
-                Effect.fail(
-                  Error.BadArgument({
-                    module: 'Terminal',
-                    method: 'display',
-                    message: err.message ?? String(err),
-                  }),
-                ),
-              );
-            }
-            resume(Effect.unit);
-          });
-        }),
-      );
-
-    return Terminal.Terminal.of({
+export const make = () => {
+  const stdin = new Gio.DataInputStream(new Gio.UnixInputStream({ fd: 0, close_fd: false }));
+  const readBytesAsync = effectify(Gio.DataInputStream, 'read_bytes_async', identity);
+  const readLineAsync = effectify(Gio.DataInputStream, 'read_line_async', identity);
+  const readInput = readBytesAsync(stdin, 1, GLib.PRIORITY_DEFAULT).pipe(
+    Effect.catchAll(Effect.die),
+    Effect.map((bytes): Terminal.UserInput => {
+      const input = String.fromCharCode.apply(null, Array.from(bytes.toArray()));
+      return {
+        input: Option.some(input),
+        key: { name: input, ctrl: false, meta: false, shift: false },
+      };
+    }),
+  );
+  const readLine = readLineAsync(stdin, GLib.PRIORITY_DEFAULT).pipe(
+    Effect.catchAll(Effect.die),
+    Effect.map((bytes) => String.fromCharCode.apply(null, Array.from((bytes as unknown as GLib.Bytes).toArray()))),
+  );
+  return Effect.succeed(
+    Terminal.Terminal.of({
       // The columns property can be undefined if stdout was redirected
-      columns: Effect.sync(() => output.columns || 0),
+      columns: Effect.sync(() => 0),
       readInput,
       readLine,
-      display,
-    });
-  });
+      display: (text) =>
+        Effect.sync(() => {
+          print(text);
+        }),
+    }),
+  );
+};
 
 /** @internal */
-export const layer: Layer.Layer<never, never, Terminal.Terminal> = Layer.scoped(
-  Terminal.Terminal,
-  make(defaultShouldQuit),
-);
+export const layer: Layer.Layer<never, never, Terminal.Terminal> = Layer.scoped(Terminal.Terminal, make());

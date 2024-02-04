@@ -1,7 +1,3 @@
-/* eslint-disable @typescript-eslint/ban-types */
-/* eslint-disable @typescript-eslint/naming-convention */
-
-
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
 import { Gio } from '@girs/gio-2.0';
@@ -20,62 +16,44 @@ type AsyncMethodKeys<T> = {
     : never;
 }[keyof T];
 
-type MethodKeys<T> = {
-  [P in keyof T]: T[P] extends Function ? P : never;
-}[keyof T];
-
-type Z = MethodKeys<Gio.File>;
-type ZZ = AsyncMethodKeys<Gio.File>;
+type WithoutPromise<T> = T extends Promise<infer R> ? R : never;
 
 export type Effectify<
   T extends abstract new (...args: any) => any,
   K extends AsyncMethodKeys<InstanceType<T>>,
-  E,,
+  E,
 > = InstanceType<T>[K] extends (...args: ArgsWithoutCancellable<infer Args>) => Promise<infer R>
   ? (obj: InstanceType<T>, ...args: [...Args, cancellable?: Gio.Cancellable | null]) => Effect.Effect<never, E, R>
   : never;
 
-export const effectify: <
-  T extends abstract new (...args: any[]) => any,
-  K extends AsyncMethodKeys<InstanceType<T>>,
-  F extends InstanceType<T>[K],
-  E>(
-    proto: T,
-    method: K,
-    onError: (e: unknown, args: [obj: InstanceType<T>, ...Parameters<InstanceType<T>[K]>]) => E,
+export const effectify: <T extends abstract new (...args: any[]) => any, K extends AsyncMethodKeys<InstanceType<T>>, E>(
+  proto: T,
+  method: K,
+  onError: (e: unknown, args: [obj: InstanceType<T>, ...Parameters<InstanceType<T>[K]>]) => E,
 ) => Effectify<T, K, E> = <
   T extends abstract new (...args: any[]) => any,
   K extends AsyncMethodKeys<InstanceType<T>>,
-  F extends InstanceType<T>[K],
   E,
+  R extends WithoutPromise<ReturnType<InstanceType<T>[K]>>,
 >(
   proto: T,
   method: K,
   onError: (e: unknown, args: [obj: InstanceType<T>, ...Parameters<InstanceType<T>[K]>]) => E,
 ) => {
   Gio._promisify(proto, method as string);
-  return (
-    obj: InstanceType<T>,
-    ...args: Parameters<F>
-  ) => {
-    const cancellable = args[args.length - 1] as Gio.Cancellable | null;
-    const f = obj[method];
-    Effect.tryPromise({
+  return (...args: [obj: InstanceType<T>, ...args: Parameters<InstanceType<T>[K]>]) => {
+    const obj = args[0];
+    const cancellable = (args[args.length - 1] as Gio.Cancellable | null)
+      ? (args[args.length - 1] as Gio.Cancellable)
+      : Gio.Cancellable.new();
+    return Effect.tryPromise({
       try: (signal) => {
-        const _cancellable = cancellable || Gio.Cancellable.new();
         signal.addEventListener('abort', () => {
-          _cancellable.cancel();
+          cancellable.cancel();
         });
-        const z = obj[method];
-        const zz = z(...args, _cancellable);
-
-        return zz;
+        return obj[method](...args.slice(0, args.length - 2), cancellable) as Promise<R>;
       },
-      catch: onError,
+      catch: (error) => onError(error, args),
     });
   };
 };
-
-export const x = effectify(Gio.File, 'make_symbolic_link_async', () => new Error());
-
-// const file = Gio.File.new_for_path('');
