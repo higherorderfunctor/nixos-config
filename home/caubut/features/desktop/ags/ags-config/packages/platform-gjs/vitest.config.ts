@@ -39,11 +39,11 @@ type LookupInfo = {
 };
 
 export const decodeLine = (segment: VlqState, state: VlqState, sources: string[], names: string[]) => {
-  segment[0] += state[0];
-  segment[1] += state[1];
-  segment[2] += state[2];
-  segment[3] += state[3];
-  segment[4] += state[4];
+  segment[0] += state[0] ?? 0;
+  segment[1] += state[1] ?? 0;
+  segment[2] += state[2] ?? 0;
+  segment[3] += state[3] ?? 0;
+  segment[4] += state[4] ?? 0;
   return {
     columnIndex: segment[0],
     source: sources[segment[1]],
@@ -62,7 +62,7 @@ const bisectLeft = <T>(arr: T[], value: number, lo: number, hi: number, what: (a
       hi = mid;
     }
   }
-  print(arr[lo], lo, arr.length);
+  print(arr[lo], lo, arr.length, arr[arr.length - 1].columnIndex);
   return arr[lo];
 };
 
