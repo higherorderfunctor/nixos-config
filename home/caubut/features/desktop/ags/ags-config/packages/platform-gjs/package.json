@@ -28,6 +28,7 @@
     "esbuild": "^0.19.12",
     "source-map": "^0.7.4",
     "sourcemap-lookup": "^0.0.5",
-    "vitest": "^1.2.2"
+    "vitest": "^1.2.2",
+    "vlq": "^2.0.4"
   }
 }

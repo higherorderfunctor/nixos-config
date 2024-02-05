@@ -150,6 +150,9 @@ importers:
       vitest:
         specifier: ^1.2.2
         version: 1.2.2
+      vlq:
+        specifier: ^2.0.4
+        version: 2.0.4
 
 packages:
 
@@ -4283,6 +4286,10 @@ packages:
       - sugarss
       - supports-color
       - terser
+    dev: true
+
+  /vlq@2.0.4:
+    resolution: {integrity: sha512-aodjPa2wPQFkra1G8CzJBTHXhgk3EVSwxSWXNPr1fgdFLUb8kvLV1iEb6rFgasIsjP82HWI6dsb5Io26DDnasA==}
     dev: true
 
   /which-boxed-primitive@1.0.2:

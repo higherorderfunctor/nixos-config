@@ -5,6 +5,7 @@ import { FileSystem } from '@effect/platform-gjs';
 import { Effect } from 'effect';
 import type { RawSourceMap } from 'source-map';
 import { SourceMapConsumer } from 'source-map';
+import * as vlq from 'vlq';
 
 // const decodeVLQ = (encoded: string) => {
 //   const BASE64_DIGITS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
@@ -132,6 +133,86 @@ const decoder = new TextDecoder('utf-8');
 
 const loop = new GLib.MainLoop(null, false);
 
+type VlqState = [number, number, number, number, number];
+
+type LookupInfo = {
+  source: string;
+  line: number;
+  column: number;
+  name: string;
+};
+
+// const formatSegment = (col, source, sourceLine, sourceCol, name, sources, names) =>
+//   `${col + 1} => ${sources[source]} ${sourceLine + 1}:${sourceCol + 1}${names[name] ? ` ${names[name]}` : ``}`
+
+const formatLine = (line: string, state: VlqState, sources: string[], names: string[]) => {
+  const acc: Record<number, LookupInfo> = {};
+  const segs = line.split(',');
+  return segs.map((seg) => {
+    if (!seg)
+      return {
+        source: '!!',
+        line: 0,
+        column: 0,
+        name: '',
+      };
+    const [columnIndex, source, line, column, name] = vlq.decode(seg) as VlqState;
+    acc[columnIndex] = { source: sources[source], line, column, name: names[name] };
+    // for (let i = 0; i < 5; i++) {
+    //   state[i] = typeof decoded[i] === 'number' ? state[i] + decoded[i] : state[i];
+    // }
+    // return formatSegment(...state.concat([sources, names]));
+    return {
+      source: sources[state[1]],
+      line: state[2] + 1,
+      column: state[3] + 1,
+      name: names[state[4]],
+    };
+  });
+};
+
+let sourceFileIndex = 0; // second field
+let sourceCodeLine = 0; // third field
+let sourceCodeColumn = 0; // fourth field
+let nameIndex = 0; // fifth field
+
+export const decodeLine = (line: string, decoded: VlqState) => {
+  let generatedCodeColumn = 0; // first field - reset each time
+
+  return line.map((segment) => {
+    generatedCodeColumn += segment[0];
+
+    const result = [generatedCodeColumn];
+
+    if (segment.length === 1) {
+      // only one field!
+      return result;
+    }
+
+    sourceFileIndex += segment[1];
+    sourceCodeLine += segment[2];
+    sourceCodeColumn += segment[3];
+
+    result.push(sourceFileIndex, sourceCodeLine, sourceCodeColumn);
+
+    if (segment.length === 5) {
+      nameIndex += segment[4];
+      result.push(nameIndex);
+    }
+
+    return result;
+  });
+};
+
+const formatMappings = (mappings: string, sources: string[], names: string[]) => {
+  const vlqState: VlqState = [0, 0, 0, 0, 0];
+  return mappings.split(';').map((line) => {
+    const formattedLine = formatLine(line, vlqState, sources, names);
+    vlqState[0] = 0;
+    return formattedLine;
+  });
+};
+
 const program = Effect.Do.pipe(
   // https://stackoverflow.com/questions/44815538/how-to-get-process-pid-in-gjs
   Effect.bind('getPid', () => {
@@ -142,12 +223,36 @@ const program = Effect.Do.pipe(
     Effect.flatMap(FileSystem.FileSystem, (fs) => fs.readFile('./dist/test/test.gjs.js.map')).pipe(
       Effect.map((bytes) => JSON.parse(decoder.decode(bytes)) as RawSourceMap),
       Effect.map((sourceMap) => {
-        const lines = sourceMap.mappings.split(';');
-        const lc = lines.map((line) => line.split(','));
-        print('Source Map Lines:', lc.length);
-        print('Source Map Lines:', lc[0][0]);
-        loop.quit();
-        return () => '';
+        let mappings = formatMappings(sourceMap.mappings, sourceMap.sources, sourceMap.names);
+        mappings = sourceMap.mappings.split(';').map((line) => line.split(',').map(() => ({})));
+        // const lines = sourceMap.mappings.split(';');
+        // const lc = lines.map((line) => line.split(','));
+        print(mappings.length);
+        const lookup = (
+          line: number,
+          column: number,
+        ):
+          | {
+              source: string;
+              line: number;
+              column: number;
+              name: string;
+            }
+          | undefined => {
+          print(
+            line,
+            column,
+            mappings[line - 1].length,
+            mappings[line].length,
+            mappings[line + 1].length,
+            mappings[line][column]?.source,
+            mappings[line][column]?.line,
+            mappings[line][column]?.column,
+            mappings[line][column]?.name,
+          );
+          return mappings[line - 1][column - 1];
+        };
+        return lookup;
       }),
       // Effect.flatMap((bytes) =>
       //   Effect.try({
@@ -196,8 +301,9 @@ const program = Effect.Do.pipe(
         .decode(fields.MESSAGE)
         .replace(/(?<=@file:\/\/)(.*):(\d+):(\d+)$/gm, (match, path, line, column) => {
           try {
+            print(path, line, column);
             const zz = sourceMap(Number(line), Number(column));
-            if (zz) return `${zz.file}:${zz.line}:${zz.column}`;
+            if (zz) return `@@@${zz.source}:${zz.line}:${zz.column}@@@`;
           } catch (error) {
             console.error(error);
           }
