@@ -17,21 +17,21 @@ const extname = (path: string) => {
 };
 
 const format = (pathObject: string) => {
-    // If the pathObject has a `dir`, use it; otherwise, use `root` for the directory part
-    let dir = pathObject.dir || pathObject.root || '';
+  // If the pathObject has a `dir`, use it; otherwise, use `root` for the directory part
+  let dir = pathObject.dir || pathObject.root || '';
 
-    // If the pathObject has a `base`, use it; otherwise, combine `name` and `ext`
-    let base = pathObject.base || (pathObject.name || '') + (pathObject.ext || '');
+  // If the pathObject has a `base`, use it; otherwise, combine `name` and `ext`
+  const base = pathObject.base || (pathObject.name || '') + (pathObject.ext || '');
 
-    // Ensure we don't double the separators if `dir` already ends with one
-    if (dir && !dir.endsWith('/')) {
-        dir += '/';
-    }
+  // Ensure we don't double the separators if `dir` already ends with one
+  if (dir && !dir.endsWith('/')) {
+    dir += '/';
+  }
 
-    const z = join(dir, base);
-  print('@@@@@@@', z)
-  return z
-}
+  const z = join(dir, base);
+  print('@@@@@@@', z);
+  return z;
+};
 
 export const fromFileUrl = (url: URL): Effect.Effect<never, BadArgument, string> =>
   Effect.try({
@@ -49,8 +49,8 @@ const join = (...paths: readonly string[]) => {
   print('hi', paths);
   const z = GLib.build_filenamev([...paths]);
   print(z);
-  return z
-}
+  return z;
+};
 
 const normalize = (path: string) => Gio.File.new_for_uri(path).get_path();
 
@@ -67,7 +67,7 @@ export const parse = (path: string) => ({
 const relative = (from: string, to: string) => Gio.File.new_for_uri(from).get_relative_path(Gio.File.new_for_uri(to));
 
 const resolve = (...pathSegments: readonly string[]) =>
-   normalize(pathSegments.length === 0 ? GLib.get_current_dir() : join(...pathSegments) )
+  normalize(pathSegments.length === 0 ? GLib.get_current_dir() : join(...pathSegments));
 
 const toFileUrl = (path: string): Effect.Effect<never, BadArgument, URL> =>
   Effect.try({

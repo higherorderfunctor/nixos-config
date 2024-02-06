@@ -1,3 +1,6 @@
+import { Gio } from '@girs/gio-2.0';
+import { GLib } from '@girs/glib-2.0';
+
 import { FileSystem } from '@effect/platform-gjs';
 import { Effect } from 'effect';
 
@@ -6,11 +9,13 @@ export const readFileSync = () => {
 };
 
 export const promises = () => {
-  throw new Error('Not implemeneted');
+  throw new Error('promises: Not implemeneted');
 };
 
-export const existsSync = () => {
-  throw new Error('Not implemeneted');
+export const existsSync = (path: string) => {
+  const file = Gio.File.new_for_path(path);
+  print('!!', path);
+  return file.query_exists(null);
 };
 
 export const statSync = () => {

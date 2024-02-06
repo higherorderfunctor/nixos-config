@@ -2,7 +2,7 @@ import { Gio } from '@girs/gio-2.0';
 import { GLib } from '@girs/glib-2.0';
 
 import { FileSystem } from '@effect/platform-gjs';
-import { Effect } from 'effect';
+import { Effect, identity, ReadonlyArray } from 'effect';
 import type { RawSourceMap } from 'source-map';
 import * as vlq from 'vlq';
 
@@ -32,38 +32,18 @@ const loop = new GLib.MainLoop(null, false);
 type VlqState = [number, number, number, number, number];
 
 type LookupInfo = {
+  columnIndex: number;
   source: string;
   line: number;
   column: number;
-  name: string;
+  name?: string | undefined;
 };
 
-export const decodeLine = (segment: VlqState, state: VlqState, sources: string[], names: string[]) => {
-  segment[0] += state[0] ?? 0;
-  segment[1] += state[1] ?? 0;
-  segment[2] += state[2] ?? 0;
-  segment[3] += state[3] ?? 0;
-  segment[4] += state[4] ?? 0;
-  return {
-    columnIndex: segment[0],
-    source: sources[segment[1]],
-    line: segment[2],
-    column: segment[3],
-    name: names[segment[4]],
-  };
-};
-
-const bisectLeft = <T>(arr: T[], value: number, lo: number, hi: number, what: (a: T) => number) => {
-  while (lo < hi) {
-    const mid = (lo + hi) >> 1;
-    if (what(arr[mid]) < value) {
-      lo = mid + 1;
-    } else {
-      hi = mid;
-    }
-  }
-  print(arr[lo], lo, arr.length, arr[arr.length - 1].columnIndex);
-  return arr[lo];
+const bisectLeft = <T, U>(arr: T[], value: U, cmp: (a: T) => U, low = 0, high: number = arr.length): T => {
+  if (low >= high) return arr[low];
+  const mid = (low + high) >> 1;
+  if (cmp(arr[mid]) < value) return bisectLeft(arr, value, cmp, mid + 1, high);
+  return bisectLeft(arr, value, cmp, low, mid);
 };
 
 const program = Effect.Do.pipe(
@@ -76,54 +56,43 @@ const program = Effect.Do.pipe(
     Effect.flatMap(FileSystem.FileSystem, (fs) => fs.readFile('./dist/test/test.gjs.js.map')).pipe(
       Effect.map((bytes) => JSON.parse(decoder.decode(bytes)) as RawSourceMap),
       Effect.map((sourceMap) => {
-        const state: VlqState = [0, 0, 0, 0, 0];
-        const mappings = sourceMap.mappings.split(';').map((line) => {
-          const segments = line
-            .split(',')
-            .map((segment) => decodeLine(vlq.decode(segment) as VlqState, state, sourceMap.sources, sourceMap.names));
+        const state = [0, 0, 0, 0, 0] as VlqState;
+        const mappings: LookupInfo[][] = sourceMap.mappings.split(';').map((segments) => {
           state[0] = 0;
-          return segments;
+          return segments.split(',').map((segment) => {
+            const stateUpdate = vlq.decode(segment) as [number, number, number, number, number | undefined];
+            const updatedState = state.map((value, i) => value + (stateUpdate[i] ?? 0)) as VlqState;
+            return {
+              columnIndex: updatedState[0],
+              source: sourceMap.sources[updatedState[1]],
+              line: updatedState[2] + 1,
+              column: updatedState[3],
+              name: stateUpdate[4] ? sourceMap.names[updatedState[4]] : undefined,
+            };
+          });
         });
-        const lookup = (
-          line: number,
-          column: number,
-        ):
-          | {
-              source: string;
-              line: number;
-              column: number;
-              name: string;
-            }
-          | undefined => {
-          const segments = mappings[line];
-          const segment = bisectLeft(segments, column, 0, segments.length, (a) => a.columnIndex);
-          print(line, column, segment, '####');
-          return segment;
+        // const filePath = GLib.build_filenamev([GLib.get_home_dir(), 'myObject.json']);
+        // const file = Gio.File.new_for_path(filePath);
+        // const encoder = new TextEncoder();
+        // file.replace_contents(
+        //   encoder.encode(JSON.stringify(mappings, null, 2)),
+        //   null, // No etag
+        //   false, // Do not make backup
+        //   Gio.FileCreateFlags.REPLACE_DESTINATION,
+        //   null, // No cancellable operation
+        // );
+        const lookup = (line: number, column: number): LookupInfo | undefined => {
+          // print('Original:', line, column);
+          if (mappings[line - 1][0].columnIndex > column - 1) {
+            // print('Not Found');
+            return undefined;
+          }
+          const info = bisectLeft(mappings[line - 1], column - 1, (a) => a.columnIndex);
+          // print('Mapped:', info.columnIndex, info.source, info.line, info.column, info.name ?? '');
+          return info;
         };
         return lookup;
       }),
-      // Effect.flatMap((bytes) =>
-      //   Effect.try({
-      //     try: () => {
-      //       const sourceMap = JSON.parse(decoder.decode(bytes)) as RawSourceMap;
-      //       return (line: number, column: number) => findOriginalPositionAndFile(sourceMap, line, column);
-      //     },
-      //     catch: (error) => {
-      //       print('111', error);
-      //       return error;
-      //     },
-      //   }),
-      // ),
-      // Effect.tapBoth({
-      //   onFailure: (error) =>
-      //     Effect.sync(() => {
-      //       print('E', error);
-      //     }),
-      //   onSuccess: (error) =>
-      //     Effect.sync(() => {
-      //       print('S', error);
-      //     }),
-      // }),
     ),
   ),
   Effect.tap(({ getPid, sourceMap }) => {
@@ -148,14 +117,10 @@ const program = Effect.Do.pipe(
       const message = decoder
         .decode(fields.MESSAGE)
         .replace(/(?<=@file:\/\/)(.*):(\d+):(\d+)$/gm, (match, path, line, column) => {
-          try {
-            print(path, line, column);
-            const zz = sourceMap(Number(line), Number(column));
-            if (zz) return `@@@${zz.source}:${zz.line}:${zz.column}@@@`;
-          } catch (error) {
-            console.error(error);
-          }
-          return `!${path}:${line}:${column}`;
+          // print(path, line, column);
+          const zz = sourceMap(Number(line), Number(column));
+          if (zz) return `${zz.source}:${zz.line}:${zz.column}`;
+          return `${path}:${line}:${column}`;
         });
       const priority = Number(decoder.decode(fields.PRIORITY));
       const domain = decoder.decode(fields.GLIB_DOMAIN);
@@ -168,7 +133,9 @@ const program = Effect.Do.pipe(
       //     // column,
       //   });
       // });
-      print('!!', getPid(), logLevelToString(priority), domain, codeFile, line, message, '<<');
+      const reset = '\x1b[0m';
+      const red = '\x1b[31m';
+      print(getPid(), `${red}${logLevelToString(priority)}${reset}`, domain, codeFile, line, message, '<<');
       return GLib.LogWriterOutput.HANDLED;
     });
   }),
@@ -179,7 +146,7 @@ const program = Effect.Do.pipe(
     }),
   ),
   Effect.tapError((error) => {
-    console.error('##', error);
+    console.error(error);
     return Effect.unit;
   }),
   // Effect.catchAll(() => Effect.unit),

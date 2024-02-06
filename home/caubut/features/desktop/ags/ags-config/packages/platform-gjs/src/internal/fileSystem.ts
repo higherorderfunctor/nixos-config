@@ -24,7 +24,10 @@ import { handleIOErrorException } from './error.js';
 
 // == access
 
-const access = (() => {
+const access: (
+  path: string,
+  options?: FileSystem.AccessFileOptions,
+) => Effect.Effect<never, Error.PlatformError, void> = (() => {
   Gio._promisify(Gio.File.prototype, 'query_info_async');
   const makeQuery = (attr: string) => (path: string) => ({
     query: attr,
@@ -90,6 +93,14 @@ const access = (() => {
         }).pipe(Effect.flatMap(hasAttributes)),
     );
 })();
+
+export const exists = (path: string): Effect.Effect<never, Error.PlatformError, boolean> =>
+  access(path, { ok: true }).pipe(
+    Effect.catchTag('SystemError', (error) =>
+      error.reason === 'NotFound' ? Effect.succeed(false) : Effect.fail(error),
+    ),
+    Effect.map(() => true),
+  );
 
 // // == copy
 //
