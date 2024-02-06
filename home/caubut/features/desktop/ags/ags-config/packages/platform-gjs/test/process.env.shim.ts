@@ -1,8 +1,6 @@
-/* File needed to bundle the tests to run on GJS */
-import { GLib } from '@girs/glib-2.0';
+import { version } from '@girs/gjs/system';
 
-const global = globalThis as typeof globalThis & {
-  process: { env: Record<string, string> };
+globalThis.process = {
+  versions: { gjs: version },
+  env: {},
 };
-
-global.process = { env: {} };

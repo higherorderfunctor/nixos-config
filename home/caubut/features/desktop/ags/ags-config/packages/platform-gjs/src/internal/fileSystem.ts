@@ -246,7 +246,6 @@ Gio._promisify(Gio.File.prototype, 'make_directory_async');
 
 const makeDirectory = (path: string, options?: FileSystem.MakeDirectoryOptions) => {
   const file = Gio.File.new_for_path(path);
-  file.make_directory_async(io_priority, cancellable, callback);
   if (options?.recursive) {
     const result = file.make_directory_with_parents(path, options.mode ?? 0o755);
     if (result === 0) {

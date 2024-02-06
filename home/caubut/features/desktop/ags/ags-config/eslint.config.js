@@ -363,7 +363,7 @@ const eslintConfig = [
           includeTypes: true,
           devDependencies: [
             'eslint.config.js',
-            'packages/*/vitest.*.ts',
+            'packages/*/unit.config.ts',
             'packages/*/esbuild.*.js',
             'packages/*/test/*test.ts',
           ],

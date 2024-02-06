@@ -39,26 +39,22 @@ const polyfills = [
 const injectGjsPolyfill = {
   name: 'inject-dirname',
   setup: (build) => {
-    polyfills.forEach((polyfill) => {
-      build.onResolve({ filter: new RegExp(`^(node:)?${polyfill}$`) }, async () => ({
-        path: path.resolve(`./test/polyfills/${polyfill}.ts`),
-      }));
-    });
-    build.onResolve({ filter: /^@effect\/platform-gjs\/.*$/ }, async (args) => ({
-      path:
-        args.path === '@effect/platform-gjs'
-          ? path.resolve('./src/index.ts')
-          : path.resolve(args.path.replace('@effect/platform-gjs', './src')),
-    }));
+    // polyfills.forEach((polyfill) => {
+    //   build.onResolve({ filter: new RegExp(`^(node:)?${polyfill}$`) }, async () => ({
+    //     path: path.resolve(`./test/polyfills/${polyfill}.ts`),
+    //   }));
+    // });
+    // build.onResolve({ filter: /^@effect\/platform-gjs\/.*$/ }, async (args) => ({
+    //   path:
+    //     args.path === '@effect/platform-gjs'
+    //       ? path.resolve('./src/index.ts')
+    //       : path.resolve(args.path.replace('@effect/platform-gjs', './src')),
+    // }));
     build.onLoad({ filter: /.*\.(js|ts)x?$/ }, async (args) => {
-      // console.log(args);
       let contents = await fs.promises.readFile(args.path, 'utf8');
-      // if (args.path.includes('source-map')) {
-      // contents = contents.replace(/\${__dirname}/g, `'${path.dirname(args.path)}'`);
       if (contents.includes('__dirname') && !contents.includes('const __dirname')) {
         contents = `const __dirname = "${path.dirname(args.path)}"\n${contents}`;
       }
-      // }
       if (
         contents.includes('AbortController') &&
         !contents.includes('import AbortController from "abort-controller/dist/abort-controller.mjs"')
@@ -71,30 +67,17 @@ const injectGjsPolyfill = {
 };
 
 await esbuild.build({
-  entryPoints: ['vitest.config.ts'],
+  entryPoints: ['unit.config.ts'],
   bundle: true,
   format: 'esm',
   treeShaking: true,
   minify: true,
   minifySyntax: true,
   outfile: 'dist/test/test.gjs.js',
-  external: [
-    'gi://*',
-    // 'system',
-    // 'console',
-    // //
-    // 'lightningcss',
-    // //
-    // 'node:*',
-    // '@edge-runtime/vm',
-    // 'jsdom',
-    // 'happy-dom',
-    // '@vitest/ui',
-    // '@vitest/browser',
-  ],
+  external: ['gi://*', 'system'],
   tsconfig: 'tsconfig.test.json',
   sourcemap: true,
-  // inject: ['test/process.env.shim.ts'],
+  inject: ['test/process.env.shim.ts'],
   resolveExtensions: ['.tsx', '.ts', '.jsx', '.js', '.json'],
-  // plugins: [injectGjsPolyfill],
+  plugins: [injectGjsPolyfill],
 });
