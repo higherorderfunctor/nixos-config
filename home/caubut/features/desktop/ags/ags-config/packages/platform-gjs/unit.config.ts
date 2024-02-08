@@ -6,8 +6,6 @@ import { run } from '@gjsify/unit';
 import { Effect } from 'effect';
 import * as vlq from 'vlq';
 
-import FileSystemTest from './test/FileSystem.test.js';
-
 export type RawSourceMap = {
   version: number;
   sources: string[];
@@ -161,21 +159,48 @@ const program = Effect.Do.pipe(
         ) => GLib.LogWriterOutput,
       ) => void
     )((_logLevel, fields) => {
-      const message = decoder
-        .decode(fields.MESSAGE)
-        .replace(/^.*<@file:\/\/.*:(\d+):(\d+)$/gm, (match, line, column) => {
-          const info = sourceMapLookup(Number(line), Number(column));
-          if (info) return `${info.name ?? ''}<@file://${info.source}:${info.line}:${info.column}`;
-          return match;
-        });
+      console.log('here');
+      const { print } = globalThis;
+      globalThis.print = (...args: unknown[]) => {
+        print(
+          '11',
+          ...args.map((arg) =>
+            typeof arg === 'string'
+              ? decoder.decode(fields.MESSAGE).replace(/^.*<@file:\/\/.*:(\d+):(\d+)$/gm, (match, line, column) => {
+                  const info = sourceMapLookup(Number(line), Number(column));
+                  if (info)
+                    return `${colors.bright} ${info.name ?? ''}<@file://${info.source}:${info.line}:${info.column}${colors.reset}`;
+                  return match;
+                })
+              : arg,
+          ),
+        );
+      };
+      const message = decoder.decode(fields.MESSAGE);
+      // .replace(/^.*<@file:\/\/.*:(\d+):(\d+)$/gm, (match, line, column) => {
+      //   const info = sourceMapLookup(Number(line), Number(column));
+      //   if (info)
+      //     return `${colors.bright} ${info.name ?? ''}<@file://${info.source}:${info.line}:${info.column}${colors.reset}`;
+      //   return match;
+      // });
       const priority = Number(decoder.decode(fields.PRIORITY));
       const domain = decoder.decode(fields.GLIB_DOMAIN);
       // const codeFile = decoder.decode(fields.CODE_FILE);
       // const line = Number(decoder.decode(fields.CODE_LINE));
-      print(`getPid(), ${logLevelToColor(priority)}${logLevelToString(priority)}${colors.reset}`, domain, message);
+      print(`${getPid()} ${logLevelToColor(priority)}${logLevelToString(priority)}${colors.reset}`, domain, message);
       return GLib.LogWriterOutput.HANDLED;
     });
   }),
 );
+
+const loop = new GLib.MainLoop(null, false);
+
+const z = await Effect.runPromise(program.pipe(Effect.provide(Fs.layer))).then(console.log);
+
+print('hi');
+loop.run();
+
+// eslint-disable-next-line import/first
+import FileSystemTest from './test/FileSystem.test.js';
 
 await run({ FileSystemTest });
