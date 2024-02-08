@@ -1,6 +1,6 @@
 // Based on https://github.com/philipphoffmann/gjsunit
 
-import { Context, Effect, Layer, STM, SynchronizedRef, TMap } from 'effect';
+import { Context, Effect, HashMap, Layer, pipe, ReadonlyArray, STM, SynchronizedRef, TMap, TRef } from 'effect';
 
 // import '@girs/gjs';
 
@@ -211,34 +211,81 @@ export type Callback = () => Promise<void>;
 //   })
 // )
 
-const suites = Effect.runSync(TMap.empty<string, null>().pipe(STM.commit, Effect.flatMap(SynchronizedRef.make)));
+export type Test = () => Effect.Effect<never, never, void>;
 
-export const describe = (moduleName: string, tests: () => Effect.Effect<never, never, void>) => {
-  console.log(Effect.runSync(SynchronizedRef.get(suites)));
-  Effect.runSync(
-    SynchronizedRef.get(suites).pipe(
-      Effect.map(TMap.set(`${moduleName}asdf`, null)),
-      (v) => v,
-      Effect.flatMap(STM.commit),
-      (v) => v,
-    ),
+export type RunnerState = {
+  suites: HashMap.HashMap<string, SynchronizedRef.SynchronizedRef<HashMap.HashMap<string, Test>>>;
+  current: SynchronizedRef.SynchronizedRef<HashMap.HashMap<string, Test>> | null;
+};
+
+export type RunnerBuilder = (state: RunnerState) => Effect.Effect<never, never, RunnerState>;
+
+export const builders: RunnerBuilder[] = [];
+
+// export type TestSuite = {
+//   addTest: (name: string, test: () => Effect.Effect<never, never, void>) => Effect.Effect<never, never, void>;
+// };
+//
+// export const TestSuite = Layer.effect(
+//   TestRunner,
+//   Effect.gen(function* (_) {
+//     const suites = yield* _(TMap.empty<string, null>().pipe(STM.commit, Effect.flatMap(SynchronizedRef.make)));
+//     return TestRunner.of({
+//       registerSuite(name) {
+//       SynchronizedRef.updateEffect(suites, (suites) => {
+//         return TMap.set(suites, name, null).pipe(v=>v,STM.commit, v=>v);
+//       })
+//       }
+//     })
+//   })
+// )
+
+export const describe = (name: string, makeTests: () => void) => {
+  builders.push(({ suites }) =>
+    Effect.gen(function* (_) {
+      const current = yield* _(SynchronizedRef.make(HashMap.empty<string, Test>()));
+      return {
+        suites: HashMap.set(suites, name, current),
+        current,
+      };
+    }),
   );
+  makeTests();
+};
 
-  Effect.runSync(
-    SynchronizedRef.get(suites).pipe(
-      Effect.map(TMap.set(moduleName, null)),
-      (v) => v,
-      Effect.flatMap(STM.commit),
-      (v) => v,
-    ),
-  );
-
-  console.log(Effect.runSync(SynchronizedRef.get(suites)));
-  console.log(Effect.runSync(SynchronizedRef.get(suites)));
-  console.log(
-    Effect.runSync(SynchronizedRef.get(suites).pipe(Effect.map(TMap.toMap), Effect.flatMap(STM.commit), (v) => v)),
+export const it = (name: string, test: Test) => {
+  builders.push(({ current, suites }) =>
+    Effect.gen(function* (_) {
+      if (current === null) {
+        throw new Error('No current suite');
+      }
+      yield* _(SynchronizedRef.update(current, HashMap.set(name, test)));
+      return {
+        suites,
+        current,
+      };
+    }),
   );
 };
+
+describe('FileSystem', () => {
+  it('readFile', () =>
+    Effect.gen(function* (_) {
+      // expect(null).toEqual('lorem ipsum dolar sit amet');
+    }));
+});
+
+const program = ReadonlyArray.reduce(
+  builders,
+  Effect.succeed({
+    suites: HashMap.empty<string, SynchronizedRef.SynchronizedRef<HashMap.HashMap<string, Test>>>(),
+    current: null as SynchronizedRef.SynchronizedRef<HashMap.HashMap<string, Test>> | null,
+  }),
+  (testSuites, op) => Effect.flatMap(testSuites, op),
+);
+
+console.log(Effect.runSync(program));
+
 // Effect.gen(function* (_) {
 //   console.log(moduleName);
 //   // const config = yield* _(TestRunner);
@@ -247,17 +294,6 @@ export const describe = (moduleName: string, tests: () => Effect.Effect<never, n
 //   // beforeEachCb = null;
 //   // afterEachCb = null;
 // });
-
-export const it = (description: string, test: () => Effect.Effect<never, never, void>) => Effect.gen(function* (_) {});
-
-describe('FileSystem', () => {
-  //   it('readFile', () =>
-  //       Effect.gen(function* (_) {
-  //         expect(null).toEqual('lorem ipsum dolar sit amet');
-  //       }),
-});
-
-console.log('umm');
 
 // const createTestSuite = () => {
 //   return {
