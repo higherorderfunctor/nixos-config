@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 // Based on https://github.com/philipphoffmann/gjsunit
 
 import { Context, Effect, HashMap, Layer, pipe, ReadonlyArray, STM, SynchronizedRef, TMap, TRef } from 'effect';
@@ -211,7 +212,7 @@ export type Callback = () => Promise<void>;
 //   })
 // )
 
-export type Test = () => Effect.Effect<never, never, void>;
+export type Test = () => Effect.Effect<never, any, void>;
 
 export type RunnerState = {
   suites: HashMap.HashMap<string, SynchronizedRef.SynchronizedRef<HashMap.HashMap<string, Test>>>;
@@ -221,24 +222,6 @@ export type RunnerState = {
 export type RunnerBuilder = (state: RunnerState) => Effect.Effect<never, never, RunnerState>;
 
 export const builders: RunnerBuilder[] = [];
-
-// export type TestSuite = {
-//   addTest: (name: string, test: () => Effect.Effect<never, never, void>) => Effect.Effect<never, never, void>;
-// };
-//
-// export const TestSuite = Layer.effect(
-//   TestRunner,
-//   Effect.gen(function* (_) {
-//     const suites = yield* _(TMap.empty<string, null>().pipe(STM.commit, Effect.flatMap(SynchronizedRef.make)));
-//     return TestRunner.of({
-//       registerSuite(name) {
-//       SynchronizedRef.updateEffect(suites, (suites) => {
-//         return TMap.set(suites, name, null).pipe(v=>v,STM.commit, v=>v);
-//       })
-//       }
-//     })
-//   })
-// )
 
 export const describe = (name: string, makeTests: () => void) => {
   builders.push(({ suites }) =>
@@ -251,7 +234,28 @@ export const describe = (name: string, makeTests: () => void) => {
     }),
   );
   makeTests();
+  builders.push(({ suites }) =>
+    Effect.sync(() => ({
+      suites,
+      current: null,
+    })),
+  );
 };
+
+export type TestError = { _tag: 'TestError'; message: string };
+
+export type TestResult = Effect.Effect<never, TestError, void>;
+
+export type TestReport = { name: string; result: TestResult };
+
+export const runTest = (name: string, test: Test): TestReport => ({
+  name,
+  result: test().pipe(
+    Effect.catchAllDefect(Effect.fail),
+    Effect.mapError((error): TestError => ({ _tag: 'TestError', message: `${error}` })),
+    (v) => v,
+  ),
+});
 
 export const it = (name: string, test: Test) => {
   builders.push(({ current, suites }) =>
@@ -271,10 +275,10 @@ export const it = (name: string, test: Test) => {
 describe('FileSystem', () => {
   it('readFile', () =>
     Effect.gen(function* (_) {
+      console.log('I RAN!!!');
       // expect(null).toEqual('lorem ipsum dolar sit amet');
     }));
 });
-
 const program = ReadonlyArray.reduce(
   builders,
   Effect.succeed({
@@ -282,6 +286,21 @@ const program = ReadonlyArray.reduce(
     current: null as SynchronizedRef.SynchronizedRef<HashMap.HashMap<string, Test>> | null,
   }),
   (testSuites, op) => Effect.flatMap(testSuites, op),
+).pipe(
+  Effect.flatMap(({ suites }) =>
+    Effect.succeed(
+      suites.pipe(
+        HashMap.map((suite, suiteName) =>
+          SynchronizedRef.get(suite).pipe(
+            Effect.tap(() => {
+              print(suiteName);
+            }),
+            Effect.flatMap((asdf) => HashMap.map(asdf, (a, testName) => a())),
+          ),
+        ),
+      ),
+    ),
+  ),
 );
 
 console.log(Effect.runSync(program));
