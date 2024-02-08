@@ -39,6 +39,8 @@ type LookupInfo = {
   name?: string | undefined;
 };
 
+// TODO process.d
+
 const bisectLeft = <T, U>(arr: T[], value: U, cmp: (a: T) => U, low = 0, high: number = arr.length): T => {
   if (low >= high) return arr[low];
   const mid = (low + high) >> 1;

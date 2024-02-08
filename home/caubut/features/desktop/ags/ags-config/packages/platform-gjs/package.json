@@ -13,18 +13,14 @@
     "test": "gjs -m dist/test/test.gjs.js",
     "lint:tsc": "tsc --skipLibCheck --noemit --project tsconfig.json"
   },
-  "pnpm": {
-    "overrides": {
-      "rollup": "npm:@rollup/wasm-node"
-    }
-  },
   "dependencies": {
-    "@effect/platform": "^0.43.9",
+    "@effect/platform": "^0.43.11",
     "@girs/gio-2.0": "2.78.0-3.2.7",
     "@girs/gjs": "^3.2.7",
     "@girs/glib-2.0": "2.78.0-3.2.7",
+    "@gjsify/assert": "^0.0.4",
     "@typescript/lib-dom": "link:pnpm:@girs/gjs",
-    "effect": "^2.2.3"
+    "effect": "^2.2.5"
   },
   "devDependencies": {
     "@gjsify/unit": "^0.0.4",
@@ -34,7 +30,6 @@
     "esbuild": "^0.20.0",
     "source-map": "^0.7.4",
     "sourcemap-lookup": "^0.0.5",
-    "vitest": "^1.2.2",
     "vlq": "^2.0.4"
   }
 }
