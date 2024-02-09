@@ -1,7 +1,21 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 // Based on https://github.com/philipphoffmann/gjsunit
 
-import { Context, Effect, HashMap, Layer, pipe, ReadonlyArray, STM, SynchronizedRef, TMap, TRef } from 'effect';
+import {
+  Cause,
+  Context,
+  Effect,
+  Either,
+  HashMap,
+  Layer,
+  Option,
+  pipe,
+  ReadonlyArray,
+  STM,
+  SynchronizedRef,
+  TMap,
+  TRef,
+} from 'effect';
+import { FiberFailureCauseId } from 'effect/Runtime';
 
 // import '@girs/gjs';
 
@@ -211,22 +225,32 @@ export type Callback = () => Promise<void>;
 //     })
 //   })
 // )
+//
 
-export type Test = () => Effect.Effect<never, any, void>;
+export type UnhandledError = { _tag: 'UnhandledError'; error: unknown };
+export type TestError = { _tag: 'TestError'; message: string } | UnhandledError;
+
+export type TestMethod = () => Effect.Effect<never, TestError, void>;
+
+export type TestResult = {
+  suiteName: string;
+  name: string;
+  error: Option.Option<TestError>;
+};
 
 export type RunnerState = {
-  suites: HashMap.HashMap<string, SynchronizedRef.SynchronizedRef<HashMap.HashMap<string, Test>>>;
-  current: SynchronizedRef.SynchronizedRef<HashMap.HashMap<string, Test>> | null;
+  suites: HashMap.HashMap<string, SynchronizedRef.SynchronizedRef<HashMap.HashMap<string, TestMethod>>>;
+  current: SynchronizedRef.SynchronizedRef<HashMap.HashMap<string, TestMethod>> | null;
 };
 
 export type RunnerBuilder = (state: RunnerState) => Effect.Effect<never, never, RunnerState>;
 
-export const builders: RunnerBuilder[] = [];
+export const builderOperations: RunnerBuilder[] = [];
 
 export const describe = (name: string, makeTests: () => void) => {
-  builders.push(({ suites }) =>
+  builderOperations.push(({ suites }) =>
     Effect.gen(function* (_) {
-      const current = yield* _(SynchronizedRef.make(HashMap.empty<string, Test>()));
+      const current = yield* _(SynchronizedRef.make(HashMap.empty<string, TestMethod>()));
       return {
         suites: HashMap.set(suites, name, current),
         current,
@@ -234,7 +258,7 @@ export const describe = (name: string, makeTests: () => void) => {
     }),
   );
   makeTests();
-  builders.push(({ suites }) =>
+  builderOperations.push(({ suites }) =>
     Effect.sync(() => ({
       suites,
       current: null,
@@ -242,23 +266,23 @@ export const describe = (name: string, makeTests: () => void) => {
   );
 };
 
-export type TestError = { _tag: 'TestError'; message: string };
+export type TestReport = { name: string; result: TestResult[] };
+export type TestSuiteReport = TestReport[];
 
-export type TestResult = Effect.Effect<never, TestError, void>;
-
-export type TestReport = { name: string; result: TestResult };
-
-export const runTest = (name: string, test: Test): TestReport => ({
-  name,
-  result: test().pipe(
+export const runTest = (suiteName: string, name: string, test: TestMethod): Effect.Effect<never, never, TestResult> =>
+  test().pipe(
+    Effect.map(Option.none<TestError>),
     Effect.catchAllDefect(Effect.fail),
-    Effect.mapError((error): TestError => ({ _tag: 'TestError', message: `${error}` })),
-    (v) => v,
-  ),
-});
+    Effect.catchAll((error) => Effect.succeedSome<TestError>({ _tag: 'UnhandledError', error })),
+    Effect.map((error) => ({
+      suiteName,
+      name,
+      error,
+    })),
+  );
 
-export const it = (name: string, test: Test) => {
-  builders.push(({ current, suites }) =>
+export const it = (name: string, test: TestMethod) => {
+  builderOperations.push(({ current, suites }) =>
     Effect.gen(function* (_) {
       if (current === null) {
         throw new Error('No current suite');
@@ -279,31 +303,74 @@ describe('FileSystem', () => {
       // expect(null).toEqual('lorem ipsum dolar sit amet');
     }));
 });
-const program = ReadonlyArray.reduce(
-  builders,
+
+const program: Effect.Effect<never, never, TestSuiteReport> = ReadonlyArray.reduce(
+  builderOperations,
   Effect.succeed({
-    suites: HashMap.empty<string, SynchronizedRef.SynchronizedRef<HashMap.HashMap<string, Test>>>(),
-    current: null as SynchronizedRef.SynchronizedRef<HashMap.HashMap<string, Test>> | null,
+    suites: HashMap.empty<string, SynchronizedRef.SynchronizedRef<HashMap.HashMap<string, TestMethod>>>(),
+    current: null as SynchronizedRef.SynchronizedRef<HashMap.HashMap<string, TestMethod>> | null,
   }),
   (testSuites, op) => Effect.flatMap(testSuites, op),
 ).pipe(
-  Effect.flatMap(({ suites }) =>
-    Effect.succeed(
-      suites.pipe(
-        HashMap.map((suite, suiteName) =>
-          SynchronizedRef.get(suite).pipe(
-            Effect.tap(() => {
-              print(suiteName);
+  Effect.flatMap(
+    ({ suites }) =>
+      Effect.gen(function* (_) {
+        print('@@$$');
+        const z = yield* _(
+          HashMap.map(suites, (suite, name) =>
+            Effect.gen(function* (_) {
+              console.warn('@@$$**', name, suite);
+              const result = yield* _(
+                SynchronizedRef.get(suite).pipe(
+                  Effect.map((suite) => HashMap.map(suite, (test, testName) => runTest(name, testName, test))),
+                  Effect.map(HashMap.values),
+                  Effect.map(ReadonlyArray.fromIterable),
+                  Effect.flatMap(Effect.all),
+                ),
+              );
+              // return { name, result: [{ suiteName: name, name: 'hi', error: Option.none() }] };
+              return { name, result };
             }),
-            Effect.flatMap((asdf) => HashMap.map(asdf, (a, testName) => a())),
-          ),
-        ),
-      ),
-    ),
+          ).pipe(HashMap.values, Effect.all),
+        );
+        print('@@$$%%%', z);
+        return z;
+      }),
+    //   return SynchronizedRef.get(suite).pipe(
+    //     (v) => {
+    //       print('&&&&&', v);
+    //       return v;
+    //     },
+    //     Effect.tapBoth({
+    //       onFailure: (err) => {
+    //         console.error('!!!!!!', err);
+    //         return Effect.fail(err);
+    //       },
+    //       onSuccess: (a) => {
+    //         console.info('*#&*%$&#$');
+    //         return Effect.succeed(a);
+    //       },
+    //     }),
+    //     Effect.flatMap((asdf) => HashMap.map(asdf, (a, testName) => a())),
+    //   );
+    // });
   ),
 );
+const rez = Effect.runPromise(
+  program.pipe(
+    Effect.map((report) => {
+      console.info(report);
+      return report;
+    }),
+    Effect.catchAllDefect((error) => Effect.succeed(error)),
+    Effect.catchAll((error) => {
+      console.log(error);
+      return Effect.succeed(error);
+    }),
+  ),
+).catch(console.error);
 
-console.log(Effect.runSync(program));
+console.log(rez);
 
 // Effect.gen(function* (_) {
 //   console.log(moduleName);
