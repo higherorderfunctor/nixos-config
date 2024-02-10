@@ -8,21 +8,24 @@
   },
   "scripts": {
     "build:test": "node esbuild.test.js",
+    "build:test:node": "node esbuild.test.node.js",
     "build:run:test": "pnpm run build:test && pnpm run test",
-    "test:unit": "gjs -m dist/test/test.gjs.js",
+    "build:run:test:node": "pnpm run build:test:node && pnpm run test:node",
     "test": "gjs -m dist/test/test.gjs.js",
+    "test:node": "node dist/test/test.node.js",
     "lint:tsc": "tsc --skipLibCheck --noemit --project tsconfig.json"
   },
   "dependencies": {
-    "@effect/platform": "^0.43.11",
+    "@effect/platform": "^0.44.2",
     "@girs/gio-2.0": "2.78.0-3.2.7",
     "@girs/gjs": "^3.2.7",
     "@girs/glib-2.0": "2.78.0-3.2.7",
     "@gjsify/assert": "^0.0.4",
     "@typescript/lib-dom": "link:pnpm:@girs/gjs",
-    "effect": "^2.2.5"
+    "effect": "^2.3.1"
   },
   "devDependencies": {
+    "@effect/schema": "^0.62.1",
     "@gjsify/unit": "^0.0.4",
     "@gjsify/utils": "^0.0.4",
     "abort-controller": "^3.0.0",
@@ -30,6 +33,8 @@
     "esbuild": "^0.20.0",
     "source-map": "^0.7.4",
     "sourcemap-lookup": "^0.0.5",
+    "ts-loader": "^9.5.1",
+    "ts-node": "^10.9.2",
     "vlq": "^2.0.4"
   }
 }

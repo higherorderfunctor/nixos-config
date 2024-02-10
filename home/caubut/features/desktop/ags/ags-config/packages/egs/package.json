@@ -7,7 +7,7 @@
     "lint:tsc": "tsc --skipLibCheck --noemit --project tsconfig.json"
   },
   "dependencies": {
-    "@effect/cli": "^0.32.2",
+    "@effect/cli": "^0.33.2",
     "@effect/platform-gjs": "workspace:*",
     "@girs/gjs": "^3.2.7",
     "@girs/glib-2.0": "2.78.0-3.2.7",
@@ -15,7 +15,7 @@
     "@girs/gtk-4.0": "4.12.4-3.2.7",
     "@gjsify/assert": "^0.0.4",
     "@gjsify/deno_std": "^0.0.4",
-    "effect": "^2.2.5"
+    "effect": "^2.3.1"
   },
   "devDependencies": {
     "esbuild": "^0.20.0"

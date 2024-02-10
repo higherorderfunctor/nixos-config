@@ -1,21 +1,4 @@
-// Based on https://github.com/philipphoffmann/gjsunit
-
-import {
-  Cause,
-  Context,
-  Effect,
-  Either,
-  HashMap,
-  Layer,
-  Option,
-  pipe,
-  ReadonlyArray,
-  STM,
-  SynchronizedRef,
-  TMap,
-  TRef,
-} from 'effect';
-import { FiberFailureCauseId } from 'effect/Runtime';
+import { Effect, HashMap, Option, ReadonlyArray, SynchronizedRef } from 'effect';
 
 // import '@girs/gjs';
 
@@ -235,6 +218,7 @@ export type TestMethod = () => Effect.Effect<never, TestError, void>;
 export type TestResult = {
   suiteName: string;
   name: string;
+  output: string;
   error: Option.Option<TestError>;
 };
 
@@ -269,17 +253,35 @@ export const describe = (name: string, makeTests: () => void) => {
 export type TestReport = { name: string; result: TestResult[] };
 export type TestSuiteReport = TestReport[];
 
-export const runTest = (suiteName: string, name: string, test: TestMethod): Effect.Effect<never, never, TestResult> =>
-  test().pipe(
+export const runTest = (suiteName: string, name: string, test: TestMethod): Effect.Effect<never, never, TestResult> => {
+  let output = '';
+  const collector = (...args: string[]) => {
+    output += args.join('');
+  };
+  let print = null;
+  if (globalThis.print) {
+    print = globalThis.print;
+    globalThis.print = collector;
+  }
+  const { log } = console;
+  console.log = collector;
+  const result = test().pipe(
     Effect.map(Option.none<TestError>),
     Effect.catchAllDefect(Effect.fail),
     Effect.catchAll((error) => Effect.succeedSome<TestError>({ _tag: 'UnhandledError', error })),
     Effect.map((error) => ({
       suiteName,
       name,
+      output,
       error,
     })),
   );
+  if (print) {
+    globalThis.print = print;
+  }
+  console.log = log;
+  return result;
+};
 
 export const it = (name: string, test: TestMethod) => {
   builderOperations.push(({ current, suites }) =>
@@ -302,6 +304,13 @@ describe('FileSystem', () => {
       console.log('I RAN!!!');
       // expect(null).toEqual('lorem ipsum dolar sit amet');
     }));
+
+  it('test', () =>
+    Effect.gen(function* (_) {
+      console.log('I FAILED!!!');
+      throw new Error('I failed');
+      // expect(null).toEqual('lorem ipsum dolar sit amet');
+    }));
 });
 
 const program: Effect.Effect<never, never, TestSuiteReport> = ReadonlyArray.reduce(
@@ -315,7 +324,7 @@ const program: Effect.Effect<never, never, TestSuiteReport> = ReadonlyArray.redu
   Effect.flatMap(
     ({ suites }) =>
       Effect.gen(function* (_) {
-        print('@@$$');
+        console.log('@@$$');
         const z = yield* _(
           HashMap.map(suites, (suite, name) =>
             Effect.gen(function* (_) {
@@ -333,7 +342,7 @@ const program: Effect.Effect<never, never, TestSuiteReport> = ReadonlyArray.redu
             }),
           ).pipe(HashMap.values, Effect.all),
         );
-        print('@@$$%%%', z);
+        console.log('@@$$%%%', z);
         return z;
       }),
     //   return SynchronizedRef.get(suite).pipe(
@@ -356,7 +365,7 @@ const program: Effect.Effect<never, never, TestSuiteReport> = ReadonlyArray.redu
     // });
   ),
 );
-const rez = Effect.runPromise(
+const rez = await Effect.runPromise(
   program.pipe(
     Effect.map((report) => {
       console.info(report);
@@ -370,7 +379,21 @@ const rez = Effect.runPromise(
   ),
 ).catch(console.error);
 
-console.log(rez);
+const printReport = (report: TestSuiteReport) => {
+  const firstStage = report
+    .map((asdf) => `${asdf.name}\n${asdf.result.map((r) => r.name + (Option.isSome(r.error) ? 'x' : '+')).join('\n')}`)
+    .join('\n');
+  const f = report
+    .flatMap((asdf) =>
+      asdf.result
+        .filter((xx) => Option.isSome(xx.error))
+        .map((r) => `${r.name}\n${Option.getOrThrow(r.error).error?.message ?? 'nope'}`),
+    )
+    .join('\n');
+  return `${firstStage}\n${f}`;
+};
+
+console.log('&&', printReport(rez));
 
 // Effect.gen(function* (_) {
 //   console.log(moduleName);
