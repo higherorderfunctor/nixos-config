@@ -1,5 +1,189 @@
 import { Effect, HashMap, Option, ReadonlyArray, SynchronizedRef } from 'effect';
 
+const colors = {
+  reset: '\x1b[0m',
+  bold: '\x1b[1m',
+  black: '\x1b[30m',
+  red: '\x1b[31m',
+  green: '\x1b[32m',
+  yellow: '\x1b[33m',
+  blue: '\x1b[34m',
+  magenta: '\x1b[35m',
+  cyan: '\x1b[36m',
+  white: '\x1b[37m',
+  crimson: '\x1b[38m',
+};
+
+export type UnhandledError = { _tag: 'UnhandledError'; message: string };
+
+export type TestError = UnhandledError;
+
+export type TestMethod = () => Effect.Effect<never, TestError, void>;
+
+export type TestResult = {
+  suiteName: string;
+  name: string;
+  output: string;
+  error: Option.Option<TestError>;
+};
+
+export type RunnerState = {
+  suites: HashMap.HashMap<string, SynchronizedRef.SynchronizedRef<HashMap.HashMap<string, TestMethod>>>;
+  current: SynchronizedRef.SynchronizedRef<HashMap.HashMap<string, TestMethod>> | null;
+};
+
+export type RunnerBuilder = (state: RunnerState) => Effect.Effect<never, never, RunnerState>;
+
+export const builderOperations: RunnerBuilder[] = [];
+
+export const describe = (name: string, makeTests: () => void) => {
+  builderOperations.push(({ suites }) =>
+    Effect.gen(function* (_) {
+      const current = yield* _(SynchronizedRef.make(HashMap.empty<string, TestMethod>()));
+      return {
+        suites: HashMap.set(suites, name, current),
+        current,
+      };
+    }),
+  );
+  makeTests();
+  builderOperations.push(({ suites }) =>
+    Effect.sync(() => ({
+      suites,
+      current: null,
+    })),
+  );
+};
+
+export const it = (name: string, test: TestMethod) => {
+  builderOperations.push(({ current, suites }) =>
+    Effect.gen(function* (_) {
+      if (current === null) {
+        throw new Error('No current suite');
+      }
+      yield* _(SynchronizedRef.update(current, HashMap.set(name, test)));
+      return {
+        suites,
+        current,
+      };
+    }),
+  );
+};
+export type TestReport = { name: string; result: TestResult[] };
+export type TestSuiteReport = TestReport[];
+
+export const runTest = (suiteName: string, name: string, test: TestMethod): Effect.Effect<never, never, TestResult> => {
+  let output = '';
+  const collector = (...args: string[]) => {
+    output += args.join('');
+  };
+  let print = null;
+  let log = null;
+  if (globalThis.print) {
+    print = globalThis.print;
+    globalThis.print = collector;
+  } else {
+    log = console.log;
+    console.log = collector;
+  }
+  const result = test().pipe(
+    Effect.map(Option.none<TestError>),
+    Effect.catchAllDefect(Effect.fail),
+    Effect.catchAll((error) => Effect.succeedSome<TestError>({ _tag: 'UnhandledError', error })),
+    Effect.map((error) => ({
+      suiteName,
+      name,
+      output,
+      error,
+    })),
+  );
+  if (print) {
+    globalThis.print = print;
+  } else {
+    console.log = log;
+  }
+  console.log('✓');
+  return result;
+};
+
+describe('FileSystem', () => {
+  it('readFile', () =>
+    Effect.gen(function* (_) {
+      console.log('I RAN!!!');
+      // expect(null).toEqual('lorem ipsum dolar sit amet');
+    }));
+
+  it('test', () =>
+    Effect.gen(function* (_) {
+      console.log('I FAILED!!!');
+      throw new Error('I failed');
+      // expect(null).toEqual('lorem ipsum dolar sit amet');
+    }));
+});
+
+const program: Effect.Effect<never, never, TestSuiteReport> = ReadonlyArray.reduce(
+  builderOperations,
+  Effect.succeed({
+    suites: HashMap.empty<string, SynchronizedRef.SynchronizedRef<HashMap.HashMap<string, TestMethod>>>(),
+    current: null as SynchronizedRef.SynchronizedRef<HashMap.HashMap<string, TestMethod>> | null,
+  }),
+  (testSuites, op) => Effect.flatMap(testSuites, op),
+).pipe(
+  Effect.flatMap(({ suites }) =>
+    Effect.gen(function* (_) {
+      console.log('@@$$');
+      const z = yield* _(
+        HashMap.map(suites, (suite, name) =>
+          Effect.gen(function* (_) {
+            console.warn('@@$$**', name, suite);
+            const result = yield* _(
+              SynchronizedRef.get(suite).pipe(
+                Effect.map((suite) => HashMap.map(suite, (test, testName) => runTest(name, testName, test))),
+                Effect.map(HashMap.values),
+                Effect.map(ReadonlyArray.fromIterable),
+                Effect.flatMap(Effect.all),
+              ),
+            );
+            // return { name, result: [{ suiteName: name, name: 'hi', error: Option.none() }] };
+            return { name, result };
+          }),
+        ).pipe(HashMap.values, Effect.all),
+      );
+      console.log('@@$$%%%', z);
+      return z;
+    }),
+  ),
+);
+const rez = await Effect.runPromise(
+  program.pipe(
+    Effect.map((report) => {
+      console.info(report);
+      return report;
+    }),
+    Effect.catchAllDefect((error) => Effect.succeed(error)),
+    Effect.catchAll((error) => {
+      console.log(error);
+      return Effect.succeed(error);
+    }),
+  ),
+).catch(console.error);
+
+const printReport = (report: TestSuiteReport) => {
+  const firstStage = report
+    .map((asdf) => `${asdf.name}\n${asdf.result.map((r) => r.name + (Option.isSome(r.error) ? 'x' : '+')).join('\n')}`)
+    .join('\n');
+  const f = report
+    .flatMap((asdf) =>
+      asdf.result
+        .filter((xx) => Option.isSome(xx.error))
+        .map((r) => `${r.name}\n${Option.getOrThrow(r.error).error?.message ?? 'nope'}`),
+    )
+    .join('\n');
+  return `${firstStage}\n${f}`;
+};
+
+console.log('&&', rez); //  printReport(rez));
+
 // import '@girs/gjs';
 
 // import nodeAssert from 'assert';
@@ -209,192 +393,6 @@ export type Callback = () => Promise<void>;
 //   })
 // )
 //
-
-export type UnhandledError = { _tag: 'UnhandledError'; error: unknown };
-export type TestError = { _tag: 'TestError'; message: string } | UnhandledError;
-
-export type TestMethod = () => Effect.Effect<never, TestError, void>;
-
-export type TestResult = {
-  suiteName: string;
-  name: string;
-  output: string;
-  error: Option.Option<TestError>;
-};
-
-export type RunnerState = {
-  suites: HashMap.HashMap<string, SynchronizedRef.SynchronizedRef<HashMap.HashMap<string, TestMethod>>>;
-  current: SynchronizedRef.SynchronizedRef<HashMap.HashMap<string, TestMethod>> | null;
-};
-
-export type RunnerBuilder = (state: RunnerState) => Effect.Effect<never, never, RunnerState>;
-
-export const builderOperations: RunnerBuilder[] = [];
-
-export const describe = (name: string, makeTests: () => void) => {
-  builderOperations.push(({ suites }) =>
-    Effect.gen(function* (_) {
-      const current = yield* _(SynchronizedRef.make(HashMap.empty<string, TestMethod>()));
-      return {
-        suites: HashMap.set(suites, name, current),
-        current,
-      };
-    }),
-  );
-  makeTests();
-  builderOperations.push(({ suites }) =>
-    Effect.sync(() => ({
-      suites,
-      current: null,
-    })),
-  );
-};
-
-export type TestReport = { name: string; result: TestResult[] };
-export type TestSuiteReport = TestReport[];
-
-export const runTest = (suiteName: string, name: string, test: TestMethod): Effect.Effect<never, never, TestResult> => {
-  let output = '';
-  const collector = (...args: string[]) => {
-    output += args.join('');
-  };
-  let print = null;
-  if (globalThis.print) {
-    print = globalThis.print;
-    globalThis.print = collector;
-  }
-  const { log } = console;
-  console.log = collector;
-  const result = test().pipe(
-    Effect.map(Option.none<TestError>),
-    Effect.catchAllDefect(Effect.fail),
-    Effect.catchAll((error) => Effect.succeedSome<TestError>({ _tag: 'UnhandledError', error })),
-    Effect.map((error) => ({
-      suiteName,
-      name,
-      output,
-      error,
-    })),
-  );
-  if (print) {
-    globalThis.print = print;
-  }
-  console.log = log;
-  return result;
-};
-
-export const it = (name: string, test: TestMethod) => {
-  builderOperations.push(({ current, suites }) =>
-    Effect.gen(function* (_) {
-      if (current === null) {
-        throw new Error('No current suite');
-      }
-      yield* _(SynchronizedRef.update(current, HashMap.set(name, test)));
-      return {
-        suites,
-        current,
-      };
-    }),
-  );
-};
-
-describe('FileSystem', () => {
-  it('readFile', () =>
-    Effect.gen(function* (_) {
-      console.log('I RAN!!!');
-      // expect(null).toEqual('lorem ipsum dolar sit amet');
-    }));
-
-  it('test', () =>
-    Effect.gen(function* (_) {
-      console.log('I FAILED!!!');
-      throw new Error('I failed');
-      // expect(null).toEqual('lorem ipsum dolar sit amet');
-    }));
-});
-
-const program: Effect.Effect<never, never, TestSuiteReport> = ReadonlyArray.reduce(
-  builderOperations,
-  Effect.succeed({
-    suites: HashMap.empty<string, SynchronizedRef.SynchronizedRef<HashMap.HashMap<string, TestMethod>>>(),
-    current: null as SynchronizedRef.SynchronizedRef<HashMap.HashMap<string, TestMethod>> | null,
-  }),
-  (testSuites, op) => Effect.flatMap(testSuites, op),
-).pipe(
-  Effect.flatMap(
-    ({ suites }) =>
-      Effect.gen(function* (_) {
-        console.log('@@$$');
-        const z = yield* _(
-          HashMap.map(suites, (suite, name) =>
-            Effect.gen(function* (_) {
-              console.warn('@@$$**', name, suite);
-              const result = yield* _(
-                SynchronizedRef.get(suite).pipe(
-                  Effect.map((suite) => HashMap.map(suite, (test, testName) => runTest(name, testName, test))),
-                  Effect.map(HashMap.values),
-                  Effect.map(ReadonlyArray.fromIterable),
-                  Effect.flatMap(Effect.all),
-                ),
-              );
-              // return { name, result: [{ suiteName: name, name: 'hi', error: Option.none() }] };
-              return { name, result };
-            }),
-          ).pipe(HashMap.values, Effect.all),
-        );
-        console.log('@@$$%%%', z);
-        return z;
-      }),
-    //   return SynchronizedRef.get(suite).pipe(
-    //     (v) => {
-    //       print('&&&&&', v);
-    //       return v;
-    //     },
-    //     Effect.tapBoth({
-    //       onFailure: (err) => {
-    //         console.error('!!!!!!', err);
-    //         return Effect.fail(err);
-    //       },
-    //       onSuccess: (a) => {
-    //         console.info('*#&*%$&#$');
-    //         return Effect.succeed(a);
-    //       },
-    //     }),
-    //     Effect.flatMap((asdf) => HashMap.map(asdf, (a, testName) => a())),
-    //   );
-    // });
-  ),
-);
-const rez = await Effect.runPromise(
-  program.pipe(
-    Effect.map((report) => {
-      console.info(report);
-      return report;
-    }),
-    Effect.catchAllDefect((error) => Effect.succeed(error)),
-    Effect.catchAll((error) => {
-      console.log(error);
-      return Effect.succeed(error);
-    }),
-  ),
-).catch(console.error);
-
-const printReport = (report: TestSuiteReport) => {
-  const firstStage = report
-    .map((asdf) => `${asdf.name}\n${asdf.result.map((r) => r.name + (Option.isSome(r.error) ? 'x' : '+')).join('\n')}`)
-    .join('\n');
-  const f = report
-    .flatMap((asdf) =>
-      asdf.result
-        .filter((xx) => Option.isSome(xx.error))
-        .map((r) => `${r.name}\n${Option.getOrThrow(r.error).error?.message ?? 'nope'}`),
-    )
-    .join('\n');
-  return `${firstStage}\n${f}`;
-};
-
-console.log('&&', printReport(rez));
-
 // Effect.gen(function* (_) {
 //   console.log(moduleName);
 //   // const config = yield* _(TestRunner);

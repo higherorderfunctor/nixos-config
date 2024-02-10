@@ -10,10 +10,6 @@ import unit from './test/unit.js';
 
 print(unit);
 
-(async () => {
-  print('hihiss');
-})();
-
 // export type RawSourceMap = {
 //   version: number;
 //   sources: string[];
@@ -200,11 +196,11 @@ print(unit);
 //   // }),
 // );
 
-const loop = new GLib.MainLoop(null, false);
+// const loop = new GLib.MainLoop(null, false);
 // const oldPrint = globalThis.print;
 //
 // globalThis.print = (...args: unknown[]) => {
 //   oldPrint('11', ...args);
 // };
 // run({ FileSystemTestSuite }).catch(console.log);
-loop.run();
+// loop.run();
