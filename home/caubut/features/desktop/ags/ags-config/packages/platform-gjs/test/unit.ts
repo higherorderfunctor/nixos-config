@@ -18,50 +18,73 @@ export type UnhandledError = { _tag: 'UnhandledError'; message: string };
 
 export type TestError = UnhandledError;
 
-export type TestMethod = () => Effect.Effect<never, TestError, void>;
+export type Test = () => Effect.Effect<never, TestError, void>;
 
-export type TestResult = {
-  suiteName: string;
-  name: string;
-  output: string;
-  error: Option.Option<TestError>;
+export type TestResult = Effect.Effect<
+  never,
+  never,
+  {
+    suiteName: string;
+    name: string;
+    output: string;
+    error: Option.Option<TestError>;
+  }
+>;
+
+export type TestSuiteName = string;
+export type TestFilename = string;
+export type TestDescription = string;
+
+export type TestRunnerState = {
+  suites: HashMap.HashMap<
+    TestSuiteName,
+    SynchronizedRef.SynchronizedRef<HashMap.HashMap<TestFilename, HashMap.HashMap<TestDescription, TestResult>>>
+  >;
+  current: Option.Option<
+    SynchronizedRef.SynchronizedRef<HashMap.HashMap<TestFilename, HashMap.HashMap<TestDescription, TestResult>>>
+  >;
+  global: HashMap.HashMap<TestFilename, HashMap.HashMap<TestDescription, TestResult>>;
 };
 
-export type RunnerState = {
-  suites: HashMap.HashMap<string, SynchronizedRef.SynchronizedRef<HashMap.HashMap<string, TestMethod>>>;
-  current: SynchronizedRef.SynchronizedRef<HashMap.HashMap<string, TestMethod>> | null;
-};
+export const testRunnerState: [TestRunnerState, ...((state: TestRunnerState) => Effect.Effect<TestRunnerState>)[]] = [
+  {
+    suites: HashMap.empty<
+      TestSuiteName,
+      SynchronizedRef.SynchronizedRef<HashMap.HashMap<TestFilename, HashMap.HashMap<TestDescription, TestResult>>>
+    >(),
+    current: Option.none(),
+    global: HashMap.empty<TestFilename, HashMap.HashMap<TestDescription, TestResult>>(),
+  },
+];
 
-export type RunnerBuilder = (state: RunnerState) => Effect.Effect<never, never, RunnerState>;
-
-export const builderOperations: RunnerBuilder[] = [];
-
-export const describe = (name: string, makeTests: () => void) => {
-  builderOperations.push(({ suites }) =>
+export const describe = (name: TestSuiteName, tests: () => void) => {
+  testRunnerState.push(({ global, suites }) =>
     Effect.gen(function* (_) {
-      const current = yield* _(SynchronizedRef.make(HashMap.empty<string, TestMethod>()));
+      const current = yield* _(
+        SynchronizedRef.make(HashMap.empty<TestFilename, HashMap.HashMap<TestDescription, TestResult>>()),
+      );
       return {
         suites: HashMap.set(suites, name, current),
-        current,
+        current: Option.some(current),
+        global,
       };
     }),
   );
-  makeTests();
-  builderOperations.push(({ suites }) =>
-    Effect.sync(() => ({
+  tests();
+  testRunnerState.push(({ global, suites }: TestRunnerState) =>
+    Effect.succeed({
       suites,
-      current: null,
-    })),
+      current: Option.none(),
+      global,
+    }),
   );
 };
 
-export const it = (name: string, test: TestMethod) => {
-  builderOperations.push(({ current, suites }) =>
+export const it = (name: TestDescription, test: Test) => {
+  testRunnerState.push(({ current, global, suites }) =>
     Effect.gen(function* (_) {
-      if (current === null) {
-        throw new Error('No current suite');
-      }
-      yield* _(SynchronizedRef.update(current, HashMap.set(name, test)));
+      HashMap.getet;
+      yield* _(SynchronizedRef.update(Option.getOrElse(current) ? current : global, HashMap.set(name, test)));
       return {
         suites,
         current,
@@ -69,6 +92,7 @@ export const it = (name: string, test: TestMethod) => {
     }),
   );
 };
+
 export type TestReport = { name: string; result: TestResult[] };
 export type TestSuiteReport = TestReport[];
 
