@@ -4,6 +4,7 @@ import * as path from 'node:path';
 
 await esbuild.build({
   entryPoints: ['test/unit.ts'],
+  platform: 'node',
   bundle: true,
   format: 'esm',
   treeShaking: true,
@@ -13,4 +14,5 @@ await esbuild.build({
   tsconfig: 'tsconfig.unit.json',
   sourcemap: true,
   resolveExtensions: ['.tsx', '.ts', '.jsx', '.js', '.json'],
+  define: { 'process.env.NODE_RUNTIME': '"node"' },
 });

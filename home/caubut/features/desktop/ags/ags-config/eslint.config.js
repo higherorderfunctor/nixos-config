@@ -366,6 +366,7 @@ const eslintConfig = [
             'packages/*/unit.config.ts',
             'packages/*/esbuild.*.js',
             'packages/*/test/*test.ts',
+            'packages/*/test/unit.ts',
           ],
         },
       ],

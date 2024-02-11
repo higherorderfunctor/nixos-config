@@ -80,4 +80,5 @@ await esbuild.build({
   inject: ['test/process.env.shim.ts'],
   resolveExtensions: ['.tsx', '.ts', '.jsx', '.js', '.json'],
   plugins: [injectGjsPolyfill],
+  define: { 'process.env.NODE_RUNTIME': '"gjs"' },
 });

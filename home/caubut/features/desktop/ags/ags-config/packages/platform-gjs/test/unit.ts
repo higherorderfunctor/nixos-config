@@ -1,18 +1,104 @@
-import { Effect, flow, HashMap, Option, pipe, ReadonlyArray, SynchronizedRef } from 'effect';
+import { FileSystem } from '@effect/platform';
+import type { PlatformError } from '@effect/platform/Error';
+import { NodeFileSystem } from '@effect/platform-node';
+import * as Render from '@effect/printer/Render';
+import * as Ansi from '@effect/printer-ansi/Ansi';
+import * as Doc from '@effect/printer-ansi/AnsiDoc';
+import {
+  Context,
+  Effect,
+  flow,
+  HashMap,
+  Layer,
+  Option,
+  pipe,
+  ReadonlyArray,
+  ReadonlyRecord,
+  SynchronizedRef,
+} from 'effect';
+import * as vlq from 'vlq';
 
-const colors = {
-  reset: '\x1b[0m',
-  bold: '\x1b[1m',
-  black: '\x1b[30m',
-  red: '\x1b[31m',
-  green: '\x1b[32m',
-  yellow: '\x1b[33m',
-  blue: '\x1b[34m',
-  magenta: '\x1b[35m',
-  cyan: '\x1b[36m',
-  white: '\x1b[37m',
-  crimson: '\x1b[38m',
+const FileSystemLive = NodeFileSystem.layer;
+// const FileSystemLive =
+//   process.env.NODE_RUNTIME === 'gjs'
+//     ? await import('@effect/platform-gjs').then((_) => _.FileSystem.layer)
+//     : await import('@effect/platform-node').then((_) => _.NodeFileSystem.layer);
+
+type VlqState = [number, number, number, number, number];
+
+export type RawSourceMap = {
+  version: number;
+  sources: string[];
+  names: string[];
+  sourceRoot?: string;
+  sourcesContent?: string[];
+  mappings: string;
+  file: string;
 };
+
+type SegmentInfo = {
+  columnIndex: number;
+  source: string;
+  line: number;
+  column: number;
+  name?: string | undefined;
+};
+
+const bisectLeft = <T, U>(arr: T[], value: U, cmp: (a: T) => U, low = 0, high: number = arr.length): T => {
+  if (low >= high) return arr[low];
+  const mid = (low + high) >> 1;
+  if (cmp(arr[mid]) < value) return bisectLeft(arr, value, cmp, mid + 1, high);
+  return bisectLeft(arr, value, cmp, low, mid);
+};
+
+class SourceMapLookup extends Context.Tag('SourceMap')<
+  // eslint-disable-next-line no-use-before-define
+  SourceMapLookup,
+  { readonly lookup: (line: number, column: number) => SegmentInfo | undefined }
+>() {}
+
+const SourceMapLookupLive = Layer.effect(
+  SourceMapLookup,
+  Effect.gen(function* (_) {
+    const fs = yield* _(FileSystem.FileSystem);
+    const lookup = yield* _(
+      fs.readFile(`./dist/test/test.${process.env.NODE_RUNTIME}.js.map`).pipe(
+        Effect.map((bytes) => JSON.parse(new TextDecoder('utf-8').decode(bytes)) as RawSourceMap),
+        Effect.flatMap((sourceMap) =>
+          Effect.gen(function* (_) {
+            const state = [0, 0, 0, 0, 0] as VlqState;
+            const mappings: SegmentInfo[][] = sourceMap.mappings.split(';').map((segments) => {
+              state[0] = 0;
+              return segments.split(',').map((segment) => {
+                // console.log(segment);
+                const stateUpdate = vlq.decode(segment) as [number, number, number, number, number | undefined];
+                // console.log(stateUpdate);
+                state.forEach((value, i) => {
+                  state[i] = value + (stateUpdate[i] ?? 0);
+                });
+                // console.log(`([${i},${state[0]}](#${state[1]})=>[${state[2]},${state[3]}]`);
+                return {
+                  columnIndex: state[0],
+                  source: sourceMap.sources[state[1]],
+                  line: state[2] + 1,
+                  column: state[3],
+                  name: state[4] ? sourceMap.names[state[4]] : undefined,
+                };
+              });
+            });
+            yield* _(fs.writeFileString('sourceMap.json', JSON.stringify(mappings, null, 2)));
+            return (line: number, column: number) => {
+              if (mappings[line - 1][0].columnIndex > column - 1) return undefined;
+              const info = bisectLeft(mappings[line - 1], column - 1, (a) => a.columnIndex);
+              return { ...info, query: [line, column] };
+            };
+          }),
+        ),
+      ),
+    );
+    return SourceMapLookup.of({ lookup });
+  }),
+);
 
 export type UnhandledError = { _tag: 'UnhandledError'; message: string; stack: Option.Option<string> };
 
@@ -25,6 +111,9 @@ export type TestFilename = string;
 export type TestDescription = string;
 
 export type TestResult = {
+  suite: TestSuiteName | null;
+  file: TestFilename;
+  description: TestDescription;
   output: string;
   error: Option.Option<TestError>;
 };
@@ -36,11 +125,12 @@ export type TestRunnerState = {
       HashMap.HashMap<TestFilename, HashMap.HashMap<TestDescription, Effect.Effect<TestResult>>>
     >
   >;
-  current: Option.Option<
-    SynchronizedRef.SynchronizedRef<
+  current: Option.Option<{
+    suite: TestSuiteName;
+    ref: SynchronizedRef.SynchronizedRef<
       HashMap.HashMap<TestFilename, HashMap.HashMap<TestDescription, Effect.Effect<TestResult>>>
-    >
-  >;
+    >;
+  }>;
   global: SynchronizedRef.SynchronizedRef<
     HashMap.HashMap<TestFilename, HashMap.HashMap<TestDescription, Effect.Effect<TestResult>>>
   >;
@@ -55,37 +145,41 @@ export const serializeError =
     return { _tag: tag, message: JSON.stringify(error), stack: Option.none() };
   };
 
-export const runTest = (test: () => Effect.Effect<void, TestError>): Effect.Effect<TestResult> =>
+export const runTest = (
+  suite: TestSuiteName | null,
+  file: TestFilename,
+  description: TestDescription,
+  test: () => Effect.Effect<void, TestError>,
+): Effect.Effect<TestResult> =>
   test().pipe(
     Effect.map(Option.none<TestError>),
     Effect.catchAll(flow(Option.some, Effect.succeed)),
     Effect.catchAllDefect(Effect.fail),
     Effect.catchAll(flow(serializeError('UnhandledError'), Option.some, Effect.succeed)),
     Effect.map((error) => ({
+      suite,
+      file,
+      description,
       output: '',
       error,
     })),
   );
 
-export const testRunnerState: [TestRunnerState, ...((state: TestRunnerState) => Effect.Effect<TestRunnerState>)[]] = [
-  {
-    suites: HashMap.empty(),
-    current: Option.none(),
-    global: SynchronizedRef.unsafeMake(HashMap.empty()),
-  },
-];
+export const testRunnerState: ((
+  state: TestRunnerState,
+) => Effect.Effect<TestRunnerState, PlatformError, FileSystem.FileSystem | SourceMapLookup>)[] = [];
 
-export const describe = (name: TestSuiteName, tests: () => void) => {
+export const describe = (suite: TestSuiteName, tests: () => void) => {
   testRunnerState.push(({ global, suites }) =>
     Effect.gen(function* (_) {
-      const current = yield* _(
+      const currentRef = yield* _(
         SynchronizedRef.make(
           HashMap.empty<TestFilename, HashMap.HashMap<TestDescription, Effect.Effect<TestResult>>>(),
         ),
       );
       return {
-        suites: HashMap.set(suites, name, current),
-        current: Option.some(current),
+        suites: HashMap.set(suites, suite, currentRef),
+        current: Option.some({ suite, ref: currentRef }),
         global,
       };
     }),
@@ -100,20 +194,150 @@ export const describe = (name: TestSuiteName, tests: () => void) => {
   );
 };
 
+const getCallerFile = Effect.gen(function* (_) {
+  const sourceMapLookup = yield* _(SourceMapLookup);
+  const file = Option.fromNullable(new Error().stack).pipe(
+    Option.tap((stack) => Option.some(console.log(stack))),
+    Option.flatMap((stack) => Option.fromNullable(stack.split('\n')[5])),
+    Option.map((line) =>
+      line.replace(/file:\/\/.+:(\d+):(\d+)/gm, (match, line, column) => {
+        const segment = sourceMapLookup.lookup(Number(line), Number(column));
+        console.log(segment);
+        if (segment)
+          Render.prettyDefault(
+            Doc.text(`!!${segment.source}:${segment.line}:${segment.column}`).pipe(Doc.annotate(Ansi.green)),
+          );
+        return Render.prettyDefault(Doc.text(`@@${match}`).pipe(Doc.annotate(Ansi.red)));
+      }),
+    ),
+  );
+  console.log(Option.getOrElse(file, () => null));
+}); // # TODO:.pipe(Effect.provide(Layer.merge(SourceMapLookupLive, FileSystem.layer)));
+
 export const it = (file: TestFilename, description: TestDescription, test: Test) => {
   testRunnerState.push(({ current, global, suites }) =>
-    Option.getOrElse(current, () => global).pipe(
-      SynchronizedRef.getAndUpdate((suite) =>
-        HashMap.get(suite, file).pipe(
-          Option.getOrElse(() => HashMap.empty<TestDescription, Effect.Effect<TestResult>>()),
-          HashMap.set(description, runTest(test)),
-          (fileResults) => HashMap.set(suite, file, fileResults),
+    pipe(
+      Option.getOrElse(current, () => ({ suite: null, ref: global })),
+      ({ ref, suite }) =>
+        getCallerFile.pipe(
+          Effect.flatMap(() =>
+            SynchronizedRef.getAndUpdate(ref, (results) =>
+              HashMap.get(results, file).pipe(
+                Option.getOrElse(() => HashMap.empty<TestDescription, Effect.Effect<TestResult>>()),
+                HashMap.set(description, runTest(suite, file, description, test)),
+                (update) => HashMap.set(results, file, update),
+              ),
+            ),
+          ),
+          Effect.map(
+            () =>
+              ({
+                global,
+                current,
+                suites,
+              }) as TestRunnerState,
+          ),
         ),
-      ),
-      () => Effect.succeed({ current, global, suites }),
     ),
   );
 };
+
+const report = (state: TestRunnerState) =>
+  pipe(
+    // suites
+    pipe(HashMap.values(state.suites), ReadonlyArray.fromIterable),
+    ReadonlyArray.append(state.global),
+    // files
+    ReadonlyArray.map(flow(SynchronizedRef.get, Effect.map(flow(HashMap.values, ReadonlyArray.fromIterable)))),
+    // tests
+    ReadonlyArray.map(
+      Effect.flatMap(flow(ReadonlyArray.flatMap(flow(HashMap.values, ReadonlyArray.fromIterable)), Effect.all)),
+    ),
+    // flatten
+    flow(Effect.all, Effect.map(ReadonlyArray.flatten)),
+    // sum totals
+    Effect.map(
+      ReadonlyArray.reduce(
+        {
+          files: {} as Record<TestFilename, { failed: number; passed: number } | undefined>,
+          tests: { failed: 0, passed: 0 },
+        },
+        ({ files, tests }, next) => ({
+          files: {
+            ...files,
+            [next.file]: {
+              failed: (files[next.file]?.failed ?? 0) + (Option.isSome(next.error) ? 1 : 0),
+              passed: (files[next.file]?.passed ?? 0) + (Option.isNone(next.error) ? 1 : 0),
+            },
+          },
+          tests: {
+            failed: tests.failed + (Option.isSome(next.error) ? 1 : 0),
+            passed: tests.passed + (Option.isNone(next.error) ? 1 : 0),
+          },
+        }),
+      ),
+    ),
+    Effect.map(({ files, tests }) => ({
+      files: {
+        failed: ReadonlyRecord.size(ReadonlyRecord.filter(files, (file) => !!file?.failed)),
+        passed: ReadonlyRecord.size(ReadonlyRecord.filter(files, (file) => !file?.failed)),
+      },
+      tests,
+    })),
+    Effect.tap(({ files, tests }) => {
+      const makeFieldSum = ({ failed, passed }: { passed: number; failed: number }) =>
+        Doc.hsep(
+          ReadonlyArray.getSomes([
+            Option.fromNullable(failed || null).pipe(
+              Option.map((failed) => Doc.text(`${failed} failed`).pipe(Doc.annotate(Ansi.red))),
+            ),
+            Option.fromNullable(passed + failed === 0 ? passed : passed || null).pipe(
+              Option.map((passed) => Doc.text(`${passed} passed`).pipe(Doc.annotate(Ansi.green))),
+            ),
+            Option.some(Doc.text(`(${passed + failed})`)),
+          ]),
+        );
+      const fields = { 'Test files': makeFieldSum(files), Tests: makeFieldSum(tests) };
+      const firstColumnWidth = Math.max(...ReadonlyArray.map(ReadonlyRecord.keys(fields), (field) => field.length)) + 1;
+      (globalThis.print ?? console.log)(
+        Doc.render(
+          Doc.vsep(
+            ReadonlyArray.map(ReadonlyRecord.keys(fields) as (keyof typeof fields)[], (field) =>
+              Doc.hsep([Doc.text(`${field.padStart(firstColumnWidth, ' ')} `), fields[field]]),
+            ),
+          ).pipe(Doc.annotate(Ansi.blackBright)),
+          { style: 'pretty' },
+        ),
+      );
+    }),
+  );
+
+const run = () =>
+  Effect.gen(function* (_) {
+    const results = yield* _(
+      ReadonlyArray.reduce(
+        testRunnerState,
+        Effect.succeed({
+          suites: HashMap.empty(),
+          current: Option.none(),
+          global: SynchronizedRef.unsafeMake(HashMap.empty()),
+        }) as Effect.Effect<TestRunnerState, PlatformError, SourceMapLookup | FileSystem.FileSystem>,
+        (results, op) => Effect.flatMap(results, op),
+      ),
+    );
+
+    const reportz = yield* _(report(results));
+
+    // const report = ReadonlyArray.reduce(
+    //   { files: { pass: 0, fail: 0 }, tests: { pass: 0, fail: 0 }},
+    //   results,
+    //   ({ files, tests }
+    // )
+
+    // const text = Doc.hsep([Doc.text(JSON.stringify(results, null, 2))]);
+
+    // (globalThis.print ?? console.log)(Doc.render(text, { style: 'pretty' }));
+  });
 
 describe('FileSystem', () => {
   it('asdf', 'readFile', () =>
@@ -139,6 +363,22 @@ describe('FileSystem', () => {
     }),
   );
 });
+
+it('asdfaksdf', 'nop', () =>
+  Effect.gen(function* (_) {
+    yield* _(
+      Effect.sync(() => {
+        console.log('I ALSO FAILED!!!');
+      }),
+    );
+    throw new Error('I failed');
+    // expect(null).toEqual('lorem ipsum dolar sit amet');
+  }),
+);
+
+await Effect.runPromiseExit(run().pipe(Effect.provide(Layer.provideMerge(SourceMapLookupLive, FileSystemLive))))
+  .then(console.log)
+  .catch(console.log);
 
 // export type TestReport = { name: string; result: TestResult[] };
 // export type TestSuiteReport = TestReport[];
@@ -178,39 +418,6 @@ describe('FileSystem', () => {
 // };
 //
 //
-// const program: Effect.Effect<never, never, TestSuiteReport> = ReadonlyArray.reduce(
-//   builderOperations,
-//   Effect.succeed({
-//     suites: HashMap.empty<string, SynchronizedRef.SynchronizedRef<HashMap.HashMap<string, TestMethod>>>(),
-//     current: null as SynchronizedRef.SynchronizedRef<HashMap.HashMap<string, TestMethod>> | null,
-//   }),
-//   (testSuites, op) => Effect.flatMap(testSuites, op),
-// ).pipe(
-//   Effect.flatMap(({ suites }) =>
-//     Effect.gen(function* (_) {
-//       console.log('@@$$');
-//       const z = yield* _(
-//         HashMap.map(suites, (suite, name) =>
-//           Effect.gen(function* (_) {
-//             console.warn('@@$$**', name, suite);
-//             const result = yield* _(
-//               SynchronizedRef.get(suite).pipe(
-//                 Effect.map((suite) => HashMap.map(suite, (test, testName) => runTest(name, testName, test))),
-//                 Effect.map(HashMap.values),
-//                 Effect.map(ReadonlyArray.fromIterable),
-//                 Effect.flatMap(Effect.all),
-//               ),
-//             );
-//             // return { name, result: [{ suiteName: name, name: 'hi', error: Option.none() }] };
-//             return { name, result };
-//           }),
-//         ).pipe(HashMap.values, Effect.all),
-//       );
-//       console.log('@@$$%%%', z);
-//       return z;
-//     }),
-//   ),
-// );
 // const rez = await Effect.runPromise(
 //   program.pipe(
 //     Effect.map((report) => {
