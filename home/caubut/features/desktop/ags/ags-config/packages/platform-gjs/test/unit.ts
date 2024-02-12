@@ -7,8 +7,8 @@ import { Effect, flow, HashMap, Layer, Option, pipe, ReadonlyArray, ReadonlyReco
 import { inspect } from 'node:util';
 
 import * as SourceMap from './unit/SourceMap.js';
-import * as Stacktrace from './unit/Stacktrace.js';
 import * as StacktraceReporter from './unit/StacktraceReporter.js';
+import * as Stacktrace from './unit/StacktraceResolver.js';
 
 const FileSystemLive = NodeFileSystem.layer;
 // const FileSystemLive =
@@ -110,20 +110,17 @@ export const describe = (suite: TestSuiteName, tests: () => void) => {
   );
 };
 
-const getCaller = Effect.gen(function* (_) {
-  const stacktrace = yield* _(
-    Stacktrace.from(new Error('asdf')).pipe(Option.map(StacktraceReporter.format), Option.getOrThrow),
-  );
-  console.log('>>>', stacktrace, '<<<');
-  return '';
-}); // # TODO:.pipe(Effect.provide(Layer.merge(SourceMapLookupLive, FileSystem.layer)));
+const getCallStack = (error: Error) =>
+  // const stacktrace = yield* _(Stacktrace.from(error).pipe(Option.map(StacktraceReporter.format), Option.getOrThrow));
+  Stacktrace.from(error).pipe(Option.getOrThrow).stack;
 
 export const it = (file: TestFilename, description: TestDescription, test: Test) => {
+  const error = new Error();
   testRunnerState.push(({ current, global, suites }) =>
     pipe(
       Option.getOrElse(current, () => ({ suite: null, ref: global })),
       ({ ref, suite }) =>
-        getCaller.pipe(
+        Effect.succeed(getCallStack(error)[1]).pipe(
           Effect.tap(console.log),
           Effect.flatMap(() =>
             SynchronizedRef.getAndUpdate(ref, (results) =>

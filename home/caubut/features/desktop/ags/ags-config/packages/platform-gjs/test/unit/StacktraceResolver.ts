@@ -1,4 +1,4 @@
-import { Option } from 'effect';
+import { Context, Option } from 'effect';
 
 export type StackFrame =
   | string
@@ -16,6 +16,14 @@ export type Stacktrace = {
   message: Option.Option<string>;
   stack: StackFrame[];
 };
+
+export class StacktraceResolver extends Context.Tag('StacktraceResolver')<
+  // eslint-disable-next-line no-use-before-define
+  StacktraceResolver,
+  {
+    readonly from: (error: Error) => Option.Option<Stacktrace>;
+  }
+>() {}
 
 export const from = (error: Error): Option.Option<Stacktrace> =>
   Option.fromNullable(error.stack).pipe(

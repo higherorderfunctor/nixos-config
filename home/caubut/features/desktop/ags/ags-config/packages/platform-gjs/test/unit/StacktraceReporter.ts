@@ -3,7 +3,7 @@ import * as Doc from '@effect/printer-ansi/AnsiDoc';
 import { Effect, Option } from 'effect';
 
 import * as SourceMap from './SourceMap.js';
-import type * as Stacktrace from './Stacktrace.js';
+import type * as Stacktrace from './StacktraceResolver.js';
 
 const formatErrorType = (stacktrace: Stacktrace.Stacktrace) => Doc.text(stacktrace.error).pipe(Doc.annotate(Ansi.red));
 
