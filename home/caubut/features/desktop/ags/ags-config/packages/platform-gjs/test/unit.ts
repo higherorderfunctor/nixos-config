@@ -1,196 +1,20 @@
-import { FileSystem } from '@effect/platform';
+import type { FileSystem } from '@effect/platform';
 import type { PlatformError } from '@effect/platform/Error';
 import { NodeFileSystem } from '@effect/platform-node';
-import * as Render from '@effect/printer/Render';
 import * as Ansi from '@effect/printer-ansi/Ansi';
 import * as Doc from '@effect/printer-ansi/AnsiDoc';
-import * as S from '@effect/schema';
-import {
-  Context,
-  Effect,
-  flow,
-  HashMap,
-  Layer,
-  Option,
-  pipe,
-  ReadonlyArray,
-  ReadonlyRecord,
-  SynchronizedRef,
-} from 'effect';
+import { Effect, flow, HashMap, Layer, Option, pipe, ReadonlyArray, ReadonlyRecord, SynchronizedRef } from 'effect';
 import { inspect } from 'node:util';
-import * as vlq from 'vlq';
+
+import * as SourceMap from './unit/SourceMap.js';
+import * as Stacktrace from './unit/Stacktrace.js';
+import * as StacktraceReporter from './unit/StacktraceReporter.js';
 
 const FileSystemLive = NodeFileSystem.layer;
 // const FileSystemLive =
 //   process.env.NODE_RUNTIME === 'gjs'
 //     ? await import('@effect/platform-gjs').then((_) => _.FileSystem.layer)
 //     : await import('@effect/platform-node').then((_) => _.NodeFileSystem.layer);
-
-type VlqState = [number, number, number, number, number];
-
-export type RawSourceMap = {
-  version: number;
-  sources: string[];
-  names: string[];
-  sourceRoot?: string;
-  sourcesContent?: string[];
-  mappings: string;
-  file: string;
-};
-
-type SegmentInfo = {
-  columnIndex: number;
-  symbol: Option.Option<string>;
-  source: string;
-  line: number;
-  column: number;
-};
-
-const bisectLeft = <T, U>(arr: T[], value: U, cmp: (a: T) => U, low = 0, high: number = arr.length): T => {
-  if (low >= high) return arr[low];
-  const mid = (low + high) >> 1;
-  if (cmp(arr[mid]) < value) return bisectLeft(arr, value, cmp, mid + 1, high);
-  return bisectLeft(arr, value, cmp, low, mid);
-};
-
-class SourceMapLookup extends Context.Tag('SourceMap')<
-  // eslint-disable-next-line no-use-before-define
-  SourceMapLookup,
-  {
-    readonly lookup: (line: number, column: number) => Option.Option<SegmentInfo>;
-    readonly stacktrace: (error: Error) => Option.Option<string>;
-  }
->() {}
-
-const SourceMapLookupLive = Layer.effect(
-  SourceMapLookup,
-  Effect.gen(function* (_) {
-    const fs = yield* _(FileSystem.FileSystem);
-    const lookup = yield* _(
-      fs.readFile(`./dist/test/test.${process.env.NODE_RUNTIME}.js.map`).pipe(
-        Effect.map((bytes) => JSON.parse(new TextDecoder('utf-8').decode(bytes)) as RawSourceMap),
-        Effect.flatMap((sourceMap) =>
-          Effect.gen(function* () {
-            const state = [0, 0, 0, 0, 0] as VlqState;
-            const mappings: SegmentInfo[][] = sourceMap.mappings.split(';').map((segments) => {
-              state[0] = 0;
-              return segments.split(',').map((segment) => {
-                // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
-                const stateUpdate = vlq.decode(segment) as [number, number, number, number, number | undefined];
-                state.forEach((value, i) => {
-                  state[i] = value + (stateUpdate[i] ?? 0);
-                });
-                return {
-                  columnIndex: state[0],
-                  symbol: state[4] ? Option.fromNullable(sourceMap.names[state[4]]) : Option.none(),
-                  source: sourceMap.sources[state[1]],
-                  line: state[2] + 1,
-                  column: state[3],
-                };
-              });
-            });
-            // yield* _(fs.writeFileString('sourceMap.json', JSON.stringify(mappings, null, 2)));
-            return (line: number, column: number) => {
-              if (mappings[line - 1][0].columnIndex > column - 1) return Option.none();
-              const info = bisectLeft(mappings[line - 1], column - 1, (a) => a.columnIndex);
-              return Option.some({ ...info, query: [line, column] });
-            };
-          }),
-        ),
-      ),
-    );
-    type StackFrame =
-      | string
-      | {
-          symbol: Option.Option<string>;
-          source: string;
-          location: Option.Option<{
-            line: string;
-            column: string;
-          }>;
-        };
-
-    type Stacktrace = {
-      error: string;
-      message: Option.Option<string>;
-      stack: StackFrame[];
-    };
-
-    const formatType = (stacktrace: Stacktrace) => Doc.text(stacktrace.error).pipe(Doc.annotate(Ansi.red));
-
-    const formatMessage = (stacktrace: Stacktrace) =>
-      stacktrace.message.pipe(Option.map((message) => Doc.text(message).pipe(Doc.annotate(Ansi.white))));
-
-    const formatHeader = (stacktrace: Stacktrace) =>
-      formatType(stacktrace).pipe(
-        Doc.cat(
-          Option.getOrElse(
-            formatMessage(stacktrace).pipe(Option.map((message) => Doc.cat(Doc.text(': '), message))),
-            () => Doc.empty,
-          ),
-        ),
-      );
-
-    const formatSource = (source: string, position: Option.Option<{ line: string; column: string }> = Option.none()) =>
-      position.pipe(
-        Option.map((position) =>
-          Doc.annotate(Doc.text(source), Ansi.green).pipe(
-            Doc.cat(Doc.colon),
-            Doc.cat(Doc.annotate(Doc.text(position.line), Ansi.blue)),
-            Doc.cat(Doc.colon),
-            Doc.cat(Doc.annotate(Doc.text(position.column), Ansi.blue)),
-          ),
-        ),
-        Option.getOrElse(() => Doc.annotate(Doc.text(source), Ansi.yellow)),
-      );
-
-    const formatSymbol = (symbol: string) => Doc.annotate(Doc.text(symbol), Ansi.cyan);
-
-    const formatFrameWithSymbol = (symbol: Doc.Doc<Ansi.Ansi>, file: Doc.Doc<Ansi.Ansi>) =>
-      Doc.cat(symbol, Doc.parenthesized(file));
-
-    const formatFrame = (frame: StackFrame) => {
-      if (typeof frame === 'string') return Doc.annotate(Doc.text(frame), Ansi.red);
-      if (Option.isNone(frame.symbol)) return formatSource(frame.source, frame.location);
-      return formatFrameWithSymbol(
-        formatSymbol(Option.getOrThrow(frame.symbol)),
-        formatSource(frame.source, frame.location),
-      );
-    };
-
-    return SourceMapLookup.of({
-      lookup,
-      stacktrace: (error) =>
-        Option.fromNullable(error.stack).pipe(
-          Option.map((stack) => {
-            const [head, ...rest] = stack.split('\n');
-            const [type, message] = head.split(':', 2) as [string, string | undefined];
-            const stacktrace: Stacktrace = {
-              error: type,
-              message: Option.fromNullable(message?.trim()),
-              stack: rest.map((text): StackFrame => {
-                const matched = text.match(/^\s*at (\S+) \((?:<(.*)>|file:\/\/(.+):(\d+):(\d+))\)$/);
-                console.log('@@@@@@@@@2', matched);
-                if (!matched) return text;
-                const [, symbol, source1, source2, line, column] = matched as
-                  | [string, string | undefined, string]
-                  | [string, string | undefined, undefined, string, string, string];
-                return {
-                  symbol: Option.fromNullable(symbol),
-                  source: source1 ?? source2,
-                  location: Option.fromNullable(source1).pipe(Option.map(() => ({ line, column }))),
-                };
-              }),
-            };
-            const doc = Doc.vsep([formatHeader(stacktrace), ...stacktrace.stack.map(formatFrame)]).pipe(
-              Doc.annotate(Ansi.blackBright),
-            );
-            return Doc.render(doc, { style: 'pretty' });
-          }),
-        ),
-    });
-  }),
-);
 
 export type UnhandledError = { _tag: 'UnhandledError'; message: string; stack: Option.Option<string> };
 
@@ -259,7 +83,7 @@ export const runTest = (
 
 export const testRunnerState: ((
   state: TestRunnerState,
-) => Effect.Effect<TestRunnerState, PlatformError, FileSystem.FileSystem | SourceMapLookup>)[] = [];
+) => Effect.Effect<TestRunnerState, PlatformError, FileSystem.FileSystem | SourceMap.SourceMap>)[] = [];
 
 export const describe = (suite: TestSuiteName, tests: () => void) => {
   testRunnerState.push(({ global, suites }) =>
@@ -286,28 +110,12 @@ export const describe = (suite: TestSuiteName, tests: () => void) => {
   );
 };
 
-const getCallerFile = Effect.gen(function* (_) {
-  const sourceMapLookup = yield* _(SourceMapLookup);
-  console.log('>>>', yield* _(sourceMapLookup.stacktrace(new Error('asdfasdf'))), '<<<');
-  const file = Option.fromNullable(new Error().stack).pipe(
-    Option.tap((stack) => Option.some(console.log(stack))),
-    Option.flatMap((stack) => Option.fromNullable(stack.split('\n')[5])),
-    Option.map((line) =>
-      line.replace(/file:\/\/.+:(\d+):(\d+)/gm, (match, line, column) => {
-        const segment = sourceMapLookup.lookup(Number(line), Number(column));
-        console.log(segment);
-        let seg = '';
-        if (segment)
-          seg = Render.prettyDefault(
-            Doc.text(`!!${segment.source}:${segment.line}:${segment.column}`).pipe(Doc.annotate(Ansi.green)),
-          );
-        else seg = Render.prettyDefault(Doc.text(`@@${match}`).pipe(Doc.annotate(Ansi.red)));
-        console.log('%$#$@%', seg, '<<<<');
-        return seg;
-      }),
-    ),
+const getCaller = Effect.gen(function* (_) {
+  const stacktrace = yield* _(
+    Stacktrace.from(new Error('asdf')).pipe(Option.map(StacktraceReporter.format), Option.getOrThrow),
   );
-  console.log(Option.getOrElse(file, () => null));
+  console.log('>>>', stacktrace, '<<<');
+  return '';
 }); // # TODO:.pipe(Effect.provide(Layer.merge(SourceMapLookupLive, FileSystem.layer)));
 
 export const it = (file: TestFilename, description: TestDescription, test: Test) => {
@@ -315,7 +123,7 @@ export const it = (file: TestFilename, description: TestDescription, test: Test)
     pipe(
       Option.getOrElse(current, () => ({ suite: null, ref: global })),
       ({ ref, suite }) =>
-        getCallerFile.pipe(
+        getCaller.pipe(
           Effect.tap(console.log),
           Effect.flatMap(() =>
             SynchronizedRef.getAndUpdate(ref, (results) =>
@@ -418,7 +226,7 @@ const run = () =>
           suites: HashMap.empty(),
           current: Option.none(),
           global: SynchronizedRef.unsafeMake(HashMap.empty()),
-        }) as Effect.Effect<TestRunnerState, PlatformError, SourceMapLookup | FileSystem.FileSystem>,
+        }) as Effect.Effect<TestRunnerState, PlatformError, SourceMap.SourceMap | FileSystem.FileSystem>,
         (results, op) => Effect.flatMap(results, op),
       ),
     );
@@ -473,9 +281,13 @@ it('asdfaksdf', 'nop', () =>
   }),
 );
 
-await Effect.runPromiseExit(run().pipe(Effect.provide(Layer.provideMerge(SourceMapLookupLive, FileSystemLive))))
-  .then(console.log)
-  .catch(console.log);
+await Effect.runPromiseExit(run().pipe(Effect.provide(Layer.provideMerge(SourceMap.layer, FileSystemLive))))
+  .then((exit) => {
+    console.log(inspect(exit, false, null, true));
+  })
+  .catch((error) => {
+    console.log(inspect(error, false, null, true));
+  });
 
 // export type TestReport = { name: string; result: TestResult[] };
 // export type TestSuiteReport = TestReport[];
