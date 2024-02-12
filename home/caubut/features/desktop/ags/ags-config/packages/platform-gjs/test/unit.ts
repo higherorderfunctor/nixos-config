@@ -17,6 +17,7 @@ import {
   ReadonlyRecord,
   SynchronizedRef,
 } from 'effect';
+import { inspect } from 'node:util';
 import * as vlq from 'vlq';
 
 const FileSystemLive = NodeFileSystem.layer;
@@ -39,10 +40,10 @@ export type RawSourceMap = {
 
 type SegmentInfo = {
   columnIndex: number;
+  symbol: Option.Option<string>;
   source: string;
   line: number;
   column: number;
-  name?: string | undefined;
 };
 
 const bisectLeft = <T, U>(arr: T[], value: U, cmp: (a: T) => U, low = 0, high: number = arr.length): T => {
@@ -56,7 +57,7 @@ class SourceMapLookup extends Context.Tag('SourceMap')<
   // eslint-disable-next-line no-use-before-define
   SourceMapLookup,
   {
-    readonly lookup: (line: number, column: number) => SegmentInfo | undefined;
+    readonly lookup: (line: number, column: number) => Option.Option<SegmentInfo>;
     readonly stacktrace: (error: Error) => Option.Option<string>;
   }
 >() {}
@@ -69,58 +70,57 @@ const SourceMapLookupLive = Layer.effect(
       fs.readFile(`./dist/test/test.${process.env.NODE_RUNTIME}.js.map`).pipe(
         Effect.map((bytes) => JSON.parse(new TextDecoder('utf-8').decode(bytes)) as RawSourceMap),
         Effect.flatMap((sourceMap) =>
-          Effect.gen(function* (_) {
+          Effect.gen(function* () {
             const state = [0, 0, 0, 0, 0] as VlqState;
             const mappings: SegmentInfo[][] = sourceMap.mappings.split(';').map((segments) => {
               state[0] = 0;
               return segments.split(',').map((segment) => {
+                // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
                 const stateUpdate = vlq.decode(segment) as [number, number, number, number, number | undefined];
                 state.forEach((value, i) => {
                   state[i] = value + (stateUpdate[i] ?? 0);
                 });
                 return {
                   columnIndex: state[0],
+                  symbol: state[4] ? Option.fromNullable(sourceMap.names[state[4]]) : Option.none(),
                   source: sourceMap.sources[state[1]],
                   line: state[2] + 1,
                   column: state[3],
-                  name: state[4] ? sourceMap.names[state[4]] : undefined,
                 };
               });
             });
             // yield* _(fs.writeFileString('sourceMap.json', JSON.stringify(mappings, null, 2)));
             return (line: number, column: number) => {
-              if (mappings[line - 1][0].columnIndex > column - 1) return undefined;
+              if (mappings[line - 1][0].columnIndex > column - 1) return Option.none();
               const info = bisectLeft(mappings[line - 1], column - 1, (a) => a.columnIndex);
-              return { ...info, query: [line, column] };
+              return Option.some({ ...info, query: [line, column] });
             };
           }),
         ),
       ),
     );
+    type StackFrame =
+      | string
+      | {
+          symbol: Option.Option<string>;
+          source: string;
+          location: Option.Option<{
+            line: string;
+            column: string;
+          }>;
+        };
 
     type Stacktrace = {
       error: string;
-      message?: string | undefined;
-      stack: (
-        | string
-        | {
-            symbol: string;
-            location:
-              | string
-              | {
-                  file: string;
-                  line: string;
-                  column: string;
-                };
-          }
-      )[];
+      message: Option.Option<string>;
+      stack: StackFrame[];
     };
 
     const formatType = (stacktrace: Stacktrace) => Doc.text(stacktrace.error).pipe(Doc.annotate(Ansi.red));
+
     const formatMessage = (stacktrace: Stacktrace) =>
-      Option.fromNullable(stacktrace.message).pipe(
-        Option.map((message) => Doc.text(message).pipe(Doc.annotate(Ansi.white))),
-      );
+      stacktrace.message.pipe(Option.map((message) => Doc.text(message).pipe(Doc.annotate(Ansi.white))));
+
     const formatHeader = (stacktrace: Stacktrace) =>
       formatType(stacktrace).pipe(
         Doc.cat(
@@ -130,81 +130,64 @@ const SourceMapLookupLive = Layer.effect(
           ),
         ),
       );
-    const formatFile = (file: string, line: string, column: string) => {
-      const sourceMapInfo = lookup(Number(line), Number(column));
-      Doc.text(file).pipe(
-        Doc.annotate(Ansi.green),
-        Doc.cat(Doc.colon),
-        Doc.cat(Doc.text(line).pipe(Doc.annotate(Ansi.blue))),
-        Doc.cat(Doc.colon),
-        Doc.cat(Doc.text(column).pipe(Doc.annotate(Ansi.blue))),
+
+    const formatSource = (source: string, position: Option.Option<{ line: string; column: string }> = Option.none()) =>
+      position.pipe(
+        Option.map((position) =>
+          Doc.annotate(Doc.text(source), Ansi.green).pipe(
+            Doc.cat(Doc.colon),
+            Doc.cat(Doc.annotate(Doc.text(position.line), Ansi.blue)),
+            Doc.cat(Doc.colon),
+            Doc.cat(Doc.annotate(Doc.text(position.column), Ansi.blue)),
+          ),
+        ),
+        Option.getOrElse(() => Doc.annotate(Doc.text(source), Ansi.yellow)),
+      );
+
+    const formatSymbol = (symbol: string) => Doc.annotate(Doc.text(symbol), Ansi.cyan);
+
+    const formatFrameWithSymbol = (symbol: Doc.Doc<Ansi.Ansi>, file: Doc.Doc<Ansi.Ansi>) =>
+      Doc.cat(symbol, Doc.parenthesized(file));
+
+    const formatFrame = (frame: StackFrame) => {
+      if (typeof frame === 'string') return Doc.annotate(Doc.text(frame), Ansi.red);
+      if (Option.isNone(frame.symbol)) return formatSource(frame.source, frame.location);
+      return formatFrameWithSymbol(
+        formatSymbol(Option.getOrThrow(frame.symbol)),
+        formatSource(frame.source, frame.location),
       );
     };
 
     return SourceMapLookup.of({
       lookup,
-      stacktrace(error) {
-        return Option.fromNullable(new Error('asdf').stack).pipe(
+      stacktrace: (error) =>
+        Option.fromNullable(error.stack).pipe(
           Option.map((stack) => {
             const [head, ...rest] = stack.split('\n');
-            console.log(head.split(':', 2), '(*@!#&$()@#*$');
             const [type, message] = head.split(':', 2) as [string, string | undefined];
             const stacktrace: Stacktrace = {
               error: type,
-              message: message?.trim(),
-              stack: rest.map((text) => {
+              message: Option.fromNullable(message?.trim()),
+              stack: rest.map((text): StackFrame => {
                 const matched = text.match(/^\s*at (\S+) \((?:<(.*)>|file:\/\/(.+):(\d+):(\d+))\)$/);
                 console.log('@@@@@@@@@2', matched);
                 if (!matched) return text;
-                const [, symbol, location, file, line, column] = matched;
-                return { symbol, location: location || { file, line, column } };
+                const [, symbol, source1, source2, line, column] = matched as
+                  | [string, string | undefined, string]
+                  | [string, string | undefined, undefined, string, string, string];
+                return {
+                  symbol: Option.fromNullable(symbol),
+                  source: source1 ?? source2,
+                  location: Option.fromNullable(source1).pipe(Option.map(() => ({ line, column }))),
+                };
               }),
             };
-            const doc = Doc.vsep([
-              formatHeader(stacktrace),
-              ...stacktrace.stack.map((frame) =>
-                Doc.hsep([
-                  Doc.indent(Doc.text('󰘍').pipe(Doc.annotate(Ansi.blue)), 2),
-                  ...(() => {
-                    if (typeof frame === 'string') return [Doc.text(frame).pipe(Doc.annotate(Ansi.red))];
-                    const symbol = Option.fromNullable(frame.symbol).pipe(
-                      Option.map(flow(Doc.text, Doc.annotate(Ansi.cyan))),
-                    );
-                    const location =
-                      typeof frame.location === 'string'
-                        ? Option.some(frame.location).pipe(
-                            Option.map(flow(Doc.text, Doc.annotate(Ansi.green), Doc.angleBracketed)),
-                          )
-                        : Option.some(
-                            Doc.parenthesized(
-                              formatFile(frame.location.file, frame.location.line, frame.location.column),
-                            ),
-                          );
-                    return ReadonlyArray.getSomes([symbol, location]);
-                  })(),
-                ]),
-              ),
-            ]).pipe(Doc.annotate(Ansi.blackBright));
-            console.log(Doc.render(doc, { style: 'pretty' }));
-            console.log(stacktrace);
-            console.log(error.stack);
-            return stack.replace(/(?<=file:\/\/).+:(\d+):(\d+)/gm, (match, line, column) => {
-              const segment = this.lookup(Number(line), Number(column));
-              let seg = '';
-              if (segment)
-                seg = Doc.render(
-                  Doc.text(`${segment.source}:${segment.line}:${segment.column}`).pipe(Doc.annotate(Ansi.green)),
-                  {
-                    style: 'pretty',
-                  },
-                );
-              else seg = Doc.render(Doc.text(`@@${match}`).pipe(Doc.annotate(Ansi.red)), { style: 'pretty' });
-              // console.log('%$#$@%', seg, '<<<<');
-              return seg;
-            });
+            const doc = Doc.vsep([formatHeader(stacktrace), ...stacktrace.stack.map(formatFrame)]).pipe(
+              Doc.annotate(Ansi.blackBright),
+            );
+            return Doc.render(doc, { style: 'pretty' });
           }),
-        );
-      },
+        ),
     });
   }),
 );
