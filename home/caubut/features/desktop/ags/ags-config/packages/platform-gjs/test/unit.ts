@@ -4,6 +4,7 @@ import { NodeFileSystem } from '@effect/platform-node';
 import * as Render from '@effect/printer/Render';
 import * as Ansi from '@effect/printer-ansi/Ansi';
 import * as Doc from '@effect/printer-ansi/AnsiDoc';
+import * as S from '@effect/schema';
 import {
   Context,
   Effect,
@@ -54,7 +55,10 @@ const bisectLeft = <T, U>(arr: T[], value: U, cmp: (a: T) => U, low = 0, high: n
 class SourceMapLookup extends Context.Tag('SourceMap')<
   // eslint-disable-next-line no-use-before-define
   SourceMapLookup,
-  { readonly lookup: (line: number, column: number) => SegmentInfo | undefined }
+  {
+    readonly lookup: (line: number, column: number) => SegmentInfo | undefined;
+    readonly stacktrace: (error: Error) => Option.Option<string>;
+  }
 >() {}
 
 const SourceMapLookupLive = Layer.effect(
@@ -70,13 +74,10 @@ const SourceMapLookupLive = Layer.effect(
             const mappings: SegmentInfo[][] = sourceMap.mappings.split(';').map((segments) => {
               state[0] = 0;
               return segments.split(',').map((segment) => {
-                // console.log(segment);
                 const stateUpdate = vlq.decode(segment) as [number, number, number, number, number | undefined];
-                // console.log(stateUpdate);
                 state.forEach((value, i) => {
                   state[i] = value + (stateUpdate[i] ?? 0);
                 });
-                // console.log(`([${i},${state[0]}](#${state[1]})=>[${state[2]},${state[3]}]`);
                 return {
                   columnIndex: state[0],
                   source: sourceMap.sources[state[1]],
@@ -86,7 +87,7 @@ const SourceMapLookupLive = Layer.effect(
                 };
               });
             });
-            yield* _(fs.writeFileString('sourceMap.json', JSON.stringify(mappings, null, 2)));
+            // yield* _(fs.writeFileString('sourceMap.json', JSON.stringify(mappings, null, 2)));
             return (line: number, column: number) => {
               if (mappings[line - 1][0].columnIndex > column - 1) return undefined;
               const info = bisectLeft(mappings[line - 1], column - 1, (a) => a.columnIndex);
@@ -96,7 +97,115 @@ const SourceMapLookupLive = Layer.effect(
         ),
       ),
     );
-    return SourceMapLookup.of({ lookup });
+
+    type Stacktrace = {
+      error: string;
+      message?: string | undefined;
+      stack: (
+        | string
+        | {
+            symbol: string;
+            location:
+              | string
+              | {
+                  file: string;
+                  line: string;
+                  column: string;
+                };
+          }
+      )[];
+    };
+
+    const formatType = (stacktrace: Stacktrace) => Doc.text(stacktrace.error).pipe(Doc.annotate(Ansi.red));
+    const formatMessage = (stacktrace: Stacktrace) =>
+      Option.fromNullable(stacktrace.message).pipe(
+        Option.map((message) => Doc.text(message).pipe(Doc.annotate(Ansi.white))),
+      );
+    const formatHeader = (stacktrace: Stacktrace) =>
+      formatType(stacktrace).pipe(
+        Doc.cat(
+          Option.getOrElse(
+            formatMessage(stacktrace).pipe(Option.map((message) => Doc.cat(Doc.text(': '), message))),
+            () => Doc.empty,
+          ),
+        ),
+      );
+    const formatFile = (file: string, line: string, column: string) => {
+      const sourceMapInfo = lookup(Number(line), Number(column));
+      Doc.text(file).pipe(
+        Doc.annotate(Ansi.green),
+        Doc.cat(Doc.colon),
+        Doc.cat(Doc.text(line).pipe(Doc.annotate(Ansi.blue))),
+        Doc.cat(Doc.colon),
+        Doc.cat(Doc.text(column).pipe(Doc.annotate(Ansi.blue))),
+      );
+    };
+
+    return SourceMapLookup.of({
+      lookup,
+      stacktrace(error) {
+        return Option.fromNullable(new Error('asdf').stack).pipe(
+          Option.map((stack) => {
+            const [head, ...rest] = stack.split('\n');
+            console.log(head.split(':', 2), '(*@!#&$()@#*$');
+            const [type, message] = head.split(':', 2) as [string, string | undefined];
+            const stacktrace: Stacktrace = {
+              error: type,
+              message: message?.trim(),
+              stack: rest.map((text) => {
+                const matched = text.match(/^\s*at (\S+) \((?:<(.*)>|file:\/\/(.+):(\d+):(\d+))\)$/);
+                console.log('@@@@@@@@@2', matched);
+                if (!matched) return text;
+                const [, symbol, location, file, line, column] = matched;
+                return { symbol, location: location || { file, line, column } };
+              }),
+            };
+            const doc = Doc.vsep([
+              formatHeader(stacktrace),
+              ...stacktrace.stack.map((frame) =>
+                Doc.hsep([
+                  Doc.indent(Doc.text('󰘍').pipe(Doc.annotate(Ansi.blue)), 2),
+                  ...(() => {
+                    if (typeof frame === 'string') return [Doc.text(frame).pipe(Doc.annotate(Ansi.red))];
+                    const symbol = Option.fromNullable(frame.symbol).pipe(
+                      Option.map(flow(Doc.text, Doc.annotate(Ansi.cyan))),
+                    );
+                    const location =
+                      typeof frame.location === 'string'
+                        ? Option.some(frame.location).pipe(
+                            Option.map(flow(Doc.text, Doc.annotate(Ansi.green), Doc.angleBracketed)),
+                          )
+                        : Option.some(
+                            Doc.parenthesized(
+                              formatFile(frame.location.file, frame.location.line, frame.location.column),
+                            ),
+                          );
+                    return ReadonlyArray.getSomes([symbol, location]);
+                  })(),
+                ]),
+              ),
+            ]).pipe(Doc.annotate(Ansi.blackBright));
+            console.log(Doc.render(doc, { style: 'pretty' }));
+            console.log(stacktrace);
+            console.log(error.stack);
+            return stack.replace(/(?<=file:\/\/).+:(\d+):(\d+)/gm, (match, line, column) => {
+              const segment = this.lookup(Number(line), Number(column));
+              let seg = '';
+              if (segment)
+                seg = Doc.render(
+                  Doc.text(`${segment.source}:${segment.line}:${segment.column}`).pipe(Doc.annotate(Ansi.green)),
+                  {
+                    style: 'pretty',
+                  },
+                );
+              else seg = Doc.render(Doc.text(`@@${match}`).pipe(Doc.annotate(Ansi.red)), { style: 'pretty' });
+              // console.log('%$#$@%', seg, '<<<<');
+              return seg;
+            });
+          }),
+        );
+      },
+    });
   }),
 );
 
@@ -196,6 +305,7 @@ export const describe = (suite: TestSuiteName, tests: () => void) => {
 
 const getCallerFile = Effect.gen(function* (_) {
   const sourceMapLookup = yield* _(SourceMapLookup);
+  console.log('>>>', yield* _(sourceMapLookup.stacktrace(new Error('asdfasdf'))), '<<<');
   const file = Option.fromNullable(new Error().stack).pipe(
     Option.tap((stack) => Option.some(console.log(stack))),
     Option.flatMap((stack) => Option.fromNullable(stack.split('\n')[5])),
@@ -203,11 +313,14 @@ const getCallerFile = Effect.gen(function* (_) {
       line.replace(/file:\/\/.+:(\d+):(\d+)/gm, (match, line, column) => {
         const segment = sourceMapLookup.lookup(Number(line), Number(column));
         console.log(segment);
+        let seg = '';
         if (segment)
-          Render.prettyDefault(
+          seg = Render.prettyDefault(
             Doc.text(`!!${segment.source}:${segment.line}:${segment.column}`).pipe(Doc.annotate(Ansi.green)),
           );
-        return Render.prettyDefault(Doc.text(`@@${match}`).pipe(Doc.annotate(Ansi.red)));
+        else seg = Render.prettyDefault(Doc.text(`@@${match}`).pipe(Doc.annotate(Ansi.red)));
+        console.log('%$#$@%', seg, '<<<<');
+        return seg;
       }),
     ),
   );
@@ -220,6 +333,7 @@ export const it = (file: TestFilename, description: TestDescription, test: Test)
       Option.getOrElse(current, () => ({ suite: null, ref: global })),
       ({ ref, suite }) =>
         getCallerFile.pipe(
+          Effect.tap(console.log),
           Effect.flatMap(() =>
             SynchronizedRef.getAndUpdate(ref, (results) =>
               HashMap.get(results, file).pipe(
