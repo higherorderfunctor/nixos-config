@@ -44,6 +44,16 @@ export const map: <A, B>(p: Parser<A>, f: (a: A) => B) => Parser<B> = (parser, f
     Effect.map(([a, s]) => [f(a), s]),
   );
 
+export const apply = <A, B>(p: Parser<(a: A) => B>, q: Parser<A>): Parser<B> =>
+  flow(
+    p,
+    Effect.flatMap(([f, o]) =>
+      Option.map(o, (s) => Effect.map(q(s), ([a, r]): [B, Option.Option<string>] => [f(a), r])).pipe(
+        Option.getOrElse(() => Effect.fail(makeError('InsufficientInputError', ''))),
+      ),
+    ),
+  );
+
 export const flatMap: <A, B>(p: Parser<A>, f: (a: A) => Parser<B>) => Parser<B> = (parser, f) =>
   flow(
     parser,
@@ -73,3 +83,21 @@ export const string: (s: string) => Parser<string> = (s) => (source) =>
 type Char<S extends string> = S extends `${infer C}${infer _R}` ? C : S extends '' ? never : S;
 
 export const char: <C extends string>(c: Char<C>) => Parser<string> = string;
+
+export const space = char(' ');
+export const tab = char('\t');
+
+// # -- | One or more.
+// # some :: f a -> f [a]
+// # some v = some_v
+// #   where
+// #     many_v = some_v <|> pure []
+// #     some_v = (:) <$> v <*> many_v
+// def some(v: Parser[A]) -> Parser[Sequence[A]]:
+//     def many_v(s: Text) -> Sequence[Tuple[Sequence[A], Text]]:
+//         return option(some_v, ret([]))(s)
+//     def some_v(s: Text) -> Sequence[Tuple[Sequence[A], Text]]:
+//         return ap(fmap(lambda x: lambda y: [x, *y], v), many_v)(s)
+//     return some_v
+
+// const some: <A>(v: Parser<A>) => Parser<A[]> = (v) => (source) => {
