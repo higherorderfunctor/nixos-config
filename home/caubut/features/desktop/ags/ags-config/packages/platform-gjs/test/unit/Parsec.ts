@@ -1,4 +1,4 @@
-import { Effect, flow, Option, pipe } from 'effect';
+import { Effect, flow, Match, Option, pipe } from 'effect';
 
 // newtype Parser a = Parser { parse :: String -> [(a,String)] }
 
@@ -13,7 +13,10 @@ export type Parser<A> = (source: string, i?: number) => [] | [[A, [string, numbe
 
 export const runParser: <A>(parser: Parser<A>, source: string) => A = (parser, source) => {
   const pr = parser(source);
-  const z = pr[2]
+  Match.value(parser(source)).pipe(
+    Match.when(
+  )
+  const [res, [s, i]] = parser(source);
   if (s.length !== i)
     return result;
   throw new Error('Parser did not consume entire stream.');
