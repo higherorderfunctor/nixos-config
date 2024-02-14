@@ -1,8 +1,10 @@
-import * as S from '@effect/schema';
+import * as S from '@effect/schema/Schema';
 import { Effect, Layer, Option } from 'effect';
 
 import * as SourceMap from './SourceMap.js';
 import * as StacktraceResolver from './StacktraceResolver.js';
+
+const symbol = S.lowercased;
 
 export const layer = Layer.effect(
   StacktraceResolver.StacktraceResolver,
