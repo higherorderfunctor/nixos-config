@@ -4,7 +4,8 @@ import { Effect, Layer, Option } from 'effect';
 import * as SourceMap from './SourceMap.js';
 import * as StacktraceResolver from './StacktraceResolver.js';
 
-const symbol = S.lowercased;
+const symbol = /(?<symbol>\S+(?: \[as .*\])?)/;
+const
 
 export const layer = Layer.effect(
   StacktraceResolver.StacktraceResolver,
