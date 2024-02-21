@@ -1,6 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/consistent-type-definitions */
-import { Effect } from 'effect';
-import { flow, Match, Option, pipe } from 'effect';
+import { Effect, flow, Match, pipe } from 'effect';
 
 // newtype Parser a = Parser { parse :: String -> [(a,String)] }
 
@@ -10,13 +9,13 @@ export type Sequence<T> = {
   length: number;
 };
 
-export interface ParseState<I extends Sequence<any>, O> {
+export interface ParseState<I extends Sequence<any>, A = never> {
   input: I;
   index: number;
-  value: O;
+  value: A;
 }
 
-export const makeState = <I extends Sequence<any>>(input: I): ParseState<I, never> => ({
+export const makeState = <I extends Sequence<any>>(input: I): ParseState<I> => ({
   input,
   index: 0,
   value: undefined as never,
@@ -82,8 +81,9 @@ export const flatMap: <
   E1 extends ParseError<I> = never,
   E2 extends ParseError<I> = never,
 >(
-  f: (state: B) => Parser<I, B, O, E2>,
-) => (parser: Parser<I, A, B, E1>) => Parser<I, A, O, E1 | E2> = (f) => (parser) =>
+  parser: Parser<I, A, B, E1>,
+  f: (value: B) => Parser<I, B, O, E2>,
+) => Parser<I, A, O, E1 | E2> = (parser, f) =>
   flow(
     parser,
     Effect.flatMap((state) => f(state.value)(state)),
@@ -92,26 +92,38 @@ export const flatMap: <
 export const result: <I extends Sequence<any>, O>(value: O) => Parser<I, never, O> = (value) => (state) =>
   Effect.succeed({ ...state, value });
 
+export const fail: <I extends Sequence<any>, E extends ParseError<I>>(error: E) => Parser<I, never, never, E> =
+  (error) => () =>
+    Effect.fail(error);
+
 export const zero: Parser<Sequence<any>, any, never, ZeroError> = () => Effect.fail<ZeroError>({ _tag: 'ZeroError' });
 
-export const item: <A>(state: ParseState<Sequence<A>, any>) => ParseResult<Sequence<A>, A, InputMissing> = (state) =>
+// export type Parser<I extends Sequence<any>, A, O = A, E extends ParseError<I> = never> = (
+//   state: ParseState<I, A>,
+// ) => ParseResult<I, O, E>;
+
+export const item: <A>(
+  state: ParseState<Sequence<A>>,
+) => ParseResult<Sequence<A>, A, SatisfyError<Sequence<A>> | ZeroError> = (state) =>
   Match.value(state.index + 1 <= state.input.length).pipe(
     Match.when(false, () => Effect.fail<InputMissing>({ _tag: 'ZeroError' })),
     Match.when(true, () => Effect.succeed({ ...state, index: state.index + 1, value: state.input[state.index] })),
     Match.exhaustive,
   );
 
+export const asdf: Parser<string, never, string, ZeroError> = {} as Parser<string, never, string, ZeroError>;
+
 export const satisfy2: <A>(
   predicate: (a: A) => boolean,
-) => Parser<Sequence<A>, any, A, ZeroError | SatisfyError<Sequence<A>>> = (predicate) =>
-  flow(
-    item,
-    Effect.map((state) => predicate(state.value) ? result(state.value),
-    (v) => v,
-    // item(state),
-    // (v) => v,
-    // Effect.flatMap((s) => flatMap((x) => (predicate(x) ? result(x) : zero))),
-  );
+) => Parser<Sequence<A>, never, A, SatisfyError<Sequence<A>> | ZeroError> = (predicate) =>
+  flatMap(item, (value) => {
+    const p = predicate(value);
+    if (p) return result(value);
+    return fail({
+      _tag: 'SatisfyError',
+      input: [value],
+    });
+  });
 
 // sat :: (Char -> Bool) -> Parser Char
 // sat p = Parser parseIfSat
