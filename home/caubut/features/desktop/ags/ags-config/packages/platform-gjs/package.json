@@ -16,24 +16,24 @@
     "lint:tsc": "tsc --skipLibCheck --noemit --project tsconfig.json"
   },
   "dependencies": {
-    "@effect/platform": "^0.44.2",
-    "@effect/printer-ansi": "^0.32.1",
-    "@effect/schema": "^0.62.1",
+    "@effect/platform": "^0.44.7",
+    "@effect/printer-ansi": "^0.32.10",
+    "@effect/schema": "^0.62.9",
     "@girs/gio-2.0": "2.78.0-3.2.7",
-    "@girs/gjs": "^3.2.7",
+    "@girs/gjs": "^3.2.8",
     "@girs/glib-2.0": "2.78.0-3.2.7",
     "@gjsify/assert": "^0.0.4",
     "@typescript/lib-dom": "link:pnpm:@girs/gjs",
-    "effect": "^2.3.1"
+    "effect": "^2.4.1"
   },
   "devDependencies": {
-    "@effect/platform-node": "^0.43.2",
-    "@effect/printer": "^0.31.1",
+    "@effect/platform-node": "^0.43.7",
+    "@effect/printer": "^0.31.10",
     "@gjsify/unit": "^0.0.4",
     "@gjsify/utils": "^0.0.4",
     "abort-controller": "^3.0.0",
     "assert": "^2.1.0",
-    "esbuild": "^0.20.0",
+    "esbuild": "^0.20.1",
     "source-map": "^0.7.4",
     "sourcemap-lookup": "^0.0.5",
     "ts-loader": "^9.5.1",

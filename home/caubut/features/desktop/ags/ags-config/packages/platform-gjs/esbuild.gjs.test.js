@@ -2,39 +2,6 @@ import * as esbuild from 'esbuild';
 import * as fs from 'node:fs';
 import * as path from 'node:path';
 
-const polyfills = [
-  'assert',
-  'async_hooks',
-  'buffer',
-  'child_process',
-  'console',
-  'crypto',
-  'dns',
-  'events',
-  'fs',
-  'fs/promises',
-  'http',
-  'https',
-  'module',
-  'net',
-  'os',
-  'path',
-  'perf_hooks',
-  'process',
-  'querystring',
-  'readline',
-  'stream',
-  'timers/promises',
-  'tls',
-  'tty',
-  'url',
-  'util',
-  'v8',
-  'vm',
-  'worker_threads',
-  'zlib',
-];
-
 /** @type {import('esbuild').Plugin} */
 const injectGjsPolyfill = {
   name: 'inject-dirname',

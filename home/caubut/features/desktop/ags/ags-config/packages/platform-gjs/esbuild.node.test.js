@@ -1,6 +1,4 @@
 import * as esbuild from 'esbuild';
-import * as fs from 'node:fs';
-import * as path from 'node:path';
 
 await esbuild.build({
   entryPoints: ['test/unit.ts'],

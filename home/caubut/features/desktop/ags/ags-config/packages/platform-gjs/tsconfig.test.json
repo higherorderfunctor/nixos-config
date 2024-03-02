@@ -2,7 +2,8 @@
   "extends": "../../tsconfig.base.json",
   "include": [
     "unit.config.ts",
-    "test"
+    "test",
+    "src/internal/unit"
   ],
   "references": [
     {
