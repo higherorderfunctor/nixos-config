@@ -48,6 +48,16 @@ in {
         extraConfig = arkenfox;
         search = {
           default = "Kagi";
+          order = [
+            "Kagi"
+            "Nix Packages"
+            "Nix Options"
+            "NixOS Wiki"
+            "Home Manager Options"
+            "Google"
+            "Bing"
+            "DuckDuckGo"
+          ];
           engines = {
             "Kagi" = {
               urls = [{template = "https://kagi.com/search?q={searchTerms}";}];
@@ -70,6 +80,12 @@ in {
                     }
                   ];
                 }
+              ];
+              icon = "${pkgs.nixos-icons}/share/icons/hicolor/scalable/apps/nix-snowflake.svg";
+              definedAliases = ["@np"];
+            };
+            "Nix Options" = {
+              urls = [
                 {
                   template = "https://search.nixos.org/options";
                   params = [
@@ -85,7 +101,7 @@ in {
                 }
               ];
               icon = "${pkgs.nixos-icons}/share/icons/hicolor/scalable/apps/nix-snowflake.svg";
-              definedAliases = ["@np"];
+              definedAliases = ["@no"];
             };
             "NixOS Wiki" = {
               urls = [{template = "https://nixos.wiki/index.php?search={searchTerms}";}];
@@ -93,39 +109,15 @@ in {
               updateInterval = 24 * 60 * 60 * 1000; # every day
               definedAliases = ["@nw"];
             };
-            "Nix Options" = {
-              urls = [
-                {
-                  template = "https://search.nixos.org/packages";
-                  params = [
-                    {
-                      name = "type";
-                      value = "packages";
-                    }
-                    {
-                      name = "query";
-                      value = "{searchTerms}";
-                    }
-                  ];
-                }
-                {
-                  template = "https://search.nixos.org/options";
-                  params = [
-                    {
-                      name = "type";
-                      value = "options";
-                    }
-                    {
-                      name = "query";
-                      value = "{searchTerms}";
-                    }
-                  ];
-                }
-              ];
+            "Home Manager Options" = {
+              urls = [{template = "https://mipmip.github.io/home-manager-option-search/query={searchTerms}";}];
               icon = "${pkgs.nixos-icons}/share/icons/hicolor/scalable/apps/nix-snowflake.svg";
-              definedAliases = ["@np"];
+              definedAliases = ["@hm"];
             };
             "Google".metaData.alias = "@g";
+            "eBay".metaData.hidden = true;
+            "Amazon.com".metaData.hidden = true;
+            "Wikipedia (en)".metaData.hidden = true;
           };
         };
       };
