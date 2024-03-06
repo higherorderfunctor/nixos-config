@@ -1,0 +1,3 @@
+return {
+  "elubow/cql-vim",
+}

@@ -1,0 +1,111 @@
+#!/usr/bin/env bash
+
+set -euETo pipefail
+shopt -s inherit_errexit
+SYSCONFIG=1
+INITRAMFS=1
+BOOTLOADER=1
+MICROCODE=
+ROOT_DISK=
+printf "%s \n" "${@}"
+while [[ $# -gt 0 ]]; do
+	case $1 in
+		--nosysconfig)
+		SYSCONFIG=0
+		shift
+		;;
+		--noinitramfs)
+		INITRAMFS=0
+		shift
+		;;
+		--nobootloader)
+		BOOTLOADER=0
+		shift
+		;;
+		--microcode)
+		MICROCODE="$2"
+		shift
+		shift
+		;;
+		--root-disk)
+		ROOT_DISK="$2"
+		shift
+		shift
+		;;
+		*)
+		echo "Unknown option: $1"
+		exit 1
+		;;
+	esac
+	
+done
+if [[ -z ROOT_DISK ]]; then
+	echo "no root disk"
+exit 1
+fi
+if [[ -z MICROCODE ]]; then
+	case "$(lscpu | grep '^Model name:' | awk -F'  +' '{ print $2 }' | awk '{ print $1 }')" in
+		AMD)
+		MICROCODE='amd-ucode.img'
+		;;		
+		*)
+		echo "Unknown arch: $1"
+		exit 1
+		;;
+	esac
+fi
+set -x
+
+if [[ "$SYSCONFIG" -eq 1 ]]; then
+ln -sf /usr/share/zoneinfo/America/Denver /etc/localtime
+hwclock --systohc
+sed -i -r 's/^#(en_US.UTF-8 UTF-8.*)$/\1/' /etc/locale.gen
+cat /etc/locale.gen | grep en_US
+locale-gen
+echo "LANG=en_US.UTF-8" > /etc/locale.conf
+read -rp "hostname> " hostname
+echo "$hostname" > /etc/hostname
+passwd
+fi
+
+if [[ "$INITRAMFS" -eq 1 ]]; then
+cat <<EOF > /etc/booster.yaml
+universal: false
+compression: zstd
+mount_timeout: 10s
+strip: true
+extra_files: fsck,fsck.ext4
+enable_lvm: true
+EOF
+/usr/lib/booster/regenerate_images
+fi
+
+if [[ "$BOOTLOADER" -eq 1 ]]; then
+# TODO config file permissions
+bootctl install
+
+cat <<EOF > /boot/loader/loader.conf
+default arch-booster.conf
+timeout 10
+console-mode max
+editor  no
+EOF
+
+cat <<EOF > /boot/loader/entries/arch-booster.conf
+title   arch (booster)
+linux   /vmlinuz-linux-hardened
+initrd  /${MICROCODE}
+initrd  /booster-linux-hardened.img
+options rd.luks.uuid=$(blkid -s UUID -o value "$ROOT_DISK") root=UUID=$(blkid -s UUID -o value /dev/mapper/SystemVolGroup-root) rw resume=/dev/mapper/cryptlvm rootfstype=ext4 rootflags=rw,relatime booter.log=debug,console"
+EOF
+bootctl list
+fi
+
+
+# fix all input to loop"
+# TODO fido
+# TODO update script
+# TODO also do efi check from systemd-boot
+# # booster fsck disk check see bookmarks
+#
+# # lsinitrd /kernel image to inspoect
