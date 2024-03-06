@@ -39,8 +39,95 @@ in {
         id = 0;
         name = "Default";
         isDefault = true;
-        settings = baseSettings // {};
+        settings =
+          baseSettings
+          // {
+            "keyword.enabled" = false; # split url and search bars
+            "browser.urlbar.update2.engineAliasRefresh" = true; # expose GUI options
+          };
         extraConfig = arkenfox;
+        search = {
+          default = "Kagi";
+          engines = {
+            "Kagi" = {
+              urls = [{template = "https://kagi.com/search?q={searchTerms}";}];
+              iconUpdateURL = "https://assets.kagi.com/v1/kagi_assets/logos/blue_1.svg";
+              updateInterval = 24 * 60 * 60 * 1000; # every day
+              definedAliases = ["@k"];
+            };
+            "Nix Packages" = {
+              urls = [
+                {
+                  template = "https://search.nixos.org/packages";
+                  params = [
+                    {
+                      name = "type";
+                      value = "packages";
+                    }
+                    {
+                      name = "query";
+                      value = "{searchTerms}";
+                    }
+                  ];
+                }
+                {
+                  template = "https://search.nixos.org/options";
+                  params = [
+                    {
+                      name = "type";
+                      value = "options";
+                    }
+                    {
+                      name = "query";
+                      value = "{searchTerms}";
+                    }
+                  ];
+                }
+              ];
+              icon = "${pkgs.nixos-icons}/share/icons/hicolor/scalable/apps/nix-snowflake.svg";
+              definedAliases = ["@np"];
+            };
+            "NixOS Wiki" = {
+              urls = [{template = "https://nixos.wiki/index.php?search={searchTerms}";}];
+              iconUpdateURL = "https://nixos.wiki/favicon.png";
+              updateInterval = 24 * 60 * 60 * 1000; # every day
+              definedAliases = ["@nw"];
+            };
+            "Nix Options" = {
+              urls = [
+                {
+                  template = "https://search.nixos.org/packages";
+                  params = [
+                    {
+                      name = "type";
+                      value = "packages";
+                    }
+                    {
+                      name = "query";
+                      value = "{searchTerms}";
+                    }
+                  ];
+                }
+                {
+                  template = "https://search.nixos.org/options";
+                  params = [
+                    {
+                      name = "type";
+                      value = "options";
+                    }
+                    {
+                      name = "query";
+                      value = "{searchTerms}";
+                    }
+                  ];
+                }
+              ];
+              icon = "${pkgs.nixos-icons}/share/icons/hicolor/scalable/apps/nix-snowflake.svg";
+              definedAliases = ["@np"];
+            };
+            "Google".metaData.alias = "@g";
+          };
+        };
       };
       unsafe = {
         id = 1;
