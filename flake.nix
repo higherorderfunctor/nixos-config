@@ -90,6 +90,13 @@
     # };
 
     homeConfigurations = {
+      "caubut@z690-ud-ddr4" = lib.homeManagerConfiguration {
+        pkgs = pkgsFor.x86_64-linux;
+        extraSpecialArgs = {inherit inputs outputs;};
+        modules = [
+          ./home/caubut/hosts/z690-ud-ddr4
+        ];
+      };
       "caubut@precision-7760" = lib.homeManagerConfiguration {
         pkgs = pkgsFor.x86_64-linux;
         extraSpecialArgs = {inherit inputs outputs;};

@@ -10,6 +10,7 @@ sh <(curl -L https://releases.nixos.org/nix/nix-2.18.1/install) --daemon
 nix flake update
 
 nix run .#homeConfigurations.caubut@precision-7760.activationPackage -- build . switch
+nix run .#homeConfigurations.caubut@z690-ud-ddr4.activationPackage -- build . switch
 
 # list generations
 home-manager generations
