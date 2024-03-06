@@ -1,13 +1,28 @@
 {
+  description = "NixOS Configuration";
+
   inputs = {
+    nixos.url = "github:nixos/nixpkgs/nixos-unstable";
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
     home-manager = {
       url = "github:nix-community/home-manager";
+    };
+    disko = {
+      url = "github:nix-community/disko";
       inputs.nixpkgs.follows = "nixpkgs";
     };
     firefox-nightly = {
       url = "github:nix-community/flake-firefox-nightly";
       inputs.nixpkgs.follows = "nixpkgs";
+    };
+    hardware = {
+      url = "github:nixos/nixos-hardware";
+    };
+    hyprland = {
+      url = "github:hyprwm/Hyprland";
+    };
+    impermanence = {
+      url = "github:nix-community/impermanence";
     };
     neovim-nightly-overlay = {
       url = "github:nix-community/neovim-nightly-overlay";
@@ -19,6 +34,10 @@
     };
     rust-overlay = {
       url = "github:oxalica/rust-overlay";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+    sops-nix = {
+      url = "github:mic92/sops-nix";
       inputs.nixpkgs.follows = "nixpkgs";
     };
   };
@@ -45,18 +64,37 @@
         ];
       });
   in {
-    # add custom packages
-    # packages = forEachSystem (pkgs: import ./pkgs {inherit pkgs;});
-
-    # set formmatter for this flake
     formatter = forAllSystems (pkgs: pkgs.alejandra);
 
+    # nixosConfigurations = {
+    #   live-cd-minimal-x86_64-linux = lib.nixosSystem {
+    #     modules = [./hosts/live-cd-minimal];
+    #     specialArgs = {inherit inputs outputs;};
+    #     pkgs = pkgsFor.x86_64-linux;
+    #   };
+    #   live-cd-graphical-x86_64-linux = lib.nixosSystem {
+    #     modules = [./hosts/live-cd-graphical];
+    #     specialArgs = {inherit inputs outputs;};
+    #     pkgs = pkgsFor.x86_64-linux;
+    #   };
+    #   beelink-ser7 = lib.nixosSystem {
+    #     modules = [./hosts/beelink-ser7];
+    #     specialArgs = {inherit inputs outputs;};
+    #     pkgs = pkgsFor.x86_64-linux;
+    #   };
+    #   vm = lib.nixosSystem {
+    #     modules = [./hosts/vm];
+    #     specialArgs = {inherit inputs outputs;};
+    #     pkgs = pkgsFor.x86_64-linux;
+    #   };
+    # };
+
     homeConfigurations = {
-      caubut = lib.homeManagerConfiguration {
+      "caubut@precision-7760" = lib.homeManagerConfiguration {
         pkgs = pkgsFor.x86_64-linux;
         extraSpecialArgs = {inherit inputs outputs;};
         modules = [
-          ./home/caubut/global
+          ./home/caubut/hosts/precision-7760
         ];
       };
     };

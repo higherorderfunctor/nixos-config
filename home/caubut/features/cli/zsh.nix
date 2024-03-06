@@ -22,7 +22,6 @@ in {
       path = "${dataHome}/zsh_history";
     };
     shellAliases = {
-      dotfiles = "git --git-dir=$HOME/.dotfiles/ --work-tree=$HOME";
       ls = "ls --color=auto";
       l = "ls -lah";
       ll = "ls -lh";

@@ -9,7 +9,7 @@ sh <(curl -L https://releases.nixos.org/nix/nix-2.18.1/install) --daemon
 # update
 nix flake update
 
-nix run .#homeConfigurations.caubut.activationPackage -- build . switch
+nix run .#homeConfigurations.caubut@precision-7760.activationPackage -- build . switch
 
 # list generations
 home-manager generations
@@ -26,7 +26,7 @@ nix store gc
 
 # see why a package is a dependency
 nix-store -q --tree ~/.nix-profile
-nix why-depends .#homeConfigurations.caubut.activationPackage /nix/store/...
+nix why-depends .#homeConfigurations.caubut@precision-7760.activationPackage /nix/store/...
 
 # TODO cachix
 ```
