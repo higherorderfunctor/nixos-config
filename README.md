@@ -2,6 +2,91 @@
 
 ## Nix
 
+### Prepare Secrets
+
+In this setup, secrets are managed with sops.  Users and hosts will use different
+keys to encrypt/decrypt secrets.
+
+#### Generate User Keys
+
+To generate a key for the current user on an existing host (NixOS or just Nix),
+generate a key-pair without a password.  Do not lose the private key!  It must
+be manually copied later.  You may have an existing one used for SSH that can be
+reused for sops.
+
+```sh
+# for a new key pair
+ssh-keygen -t ed25519 -f home/caubut/secrets
+
+# for an existing key pair
+cp ~/.ssh/id_ed25519.pub home/caubut/secrets
+```
+
+#### Generate Host Keys
+
+Same steps as above, just for hosts to decrypt secrets.  Again, no password.  This
+key will also be the host's SSH key.
+
+```sh
+# generate key pair
+ssh-keygen -t ed25519 -f hosts/<HOST>/secrets/ssh_host_ed25519_key
+
+# example
+ssh-keygen -t ed25519 -f hosts/beelink-ser7/secrets/ssh_host_ed25519_key
+ssh-keygen -t ed25519 -f hosts/vm/secrets/ssh_host_ed25519_key
+```
+
+#### Setup SOPS
+
+Add all public keys to `sops.yaml` under users or hosts with an age key.
+
+```sh
+# derive a public key from an SSH public key
+nix-shell -p ssh-to-age --run 'cat home/<USER>/secrets/id_ed25519.pub | ssh-to-age'
+
+# example
+nix-shell -p ssh-to-age --run 'cat home/caubut/secrets/id_ed25519.pub | ssh-to-age'
+nix-shell -p ssh-to-age --run \
+  'cat hosts/beelink-ser7/secrets/ssh_host_ed25519_key.pub | ssh-to-age'
+nix-shell -p ssh-to-age --run 'cat hosts/vm/secrets/ssh_host_ed25519_key.pub | ssh-to-age'
+```
+
+Secrets are stored in either `home/<USER>/secrets/secrets.yaml`, `hosts/<HOST>/secrets/secrets.yaml`,
+or `hosts/common/secrets/<SCOPE>.yaml`.  Fill out the matrix in `sops.yaml` for which
+users and hosts should have access to which secrets.
+
+To start making secrets, on the current host, configure age.  This enables
+decryption of any existing secrets.
+
+```sh
+# derive an age private key from an SSH private key
+mkdir -p ~/.config/sops/age
+nix-shell -p ssh-to-age --run \
+  "ssh-to-age -private-key -i ~/.ssh/id_ed25519 > \
+  ~/.config/sops/age/keys.txt"
+```
+
+Edit the secrets which can be decrypted per the `.sops.yaml` matrix.
+
+```sh
+nix-shell -p sops --run "sops home/<USER>/secrets/secrets.yaml"
+nix-shell -p sops --run "sops hosts/<HOST>/secrets/secrets.yaml"
+nix-shell -p sops --run "sops hosts/common/secrets/<SCOPE>.yaml"
+
+# example
+nix-shell -p sops --run "sops home/caubut/secrets/secrets.yaml"
+nix-shell -p sops --run "sops hosts/beelink-ser7/secrets/secrets.yaml"
+nix-shell -p sops --run "sops hosts/vm/secrets/secrets.yaml"
+nix-shell -p sops --run "sops hosts/common/secrets/wireless.yaml"
+# TODO: update command: nix run nixpkgs#sops -- hosts/common/secrets/wireless.yaml
+```
+
+User password hashes can be generated with the following.
+
+```sh
+nix-shell -p mkpasswd --run 'mkpasswd --method=SHA-512 --stdin'
+```
+
 ```sh
 # https://github.com/nix-community/home-manager/issues/4692
 sh <(curl -L https://releases.nixos.org/nix/nix-2.18.1/install) --daemon
@@ -28,8 +113,6 @@ nix store gc
 # see why a package is a dependency
 nix-store -q --tree ~/.nix-profile
 nix why-depends .#homeConfigurations.caubut@precision-7760.activationPackage /nix/store/...
-
-# TODO cachix
 ```
 
 ## Setup

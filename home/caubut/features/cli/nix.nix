@@ -10,7 +10,7 @@
       trusted-users = ["root" "@wheel" config.home.username];
       auto-optimise-store = lib.mkDefault true;
       experimental-features = ["nix-command" "flakes" "repl-flake"];
-      substituters = [
+      trusted-substituters = [
         # "https://hyprland.cachix.org"
         "https://nix-community.cachix.org"
         "https://cache.nixos.org/"

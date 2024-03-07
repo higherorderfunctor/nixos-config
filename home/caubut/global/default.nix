@@ -10,8 +10,8 @@
   username = "caubut"; # TODO: get from system
 in {
   imports = [
-    # inputs.impermanence.nixosModules.home-manager.impermanence
-    # inputs.sops-nix.homeManagerModules.sops
+    inputs.impermanence.nixosModules.home-manager.impermanence
+    inputs.sops-nix.homeManagerModules.sops
     ../features/cli
     ../features/desktop
     ../features/colors/catppuccin-mocha.nix

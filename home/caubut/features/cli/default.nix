@@ -13,6 +13,7 @@
     ./curl.nix
     ./deadnix.nix
     ./dircolors.nix
+    ./fblog.nix
     ./fd.nix
     ./fzf.nix
     ./gawk.nix
@@ -37,7 +38,9 @@
     ./ripgrep.nix
     ./rust.nix
     ./shellcheck.nix
+    ./sops.nix
     ./sqlite.nix
+    ./ssh-to-age.nix
     ./starship.nix
     ./statix.nix
     ./tmux.nix
