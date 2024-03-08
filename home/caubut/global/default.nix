@@ -1,49 +1,44 @@
 {
-  config,
   inputs,
-  lib,
-  pkgs,
-  specialArgs,
+  outputs,
   ...
 }: let
-  # inherit (specialArgs) hostname;
-  username = "caubut"; # TODO: get from system
+  username = "caubut";
 in {
-  imports = [
-    inputs.impermanence.nixosModules.home-manager.impermanence
-    ../features/cli
-    ../features/desktop
-    ../features/colors/catppuccin-mocha.nix
-  ];
+  imports =
+    [
+      inputs.impermanence.nixosModules.home-manager.impermanence
+      ../features/cli
+      ../features/colors/catppuccin-mocha.nix
+    ]
+    ++ (builtins.attrValues outputs.homeManagerModules);
 
   programs = {
     home-manager.enable = true;
     oh-my-posh.enable = true;
-    # starship.enable = true;
   };
 
   xdg = {
     enable = true;
+    mime.enable = true;
     userDirs = {
       enable = true;
       createDirectories = true;
     };
-
-    mime.enable = true;
   };
 
   systemd.user = {
     # switches services on rebuilds
     startServices = "sd-switch";
-    #   #   # permission fixes
-    #   #   tmpfiles.rules = [
-    #   #     "z /home/${username}/.ssh 0700 ${username} ${username} - -"
-    #   #     "z /persist/home/${username}/.ssh 0700 ${username} ${username} - -"
-    #   #     "z /home/${username}/.local 0700 ${username} ${username} - -"
-    #   #     "z /persist/home/${username}/.local 0700 ${username} ${username} - -"
-    #   #     "z /home/${username}/.local/share 0700 ${username} ${username} - -"
-    #   #     "z /persist/home/${username}/.local/share 0700 ${username} ${username} - -"
-    #   #   ];
+    # permission fixes
+    tmpfiles.rules = [
+      "z /home/${username}/.ssh 0700 ${username} ${username} - -"
+      "z /persist/home/${username}/.ssh 0700 ${username} ${username} - -"
+      "z /home/${username}/.local 0700 ${username} ${username} - -"
+      "z /persist/home/${username}/.local 0700 ${username} ${username} - -"
+      "z /home/${username}/.local/share 0700 ${username} ${username} - -"
+      "z /persist/home/${username}/.local/share 0700 ${username} ${username} - -"
+    ];
     #   #   services = {
     #   #     nixos-config = {
     #   #       Unit = {
@@ -122,31 +117,19 @@ in {
     inherit (import ../../../hosts/common/global/state-version.nix) stateVersion;
     inherit username;
     homeDirectory = "/home/${username}";
-    #/run/current-system/sw/bin/systemctl start --user sops-nix
-    # activation.setupEtc = config.lib.dag.entryAfter ["writeBoundary"] ''
-    #   /usr/bin/systemctl start --user sops-nix
-    # '';
-    # sessionVariables = {
-    #   # XDG_DATA_DIRS = "${config.home.profileDirectory}/share:$XDG_DATA_DIRS";
-    #   # XDG_DATA_DIRS =
-    #   #   lib.mkIf (lib.hasAttr "XDG_DATA_DIRS" config.home.sessionVariables)
-    #   #   (lib.mkBefore "${config.home.profileDirectory}/share:${builtins.getEnv "XDG_DATA_DIRS"}")
-    #   #   "${config.home.profileDirectory}/share";
-    #   #     NIXOS_HOST = hostname;
-    # };
-    #   persistence = {
-    #     "/persist/home/${username}" = {
-    #       directories = [
-    #         "Documents"
-    #         "Downloads"
-    #         "Pictures"
-    #         "Videos"
-    #       ];
-    #       files = [
-    #         ".ssh/known_hosts"
-    #       ];
-    #       allowOther = true;
-    #     };
-    #   };
+    persistence = {
+      "/persist/home/${username}" = {
+        directories = [
+          "Documents"
+          "Downloads"
+          "Pictures"
+          "Videos"
+        ];
+        files = [
+          ".ssh/known_hosts"
+        ];
+        allowOther = true;
+      };
+    };
   };
 }
