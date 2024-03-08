@@ -1,6 +1,7 @@
 {
   config,
   inputs,
+  pkgs,
   outputs,
   ...
 }: let
@@ -52,6 +53,8 @@ in {
   targets.genericLinux.enable = true;
 
   home = {
+    # TODO: temp?
+    packages = [pkgs.cinnamon.nemo];
     # pin system and home-manager state versions
     inherit (import ../../../hosts/common/global/state-version.nix) stateVersion;
     inherit username;
