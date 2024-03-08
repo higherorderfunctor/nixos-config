@@ -97,6 +97,7 @@ nix store gc
 # see why a package is a dependency
 nix-store -q --tree ~/.nix-profile
 nix why-depends .#homeConfigurations.caubut@precision-7760.activationPackage /nix/store/...
+nix why-depends .#homeConfigurations.caubut@z690-ud-ddr4.activationPackage /nix/store/...
 ```
 
 ## Setup

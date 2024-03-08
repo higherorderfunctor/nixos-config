@@ -34,14 +34,16 @@
     ./nodejs_20.nix
     ./nvim
     ./oh-my-posh.nix
+    ./poetry.nix
+    ./python_311.nix
     ./rclone.nix
     ./ripgrep.nix
     ./rust.nix
     ./shellcheck.nix
     ./sops.nix
     ./sqlite.nix
-    ./ssh.nix
     ./ssh-to-age.nix
+    ./ssh.nix
     ./starship.nix
     ./statix.nix
     ./tmux.nix
