@@ -20,6 +20,11 @@
           user = "git";
           identityFile = "/home/${config.home.username}/.ssh/professional_ed25519_key";
         };
+        "gitlab.spectrumflow.net" = {
+          hostname = "gitlab.spectrumflow.net";
+          user = "git";
+          identityFile = "/home/${config.home.username}/.ssh/professional_ed25519_key";
+        };
       };
     };
   };
