@@ -64,6 +64,8 @@
         ];
       });
   in {
+    homeManagerModules = import ./modules/home-manager;
+
     formatter = forAllSystems (pkgs: pkgs.alejandra);
 
     # nixosConfigurations = {
