@@ -1,6 +1,6 @@
 keys:
   - users:
-      - &caubut age1clvpkj8ktzrlj6dqmchae7suz2kmmjlye8c8pytje03dx3qth47snhfx4v
+      - &caubut age1cepr9aqfkt084kmt2683wl5mh376lazqeezwwtfvq33dzrhdpczqyvfqd8
 
 creation_rules:
   - path_regex: home/caubut/secrets/secrets.yaml$

@@ -40,6 +40,7 @@
     ./shellcheck.nix
     ./sops.nix
     ./sqlite.nix
+    ./ssh.nix
     ./ssh-to-age.nix
     ./starship.nix
     ./statix.nix

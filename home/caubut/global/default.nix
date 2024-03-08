@@ -17,15 +17,6 @@ in {
     ../features/colors/catppuccin-mocha.nix
   ];
 
-  nixpkgs = {
-    #   overlays = [
-    #     inputs.neovim-nightly-overlay.overlay
-    #   ];
-    config = {
-      allowUnfree = true;
-    };
-  };
-
   programs = {
     home-manager.enable = true;
     oh-my-posh.enable = true;
@@ -44,15 +35,21 @@ in {
   };
 
   # # TODO: # secrets
-  # # sops = {
-  # #   defaultSopsFile = ../secrets/secrets.yaml;
-  # #   secrets = {
-  # #     "${config.home.username}-secret-key" = {
-  # #       path = "${config.home.homeDirectory}/.ssh/id_ed25519";
-  # #       mode = "600";
-  # #     };
-  # #   };
-  # # };
+  sops = {
+    defaultSopsFile = ../secrets/secrets.yaml;
+    # age.keyFile = "/home/${username}/.config/sops/age/keys.txt";
+    age.sshKeyPaths = ["/home/${username}/.ssh/personal_ed25519_key"];
+    secrets = {
+      "${config.home.username}-personal-ed25519-key" = {
+        path = "${config.home.homeDirectory}/.ssh/personal_ed25519_key";
+        mode = "600";
+      };
+      "${config.home.username}-professional-ed25519-key" = {
+        path = "${config.home.homeDirectory}/.ssh/professional_ed25519_key";
+        mode = "600";
+      };
+    };
+  };
 
   systemd.user = {
     # switches services on rebuilds
@@ -144,6 +141,10 @@ in {
     inherit (import ../../../hosts/common/global/state-version.nix) stateVersion;
     inherit username;
     homeDirectory = "/home/${username}";
+    #/run/current-system/sw/bin/systemctl start --user sops-nix
+    # activation.setupEtc = config.lib.dag.entryAfter ["writeBoundary"] ''
+    #   /usr/bin/systemctl start --user sops-nix
+    # '';
     # sessionVariables = {
     #   # XDG_DATA_DIRS = "${config.home.profileDirectory}/share:$XDG_DATA_DIRS";
     #   # XDG_DATA_DIRS =
@@ -166,9 +167,11 @@ in {
     #       allowOther = true;
     #     };
     #   };
-    #   file = {
-    #     ".ssh/id_ed25519".source = config.lib.file.mkOutOfStoreSymlink "/run/secrets/${username}-secret-key";
-    #     ".ssh/id_ed25519.pub".source = ../secrets/id_ed25519.pub;
-    #   };
+    file = {
+      # ".ssh/personal_ed25519_key".source = config.lib.file.mkOutOfStoreSymlink "/run/secrets/${username}-personal-ed25519-key";
+      # ".ssh/professional_ed25519_key".source = config.lib.file.mkOutOfStoreSymlink "/run/secrets/${username}-professional-ed25519-key";
+      ".ssh/personal_ed25519_key.pub".source = ../secrets/personal_ed25519_key.pub;
+      ".ssh/professional_ed25519_key.pub".source = ../secrets/professional_ed25519_key.pub;
+    };
   };
 }
