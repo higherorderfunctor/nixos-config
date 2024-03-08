@@ -1,6 +1,5 @@
 {
   config,
-  inputs,
   lib,
   pkgs,
   ...
@@ -66,11 +65,6 @@ in {
             else
               # fetch if yes
               ${git-cmd} fetch
-            fi
-            # check if dirty
-            if ${git-cmd} diff-index --quiet HEAD --; then
-              # update to this build if no
-              ${git-cmd} checkout "${inputs.self.sourceInfo.rev}"
             fi
           '';
         }}/bin/nixos-config";
