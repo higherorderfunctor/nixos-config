@@ -11,7 +11,6 @@
 in {
   imports = [
     inputs.impermanence.nixosModules.home-manager.impermanence
-    inputs.sops-nix.homeManagerModules.sops
     ../features/cli
     ../features/desktop
     ../features/colors/catppuccin-mocha.nix
@@ -21,7 +20,6 @@ in {
     home-manager.enable = true;
     oh-my-posh.enable = true;
     # starship.enable = true;
-    # ssh.enable = true;
   };
 
   xdg = {
@@ -32,23 +30,6 @@ in {
     };
 
     mime.enable = true;
-  };
-
-  # # TODO: # secrets
-  sops = {
-    defaultSopsFile = ../secrets/secrets.yaml;
-    # age.keyFile = "/home/${username}/.config/sops/age/keys.txt";
-    age.sshKeyPaths = ["/home/${username}/.ssh/personal_ed25519_key"];
-    secrets = {
-      "${config.home.username}-personal-ed25519-key" = {
-        path = "${config.home.homeDirectory}/.ssh/personal_ed25519_key";
-        mode = "600";
-      };
-      "${config.home.username}-professional-ed25519-key" = {
-        path = "${config.home.homeDirectory}/.ssh/professional_ed25519_key";
-        mode = "600";
-      };
-    };
   };
 
   systemd.user = {
@@ -167,11 +148,5 @@ in {
     #       allowOther = true;
     #     };
     #   };
-    file = {
-      # ".ssh/personal_ed25519_key".source = config.lib.file.mkOutOfStoreSymlink "/run/secrets/${username}-personal-ed25519-key";
-      # ".ssh/professional_ed25519_key".source = config.lib.file.mkOutOfStoreSymlink "/run/secrets/${username}-professional-ed25519-key";
-      ".ssh/personal_ed25519_key.pub".source = ../secrets/personal_ed25519_key.pub;
-      ".ssh/professional_ed25519_key.pub".source = ../secrets/professional_ed25519_key.pub;
-    };
   };
 }
