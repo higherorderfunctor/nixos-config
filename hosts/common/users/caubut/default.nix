@@ -29,9 +29,12 @@ in {
   };
 
   environment.etc = {
-    # https://github.com/NixOS/nixpkgs/issues/31611
-    "ssh/authorized_keys.d/${username}/personal_ed25519_key.pub" = {
-      source = ../../../../home/${username}/secrets/personal_ed25519_key.pub;
+    "ssh/authorized_keys.d/${username}" = {
+      text = pkgs.lib.mkDefault (
+        pkgs.lib.mkAfter (
+          builtins.readFile ../../../../home/${username}/secrets/personal_ed25519_key.pub
+        )
+      );
       mode = "0444";
     };
   };

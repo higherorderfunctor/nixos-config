@@ -225,8 +225,8 @@ sudo nixos-rebuild --refresh --flake \
 ### Updating from a Live CD
 
 ```sh
-BRANCH=fix/user-permissions
-NIXOS_HOST=vm
+BRANCH=dotfiles
+NIXOS_HOST=beelink-ser7
 
 # mount disk(s)
 nix run github:nix-community/disko -- --mode mount --flake  \
