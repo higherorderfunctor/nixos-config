@@ -41,10 +41,10 @@ in {
 
   # TODO: ssh agent error in journal
 
-  # needs to be defined at the system config to use the system key to decrypt
+  # defines at system level to since there is
+  # no key for home manager to unlock secrets
   sops.secrets = {
     "${username}-personal-ed25519-key" = {
-      path = "${config.home-manager.users.${username}.home.homeDirectory}/.ssh/personal-ed25519-key";
       owner = "${username}";
       mode = "400";
       sopsFile = ../../../../home/${username}/secrets/secrets.yaml;
