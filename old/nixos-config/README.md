@@ -204,7 +204,23 @@ reboot
 
 ## Updating
 
-### Updating on the Host
+### Updating on the Host (from local)
+
+```sh
+NIXOS_HOST=beelink-ser7
+
+# update and check the flake if hardware modifications made
+nix flake check --refresh "github:higherorderfunctor/nixos-config?ref=$BRANCH"
+
+# rebuild nixos
+sudo nixos-rebuild --flake ".#$NIXOS_HOST" switch
+
+# rebuild nixos with full stack trace
+sudo nixos-rebuild --flake ".#$NIXOS_HOST" switch \
+  --show-trace --option eval-cache false
+```
+
+### Updating on the Host (from remote)
 
 ```sh
 BRANCH=dotfiles

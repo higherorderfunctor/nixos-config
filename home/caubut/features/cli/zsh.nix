@@ -84,7 +84,10 @@ in {
 
   # persistence
   home.persistence = {
-    "/persist${config.xdg.dataHome}".directories = ["zsh"];
+    "/persist${config.xdg.dataHome}" = {
+      directories = ["zsh"];
+      allowOther = false;
+    };
   };
 }
 # TODO: use xdg everywhere

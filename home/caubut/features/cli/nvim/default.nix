@@ -26,7 +26,13 @@ in {
 
   # persistence
   home.persistence = {
-    "/persist${config.xdg.dataHome}".directories = ["nvim"];
-    "/persist${config.xdg.stateHome}".directories = ["nvim"];
+    "/persist${config.xdg.dataHome}" = {
+      directories = ["nvim"];
+      allowOther = false;
+    };
+    "/persist${config.xdg.stateHome}" = {
+      directories = ["nvim"];
+      allowOther = false;
+    };
   };
 }
