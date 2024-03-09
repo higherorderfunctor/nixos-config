@@ -25,7 +25,7 @@ in {
       ++ ifGroupExist [
         "network"
       ];
-    openssh.authorizedKeys.keys = [(builtins.readFile ../../../../home/${username}/secrets/id_ed25519.pub)];
+    openssh.authorizedKeys.keys = [(builtins.readFile ../../../../home/${username}/secrets/personal_ed25519_key.pub)];
     hashedPasswordFile = config.sops.secrets."${username}-password".path;
     packages = [pkgs.home-manager];
   };
@@ -34,8 +34,7 @@ in {
 
   # needs to be defined at the system config to use the system key to decrypt
   sops.secrets = {
-    "${username}-secret-key" = {
-      # path = "${config.home-manager.users.${username}.home.homeDirectory}/.ssh/id_ed25519";
+    "${username}-personal-ed25519-key" = {
       owner = "${username}";
       mode = "400";
       sopsFile = ../../../../home/${username}/secrets/secrets.yaml;
@@ -47,5 +46,5 @@ in {
   };
 
   # host specific home-manager configuration for user
-  home-manager.users.caubut = import ../../../../home/${username}/${config.networking.hostName}.nix;
+  home-manager.users.caubut = import ../../../../home/${username}/hosts/${config.networking.hostName}.nix;
 }

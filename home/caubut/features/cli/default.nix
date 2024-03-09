@@ -1,8 +1,5 @@
 {
   imports = [
-    # ./lshw.nix
-    # ./pciutils.nix
-    # ./usbutils.nix
     ./alejandra.nix
     ./aspell.nix
     ./bash.nix
@@ -29,7 +26,6 @@
     ./luarocks.nix
     ./nil.nix
     ./nix-index.nix
-    ./nix.nix
     ./nixd.nix
     ./nodejs_20.nix
     ./nvim

@@ -10,19 +10,11 @@
     ./impermanence.nix
     ./mutable-users.nix
     ./nix.nix
-    ./neovim.nix
+    ./nvim.nix
     ./sops.nix
     ./zsh.nix
-    # add users
     ../users/caubut
   ];
-
-  # nixpkgs
-  # nixpkgs = {
-  #   config = {
-  #     allowUnfree = true;
-  #   };
-  # };
 
   # home manager
   home-manager = {
@@ -34,7 +26,7 @@
     };
   };
 
-  # system state version
+  # pin state version
   system = import ./state-version.nix;
 
   # disable root
@@ -66,11 +58,11 @@
     useDHCP = true;
   };
 
-  # TODO:
-  services.fwupd.enable = true;
   # https://nixos.wiki/wiki/Fwupd
+  services.fwupd.enable = true;
   hardware.enableAllFirmware = lib.mkDefault true;
 
+  # security
   security.sudo = {
     execWheelOnly = true;
     extraConfig = ''

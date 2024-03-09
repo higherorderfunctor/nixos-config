@@ -52,7 +52,7 @@ in {
   home = {
     # TODO: temp?
     packages = [pkgs.cinnamon.nemo];
-    # pin system and home-manager state versions
+    # pin state version
     inherit (import ../../../hosts/common/global/state-version.nix) stateVersion;
     inherit username;
     homeDirectory = "/home/${username}";

@@ -20,11 +20,11 @@
     secrets = {
       "${config.home.username}-personal-ed25519-key" = {
         path = "${config.home.homeDirectory}/.ssh/personal_ed25519_key";
-        mode = "600";
+        mode = "400";
       };
       "${config.home.username}-professional-ed25519-key" = {
         path = "${config.home.homeDirectory}/.ssh/professional_ed25519_key";
-        mode = "600";
+        mode = "400";
       };
     };
   };

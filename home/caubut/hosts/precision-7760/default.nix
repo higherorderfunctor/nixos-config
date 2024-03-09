@@ -1,6 +1,7 @@
 {lib, ...}: {
   imports = [
     ../../global
+    ../../features/cli/nix.nix
     ../../features/desktop
   ];
   # disable impermanence

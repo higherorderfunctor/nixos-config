@@ -6,7 +6,7 @@
 
   # allowed SSH users
   users.users.root.openssh.authorizedKeys.keys = [
-    (builtins.readFile ../../../home/caubut/secrets/id_ed25519.pub)
+    (builtins.readFile ../../../home/caubut/secrets/personal_ed25519_key.pub)
   ];
 
   # image generation

@@ -12,11 +12,11 @@
     # declarative configuration
     environmentFile = config.sops.secrets.wireless.path;
     networks = {
-      "WiFi 6e TEST Please Ignore" = {
-        psk = "@HOME_PASS@";
+      "HOME_SSID_1" = {
+        psk = "@HOME_PASS_1@";
       };
-      "Another TEST Please Ignore" = {
-        psk = "@HOME_PASS@";
+      "@HOME_SSID_2@" = {
+        psk = "@HOME_PASS_2@";
       };
     };
 
