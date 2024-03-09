@@ -99,7 +99,7 @@ nix build .#nixosConfigurations.live-cd-minimal-x86_64-linux.config.system.build
 # graphical
 nix build .#nixosConfigurations.live-cd-graphical-x86_64-linux.config.system.build.isoImage
 
-sudo dd status=progress if=result/iso/nixos-24.05.20240306.9df3e30-x86_64-linux.iso of=/dev/sda bs=64k
+sudo dd status=progress if=result/iso/nixos-24.05.20240306.9df3e30-x86_64-linux.iso of=/dev/sda status=progress bs=128k
 ```
 
 ## Install
