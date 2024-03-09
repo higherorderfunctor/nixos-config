@@ -84,10 +84,9 @@ in {
 
   # persistence
   home.persistence = {
-    "/persist${config.xdg.dataHome}" = {
-      directories = ["zsh"];
-      allowOther = false;
-    };
+    "/persist${config.home.homeDirectory}".directories = [
+      (lib.strings.removePrefix "${config.home.homeDirectory}/" "${config.xdg.dataHome}/zsh")
+    ];
   };
 }
 # TODO: use xdg everywhere

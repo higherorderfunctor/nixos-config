@@ -1,5 +1,6 @@
 {
   config,
+  lib,
   pkgs,
   ...
 }: let
@@ -26,13 +27,9 @@ in {
 
   # persistence
   home.persistence = {
-    "/persist${config.xdg.dataHome}" = {
-      directories = ["nvim"];
-      allowOther = false;
-    };
-    "/persist${config.xdg.stateHome}" = {
-      directories = ["nvim"];
-      allowOther = false;
-    };
+    "/persist${config.home.homeDirectory}".directories = [
+      (lib.strings.removePrefix "${config.home.homeDirectory}/" "${config.xdg.dataHome}/nvim")
+      (lib.strings.removePrefix "${config.home.homeDirectory}/" "${config.xdg.stateHome}/nvim")
+    ];
   };
 }

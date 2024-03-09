@@ -57,7 +57,7 @@ in {
     inherit username;
     homeDirectory = "/home/${username}";
     persistence = {
-      "/persist/home/${username}" = {
+      "/persist${config.home.homeDirectory}" = {
         directories = [
           "Documents"
           "Downloads"
