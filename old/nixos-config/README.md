@@ -176,7 +176,7 @@ chmod 600 ~/.ssh/beelink_ser7_ed25519_key
 REMOTE=root@localhost
 PORT=2522
 # real host
-REMOTE=root@192.168.9.130
+REMOTE=root@192.168.10.34
 PORT=22
 
 NIXOS_HOST=beelink-ser7
