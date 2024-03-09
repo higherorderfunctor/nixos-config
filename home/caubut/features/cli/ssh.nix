@@ -1,4 +1,8 @@
-{config, ...}: {
+{
+  config,
+  lib,
+  ...
+}: {
   services = {
     ssh-agent.enable = true;
   };
@@ -39,7 +43,8 @@
 
   sops = {
     secrets = {
-      "${config.home.username}-personal-ed25519-key" = {
+      # normally handled by nixos, default for home manager configs
+      "${config.home.username}-personal-ed25519-key" = lib.mkDefault {
         path = "${config.home.homeDirectory}/.ssh/personal_ed25519_key";
         mode = "400";
       };

@@ -43,11 +43,11 @@ in {
 
   # needs to be defined at the system config to use the system key to decrypt
   sops.secrets = {
-    # "${username}-personal-ed25519-key" = {
-    #   owner = "${username}";
-    #   mode = "400";
-    #   sopsFile = ../../../../home/${username}/secrets/secrets.yaml;
-    # };
+    "${username}-personal-ed25519-key" = {
+      owner = "${username}";
+      mode = "400";
+      sopsFile = ../../../../home/${username}/secrets/secrets.yaml;
+    };
     "${username}-password" = {
       neededForUsers = true;
       sopsFile = ../../../../home/${username}/secrets/secrets.yaml;
