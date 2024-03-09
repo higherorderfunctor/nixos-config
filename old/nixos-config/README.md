@@ -208,6 +208,7 @@ reboot
 
 ```sh
 BRANCH=dotfiles
+NIXOS_HOST=beelink-ser7
 
 # update and check the flake if hardware modifications made
 nix flake check --refresh "github:higherorderfunctor/nixos-config?ref=$BRANCH"
