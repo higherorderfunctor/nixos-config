@@ -80,16 +80,16 @@
     formatter = forAllSystems (pkgs: pkgs.alejandra);
 
     nixosConfigurations = {
-      #   live-cd-minimal-x86_64-linux = lib.nixosSystem {
-      #     modules = [./hosts/live-cd-minimal];
-      #     specialArgs = {inherit inputs outputs;};
-      #     pkgs = pkgsFor.x86_64-linux;
-      #   };
-      #   live-cd-graphical-x86_64-linux = lib.nixosSystem {
-      #     modules = [./hosts/live-cd-graphical];
-      #     specialArgs = {inherit inputs outputs;};
-      #     pkgs = pkgsFor.x86_64-linux;
-      #   };
+      live-cd-minimal-x86_64-linux = lib.nixosSystem {
+        modules = [./hosts/live-cd-minimal];
+        specialArgs = {inherit inputs outputs;};
+        pkgs = pkgsFor.x86_64-linux;
+      };
+      live-cd-graphical-x86_64-linux = lib.nixosSystem {
+        modules = [./hosts/live-cd-graphical];
+        specialArgs = {inherit inputs outputs;};
+        pkgs = pkgsFor.x86_64-linux;
+      };
       beelink-ser7 = lib.nixosSystem {
         modules = [./hosts/beelink-ser7];
         specialArgs = {inherit inputs outputs;};
