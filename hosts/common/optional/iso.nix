@@ -1,13 +1,10 @@
-{}: let
-  username = "caubut";
-in {
+{
   imports = [
     ../global/nix.nix
     ./openssh.nix
   ];
 
   environment.etc = {
-    # https://github.com/NixOS/nixpkgs/issues/31611
     "ssh/authorized_keys.d/root/personal_ed25519_key.pub" = {
       source = ../../../home/caubut/secrets/personal_ed25519_key.pub;
       mode = "0444";
