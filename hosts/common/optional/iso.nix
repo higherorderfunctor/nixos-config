@@ -1,4 +1,6 @@
-{
+{}: let
+  username = "caubut";
+in {
   imports = [
     ../global/nix.nix
     ./openssh.nix
