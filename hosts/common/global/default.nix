@@ -74,8 +74,8 @@
   services.openssh = {
     hostKeys = [
       {
-        # TODO: path = "/persist/etc/ssh/ssh_host_ed25519_key";
-        path = "/etc/ssh/ssh_host_ed25519_key";
+        # must be a persisted path since sops runs before impermanence
+        path = "/persist/etc/ssh/ssh_host_ed25519_key";
         type = "ed25519";
       }
     ];
