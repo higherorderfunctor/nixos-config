@@ -3,7 +3,8 @@
   pkgs,
   ...
 }: {
-  nix = {
+  # defaults for non-nixos systems
+  nix = lib.mkDefault {
     package = pkgs.nix;
     settings = {
       trusted-users = ["root" "@wheel"];

@@ -24,10 +24,6 @@ in {
       ++ ifGroupExist [
         "network"
       ];
-    openssh.authorizedKeys.keyFiles = [
-      # https://github.com/NixOS/nixpkgs/issues/31611
-      /etc/ssh/authorized_keys.d/${username}/personal_ed25519_key.pub
-    ];
     hashedPasswordFile = config.sops.secrets."${username}-password".path;
     packages = [pkgs.home-manager];
   };
