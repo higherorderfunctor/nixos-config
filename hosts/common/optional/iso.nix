@@ -1,4 +1,4 @@
-{
+{pkgs, ...}: {
   imports = [
     ../global/nix.nix
     ./openssh.nix
@@ -6,7 +6,11 @@
 
   environment.etc = {
     "ssh/authorized_keys.d/root/personal_ed25519_key.pub" = {
-      source = ../../../home/caubut/secrets/personal_ed25519_key.pub;
+      text = pkgs.lib.mkDefault (
+        pkgs.lib.mkAfter (
+          builtins.readFile ../../../home/caubut/secrets/personal_ed25519_key.pub
+        )
+      );
       mode = "0444";
     };
   };

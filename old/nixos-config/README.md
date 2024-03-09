@@ -90,7 +90,7 @@ nix-shell -p mkpasswd --run 'mkpasswd --method=SHA-512 --stdin'
 Build a bootable NixOS Live CD Installer ISO with SSH enabled and the user's public
 key preloaded.
 
-See `hosts/common/optional/openssh.nix` for adding the key.
+TODO: See `hosts/common/optional/openssh.nix` for adding the key.
 
 ```sh
 # minimal
@@ -98,6 +98,8 @@ nix build .#nixosConfigurations.live-cd-minimal-x86_64-linux.config.system.build
 
 # graphical
 nix build .#nixosConfigurations.live-cd-graphical-x86_64-linux.config.system.build.isoImage
+
+sudo dd status=progress if=result/iso/nixos-24.05.20240306.9df3e30-x86_64-linux.iso of=/dev/sda bs=64k
 ```
 
 ## Install
@@ -133,8 +135,8 @@ nix run nixpkgs#nvme-cli -- id-ns /dev/nvme0n1 -H | grep "^LBA Format"
 # update to best LBA format (destructive!)
 nix run nixpkgs#nvme-cli -- format /dev/nvme0n1 --force --lbaf <BEST>
 
-BRANCH=fix/user-permissions
-NIXOS_HOST=vm
+BRANCH=dotfiles
+NIXOS_HOST=beelink-ser7
 
 # partition disk(s)
 nix run github:nix-community/disko -- --mode disko --flake  \
@@ -164,9 +166,9 @@ nixos-generate-config --root /mnt --show-hardware-config
 # restore the host specific private key
 
 # example: copy from host secrets
-nix-shell -p sops --run "sops hosts/beelink-ser7/secrets/secrets.yaml"
-vim hosts/beelink-ser7/secrets/ssh_host_ed25519_key
-chmod 600 hosts/beelink-ser7/secrets/ssh_host_ed25519_key
+EDITOR=vi sops hosts/beelink-ser7/secrets/secrets.yaml
+vi ~/.ssh/beelink_ser7_ed25519_key
+chmod 600 ~/.ssh/beelink_ser7_ed25519_key
 
 # scp key to persistent storage for impermanence
 
@@ -180,14 +182,14 @@ PORT=22
 NIXOS_HOST=beelink-ser7
 
 ssh -p "$PORT" "$REMOTE" "mkdir -p /mnt/persist/etc/ssh/"
-scp -P "$PORT" -r hosts/$NIXOS_HOST/secrets/ssh_host_ed25519_key \
+scp -P "$PORT" -r ~/.ssh/beelink_ser7_ed25519_key \
   "$REMOTE":/mnt/persist/etc/ssh/ssh_host_ed25519_key
 
 
 ##
 # REMOTE (ssh): run the installation
 
-BRANCH=fix/user-permissions
+BRANCH=dotfiles
 NIXOS_HOST=beelink-ser7
 
 # update and check the flake if hardware modifications made
@@ -205,7 +207,7 @@ reboot
 ### Updating on the Host
 
 ```sh
-BRANCH=fix/user-permissions
+BRANCH=dotfiles
 
 # update and check the flake if hardware modifications made
 nix flake check --refresh "github:higherorderfunctor/nixos-config?ref=$BRANCH"
