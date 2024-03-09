@@ -44,7 +44,7 @@ in {
   # needs to be defined at the system config to use the system key to decrypt
   sops.secrets = {
     "${username}-personal-ed25519-key" = {
-      # path = "${config.home-manager.users.${username}.home.homeDirectory}/.ssh/personal-ed25519-key";
+      path = "${config.home-manager.users.${username}.home.homeDirectory}/.ssh/personal-ed25519-key";
       owner = "${username}";
       mode = "400";
       sopsFile = ../../../../home/${username}/secrets/secrets.yaml;
