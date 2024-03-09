@@ -78,8 +78,8 @@ in {
 
   # permission fixes
   systemd.user.tmpfiles.rules = [
-    "z ${config.home.dataHome}/zsh 0700 ${username} ${username} - -"
-    "z /persist${config.home.dataHome}/zsh 0700 ${username} ${username} - -"
+    "z ${config.xdg.dataHome}/zsh 0700 ${username} ${username} - -"
+    "z /persist${config.xdg.dataHome}/zsh 0700 ${username} ${username} - -"
   ];
 
   # persistence
