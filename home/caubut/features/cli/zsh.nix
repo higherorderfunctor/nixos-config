@@ -11,13 +11,13 @@ in {
     package = pkgs.zsh;
     enableCompletion = true;
     completionInit = lib.strings.concatStringsSep " && " [
-      "autoload -U compinit -d ${config.xdg.dataHome}/.zcompdump"
-      "compinit -d ${config.xdg.dataHome}/.zcompdump"
+      "autoload -U compinit -d ${config.xdg.dataHome}/zsh/.zcompdump"
+      "compinit -d ${config.xdg.dataHome}/zsh/.zcompdump"
     ];
     defaultKeymap = "viins";
     dotDir = lib.strings.removePrefix "${config.home.homeDirectory}" "${config.xdg.configHome}/zsh";
     history = {
-      path = "${config.xdg.dataHome}/zsh_history";
+      path = "${config.xdg.dataHome}/zsh/zsh_history";
     };
     shellAliases = {
       grep = "grep --color=auto";

@@ -19,10 +19,10 @@ in {
 
   # permission fixes
   systemd.user.tmpfiles.rules = [
-    "z ${config.xdg.dataHome}/zsh 0700 ${username} ${username} - -"
-    "z /persist${config.xdg.dataHome}/zsh 0700 ${username} ${username} - -"
-    "z ${config.xdg.stateHome}/zsh 0700 ${username} ${username} - -"
-    "z /persist${config.xdg.stateHome}/zsh 0700 ${username} ${username} - -"
+    "z ${config.xdg.dataHome}/nvim 0700 ${username} ${username} - -"
+    "z /persist${config.xdg.dataHome}/nvim 0700 ${username} ${username} - -"
+    "z ${config.xdg.stateHome}/nvim 0700 ${username} ${username} - -"
+    "z /persist${config.xdg.stateHome}/nvim 0700 ${username} ${username} - -"
   ];
 
   # persistence

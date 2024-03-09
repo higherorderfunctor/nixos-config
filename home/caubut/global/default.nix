@@ -46,12 +46,17 @@ in {
       "z /persist/home/${username}/.local 0700 ${username} ${username} - -"
       "z /home/${username}/.local/share 0700 ${username} ${username} - -"
       "z /persist/home/${username}/.local/share 0700 ${username} ${username} - -"
+      "z /home/${username}/.local/state 0700 ${username} ${username} - -"
+      "z /persist/home/${username}/.local/state 0700 ${username} ${username} - -"
     ];
   };
 
   home = {
     # TODO: temp?
     packages = [pkgs.cinnamon.nemo];
+    # sessionVariables = {
+    #   NIXOS_HOST = hostname;
+    # };
     # pin state version
     inherit (import ../../../hosts/common/global/state-version.nix) stateVersion;
     inherit username;

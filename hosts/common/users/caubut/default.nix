@@ -40,6 +40,7 @@ in {
   };
 
   # TODO: ssh agent error in journal
+  # TODO passwordless sudo not working
 
   # defines at system level since there is no
   # key for home manager to unlock secrets
