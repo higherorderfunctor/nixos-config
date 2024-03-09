@@ -32,6 +32,10 @@
       url = "github:Mic92/nix-index-database";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    nix-gl-host = {
+      url = "github:numtide/nix-gl-host";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
     rust-overlay = {
       url = "github:oxalica/rust-overlay";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -47,6 +51,7 @@
     nixpkgs,
     home-manager,
     neovim-nightly-overlay,
+    nix-gl-host,
     rust-overlay,
     ...
   } @ inputs: let
@@ -61,6 +66,9 @@
         overlays = [
           neovim-nightly-overlay.overlays.default
           rust-overlay.overlays.default
+          (self: super: {
+            nix-gl-host = super.callPackage nix-gl-host.defaultPackage.x86_64-linux {};
+          })
         ];
       });
   in {

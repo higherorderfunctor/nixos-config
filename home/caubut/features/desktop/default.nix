@@ -20,6 +20,6 @@
     ./sxiv.nix
     ./vlc.nix
     ./webex.nix
-    # ./wezterm.nix
+    ./wezterm.nix
   ];
 }
