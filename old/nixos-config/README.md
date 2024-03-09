@@ -213,10 +213,10 @@ NIXOS_HOST=beelink-ser7
 nix flake check --refresh "github:higherorderfunctor/nixos-config?ref=$BRANCH"
 
 # rebuild nixos
-sudo nixos-rebuild --flake ".#$NIXOS_HOST" switch
+sudo nixos-rebuild --flake ".#${hostname}" switch
 
 # rebuild nixos with full stack trace
-sudo nixos-rebuild --flake ".#$NIXOS_HOST" switch \
+sudo nixos-rebuild --flake ".#${hostname}" switch \
   --show-trace --option eval-cache false
 ```
 

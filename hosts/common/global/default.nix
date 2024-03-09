@@ -22,7 +22,6 @@
     useUserPackages = true;
     extraSpecialArgs = {
       inherit inputs outputs;
-      hostname = config.networking.hostName;
     };
   };
 

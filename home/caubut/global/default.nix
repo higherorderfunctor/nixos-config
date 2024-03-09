@@ -54,9 +54,6 @@ in {
   home = {
     # TODO: temp?
     packages = [pkgs.cinnamon.nemo];
-    # sessionVariables = {
-    #   NIXOS_HOST = hostname;
-    # };
     # pin state version
     inherit (import ../../../hosts/common/global/state-version.nix) stateVersion;
     inherit username;
