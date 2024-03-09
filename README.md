@@ -68,7 +68,7 @@ EDITOR=vi sops hosts/common/secrets/wireless.yaml
 User password hashes can be generated with the following.
 
 ```sh
-# TODO: nix-shell -p mkpasswd --run 'mkpasswd --method=SHA-512 --stdin'
+nix run nixpkgs#mkpasswd -- --method=SHA-512 --stdin
 ```
 
 ```sh
