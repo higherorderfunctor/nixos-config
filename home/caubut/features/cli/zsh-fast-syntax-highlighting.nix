@@ -1,4 +1,3 @@
-
 {
   config,
   lib,
@@ -43,7 +42,7 @@
       chmod u-w $(stripHash "''${src[0]}")/themes
       ls -la
     '';
-    # unpackPhase = ''
+    #TODO: unpackPhase = ''
     #   cp ''${srcs[0]}/* "$out"
     #   cp ''${srcs[1]}/* "$out/plugins/zsh-fast-syntax-highlighting/themes"
     # '';

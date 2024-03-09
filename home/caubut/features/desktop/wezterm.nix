@@ -1,5 +1,17 @@
-{pkgs, ...}: {
-  home.packages = [pkgs.wezterm];
+{pkgs, ...}: let
+  toolchain = pkgs.rust-bin.stable.latest.default;
+  rustPlatform = pkgs.makeRustPlatform {
+    rustc = toolchain;
+    cargo = toolchain;
+  };
+  wezterm =
+    pkgs.wezterm.override
+    (_: {
+      rustPlatform.buildRustPackage = args:
+        rustPlatform.buildRustPackage args;
+    });
+in {
+  home.packages = [wezterm];
 }
 # .config/wezterm/wezterm.lua
 # -- Official doco: https://wezfurlong.org/wezterm/config/files.html

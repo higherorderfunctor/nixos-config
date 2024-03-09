@@ -1,0 +1,43 @@
+{
+  "name": "@effect/platform-gjs",
+  "version": "0.0.0",
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./*": "./src/*"
+  },
+  "scripts": {
+    "build:test": "node esbuild.test.js",
+    "build:test:node": "node esbuild.test.node.js",
+    "build:run:test": "pnpm run build:test && pnpm run test",
+    "build:run:test:node": "pnpm run build:test:node && pnpm run test:node",
+    "test": "gjs -m dist/test/test.gjs.js",
+    "test:node": "node dist/test/test.node.js",
+    "lint:tsc": "tsc --skipLibCheck --noemit --project tsconfig.json"
+  },
+  "dependencies": {
+    "@effect/platform": "^0.44.7",
+    "@effect/printer-ansi": "^0.32.10",
+    "@effect/schema": "^0.62.9",
+    "@girs/gio-2.0": "2.78.0-3.2.7",
+    "@girs/gjs": "^3.2.8",
+    "@girs/glib-2.0": "2.78.0-3.2.7",
+    "@gjsify/assert": "^0.0.4",
+    "@typescript/lib-dom": "link:pnpm:@girs/gjs",
+    "effect": "^2.4.1"
+  },
+  "devDependencies": {
+    "@effect/platform-node": "^0.43.7",
+    "@effect/printer": "^0.31.10",
+    "@gjsify/unit": "^0.0.4",
+    "@gjsify/utils": "^0.0.4",
+    "abort-controller": "^3.0.0",
+    "assert": "^2.1.0",
+    "esbuild": "^0.20.1",
+    "source-map": "^0.7.4",
+    "sourcemap-lookup": "^0.0.5",
+    "ts-loader": "^9.5.1",
+    "ts-node": "^10.9.2",
+    "vlq": "^2.0.4"
+  }
+}

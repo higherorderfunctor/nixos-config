@@ -22,6 +22,7 @@ in {
       path = "${dataHome}/zsh_history";
     };
     shellAliases = {
+      grep = "grep --color=auto";
       ls = "ls --color=auto";
       l = "ls -lah";
       ll = "ls -lh";

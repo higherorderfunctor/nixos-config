@@ -1,0 +1,48 @@
+{
+  "name": "effect-gnome-shell",
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "build": "pnpm run -r --reporter=append-only --reporter-hide-prefix build",
+    "start": "gjs -m packages/egs/dist/esm/index.js",
+    "lint": "pnpm run lint:tsc; pnpm run lint:eslint;",
+    "lint:tsc": "pnpm run -r lint:tsc",
+    "lint:eslint": "ESLINT_USE_FLAT_CONFIG=true eslint_d --cache --max-warnings=0 .",
+    "lint:eslint:fix": "pnpm run lint:eslint --fix",
+    "lint:eslint:restart": "ESLINT_USE_FLAT_CONFIG=true eslint_d restart",
+    "lint:eslint:stop": "eslint_d stop"
+  },
+  "workspaces": [
+    "packages/*"
+  ],
+  "devDependencies": {
+    "@eslint/eslintrc": "^3.0.2",
+    "@eslint/js": "^8.57.0",
+    "@stylistic/eslint-plugin": "^1.6.3",
+    "@typescript-eslint/eslint-plugin": "^6.21.0",
+    "@typescript-eslint/parser": "^6.21.0",
+    "eslint": "^8.57.0",
+    "eslint-config-airbnb-base": "^15.0.0",
+    "eslint-config-airbnb-typescript": "^17.1.0",
+    "eslint-config-prettier": "^9.1.0",
+    "eslint-import-resolver-typescript": "^3.6.1",
+    "eslint-plugin-codegen": "^0.23.0",
+    "eslint-plugin-deprecation": "^2.0.0",
+    "eslint-plugin-import": "^2.29.1",
+    "eslint-plugin-prefer-arrow-functions": "^3.3.2",
+    "eslint-plugin-prettier": "^5.1.3",
+    "eslint-plugin-promise": "^6.1.1",
+    "eslint-plugin-simple-import-sort": "^12.0.0",
+    "eslint-plugin-sort-destructure-keys": "^1.5.0",
+    "eslint_d": "^13.1.2",
+    "prettier": "^3.2.5",
+    "typescript": "^5.3.3"
+  },
+  "prettier": {
+    "semi": true,
+    "trailingComma": "all",
+    "singleQuote": true,
+    "printWidth": 120,
+    "tabWidth": 2
+  }
+}

@@ -1,5 +1,5 @@
 return {
-  require("plugins.editor.flash"),
+  require("plugins.editor.auto-pairs"),
   require("plugins.editor.colorizer"),
   require("plugins.editor.flash"),
 }

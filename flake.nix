@@ -7,6 +7,10 @@
     home-manager = {
       url = "github:nix-community/home-manager";
     };
+    ags = {
+      url = "github:Aylur/ags";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
     disko = {
       url = "github:nix-community/disko";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -66,9 +70,8 @@
         overlays = [
           neovim-nightly-overlay.overlays.default
           rust-overlay.overlays.default
-          (self: super: {
-            nix-gl-host = super.callPackage nix-gl-host.defaultPackage.x86_64-linux {};
-          })
+          (_: _: {firefox-nightly = inputs.firefox-nightly.packages.${system}.firefox-nightly-bin;})
+          (_: _: {nix-gl-host = nix-gl-host.defaultPackage.${system};})
         ];
       });
   in {
@@ -76,28 +79,28 @@
 
     formatter = forAllSystems (pkgs: pkgs.alejandra);
 
-    # nixosConfigurations = {
-    #   live-cd-minimal-x86_64-linux = lib.nixosSystem {
-    #     modules = [./hosts/live-cd-minimal];
-    #     specialArgs = {inherit inputs outputs;};
-    #     pkgs = pkgsFor.x86_64-linux;
-    #   };
-    #   live-cd-graphical-x86_64-linux = lib.nixosSystem {
-    #     modules = [./hosts/live-cd-graphical];
-    #     specialArgs = {inherit inputs outputs;};
-    #     pkgs = pkgsFor.x86_64-linux;
-    #   };
-    #   beelink-ser7 = lib.nixosSystem {
-    #     modules = [./hosts/beelink-ser7];
-    #     specialArgs = {inherit inputs outputs;};
-    #     pkgs = pkgsFor.x86_64-linux;
-    #   };
-    #   vm = lib.nixosSystem {
-    #     modules = [./hosts/vm];
-    #     specialArgs = {inherit inputs outputs;};
-    #     pkgs = pkgsFor.x86_64-linux;
-    #   };
-    # };
+    nixosConfigurations = {
+      #   live-cd-minimal-x86_64-linux = lib.nixosSystem {
+      #     modules = [./hosts/live-cd-minimal];
+      #     specialArgs = {inherit inputs outputs;};
+      #     pkgs = pkgsFor.x86_64-linux;
+      #   };
+      #   live-cd-graphical-x86_64-linux = lib.nixosSystem {
+      #     modules = [./hosts/live-cd-graphical];
+      #     specialArgs = {inherit inputs outputs;};
+      #     pkgs = pkgsFor.x86_64-linux;
+      #   };
+      beelink-ser7 = lib.nixosSystem {
+        modules = [./hosts/beelink-ser7];
+        specialArgs = {inherit inputs outputs;};
+        pkgs = pkgsFor.x86_64-linux;
+      };
+      vm = lib.nixosSystem {
+        modules = [./hosts/vm];
+        specialArgs = {inherit inputs outputs;};
+        pkgs = pkgsFor.x86_64-linux;
+      };
+    };
 
     homeConfigurations = {
       "caubut@z690-ud-ddr4" = lib.homeManagerConfiguration {

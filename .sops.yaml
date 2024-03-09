@@ -1,9 +1,31 @@
 keys:
   - users:
       - &caubut age1cepr9aqfkt084kmt2683wl5mh376lazqeezwwtfvq33dzrhdpczqyvfqd8
+  - hosts:
+      - &beelink-ser7 age1ygpwhp7g7nldj043h0z3krwpx9t403e0z26cky7yz35prrvu8y6svysgcx
+      - &vm age1l30yklruazhata9v7ak796ak0zffaf48xx7xy8zvl20uz3rc4prqucdvzl
 
 creation_rules:
+  # users
   - path_regex: home/caubut/secrets/secrets.yaml$
     key_groups:
       - age:
           - *caubut
+          - *beelink-ser7
+          - *vm
+  # hosts
+  - path_regex: hosts/common/secrets/wireless.yaml$
+    key_groups:
+      - age:
+          - *caubut
+          - *beelink-ser7
+  - path_regex: hosts/beelink-ser7/secrets/secrets.yaml$
+    key_groups:
+      - age:
+          - *caubut
+          - *beelink-ser7
+  - path_regex: hosts/vm/secrets/secrets.yaml$
+    key_groups:
+      - age:
+          - *caubut
+          - *vm

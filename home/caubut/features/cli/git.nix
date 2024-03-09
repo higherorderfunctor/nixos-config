@@ -30,8 +30,8 @@ in {
   xdg.configFile."git/work.inc".text = lib.generators.toGitINI {
     user.email = "christopher.aubut@charter.com";
   };
-  #systemd.user.tmpfiles.rules = [
-  #  # TODO: fix permissions on other files
-  #  "d ${config.xdg.userDirs.documents}/work 0700 ${username} ${username} - -"
-  #];
+  systemd.user.tmpfiles.rules = [
+    # TODO: fix permissions on other files
+    "d ${config.xdg.userDirs.documents}/work 0700 ${username} ${username} - -"
+  ];
 }

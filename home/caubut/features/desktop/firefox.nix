@@ -33,7 +33,7 @@ in {
   };
   programs.firefox = {
     enable = true;
-    package = inputs.firefox-nightly.packages.${pkgs.system}.firefox-nightly-bin;
+    package = pkgs.firefox-nightly;
     profiles = {
       default = {
         id = 0;
@@ -43,7 +43,7 @@ in {
           baseSettings
           // {
             "keyword.enabled" = false; # split url and search bars
-            "browser.urlbar.update2.engineAliasRefresh" = true; # expose GUI options
+            "browser.urlbar.update2.engineAliasRefresh" = true; # FIXME: expose GUI options
           };
         extraConfig = arkenfox;
         search = {
@@ -129,4 +129,13 @@ in {
       };
     };
   };
+  # alias 'firefox-nightly' to 'firefox'
+  # home.packages = [
+  #   (pkgs.linkFarm "firefox" [
+  #     {
+  #       name = "bin/firefox";
+  #       path = "${inputs.firefox-nightly.packages.${pkgs.system}.firefox-nightly-bin}/bin/firefox-nightly";
+  #     }
+  #   ])
+  # ];
 }

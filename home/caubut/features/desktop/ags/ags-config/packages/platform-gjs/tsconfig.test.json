@@ -1,0 +1,18 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "include": [
+    "unit.config.ts",
+    "test",
+    "src/internal/unit"
+  ],
+  "references": [
+    {
+      "path": "tsconfig.src.json"
+    },
+  ],
+  "compilerOptions": {
+    "tsBuildInfoFile": ".tsbuildinfo/test.tsbuildinfo",
+    "rootDir": "test",
+    "noEmit": true
+  }
+}

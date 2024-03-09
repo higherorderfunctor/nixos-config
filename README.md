@@ -27,7 +27,7 @@ cp ~/.ssh/personal_ed25519_key.pub home/caubut/secrets/personal_ed25519_key.pub
 cp ~/.ssh/professional_ed25519_key.pub home/caubut/secrets/professional_ed25519_key.pub
 
 # hosts
-cp ~/.ssh/beelink_ser7_ed25519_key.pub hosts/beeink-ser7/secrets/ssh_host_ed25519_key.pub
+cp ~/.ssh/beelink_ser7_ed25519_key.pub hosts/beelink-ser7/secrets/ssh_host_ed25519_key.pub
 cp ~/.ssh/vm_ed25519_key.pub hosts/vm/secrets/ssh_host_ed25519_key.pub
 ```
 
@@ -39,7 +39,7 @@ can unlock the sops files.
 ```sh
 # derive a public key from an SSH public key
 cat home/caubut/secrets/personal_ed25519_key.pub | ssh-to-age
-cat hosts/beeink-ser7/secrets/ssh_host_ed25519_key.pub | ssh-to-age
+cat hosts/beelink-ser7/secrets/ssh_host_ed25519_key.pub | ssh-to-age
 cat hosts/vm/secrets/ssh_host_ed25519_key.pub | ssh-to-age
 ```
 
@@ -60,9 +60,9 @@ Edit the secrets which can be decrypted per the `.sops.yaml` matrix.
 
 ```sh
 EDITOR=vi sops home/caubut/secrets/secrets.yaml
-sops hosts/beelink-ser7/secrets/secrets.yaml
-sops hosts/vm/secrets/secrets.yaml
-sops hosts/common/secrets/wireless.yaml
+EDITOR=vi sops hosts/beelink-ser7/secrets/secrets.yaml
+EDITOR=vi sops hosts/vm/secrets/secrets.yaml
+EDITOR=vi sops hosts/common/secrets/wireless.yaml
 ```
 
 User password hashes can be generated with the following.

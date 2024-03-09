@@ -49,9 +49,6 @@ in {
     ];
   };
 
-  # TODO: non-nixos only
-  targets.genericLinux.enable = true;
-
   home = {
     # TODO: temp?
     packages = [pkgs.cinnamon.nemo];
@@ -64,7 +61,10 @@ in {
         directories = [
           "Documents"
           "Downloads"
+          "Music"
           "Pictures"
+          "Public"
+          "Templates"
           "Videos"
         ];
         files = [
