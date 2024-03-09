@@ -41,8 +41,8 @@ in {
 
   # TODO: ssh agent error in journal
 
-  # defines at system level to since there is
-  # no key for home manager to unlock secrets
+  # defines at system level since there is no
+  # key for home manager to unlock secrets
   sops.secrets = {
     "${username}-personal-ed25519-key" = {
       owner = "${username}";
