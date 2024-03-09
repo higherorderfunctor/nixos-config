@@ -9,10 +9,12 @@
     package = pkgs.neovim-nightly;
     defaultEditor = true;
   };
+
   # symlink to clone of project to allow for easy editing
   xdg.configFile.nvim.source =
     config.lib.file.mkOutOfStoreSymlink
     "${config.xdg.userDirs.documents}/projects/nixos-config/home/${config.home.username}/features/cli/nvim/nvim-config";
+
   # persistence
   home.persistence = {
     "/persist${config.home.homeDirectory}".directories = [

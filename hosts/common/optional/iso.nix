@@ -5,9 +5,16 @@
   ];
 
   # allowed SSH users
-  users.users.root.openssh.authorizedKeys.keys = [
-    (builtins.readFile ../../../home/caubut/secrets/personal_ed25519_key.pub)
+  services.openssh.authorizedKeysFiles = [
+    "ssh/authorized_keys.d/root/personal_ed25519_key.pub"
   ];
+
+  environment.etc = {
+    "ssh/authorized_keys.d/root/personal_ed25519_key.pub" = {
+      source = ../../../caubut/secrets/personal_ed25519_key.pub;
+      mode = "0444";
+    };
+  };
 
   # image generation
   isoImage.squashfsCompression = "gzip -Xcompression-level 1";

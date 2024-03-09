@@ -7,9 +7,7 @@
   getKeyPath = k: k.path;
   keys = builtins.filter isEd25519 config.services.openssh.hostKeys;
 in {
-  imports = [
-    inputs.sops-nix.nixosModules.sops
-  ];
+  imports = [inputs.sops-nix.nixosModules.sops];
 
   sops = {
     # https://github.com/Mic92/sops-nix/issues/427

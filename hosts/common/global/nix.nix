@@ -4,14 +4,14 @@
   ...
 }: {
   nix = {
+    package = pkgs.nix;
     settings = {
-      package = pkgs.nix;
       trusted-users = ["root" "@wheel"];
       auto-optimise-store = lib.mkDefault true;
       experimental-features = ["nix-command" "flakes" "repl-flake"];
       substituters = [
-        "https://nix-community.cachix.org"
         "https://cache.nixos.org/"
+        "https://nix-community.cachix.org"
         "https://hyprland.cachix.org"
       ];
       trusted-public-keys = [

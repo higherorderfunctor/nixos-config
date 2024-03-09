@@ -2,6 +2,7 @@
   services = {
     ssh-agent.enable = true;
   };
+
   programs = {
     ssh = {
       enable = true;
@@ -25,6 +26,26 @@
           user = "git";
           identityFile = "/home/${config.home.username}/.ssh/professional_ed25519_key";
         };
+      };
+    };
+  };
+
+  home = {
+    file = {
+      ".ssh/personal_ed25519_key.pub".source = ../../secrets/personal_ed25519_key.pub;
+      ".ssh/professional_ed25519_key.pub".source = ../../secrets/professional_ed25519_key.pub;
+    };
+  };
+
+  sops = {
+    secrets = {
+      "${config.home.username}-personal-ed25519-key" = {
+        path = "${config.home.homeDirectory}/.ssh/personal_ed25519_key";
+        mode = "400";
+      };
+      "${config.home.username}-professional-ed25519-key" = {
+        path = "${config.home.homeDirectory}/.ssh/professional_ed25519_key";
+        mode = "400";
       };
     };
   };

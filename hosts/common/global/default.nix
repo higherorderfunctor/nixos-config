@@ -70,6 +70,17 @@
     '';
   };
 
+  # configure for sops even if openssh is not enabled
+  services.openssh = {
+    hostKeys = [
+      {
+        # TODO: path = "/persist/etc/ssh/ssh_host_ed25519_key";
+        path = "/etc/ssh/ssh_host_ed25519_key";
+        type = "ed25519";
+      }
+    ];
+  };
+
   environment.etc = {
     "ssh/ssh_host_ed25519_key.pub".source = ../../${config.networking.hostName}/secrets/ssh_host_ed25519_key.pub;
   };
