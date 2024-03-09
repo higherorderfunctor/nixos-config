@@ -1,5 +1,25 @@
 {
   "nodes": {
+    "ags": {
+      "inputs": {
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1709931632,
+        "narHash": "sha256-jB2ESC5C1HJULZ2YQ8xpAWJy6C43zq6uaDqLMnksGHU=",
+        "owner": "Aylur",
+        "repo": "ags",
+        "rev": "b7bf2384da200ac900a60b6c602880251c6a337d",
+        "type": "github"
+      },
+      "original": {
+        "owner": "Aylur",
+        "repo": "ags",
+        "type": "github"
+      }
+    },
     "cachix": {
       "locked": {
         "lastModified": 1635350005,
@@ -252,11 +272,11 @@
         "xdph": "xdph"
       },
       "locked": {
-        "lastModified": 1709938288,
-        "narHash": "sha256-0nQNygrQ9fbbieo6o8eGmadQ19U372OTOu1WUcmZbIs=",
+        "lastModified": 1709953765,
+        "narHash": "sha256-91LK3Ur3sy1jrh8Du8f+4maRVhcFNmwd6TBv7AxLGQU=",
         "owner": "hyprwm",
         "repo": "Hyprland",
-        "rev": "024d4ddc74c9bd7945c4075c972575f20bc5b9bd",
+        "rev": "3e930a568a76a810dde6bcabcf737a81850e7153",
         "type": "github"
       },
       "original": {
@@ -550,6 +570,7 @@
     },
     "root": {
       "inputs": {
+        "ags": "ags",
         "disko": "disko",
         "firefox-nightly": "firefox-nightly",
         "hardware": "hardware",
@@ -573,11 +594,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1709863839,
-        "narHash": "sha256-QpEL5FmZNi2By3sKZY55wGniFXc4wEn9PQczlE8TG0o=",
+        "lastModified": 1709950089,
+        "narHash": "sha256-JjZINymxtnDY9EDdxnVPideZvHPR2Cm/GdKAptCWLI4=",
         "owner": "oxalica",
         "repo": "rust-overlay",
-        "rev": "e5ab9ee98f479081ad971473d2bc13c59e9fbc0a",
+        "rev": "d3a05d053b145349b8ad395741c5951f332280ef",
         "type": "github"
       },
       "original": {
