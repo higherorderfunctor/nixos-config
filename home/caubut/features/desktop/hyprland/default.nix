@@ -46,7 +46,7 @@
     package = inputs.hyprland.packages.${pkgs.system}.hyprland;
     settings = {
       exec-once = [
-        "ags -b hypr"
+        # "ags -b hypr"
         # "hyprctl setcursor Qogir 24"
       ];
 
@@ -99,7 +99,21 @@
 
       windowrule = let
         f = regex: "float, ^(${regex})$";
-      in [(f "org.gnome.Calculator") (f "org.gnome.Nautilus") (f "pavucontrol") (f "nm-connection-editor") (f "blueberry.py") (f "org.gnome.Settings") (f "org.gnome.design.Palette") (f "Color Picker") (f "xdg-desktop-portal") (f "xdg-desktop-portal-gnome") (f "transmission-gtk") (f "com.github.Aylur.ags") "workspace 7, title:Spotify"];
+      in [
+        (f "org.gnome.Calculator")
+        (f "org.gnome.Nautilus")
+        (f "pavucontrol")
+        (f "nm-connection-editor")
+        (f "blueberry.py")
+        (f "org.gnome.Settings")
+        (f "org.gnome.design.Palette")
+        (f "Color Picker")
+        (f "xdg-desktop-portal")
+        (f "xdg-desktop-portal-gnome")
+        (f "transmission-gtk")
+        (f "com.github.Aylur.ags")
+        "workspace 7, title:Spotify"
+      ];
       bind = let
         binding = mod: cmd: key: arg: "${mod}, ${key}, ${cmd}, ${arg}";
         mvfocus = binding "SUPER" "movefocus";
@@ -108,15 +122,15 @@
         mvactive = binding "SUPER ALT" "moveactive";
         mvtows = binding "SUPER SHIFT" "movetoworkspace";
         #   e = "exec, ags -b hypr";
-        ags = "exec, ags -b hypr";
+        # ags = "exec, ags -b hypr";
         #   arr = [1 2 3 4 5 6 7 8 9];
         #   yt = pkgs.writeShellScriptBin "yt" ''
         #     notify-send "Opening video" "$(wl-paste)"
         #     mpv "$(wl-paste)"
         #   '';
       in [
-        "SUPER, R,           ${ags} quit; ags -b hypr" # reload ags
-        "SUPER, SPACE,       ${ags} -t applauncher" # app launcher
+        # "SUPER, R,           ${ags} quit; ags -b hypr" # reload ags
+        # "SUPER, SPACE,       ${ags} -t applauncher" # app launcher
         # ", XF86PowerOff, ${e} -t powermenu"
         # "SUPER, Tab,     ${e} -t overview"
         # ", XF86Launch4,  ${e} -r 'recorder.start()'"
