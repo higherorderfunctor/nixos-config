@@ -5,7 +5,7 @@
   ];
 
   environment.etc = {
-    "ssh/authorized_keys.d/root/personal_ed25519_key.pub" = {
+    "ssh/authorized_keys.d/root" = {
       text = pkgs.lib.mkDefault (
         pkgs.lib.mkAfter (
           builtins.readFile ../../../home/caubut/secrets/personal_ed25519_key.pub
