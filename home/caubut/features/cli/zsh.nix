@@ -15,7 +15,7 @@ in {
       "compinit -d ${config.xdg.dataHome}/zsh/.zcompdump"
     ];
     defaultKeymap = "viins";
-    dotDir = lib.strings.removePrefix "${config.home.homeDirectory}" "${config.xdg.configHome}/zsh";
+    dotDir = lib.strings.removePrefix "${config.home.homeDirectory}/" "${config.xdg.configHome}/zsh";
     history = {
       path = "${config.xdg.dataHome}/zsh/zsh_history";
     };
