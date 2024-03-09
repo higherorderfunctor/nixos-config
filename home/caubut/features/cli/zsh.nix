@@ -3,23 +3,21 @@
   lib,
   pkgs,
   ...
-}:
-with lib; let
+}: let
   inherit (config.home) username;
-  dataHome = "${config.xdg.dataHome}/zsh";
 in {
   programs.zsh = {
     enable = true;
     package = pkgs.zsh;
     enableCompletion = true;
-    completionInit = strings.concatStringsSep " && " [
-      "autoload -U compinit -d ${dataHome}/.zcompdump"
-      "compinit -d ${dataHome}/.zcompdump"
+    completionInit = lib.strings.concatStringsSep " && " [
+      "autoload -U compinit -d ${config.xdg.dataHome}/.zcompdump"
+      "compinit -d ${config.xdg.dataHome}/.zcompdump"
     ];
     defaultKeymap = "viins";
     dotDir = lib.strings.removePrefix "${config.home.homeDirectory}" "${config.xdg.configHome}/zsh";
     history = {
-      path = "${dataHome}/zsh_history";
+      path = "${config.xdg.dataHome}/zsh_history";
     };
     shellAliases = {
       grep = "grep --color=auto";
@@ -77,20 +75,19 @@ in {
       zstyle ':completion:*:default' list-colors ''${(s.:.)LS_COLORS}
     '';
   };
-  # TODO use xdg everywhere
+
   # permission fixes
   systemd.user.tmpfiles.rules = [
-    "z /home/${username}/.local/share/zsh 0700 ${username} ${username} - -"
-    # "z /persist/home/${username}/.local/share/zsh 0700 ${username} ${username} - -"
+    "z ${config.home.dataHome}/zsh 0700 ${username} ${username} - -"
+    "z /persist${config.home.dataHome}/zsh 0700 ${username} ${username} - -"
   ];
-  # caching
-  # home.persistence = {
-  #   # add zsh specific
-  #   "/persist${config.home.homeDirectory}".directories = [
-  #     (strings.removePrefix "${config.home.homeDirectory}/" dataHome) # TODO: clean up
-  #   ];
-  # };
+
+  # persistence
+  home.persistence = {
+    "/persist${config.xdg.dataHome}".directories = ["zsh"];
+  };
 }
+# TODO: use xdg everywhere
 # TODO: oh-my-zsh = {
 #   enable = true;
 #   plugins = ["git"];
