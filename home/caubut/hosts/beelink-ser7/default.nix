@@ -9,6 +9,5 @@
     ../../features/desktop/hyprland
     ../../features/desktop/ags
     ../../features/desktop/wezterm
-    ../../features/desktop/ajs
   ];
 }
