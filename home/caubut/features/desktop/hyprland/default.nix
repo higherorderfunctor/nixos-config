@@ -53,7 +53,7 @@
     settings = {
       "$mod" = "SUPER";
       bind = [
-        "$mod, T, exec, WEZTERM_LOG=debug wezterm"
+        "$mod, T, exec, WAYLAND_DEBUG=1 WEZTERM_LOG=debug wezterm"
         "$mod, F, exec, firefox-nightly"
         "$mod, D, exec, discord"
       ];
