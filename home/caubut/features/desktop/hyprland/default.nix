@@ -51,17 +51,26 @@
     enable = true;
     package = inputs.hyprland.packages.${pkgs.system}.hyprland;
     settings = {
-      "$mod" = "SUPER";
-      bind = [
-        "$mod, T, exec, WAYLAND_DEBUG=1 WEZTERM_LOG=debug wezterm"
-        "$mod, F, exec, firefox-nightly"
-        "$mod, D, exec, discord"
-        "CTRL ALT, Delete, exit"
+      # startup applications
+      exec-once = [
+        "ags -b hypr"
+        # "hyprctl setcursor Qogir 24"
       ];
-      # exec-once = [
-      #   # "ags -b hypr"
-      #   # "hyprctl setcursor Qogir 24"
-      # ];
+
+      # keybinds
+      "$mod" = "SUPER";
+      bind = let
+        ags = "exec, ags -b hypr";
+      in [
+        "$mod, T,     exec,   WAYLAND_DEBUG=1 WEZTERM_LOG=debug wezterm"
+        "$mod, F,     exec,   firefox-nightly"
+        "$mod, D,     exec,   discord"
+        "CTRL ALT, Delete,    exit"
+
+        # ags
+        "$mod, R,             ${ags} quit; ags -b hypr" # reload ags
+        # "$mod, SPACE,         ${ags} -t applauncher" # app launcher
+      ];
 
       monitor = [
         # "eDP-1, 1920x1080, 0x0, 1"
@@ -157,8 +166,6 @@
       #     #     mpv "$(wl-paste)"
       #     #   '';
       #   in [
-      #     # "SUPER, R,           ${ags} quit; ags -b hypr" # reload ags
-      #      # "SUPER, SPACE,       ${ags} -t applauncher" # app launcher
       #     # ", XF86PowerOff, ${e} -t powermenu"
       #     # "SUPER, Tab,     ${e} -t overview"
       #     # ", XF86Launch4,  ${e} -r 'recorder.start()'"
