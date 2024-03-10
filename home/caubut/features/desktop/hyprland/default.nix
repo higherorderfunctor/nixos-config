@@ -56,6 +56,7 @@
         "$mod, T, exec, WAYLAND_DEBUG=1 WEZTERM_LOG=debug wezterm"
         "$mod, F, exec, firefox-nightly"
         "$mod, D, exec, discord"
+        "CTRL ALT, Delete, exit"
       ];
       # exec-once = [
       #   # "ags -b hypr"
