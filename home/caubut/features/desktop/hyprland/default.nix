@@ -70,14 +70,35 @@
 
       general = {
         layout = "dwindle";
-        resize_on_border = true;
-        "col.active_border" = "0x00000000";
+        resize_on_border = true; # resize windows by dragging their borders
+        "col.active_border" = "0x00000000"; # active window border color
+      };
+
+      dwindle = {
+        pseudotile = "yes"; # retain floating window size when tiled
+        preserve_split = "yes"; # preserve split ratio when resizing
       };
 
       misc = {
         layers_hog_keyboard_focus = false; # TODO:
         disable_splash_rendering = true; # disable startup splash screen
         force_default_wallpaper = 0; # use the default non-anime wallpaper
+      };
+
+      plugin = {
+        hyprbars = {
+          bar_color = "rgb(2a2a2a)";
+          bar_height = 28;
+          col_text = "rgba(ffffffdd)";
+          bar_text_size = 11;
+          bar_text_font = "Ubuntu Nerd Font";
+
+          buttons = {
+            button_size = 0;
+            "col.maximize" = "rgba(ffffff11)";
+            "col.close" = "rgba(ff111133)";
+          };
+        };
       };
 
       # # input = {
@@ -95,12 +116,6 @@
 
       #  binds = {
       #   allow_workspace_cycles = true;
-      # };
-
-      # dwindle = {
-      #   pseudotile = "yes";
-      #   preserve_split = "yes";
-      #   # no_gaps_when_only = "yes";
       # };
 
       # gestures = {
@@ -239,22 +254,6 @@
       #       "fade, 1, 7, default"
       #       "workspaces, 1, 6, default"
       #     ];
-      #   };
-
-      #   plugin = {
-      #     hyprbars = {
-      #       bar_color = "rgb(2a2a2a)";
-      #       bar_height = 28;
-      #       col_text = "rgba(ffffffdd)";
-      #       bar_text_size = 11;
-      #       bar_text_font = "Ubuntu Nerd Font";
-
-      #       buttons = {
-      #         button_size = 0;
-      #         "col.maximize" = "rgba(ffffff11)";
-      #         "col.close" = "rgba(ff111133)";
-      #       };
-      #     };
       #   };
     };
     # systemd = {
