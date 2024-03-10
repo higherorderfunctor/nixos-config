@@ -21,7 +21,7 @@ const IconPicker = () => {
             })
 
             Gtk.IconTheme.get_default().list_icons(null).sort().map(icon => {
-                !icon.endsWith(".symbolic") && self.insert(Widget.Icon({
+                self.insert(Widget.Icon({
                     icon,
                     size: 38,
                 }), -1)
@@ -33,7 +33,7 @@ const IconPicker = () => {
 
     const entry = Widget.Entry({
         placeholder_text: "Type to seach...",
-        primary_icon_name: "flameshot",
+        primary_icon_name: "system-search-symbolic",
         on_change: ({ text }) => flowbox.get_children().forEach(child => {
             child.visible = child.get_child().iconName.includes(text)
         }),

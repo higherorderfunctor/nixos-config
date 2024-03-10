@@ -7,7 +7,7 @@
 }:
 stdenvNoCC.mkDerivation {
   pname = "vivid-icon-themes";
-  version = "2024-03-09";
+  version = "2024-03-09-2";
 
   src = fetchFromGitHub {
     owner = "L4ki";
@@ -23,13 +23,15 @@ stdenvNoCC.mkDerivation {
   # avoid the makefile which is only for the theme maintainers
   dontBuild = true;
 
+  dontDropIconThemeCache = true;
+
   installPhase = ''
     runHook preInstall
 
     mkdir -p $out/share/icons
     ls -la
-    mv 'Vivid Icons Themes/Vivid-Dark-Icons/' $out/share/icons/vivid-dark-icons
-    mv 'Vivid Icons Themes/Vivid-Glassy-Dark-Icons/' $out/share/icons/vivid-glassy-dark-icons
+    mv 'Vivid Icons Themes/Vivid-Dark-Icons/' $out/share/icons/Vivid-Dark-Icons
+    mv 'Vivid Icons Themes/Vivid-Glassy-Dark-Icons/' $out/share/icons/Vivid-Glassy-Dark-Icons
 
     for theme in $out/share/icons/*; do
       gtk-update-icon-cache --force $theme

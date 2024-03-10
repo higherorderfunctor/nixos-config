@@ -13,7 +13,10 @@
 
   xdg.portal = {
     enable = true;
-    extraPortals = [inputs.hyprland.packages.${pkgs.system}.xdg-desktop-portal-hyprland];
+    extraPortals = [
+      inputs.hyprland.packages.${pkgs.system}.xdg-desktop-portal-hyprland
+      pkgs.xdg-desktop-portal-gtk
+    ];
     configPackages = [inputs.hyprland.packages.${pkgs.system}.hyprland];
   };
 
@@ -35,7 +38,7 @@
       name = "Ubuntu Nerd Font Regular";
     };
     iconTheme = {
-      name = "vivid-icon-themes";
+      name = "Vivid-Glassy-Dark-Icons";
       package = pkgs.vivid-icons-themes;
     };
     theme = {
@@ -49,6 +52,14 @@
     };
   };
 
+  # services.xsettingsd = {
+  #   enable = true;
+  #   settings = {
+  #     "Net/ThemeName" = "Catppuccin-Macchiato-Compact-Sky-Dark";
+  #     "Net/IconThemeName" = "Vivid-Glassy-Dark-Icons";
+  #   };
+  # };
+
   qt = {
     enable = true;
     platformTheme = "gtk3";
@@ -59,7 +70,18 @@
     enable = true;
     # TODO overlay
     package = inputs.hyprland.packages.${pkgs.system}.hyprland;
+
+    systemd = {
+      enable = true;
+      # Same as default, but stop graphical-session too
+      extraCommands = lib.mkBefore [
+        "systemctl --user stop graphical-session.target"
+        "systemctl --user start hyprland-session.target"
+      ];
+    };
+
     plugins = [pkgs.hyprbars];
+
     settings = {
       # startup applications
       exec-once = [
