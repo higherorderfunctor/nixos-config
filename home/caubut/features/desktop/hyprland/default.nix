@@ -69,7 +69,7 @@
 
         # ags
         "$mod, R,             ${ags} quit; ags -b hypr" # reload ags
-        # "$mod, SPACE,         ${ags} -t applauncher" # app launcher
+        "$mod, SPACE,         ${ags} -t applauncher" # app launcher
       ];
 
       monitor = [
