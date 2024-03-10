@@ -100,6 +100,10 @@
         "$mod, D,     exec,   discord"
         "CTRL ALT, Delete,    exit"
 
+        # movement keybinds
+        "$mod, right, workspace, +1"
+        "$mod, left, workspace, -1"
+
         # ags # TODO: merge if
         "$mod, R,             ${ags} quit; ags -b hypr" # reload ags
         "$mod, SPACE,         ${ags} -t applauncher" # app launcher
@@ -216,7 +220,7 @@
       #     ws = binding "SUPER" "workspace";
       #     resizeactive = binding "SUPER CTRL" "resizeactive";
       #     mvactive = binding "SUPER ALT" "moveactive";
-      #     mvtows = binding "SUPER SHIFT" "movetoworkspace";
+      #     mvtows = binding "SUPER SHIFT" "movetoworkspace";hype
       #     #   e = "exec, ags -b hypr";
       #     # ags = "exec, ags -b hypr";
       #     #   arr = [1 2 3 4 5 6 7 8 9];

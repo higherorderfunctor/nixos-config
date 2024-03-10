@@ -4,10 +4,11 @@
   fetchFromGitHub,
   gtk3,
   gitUpdater,
+  epapirus-icon-theme,
 }:
 stdenvNoCC.mkDerivation {
   pname = "vivid-icon-themes";
-  version = "2024-03-09-2";
+  version = "2024-03-09-4";
 
   src = fetchFromGitHub {
     owner = "L4ki";
@@ -22,6 +23,12 @@ stdenvNoCC.mkDerivation {
 
   # avoid the makefile which is only for the theme maintainers
   dontBuild = true;
+  propagatedBuildInputs = [
+    (epapirus-icon-theme.override
+      {
+        withElementary = true;
+      })
+  ];
 
   dontDropIconThemeCache = true;
 

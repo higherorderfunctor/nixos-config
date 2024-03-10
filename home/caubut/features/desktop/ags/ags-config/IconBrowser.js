@@ -59,15 +59,15 @@ const IconPicker = () => {
     })
 }
 
-const win = new Gtk.Window({
-    name: "icon-browser",
+export const iconbrowser = new Gtk.Window({
+    name: "iconbrowser",
     child: IconPicker(),
 })
 
-win.show_all()
-win.connect("delete-event", () => {
-    App.quit()
-    return true
-})
+ iconbrowser.show_all()
+ iconbrowser.connect("delete-event", () => {
+     App.quit()
+     return true
+ })
 
-export default { windows: [win] }
+ export default { widows: [iconbrowser] }

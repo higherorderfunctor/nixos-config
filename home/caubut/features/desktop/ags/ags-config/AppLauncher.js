@@ -1,3 +1,5 @@
+#!/usr/bin/env -S ags -b icon-browser -c
+
 const { query } = await Service.import("applications")
 const WINDOW_NAME = "applauncher"
 
@@ -90,7 +92,7 @@ const Launcher = ({ width = 500, height = 500, spacing = 12 }) => {
 }
 
 // there needs to be only one instance
-export const AppLauncher = Widget.Window({
+export const applauncher = Widget.Window({
     name: WINDOW_NAME,
     setup: self => self.keybind("Escape", () => {
         App.closeWindow(WINDOW_NAME)
