@@ -42,6 +42,7 @@
     ./ssh.nix
     ./starship.nix
     ./statix.nix
+    ./stylua.nix
     ./tmux.nix
     ./unzip.nix
     ./wget.nix

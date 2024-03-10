@@ -25,7 +25,7 @@ const AppItem = app => Widget.Button({
     }),
 })
 
-const Applauncher = ({ width = 500, height = 500, spacing = 12 }) => {
+const Launcher = ({ width = 500, height = 500, spacing = 12 }) => {
     // list of application buttons
     let applications = query("").map(AppItem)
 
@@ -90,14 +90,14 @@ const Applauncher = ({ width = 500, height = 500, spacing = 12 }) => {
 }
 
 // there needs to be only one instance
-export const applauncher = Widget.Window({
+export const AppLauncher = Widget.Window({
     name: WINDOW_NAME,
     setup: self => self.keybind("Escape", () => {
         App.closeWindow(WINDOW_NAME)
     }),
     visible: false,
     keymode: "exclusive",
-    child: Applauncher({
+    child: Launcher({
         width: 500,
         height: 500,
         spacing: 12,

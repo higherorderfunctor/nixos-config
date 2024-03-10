@@ -8,6 +8,9 @@
     inputs.hyprland.homeManagerModules.default
   ];
 
+  # TODO: temp
+  programs.kitty.enable = true;
+
   xdg.portal = {
     enable = true;
     extraPortals = [inputs.hyprland.packages.${pkgs.system}.xdg-desktop-portal-hyprland];
@@ -47,6 +50,7 @@
     platformTheme = "gtk3";
   }; # TODO
 
+  # TODO: DISPLAY=:0 ags -b hypr
   wayland.windowManager.hyprland = {
     enable = true;
     package = inputs.hyprland.packages.${pkgs.system}.hyprland;
@@ -63,13 +67,15 @@
         ags = "exec, ags -b hypr";
       in [
         "$mod, T,     exec,   WAYLAND_DEBUG=1 WEZTERM_LOG=debug wezterm"
+        "$mod, Y,     exec,   kitty"
         "$mod, F,     exec,   firefox-nightly"
         "$mod, D,     exec,   discord"
         "CTRL ALT, Delete,    exit"
 
-        # ags
+        # ags # TODO: merge if
         "$mod, R,             ${ags} quit; ags -b hypr" # reload ags
         "$mod, SPACE,         ${ags} -t applauncher" # app launcher
+        "$mod, P,         ${ags} -t iconbrowser" # app launcher
       ];
 
       monitor = [

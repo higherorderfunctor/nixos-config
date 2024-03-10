@@ -10,7 +10,14 @@ in {
     enable = true;
     package = pkgs.neovim-nightly;
     defaultEditor = true;
+    extraPackages = with pkgs; [
+      fswatch
+      lua-language-server
+      tree-sitter
+    ];
   };
+
+  # TODO: nixd error logs in lso.log
 
   # symlink to clone of project to allow for easy editing
   xdg.configFile.nvim.source =
