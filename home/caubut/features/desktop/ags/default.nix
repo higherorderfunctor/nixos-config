@@ -2,12 +2,14 @@
   config,
   inputs,
   lib,
+  pkgs,
   ...
 }: let
   inherit (config.home) username;
 in {
   imports = [inputs.ags.homeManagerModules.default];
 
+  home.packages = [pkgs.nixos-icons];
   programs.ags = {
     enable = true;
 

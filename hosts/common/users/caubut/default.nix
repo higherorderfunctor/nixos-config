@@ -10,6 +10,42 @@ in {
     gid = 1000;
   };
 
+  # TODO: services.gnome.gnome-keyring.enable
+  services.gnome = {
+    gnome-keyring.enable = true;
+    gnome-settings-daemon.enable = true;
+  };
+  security = {
+    polkit.enable = true;
+    pam.services.ags = {};
+  };
+  # packages = [pkgs.gnomeExtensions.advanced-volume-control];
+  environment.systemPackages = with pkgs;
+  with gnome; [
+    #gnome.adwaita-icon-theme
+    #loupe
+    #adwaita-icon-theme
+    #nautilus
+    #baobab
+    gnome-calendar
+    gnome-boxes
+    gnome-system-monitor
+    gnome-control-center
+    gnome-weather
+    gnome-calculator
+    gnome-clocks
+    gnome-software # for flatpak
+    # wl-gammactl
+    wl-clipboard
+    gnome-settings-daemon
+    # wayshot
+    # pavucontrol
+    # brightnessctl
+    # swww
+  ];
+
+  services.udev.packages = with pkgs; [gnome.gnome-settings-daemon];
+
   users.users.${username} = {
     uid = 1000;
     group = "${username}";

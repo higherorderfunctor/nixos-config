@@ -6,6 +6,7 @@
 }: {
   imports = [
     inputs.hyprland.homeManagerModules.default
+    ../gnome
   ];
 
   # TODO: temp
