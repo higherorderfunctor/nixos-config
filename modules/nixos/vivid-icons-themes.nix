@@ -3,18 +3,17 @@
   lib,
   fetchFromGitHub,
   gtk3,
+  gitUpdater,
 }:
-stdenvNoCC.mkDerivation rec {
+stdenvNoCC.mkDerivation {
   pname = "vivid-icon-themes";
-  version = "8b5b05ceae56987048cb7d1b37c8052f937fc67a";
-
-  # TODO: git updater https://github.com/NixOS/nixpkgs/blob/master/pkgs/data/icons/papirus-icon-theme/default.nix
+  version = "2024-03-09";
 
   src = fetchFromGitHub {
     owner = "L4ki";
     repo = "Vivid-Plasma-Themes";
     rev = "8b5b05ceae56987048cb7d1b37c8052f937fc67a";
-    sha256 = "0q74wjyrsjyym770i3sqs071bvanwmm727xzv50wk6kzvpyqgi67";
+    sha256 = "sha256-U+jCoaPDV+iexk+ub0wwFRXI3tAQVrvbUZ+ZZPCxcxA=";
   };
 
   nativeBuildInputs = [
@@ -28,16 +27,19 @@ stdenvNoCC.mkDerivation rec {
     runHook preInstall
 
     mkdir -p $out/share/icons
-    l
+    ls -la
     mv 'Vivid Icons Themes/Vivid-Dark-Icons/' $out/share/icons/vivid-dark-icons
     mv 'Vivid Icons Themes/Vivid-Glassy-Dark-Icons/' $out/share/icons/vivid-glassy-dark-icons
 
     for theme in $out/share/icons/*; do
-      gtk-update-icon-cache $theme
+      gtk-update-icon-cache --force $theme
     done
 
     runHook postInstall
   '';
+
+  # TODO: make work
+  passthru.updateScript = gitUpdater {};
 
   meta = with lib; {
     description = "Vivid Plasma Themes For Plasma Desktop";

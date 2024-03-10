@@ -33,7 +33,7 @@ const IconPicker = () => {
 
     const entry = Widget.Entry({
         placeholder_text: "Type to seach...",
-        primary_icon_name: "system-search-symbolic",
+        primary_icon_name: "flameshot",
         on_change: ({ text }) => flowbox.get_children().forEach(child => {
             child.visible = child.get_child().iconName.includes(text)
         }),

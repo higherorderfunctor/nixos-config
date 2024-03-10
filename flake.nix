@@ -25,6 +25,10 @@
     hyprland = {
       url = "github:hyprwm/Hyprland";
     };
+    hyprland-plugins = {
+      url = "github:hyprwm/hyprland-plugins";
+      inputs.hyprland.follows = "hyprland";
+    };
     impermanence = {
       url = "github:nix-community/impermanence";
     };
@@ -54,6 +58,7 @@
     self,
     nixpkgs,
     home-manager,
+    hyprland-plugins,
     neovim-nightly-overlay,
     nix-gl-host,
     rust-overlay,
@@ -70,10 +75,13 @@
         overlays = [
           neovim-nightly-overlay.overlays.default
           rust-overlay.overlays.default
+          (_: _: {
+            inherit (hyprland-plugins.packages.${system}) hyprbars;
+          })
           (_: _: {firefox-nightly = inputs.firefox-nightly.packages.${system}.firefox-nightly-bin;})
           (_: _: {nix-gl-host = nix-gl-host.defaultPackage.${system};})
           (_: super: {
-            myPackage = super.callPackage ./modules/nixos/vivid-icons-themes.nix {};
+            vivid-icons-themes = super.callPackage ./modules/nixos/vivid-icons-themes.nix {};
           })
         ];
       });

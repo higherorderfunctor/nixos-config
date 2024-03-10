@@ -26,7 +26,6 @@
     packages = [
       pkgs.nerdfonts
       pkgs.dconf
-      pkgs.vivid-icons-themes
     ];
   };
 
@@ -34,6 +33,10 @@
     enable = true;
     font = {
       name = "Ubuntu Nerd Font Regular";
+    };
+    iconTheme = {
+      name = "vivid-icon-themes";
+      package = pkgs.vivid-icons-themes;
     };
     theme = {
       name = "Catppuccin-Macchiato-Compact-Sky-Dark";
@@ -54,7 +57,9 @@
   # TODO: DISPLAY=:0 ags -b hypr
   wayland.windowManager.hyprland = {
     enable = true;
+    # TODO overlay
     package = inputs.hyprland.packages.${pkgs.system}.hyprland;
+    plugins = [pkgs.hyprbars];
     settings = {
       # startup applications
       exec-once = [
@@ -126,12 +131,20 @@
           col_text = "rgba(ffffffdd)";
           bar_text_size = 11;
           bar_text_font = "Ubuntu Nerd Font";
+          hyprbars-button = let
+            closeAction = "hyprctl dispatch killactive";
 
-          buttons = {
-            button_size = 0;
-            "col.maximize" = "rgba(ffffff11)";
-            "col.close" = "rgba(ff111133)";
-          };
+            isOnSpecial = ''hyprctl activewindow -j | jq -re 'select(.workspace.name == "special")' >/dev/null'';
+            moveToSpecial = "hyprctl dispatch movetoworkspacesilent special";
+            moveToActive = "hyprctl dispatch movetoworkspacesilent name:$(hyprctl -j activeworkspace | jq -re '.name')";
+            minimizeAction = "${isOnSpecial} && ${moveToActive} || ${moveToSpecial}";
+
+            maximizeAction = "hyprctl dispatch togglefloating";
+          in [
+            "rgb(f38ba8),12,,${closeAction}"
+            "rgb(a6e3a1),12,,${maximizeAction}"
+            "rgb(f9e2af),12,,${minimizeAction}"
+          ];
         };
       };
 
