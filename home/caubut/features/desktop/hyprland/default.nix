@@ -53,8 +53,8 @@
     settings = {
       "$mod" = "SUPER";
       bind = [
-        "$mod, F, exec, firefox"
-        ", Print, exec, grimblast copy area"
+        "$mod, F, exec, firefox-nightly"
+        "$mod, E, exec, wezterm"
       ];
       # exec-once = [
       #   # "ags -b hypr"
