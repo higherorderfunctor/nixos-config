@@ -69,9 +69,6 @@ in {
           "Templates"
           "Videos"
         ];
-        files = [
-          ".ssh/known_hosts"
-        ];
         allowOther = true;
       };
     };
