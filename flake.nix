@@ -72,6 +72,9 @@
           rust-overlay.overlays.default
           (_: _: {firefox-nightly = inputs.firefox-nightly.packages.${system}.firefox-nightly-bin;})
           (_: _: {nix-gl-host = nix-gl-host.defaultPackage.${system};})
+          (_: super: {
+            myPackage = super.callPackage ./modules/nixos/vivid-icons-themes.nix {};
+          })
         ];
       });
   in {

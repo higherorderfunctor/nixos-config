@@ -26,6 +26,7 @@
     packages = [
       pkgs.nerdfonts
       pkgs.dconf
+      pkgs.vivid-icons-themes
     ];
   };
 
