@@ -68,17 +68,17 @@
         ",preferred,auto,1"
       ];
 
-      # general = {
-      #   layout = "dwindle";
-      #   resize_on_border = true;
-      #   "col.active_border" = "0x00000000";
-      # };
+      general = {
+        layout = "dwindle";
+        resize_on_border = true;
+        "col.active_border" = "0x00000000";
+      };
 
-      # misc = {
-      #   layers_hog_keyboard_focus = false; # TODO:
-      #   disable_splash_rendering = true; # disable startup splash screen
-      #   force_default_wallpaper = 0; # use the default non-anime wallpaper
-      # };
+      misc = {
+        layers_hog_keyboard_focus = false; # TODO:
+        disable_splash_rendering = true; # disable startup splash screen
+        force_default_wallpaper = 0; # use the default non-anime wallpaper
+      };
 
       # # input = {
       # #   kb_layout = "hu";
