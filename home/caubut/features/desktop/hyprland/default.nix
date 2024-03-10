@@ -89,6 +89,23 @@
         preserve_split = "yes"; # preserve split ratio when resizing
       };
 
+      windowrule = let
+        f = regex: "float, ^(${regex})$";
+      in [
+        (f "org.gnome.Calculator")
+        (f "org.gnome.Nautilus")
+        (f "pavucontrol")
+        (f "nm-connection-editor")
+        (f "blueberry.py")
+        (f "org.gnome.Settings")
+        (f "org.gnome.design.Palette")
+        (f "Color Picker")
+        (f "xdg-desktop-portal")
+        (f "xdg-desktop-portal-gnome")
+        (f "transmission-gtk")
+        (f "com.github.Aylur.ags")
+      ];
+
       misc = {
         layers_hog_keyboard_focus = false; # TODO:
         disable_splash_rendering = true; # disable startup splash screen
