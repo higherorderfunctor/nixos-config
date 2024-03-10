@@ -1,9 +1,0 @@
-{
-  "name": "@egs/egs-config",
-  "version": "0.0.0",
-  "type": "module",
-  "scripts": {
-    "lint:tsc": "tsc --skipLibCheck --noemit --project tsconfig.json"
-  },
-  "dependencies": {}
-}
