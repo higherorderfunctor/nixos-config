@@ -54,7 +54,7 @@
       "$mod" = "SUPER";
       bind = [
         "$mod, F, exec, firefox-nightly"
-        "$mod, T, exec, wezterm"
+        "$mod, T, exec, WEZTERM_LOG=debug wezterm"
       ];
       # exec-once = [
       #   # "ags -b hypr"
