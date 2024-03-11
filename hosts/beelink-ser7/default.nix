@@ -1,4 +1,4 @@
-{...}: {
+{pkgs, ...}: {
   imports = [
     ./hardware-configuration.nix
     ../common/global
@@ -8,8 +8,13 @@
   # hostname
   networking.hostName = "beelink-ser7";
 
+  # TODO: linking with btop
+  environment.systemPackages = [
+    pkgs.rocmPackages.rocm-smi
+  ];
+
   # TODO:
-  # https://nixos.wiki/wiki/PipeWire
+  #https://nixos.wiki/wiki/PipeWire
   # rtkit is optional but recommended
   security.rtkit.enable = true;
   services.pipewire = {
