@@ -54,7 +54,7 @@
 
   # networking
   networking = {
-    useDHCP = true;
+    useDHCP = lib.mkDefault true;
   };
 
   # https://nixos.wiki/wiki/Fwupd

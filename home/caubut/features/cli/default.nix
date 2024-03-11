@@ -5,6 +5,7 @@
     ./bash.nix
     ./beautysh.nix
     ./bitwarden.nix
+    ./btop.nix
     ./bun.nix
     ./cmake.nix
     ./curl.nix

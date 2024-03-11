@@ -43,7 +43,15 @@ in {
     # brightnessctl
     # swww
   ];
-
+  # services.xserver = {
+  #   # displayManager.gdm.enable = true;
+  #   desktopManager.gnome = {
+  #     enable = true;
+  #     # extraGSettingsOverridePackages = [
+  #     #   pkgs.nautilus-open-any-terminal
+  #     # ];
+  #   };
+  # };
   services.udev.packages = with pkgs; [gnome.gnome-settings-daemon];
 
   users.users.${username} = {
