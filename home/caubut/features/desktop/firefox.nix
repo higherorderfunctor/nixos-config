@@ -71,7 +71,7 @@
           "urlbar-container"
           "search-container"
           "downloads-button"
-          "library-button"
+          # "library-button"
           "ublock0_raymondhill_net-browser-action"
           "_446900e4-71c2-419f-a6a7-df9c091e268b_-browser-action" # bitwarden
         ];
