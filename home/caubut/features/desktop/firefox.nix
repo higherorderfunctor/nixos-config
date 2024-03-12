@@ -13,12 +13,101 @@
     "layout.css.prefers-color-scheme.content-override" = 0;
     "extensions.formautofill.addresses.enabled" = false;
     "extensions.formautofill.creditCards.enabled" = false;
-    "signon.rememberSignons" = false;
+    "signon.remgiemberSignons" = false;
+    "browser.bookmarks.addedImportButton" = false;
+    #"browser.uiCustomization.state" = ''{
+    #   "placements": {
+    #     "widget-overflow-fixed-list": [],
+    #     "nav-bar": [
+    #       "back-button",
+    #       "forward-button",
+    #       "stop-reload-button",
+    #       "home-button",
+    #       "urlbar-container",
+    #       "downloads-button",
+    #       "library-button",
+    #       "ublock0_raymondhill_net-browser-action",
+    #       "_testpilot-containers-browser-action"
+    #     ],
+    #     "toolbar-menubar": [
+    #       "menubar-items"
+    #     ],
+    #     "TabsToolbar": [
+    #       "tabbrowser-tabs",
+    #       "new-tab-button",
+    #       "alltabs-button"
+    #     ],
+    #     "PersonalToolbar": [
+    #       "import-button",
+    #       "personal-bookmarks"
+    #     ]
+    #   },
+    #   "seen": [
+    #     "save-to-pocket-button",
+    #     "developer-button",
+    #     "ublock0_raymondhill_net-browser-action",
+    #     "_testpilot-containers-browser-action"
+    #   ],
+    #   "dirtyAreaCache": [
+    #     "nav-bar",
+    #     "PersonalToolbar",
+    #     "toolbar-menubar",
+    #     "TabsToolbar",
+    #     "widget-overflow-fixed-list"
+    #   ],
+    #   "currentVersion": 18,
+    #   "newElementCount": 4
+    # }
+
+    #
+    "browser.uiCustomization.state" = builtins.toJSON {
+      placements = {
+        widget-overflow-fixed-list = [];
+        nav-bar = [
+          "back-button"
+          "forward-button"
+          "stop-reload-button"
+          "home-button"
+          "urlbar-container"
+          "search-container"
+          "downloads-button"
+          "library-button"
+          "ublock0_raymondhill_net-browser-action"
+          "_446900e4-71c2-419f-a6a7-df9c091e268b_-browser-action" # bitwarden
+        ];
+        toolbar-menubar = ["menubar-items"];
+        TabsToolbar = [
+          "tabbrowser-tabs"
+          "new-tab-button"
+          #"alltabs-button"
+        ];
+        PersonalToolbar = [
+          # "import-button"
+          # "personal-bookmarks"
+        ];
+      };
+      seen = [
+        # "save-to-pocket-button"
+        "developer-button"
+        "ublock0_raymondhill_net-browser-action"
+        "_446900e4-71c2-419f-a6a7-df9c091e268b_-browser-action" # bitwarden
+      ];
+      dirtyAreaCache = [
+        "nav-bar"
+        "PersonalToolbar"
+        "toolbar-menubar"
+        "TabsToolbar"
+        "widget-overflow-fixed-list"
+      ];
+      currentVersion = 18;
+      newElementCount = 4;
+    };
   };
   arkenfox = lib.readFile (pkgs.fetchurl {
     url = "https://raw.githubusercontent.com/arkenfox/user.js/master/user.js";
     name = "arkenfox";
     hash = "sha256-H3Nk5sDxSElGRgK+cyQpVyjtlMF2Okxbstu9A+eJtGk=";
+    # TODO: update form github
   });
 in {
   xdg.mimeApps = {
@@ -39,11 +128,16 @@ in {
         id = 0;
         name = "Default";
         isDefault = true;
+        bookmarks = {};
+        # something something nur
+        # extensions = with inputs.firefox-addons; [
+        #   ublock-origin
+        #   bitwarden
+        # ];
         settings =
           baseSettings
           // {
             "keyword.enabled" = false; # split url and search bars
-            "browser.urlbar.update2.engineAliasRefresh" = true; # FIXME: expose GUI options
           };
         extraConfig = arkenfox;
         search = {
