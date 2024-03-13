@@ -34,7 +34,7 @@
     ./oh-my-posh.nix
     ./poetry.nix
     ./python_311.nix
-    ./rclone.nix
+    ./rclone
     ./ripgrep.nix
     ./rust.nix
     ./shellcheck.nix
