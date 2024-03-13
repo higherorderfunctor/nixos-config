@@ -146,7 +146,7 @@
       ];
 
       misc = {
-        layers_hog_keyboard_focus = false; # TODO:
+        layers_hog_keyboard_focus = true; # keyboard-interactive layers keep their focus on mouse move
         disable_splash_rendering = true; # disable startup splash screen
         force_default_wallpaper = 0; # use the default non-anime wallpaper
       };
