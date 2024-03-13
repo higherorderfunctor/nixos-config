@@ -59,20 +59,9 @@
     sha256 = "sha256-624Giuo1TfeXQGzcGK9ETW86esNFhFZ5a46DCjT6K5I=";
   };
   arkenfox = lib.readFile "${arkenfoxRepo}/user.js";
-  # enable userChrome.css
-  extraConfig = ''
-    user_pref("toolkit.legacyUserProfileCustomizations.stylesheets", true);
-  '';
   baseProfile = {
     inherit settings;
     bookmarks = {};
-    userChrome =
-      # https://github.com/hyprwm/hyprland-plugins/issues/70
-      lib.mkIf
-      config.wayland.windowManager.hyprland.enable ''
-        //* remove close button */
-        .titlebar-buttonbox-container { display:none }
-      '';
     search = {
       force = true;
       default = "Kagi";
@@ -154,6 +143,7 @@ in {
       "x-scheme-handler/unknown" = "firefox-nightly.desktop";
     };
   };
+  # TODO: active theme doesn't appear to apply, possible sync issue with mozilla, needs more testing
   programs.firefox = {
     enable = true;
     package = pkgs.firefox-nightly;
@@ -168,10 +158,7 @@ in {
             // {
               "browser.toolbars.bookmarks.visibility" = "always"; # show bookmarks bar
             };
-          extraConfig = lib.strings.concatStringsSep "\n" [
-            extraConfig
-            arkenfox
-          ];
+          extraConfig = arkenfox;
         };
       unsafe =
         baseProfile
