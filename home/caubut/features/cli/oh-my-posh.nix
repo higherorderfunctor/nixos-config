@@ -1,5 +1,6 @@
 {
   config,
+  lib,
   pkgs,
   ...
 }: {
@@ -8,18 +9,19 @@
     enableZshIntegration = config.programs.zsh.enable;
     package = let
       # set wanted version
-      version = "19.11.7";
+      version = "19.16.1";
       # override fetch to use wanted version
       src = pkgs.fetchFromGitHub {
         owner = "jandedobbeleer";
         repo = "oh-my-posh";
         rev = "refs/tags/v${version}";
-        # hash = lib.fakeSha256;
-        hash = "sha256-CBAIojr+J84spnd0SQHT0xLoLuOPQsZEhWfKZMuj12Q=";
+        # sha256 = lib.fakeHash; # TODO: last tested correct, hash not getting
+        # check last update
+        sha256 = "sha256-+8AKxbrLZOOML79P8BS4xTqrsXOqceGJyrZ39NL6zRo=";
       };
-      # fix verison hash
-      vendorHash = "sha256-OkcwcQfI1CeKIQaaS/Bd1Hct2yebp0TB98lsGAVRWqk=";
-      # vendorHash = lib.fakeSha256;
+      # fix version hash
+      vendorHash = "sha256-WuPEoDmp/SSf3AqHtYTtMb56PnjZLWr3weZQXEF7pbg=";
+      # vendorHash = lib.fakeHash;
       # fix build.Version; ${version} doesn't seem to re-evaluate
       ldflags = [
         "-s"
@@ -37,7 +39,7 @@
       pkgs.oh-my-posh.override
       (_: {
         buildGoModule = args:
-          pkgs.buildGoModule (args
+          pkgs.buildGo122Module (args
             // {
               inherit version src vendorHash ldflags postPatch;
               # fix version
