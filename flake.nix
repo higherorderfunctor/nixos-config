@@ -36,6 +36,10 @@
       url = "github:nix-community/neovim-nightly-overlay";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    nixd = {
+      url = "github:nix-community/nixd";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
     nix-index-database = {
       url = "github:Mic92/nix-index-database";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -61,6 +65,7 @@
     hyprland-plugins,
     neovim-nightly-overlay,
     nix-gl-host,
+    nixd,
     rust-overlay,
     ...
   } @ inputs: let
@@ -74,6 +79,7 @@
         config.allowUnfree = true;
         overlays = [
           neovim-nightly-overlay.overlays.default
+          nixd.overlays.default
           rust-overlay.overlays.default
           (_: _: {
             inherit (hyprland-plugins.packages.${system}) hyprbars;
