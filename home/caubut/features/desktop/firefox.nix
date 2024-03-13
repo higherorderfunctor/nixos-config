@@ -59,9 +59,20 @@
     sha256 = "sha256-624Giuo1TfeXQGzcGK9ETW86esNFhFZ5a46DCjT6K5I=";
   };
   arkenfox = lib.readFile "${arkenfoxRepo}/user.js";
+  # enable userChrome.css
+  extraConfig = ''
+    user_pref("toolkit.legacyUserProfileCustomizations.stylesheets", true);
+  '';
   baseProfile = {
     inherit settings;
     bookmarks = {};
+    userChrome =
+      # https://github.com/hyprwm/hyprland-plugins/issues/70
+      lib.mkIf
+      config.wayland.windowManager.hyprland.enable ''
+        //* remove close button */
+        .titlebar-buttonbox-container { display:none }
+      '';
     search = {
       force = true;
       default = "Kagi";
@@ -150,12 +161,17 @@ in {
       default =
         baseProfile
         // {
-          settings = {
-            "browser.toolbars.bookmarks.visibility" = "always"; # show bookmarks bar
-          };
           id = 0;
           name = "Default";
-          extraConfig = arkenfox;
+          settings =
+            settings
+            // {
+              "browser.toolbars.bookmarks.visibility" = "always"; # show bookmarks bar
+            };
+          extraConfig = lib.strings.concatStringsSep "\n" [
+            extraConfig
+            arkenfox
+          ];
         };
       unsafe =
         baseProfile
