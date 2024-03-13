@@ -123,7 +123,7 @@
           updateInterval = 24 * 60 * 60 * 1000; # every day
         };
         "Home Manager Options" = {
-          urls = [{template = "https://mipmip.github.io/home-manager-option-search?query={searchTerms}";}];
+          urls = [{template = "https://home-manager-options.extranix.com/?query={searchTerms}";}];
           icon = "${pkgs.nixos-icons}/share/icons/hicolor/scalable/apps/nix-snowflake.svg";
         };
         "eBay".metaData.hidden = true;
