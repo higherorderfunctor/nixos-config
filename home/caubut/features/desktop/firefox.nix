@@ -52,12 +52,13 @@
       newElementCount = 4;
     };
   };
-  arkenfox = lib.readFile (pkgs.fetchurl {
-    url = "https://raw.githubusercontent.com/arkenfox/user.js/master/user.js";
-    name = "arkenfox";
-    hash = "sha256-H3Nk5sDxSElGRgK+cyQpVyjtlMF2Okxbstu9A+eJtGk=";
-    # TODO: update form github
-  });
+  arkenfoxRepo = pkgs.fetchFromGitHub {
+    owner = "arkenfox";
+    repo = "user.js";
+    rev = "122.0";
+    sha256 = "sha256-624Giuo1TfeXQGzcGK9ETW86esNFhFZ5a46DCjT6K5I=";
+  };
+  arkenfox = lib.readFile "${arkenfoxRepo}/user.js";
   baseProfile = {
     inherit settings;
     bookmarks = {};
