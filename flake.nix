@@ -81,6 +81,8 @@
   in {
     homeManagerModules = import ./modules/home-manager;
 
+    #overlays = import ./overlays {inherit inputs outputs;};
+
     formatter = forAllSystems (pkgs: pkgs.alejandra);
 
     nixosConfigurations = {
