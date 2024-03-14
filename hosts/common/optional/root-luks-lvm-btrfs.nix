@@ -7,6 +7,7 @@
 }:
 with lib; let
   cfg = config.root-luks-lvm-btrfs;
+  # TODO: move to file
   rollback = ''
     mkdir /btrfs
     mount -t btrfs /dev/mapper/cryptlvm-root /btrfs
