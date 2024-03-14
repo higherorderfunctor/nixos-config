@@ -10,11 +10,12 @@
     "browser.warnOnQuitShortcut" = false; # no prompt on quit
     "extensions.activeThemeID" = "firefox-compact-dark@mozilla.org"; # set the theme
     "extensions.pocket.enabled" = false; # disable pocket
+    "findbar.highlightAll" = true; # highlight all matches when searching in page text
     "keyword.enabled" = false; # split url and search bars / breaks alias searches
     "layout.css.prefers-color-scheme.content-override" = 0; # dark mode
+    "privacy.clearOnShutdown.siteSettings" = true; # reset site settings (location, camera, etc)
     "signon.autofillForms" = false; # no auto-fill
     "signon.rememberSignons" = false; # disable passwords
-    "privacy.clearOnShutdown.siteSettings" = true; # reset site settings (location, camera, etc)
     "browser.uiCustomization.state" = builtins.toJSON {
       placements = {
         widget-overflow-fixed-list = [];
@@ -38,7 +39,7 @@
       };
       seen = [
         "developer-button"
-        "ublock0_raymondhill_net-browser-action"
+        "ublock0_raymondhill_net-browser-action" # uBlock Origin
         "_446900e4-71c2-419f-a6a7-df9c091e268b_-browser-action" # bitwarden
       ];
       dirtyAreaCache = [
@@ -176,4 +177,3 @@ in {
     ];
   };
 }
-# TODO: highlight all

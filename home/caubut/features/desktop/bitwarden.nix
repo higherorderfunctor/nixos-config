@@ -14,3 +14,4 @@
   };
 }
 # TODO: node:125650) UnhandledPromiseRejectionWarning: TypeError: Cannot read properties of undefined (reading 'setContextMenu')
+# # TODO: configurations declarative
