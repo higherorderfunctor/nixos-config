@@ -27,8 +27,8 @@
     ./luarocks.nix
     ./nil.nix
     ./nix-index.nix
-    ./nix-update.nix # TODO
     ./nixd.nix
+    ./niv.nix
     ./nodejs_20.nix
     ./nvim
     ./oh-my-posh.nix

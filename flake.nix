@@ -56,10 +56,6 @@
       url = "github:mic92/sops-nix";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    nix-update = {
-      url = "github:mic92/nix-update";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
   };
 
   outputs = {

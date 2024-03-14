@@ -7,6 +7,7 @@
   (import ./nixd-overlay.nix {inherit inputs;})
   (import ./nix-update-overlay.nix {inherit inputs;})
   (import ./nixd-overlay.nix {inherit inputs;})
+  (import ./oh-my-posh.nix {inherit inputs;})
   (import ./rust-overlay.nix {inherit inputs;})
   (import ./vivid-icons-themes-overlay.nix {inherit inputs;})
 ]

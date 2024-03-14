@@ -18,6 +18,7 @@ in {
   };
 
   # TODO: nixd error logs in lso.log
+  # TODO: delete from neo-tree
 
   # symlink to clone of project to allow for easy editing
   xdg.configFile.nvim.source =
