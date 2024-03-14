@@ -20,7 +20,7 @@
           user = "git";
           identityFile = "/home/${config.home.username}/.ssh/personal_ed25519_key";
         };
-        "github.com-professional" = {
+        "github-professional" = {
           hostname = "github.com";
           user = "git";
           identityFile = "/home/${config.home.username}/.ssh/professional_ed25519_key";
