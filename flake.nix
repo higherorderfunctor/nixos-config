@@ -41,7 +41,7 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
     nix-index-database = {
-      url = "github:Mic92/nix-index-database";
+      url = "github:mic92/nix-index-database";
       inputs.nixpkgs.follows = "nixpkgs";
     };
     nix-gl-host = {
@@ -56,17 +56,16 @@
       url = "github:mic92/sops-nix";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    nix-update = {
+      url = "github:mic92/nix-update";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs = {
     self,
     nixpkgs,
     home-manager,
-    hyprland-plugins,
-    neovim-nightly-overlay,
-    nix-gl-host,
-    nixd,
-    rust-overlay,
     ...
   } @ inputs: let
     inherit (self) outputs;
@@ -77,19 +76,7 @@
       import nixpkgs {
         inherit system;
         config.allowUnfree = true;
-        overlays = [
-          neovim-nightly-overlay.overlays.default
-          nixd.overlays.default
-          rust-overlay.overlays.default
-          (_: _: {
-            inherit (hyprland-plugins.packages.${system}) hyprbars;
-          })
-          (_: _: {firefox-nightly = inputs.firefox-nightly.packages.${system}.firefox-nightly-bin;})
-          (_: _: {nix-gl-host = nix-gl-host.defaultPackage.${system};})
-          (_: super: {
-            vivid-icons-themes = super.callPackage ./modules/nixos/vivid-icons-themes.nix {};
-          })
-        ];
+        overlays = import ./overlays/default.nix {inherit inputs;};
       });
   in {
     homeManagerModules = import ./modules/home-manager;
