@@ -11,9 +11,6 @@
     ssh = {
       enable = true;
       addKeysToAgent = "yes";
-      extraConfig = ''
-        IdentityFile /home/${config.home.username}/.ssh/personal_ed25519_key
-      '';
       matchBlocks = {
         "github.com" = {
           hostname = "github.com";
