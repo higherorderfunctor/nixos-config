@@ -1,3 +1,3 @@
 {pkgs, ...}: {
-  home.packages = [pkgs.niv];
+  home.packages = [pkgs.niv pkgs.nvfetcher];
 }

@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+
+set -euETo pipefail
+shopt -s inherit_errexit 2>/dev/null || :
+
+cd "$(dirname "$0")/.."
+
+nvfetcher -o .nvfetcher
+
+nix flake update
