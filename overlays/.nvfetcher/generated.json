@@ -19,6 +19,46 @@
         },
         "version": "122.0"
     },
+    "btop": {
+        "cargoLocks": null,
+        "date": null,
+        "extract": null,
+        "name": "btop",
+        "passthru": null,
+        "pinned": false,
+        "src": {
+            "deepClone": false,
+            "fetchSubmodules": false,
+            "leaveDotGit": false,
+            "name": null,
+            "owner": "aristocratos",
+            "repo": "btop",
+            "rev": "v1.3.2",
+            "sha256": "sha256-kjSyIgLTObTOKMG5dk49XmWPXZpCWbLdpkmAsJcFliA=",
+            "type": "github"
+        },
+        "version": "v1.3.2"
+    },
+    "catppuccin-btop": {
+        "cargoLocks": null,
+        "date": null,
+        "extract": null,
+        "name": "catppuccin-btop",
+        "passthru": null,
+        "pinned": false,
+        "src": {
+            "deepClone": false,
+            "fetchSubmodules": false,
+            "leaveDotGit": false,
+            "name": null,
+            "owner": "catppuccin",
+            "repo": "btop",
+            "rev": "1.0.0",
+            "sha256": "sha256-J3UezOQMDdxpflGax0rGBF/XMiKqdqZXuX4KMVGTxFk=",
+            "type": "github"
+        },
+        "version": "1.0.0"
+    },
     "fblog": {
         "cargoLocks": {
             "Cargo.lock": [
@@ -58,10 +98,10 @@
             "name": null,
             "owner": "JanDeDobbeleer",
             "repo": "oh-my-posh",
-            "rev": "v19.17.0",
-            "sha256": "sha256-K8Vx4yG18q5scUbcKu5VSTFzqXR2NeNSjzN4RFDvQHA=",
+            "rev": "v19.17.1",
+            "sha256": "sha256-2mfkRwid22l+4om9HmM0ketWFXqkRknFzKKBkaVO3d8=",
             "type": "github"
         },
-        "version": "v19.17.0"
+        "version": "v19.17.1"
     }
 }

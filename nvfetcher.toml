@@ -2,6 +2,14 @@
 src.github = "arkenfox/user.js"
 fetch.github = "arkenfox/user.js"
 
+[btop]
+src.github = "aristocratos/btop"
+fetch.github = "aristocratos/btop"
+
+[catppuccin-btop]
+src.github = "catppuccin/btop"
+fetch.github = "catppuccin/btop"
+
 [fblog]
 src.github = "brocode/fblog"
 fetch.github = "brocode/fblog"

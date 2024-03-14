@@ -37,7 +37,8 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
     nixd = {
-      url = "github:nix-community/nixd";
+      # TODO: https://github.com/nix-community/nixd/issues/362
+      url = "github:nix-community/nixd/8743217ce6fe31def86ab284690d1b33ed8e7bfb";
       inputs.nixpkgs.follows = "nixpkgs";
     };
     nix-index-database = {
@@ -75,9 +76,8 @@
         overlays = import ./overlays/default.nix {inherit inputs;};
       });
   in {
+    # TODO: tuck someplace else to remove the warning
     homeManagerModules = import ./modules/home-manager;
-
-    #overlays = import ./overlays {inherit inputs outputs;};
 
     formatter = forAllSystems (pkgs: pkgs.alejandra);
 

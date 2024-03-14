@@ -3,15 +3,18 @@ _: let
 in
   final: prev: {
     oh-my-posh = let
+      inherit (final) lib;
       inherit (nv) version;
       src = final.fetchFromGitHub {inherit (nv.src) owner repo rev sha256;};
       vendorHash = "sha256-WuPEoDmp/SSf3AqHtYTtMb56PnjZLWr3weZQXEF7pbg=";
-      ldflags = [
-        "-s"
-        "-w"
-        "-X github.com/jandedobbeleer/oh-my-posh/src/build.Version=${nv.version}"
-        "-X github.com/jandedobbeleer/oh-my-posh/src/build.Date=1970-01-01T00:00:00Z"
-      ];
+      replaceVersion = flag:
+        if lib.strings.hasInfix "build.Version" flag
+        then
+          lib.strings.concatStringsSep "=" [
+            (builtins.head (lib.splitString "=" flag))
+            nv.version
+          ]
+        else flag;
       # skip tests that require internet access
       postPatch = ''
         rm engine/image_test.go \
@@ -21,10 +24,11 @@ in
     in
       prev.oh-my-posh.override
       (_: {
-        buildGoModule = args:
-          final.buildGo122Module (args
+        buildGoModule = orig:
+          final.buildGo122Module (orig
             // {
-              inherit version src vendorHash ldflags postPatch;
+              inherit version src vendorHash postPatch;
+              ldflags = builtins.map replaceVersion orig.ldflags;
               meta.changelog = "https://github.com/JanDeDobbeleer/oh-my-posh/releases/tag/${nv.version}";
             });
       });
