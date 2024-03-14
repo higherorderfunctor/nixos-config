@@ -1,4 +1,24 @@
 {
+    "arkenfox": {
+        "cargoLocks": null,
+        "date": null,
+        "extract": null,
+        "name": "arkenfox",
+        "passthru": null,
+        "pinned": false,
+        "src": {
+            "deepClone": false,
+            "fetchSubmodules": false,
+            "leaveDotGit": false,
+            "name": null,
+            "owner": "arkenfox",
+            "repo": "user.js",
+            "rev": "122.0",
+            "sha256": "sha256-624Giuo1TfeXQGzcGK9ETW86esNFhFZ5a46DCjT6K5I=",
+            "type": "github"
+        },
+        "version": "122.0"
+    },
     "oh-my-posh": {
         "cargoLocks": null,
         "date": null,
@@ -13,10 +33,10 @@
             "name": null,
             "owner": "JanDeDobbeleer",
             "repo": "oh-my-posh",
-            "rev": "v19.16.1",
-            "sha256": "sha256-+8AKxbrLZOOML79P8BS4xTqrsXOqceGJyrZ39NL6zRo=",
+            "rev": "v19.16.2",
+            "sha256": "sha256-rojUoWQPreNhtEh9muxxr4lIqVvgAo72eye3V86NueE=",
             "type": "github"
         },
-        "version": "v19.16.1"
+        "version": "v19.16.2"
     }
 }

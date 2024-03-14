@@ -1,3 +1,7 @@
+[arkenfox]
+src.github = "arkenfox/user.js"
+fetch.github = "arkenfox/user.js"
+
 [oh-my-posh]
 src.github = "JanDeDobbeleer/oh-my-posh"
 fetch.github = "JanDeDobbeleer/oh-my-posh"

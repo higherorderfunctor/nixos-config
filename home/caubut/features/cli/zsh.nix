@@ -24,6 +24,8 @@ in {
       ls = "ls --color=auto";
       l = "ls -lah";
       ll = "ls -lh";
+      nv = "${config.home.homeDirectory}/Documents/projects/nixos-config/scripts/nix-update";
+      sw = "sudo nixos-rebuild --show-trace --flake \".#$(hostname)\" switch";
     };
     # TODO: https://thevaluable.dev/zsh-completion-guide-examples/
     initExtraBeforeCompInit = ''
