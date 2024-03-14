@@ -1,6 +1,5 @@
 {
   config,
-  lib,
   pkgs,
   ...
 }: let
@@ -53,13 +52,6 @@
       newElementCount = 4;
     };
   };
-  arkenfoxRepo = pkgs.fetchFromGitHub {
-    owner = "arkenfox";
-    repo = "user.js";
-    rev = "122.0";
-    sha256 = "sha256-624Giuo1TfeXQGzcGK9ETW86esNFhFZ5a46DCjT6K5I=";
-  };
-  arkenfox = lib.readFile "${arkenfoxRepo}/user.js";
   baseProfile = {
     inherit settings;
     bookmarks = {};
@@ -167,7 +159,7 @@ in {
             // {
               "browser.toolbars.bookmarks.visibility" = "always"; # show bookmarks bar
             };
-          extraConfig = arkenfox;
+          extraConfig = pkgs.arkenfox;
         };
       unsafe =
         baseProfile

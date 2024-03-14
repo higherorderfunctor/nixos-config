@@ -2,6 +2,11 @@
 src.github = "arkenfox/user.js"
 fetch.github = "arkenfox/user.js"
 
+[fblog]
+src.github = "brocode/fblog"
+fetch.github = "brocode/fblog"
+cargo_locks = ["Cargo.lock"]
+
 [oh-my-posh]
 src.github = "JanDeDobbeleer/oh-my-posh"
 fetch.github = "JanDeDobbeleer/oh-my-posh"

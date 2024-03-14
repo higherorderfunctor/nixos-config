@@ -19,6 +19,31 @@
         },
         "version": "122.0"
     },
+    "fblog": {
+        "cargoLocks": {
+            "Cargo.lock": [
+                "./fblog-v4.8.0/Cargo.lock",
+                {}
+            ]
+        },
+        "date": null,
+        "extract": null,
+        "name": "fblog",
+        "passthru": null,
+        "pinned": false,
+        "src": {
+            "deepClone": false,
+            "fetchSubmodules": false,
+            "leaveDotGit": false,
+            "name": null,
+            "owner": "brocode",
+            "repo": "fblog",
+            "rev": "v4.8.0",
+            "sha256": "sha256-ByojMOkdE3B9KrApOWPihg6vJHpLQy0gsIlKPd5xJog=",
+            "type": "github"
+        },
+        "version": "v4.8.0"
+    },
     "oh-my-posh": {
         "cargoLocks": null,
         "date": null,
@@ -33,10 +58,10 @@
             "name": null,
             "owner": "JanDeDobbeleer",
             "repo": "oh-my-posh",
-            "rev": "v19.16.2",
-            "sha256": "sha256-rojUoWQPreNhtEh9muxxr4lIqVvgAo72eye3V86NueE=",
+            "rev": "v19.17.0",
+            "sha256": "sha256-K8Vx4yG18q5scUbcKu5VSTFzqXR2NeNSjzN4RFDvQHA=",
             "type": "github"
         },
-        "version": "v19.16.2"
+        "version": "v19.17.0"
     }
 }

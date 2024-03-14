@@ -1,4 +1,5 @@
 {inputs, ...}: [
+  (import ./arkenfox-overlay.nix {inherit inputs;})
   (import ./firefox-nightly-overlay.nix {inherit inputs;})
   (import ./hyprbars-overlay.nix {inherit inputs;})
   (import ./hyprland-overlay.nix {inherit inputs;})
