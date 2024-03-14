@@ -1,2 +1,2 @@
 /result
-.nvfetcher/generated.nix
+overlays/.nvfetcher/generated.nix

@@ -28,8 +28,8 @@
     ./nil.nix
     ./nix-index.nix
     ./nixd.nix
-    ./niv.nix
     ./nodejs_20.nix
+    ./nvfetcher.nix
     ./nvim
     ./oh-my-posh.nix
     ./poetry.nix
