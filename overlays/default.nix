@@ -1,6 +1,6 @@
 {inputs, ...}: [
   (import ./arkenfox-overlay.nix {inherit inputs;})
-  # (import ./btop-overlay.nix {inherit inputs;})
+  (import ./btop-overlay.nix {inherit inputs;})
   (import ./fblog-overlay.nix {inherit inputs;})
   (import ./firefox-nightly-overlay.nix {inherit inputs;})
   (import ./hyprbars-overlay.nix {inherit inputs;})

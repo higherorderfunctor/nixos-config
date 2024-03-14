@@ -27,33 +27,3 @@ in
             });
       });
   }
-# TODO:
-# _: let
-#   nv = (import ./nvpkgs.nix).oh-my-posh;
-# in
-#   final: prev: let
-#     inherit (final) lib;
-#   in {
-#     oh-my-posh = prev.oh-my-posh.overrideAttrs (orig: let
-#       replaceVersion = flag:
-#         if lib.strings.hasInfix "build.Version" flag
-#         then
-#           lib.strings.concatStringsSep "=" [
-#             (builtins.head (lib.splitString "=" flag))
-#             nv.version
-#           ]
-#         else flag;
-#     in {
-#       inherit (nv) version;
-#       src = final.fetchFromGitHub {inherit (nv.src) owner repo rev sha256;};
-#       vendorHash = "sha256-WuPEoDmp/SSf3AqHtYTtMb56PnjZLWr3weZQXEF7pbg=";
-#       ldflags = builtins.map replaceVersion orig.ldflags;
-#       # postPatch =
-#       #   orig.postPatch
-#       #   + ''
-#       #     rm engine/image_test.go \
-#       #        engine/migrate_glyphs_test.go \
-#       #        segments/nba_test.go
-#       #   '';
-#     });
-#   }

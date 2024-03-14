@@ -5,6 +5,7 @@
 }: let
   settings = {
     "browser.bookmarks.addedImportButton" = false; # don't include the default bookmark
+    "browser.places.importBookmarksHTML" = false;
     "browser.warnOnQuit" = false; # no prompt on quit
     "browser.warnOnQuitShortcut" = false; # no prompt on quit
     "extensions.activeThemeID" = "firefox-compact-dark@mozilla.org"; # set the theme
@@ -154,12 +155,12 @@ in {
         // {
           id = 0;
           name = "Default";
+          # arkenfox.enable = true;
           settings =
             settings
             // {
               "browser.toolbars.bookmarks.visibility" = "always"; # show bookmarks bar
             };
-          extraConfig = pkgs.arkenfox;
         };
       unsafe =
         baseProfile
@@ -177,3 +178,12 @@ in {
     ];
   };
 }
+#    enableGnomeExtensions = mkOption {
+#         type = types.bool;
+#         default = false;
+#         description = ''
+#           Whether to enable the GNOME Shell native host connector. Note, you
+#           also need to set the NixOS option
+#           `services.gnome.gnome-browser-connector.enable` to
+#           `true`.
+#         '';
