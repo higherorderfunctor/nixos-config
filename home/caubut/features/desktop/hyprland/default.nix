@@ -45,6 +45,12 @@
       pkgs.nerdfonts
       pkgs.dconf
     ];
+    pointerCursor = {
+      package = pkgs.catppuccin-cursors.mochaDark;
+      name = "Catppuccin-Mocha-Dark-Cursors";
+      size = 40;
+      gtk.enable = true;
+    };
   };
 
   gtk = {
@@ -56,6 +62,10 @@
       name = "Vivid-Glassy-Dark-Icons";
       package = pkgs.vivid-icons-themes;
     };
+    # cursorTheme = {
+    #   name = "Catppuccin-Mocha-Dark-Cursors";
+    #   package = pkgs.catppuccin-cursors;
+    # };
     theme = {
       name = "Catppuccin-Macchiato-Compact-Sky-Dark";
       package = pkgs.catppuccin-gtk.override {

@@ -20,13 +20,13 @@ in {
       path = "${config.xdg.dataHome}/zsh/zsh_history";
     };
     shellAliases = {
-      grep = "grep --color=auto";
+      grep = "grep -i --color=auto";
       ls = "ls --color=auto";
       l = "ls -lah";
       ll = "ls -lh";
       lb = "tmux popup -w 99% -h 99% -E 'findmnt -n | less'";
       nv = "${config.home.homeDirectory}/Documents/projects/nixos-config/scripts/nix-update";
-      sw = "sudo nixos-rebuild --show-trace --flake \".#$(hostname)\" switch";
+      sw = "sudo nixos-rebuild --show-trace --flake \"${config.home.homeDirectory}/Documents/projects/nixos-config#$(hostname)\" switch";
       gc = "nix store gc";
     };
     # TODO: https://thevaluable.dev/zsh-completion-guide-examples/
