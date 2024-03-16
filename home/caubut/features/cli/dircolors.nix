@@ -1,4 +1,5 @@
 {config, ...}: {
+  # TODO: xdg
   programs.dircolors = {
     enable = true;
     enableBashIntegration = config.programs.bash.enable;

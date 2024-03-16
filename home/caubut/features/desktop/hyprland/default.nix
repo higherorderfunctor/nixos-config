@@ -23,8 +23,22 @@
 
   fonts.fontconfig.enable = true; # TODO
 
+  # TODO:
+  # In all of the cases, if you want to use screen-sharing, you'll have to enable xdg-desktop-portal, too:
+  # xdg = {
+  #  portal = {
+  #    enable = true;
+  #    extraPortals = with pkgs; [
+  #      xdg-desktop-portal-wlr
+  #      xdg-desktop-portal-gtk
+  #    ];
+  #    gtkUsePortal = true;
+  #  };
+  #};
+
   home = {
     sessionVariables = {
+      NIXOS_OZONE_WL = 1; # fixes some apps in wayland
       FREETYPE_PROPERTIES = "cff:no-stem-darkening=0 autofitter:no-stem-darkening=0";
     };
     packages = [
@@ -143,6 +157,7 @@
         (f "xdg-desktop-portal-gnome")
         (f "transmission-gtk")
         (f "com.github.Aylur.ags")
+        (f "Webex")
       ];
 
       misc = {

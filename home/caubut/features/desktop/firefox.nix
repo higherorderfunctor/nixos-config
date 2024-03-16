@@ -58,7 +58,7 @@
     inherit settings;
     bookmarks = {};
     search = {
-      force = true;
+      force = true; # prevents issues with home manager when firefox writes back to user.js
       default = "Kagi";
       order = [
         "Kagi"
@@ -146,11 +146,10 @@ in {
       "x-scheme-handler/unknown" = "firefox-nightly.desktop";
     };
   };
-  # TODO: active theme doesn't appear to apply, possible sync issue with mozilla, needs more testing
   programs.firefox = {
     enable = true;
     package = pkgs.firefox-nightly;
-    enableGnomeExtensions = true;
+    nativeMessagingHosts = [pkgs.gnome-browser-connector];
     profiles = {
       default =
         baseProfile
@@ -180,12 +179,3 @@ in {
     ];
   };
 }
-# TODO:   enableGnomeExtensions = mkOption {
-#         type = types.bool;
-#         default = false;
-#         description = ''
-#           Whether to enable the GNOME Shell native host connector. Note, you
-#           also need to set the NixOS option
-#           `services.gnome.gnome-browser-connector.enable` to
-#           `true`.
-#         '';
