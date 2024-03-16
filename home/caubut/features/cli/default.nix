@@ -47,6 +47,7 @@
     ./stylua.nix
     ./tmux.nix
     ./unzip.nix
+    ./vim.nix
     ./wget.nix
     ./xclip.nix
     ./zsh-fast-syntax-highlighting.nix

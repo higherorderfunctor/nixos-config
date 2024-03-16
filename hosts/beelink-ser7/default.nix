@@ -3,6 +3,7 @@
     ./hardware-configuration.nix
     ../common/global
     ../common/optional/openssh.nix
+    ../common/optional/gnome # system support for Hyprland
   ];
 
   # hostname

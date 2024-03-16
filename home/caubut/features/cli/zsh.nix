@@ -24,6 +24,7 @@ in {
       ls = "ls --color=auto";
       l = "ls -lah";
       ll = "ls -lh";
+      # TODO: opens in any terminal with tmux not one run from
       lb = "tmux popup -w 99% -h 99% -E 'findmnt -n | less'";
       nv = "${config.home.homeDirectory}/Documents/projects/nixos-config/scripts/nix-update";
       sw = "sudo nixos-rebuild --show-trace --flake \"${config.home.homeDirectory}/Documents/projects/nixos-config#$(hostname)\" switch";

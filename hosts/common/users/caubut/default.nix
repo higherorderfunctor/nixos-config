@@ -11,6 +11,7 @@ in {
   };
 
   # TODO: services.gnome.gnome-keyring.enable
+  # TODO: https://github.com/Aylur/dotfiles/blob/ffd0a66743affabe0083cb6ac14ce10b7f549039/nixos/gnome.nix
   services.gnome = {
     gnome-keyring.enable = true;
     gnome-settings-daemon.enable = true;

@@ -16,3 +16,4 @@ in {
 # TODO: systemd less test
 # TODO: move from env to file?
 # https://github.com/microsoft/vscode/issues/194630
+# TODO: not sure what is enabling lesspipe, but bunch of options to look at
