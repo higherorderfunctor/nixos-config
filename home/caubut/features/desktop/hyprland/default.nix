@@ -8,6 +8,7 @@
     inputs.hyprland.homeManagerModules.default
     ../gnome
     ./packages.nix
+    ./dconf.nix
   ];
 
   # TODO: temp
