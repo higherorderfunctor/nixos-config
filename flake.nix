@@ -37,8 +37,7 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
     nixd = {
-      # TODO: https://github.com/nix-community/nixd/issues/362
-      url = "github:nix-community/nixd/8743217ce6fe31def86ab284690d1b33ed8e7bfb";
+      url = "github:nix-community/nixd";
       inputs.nixpkgs.follows = "nixpkgs";
     };
     nix-index-database = {

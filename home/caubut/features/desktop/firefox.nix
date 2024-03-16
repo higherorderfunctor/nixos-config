@@ -1,5 +1,6 @@
 {
   config,
+  lib,
   pkgs,
   ...
 }: let
@@ -149,18 +150,19 @@ in {
   programs.firefox = {
     enable = true;
     package = pkgs.firefox-nightly;
+    enableGnomeExtensions = true;
     profiles = {
       default =
         baseProfile
         // {
           id = 0;
           name = "Default";
-          # arkenfox.enable = true;
           settings =
             settings
             // {
               "browser.toolbars.bookmarks.visibility" = "always"; # show bookmarks bar
             };
+          extraConfig = lib.readFile pkgs.arkenfox;
         };
       unsafe =
         baseProfile

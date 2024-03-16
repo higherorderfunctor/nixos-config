@@ -1,4 +1,4 @@
-_: final: prev: let
+_: final: _: let
   nv = (import ./nvpkgs.nix).arkenfox;
   arkenfox = final.stdenvNoCC.mkDerivation {
     inherit (nv) version;
@@ -10,9 +10,4 @@ _: final: prev: let
   };
 in {
   inherit arkenfox;
-  #firefox = prev.firefox.overrideAttrs (_: {});
-  firefox = prev.firefox.overrideAttrs (
-    attrs:
-      builtins.trace attrs attrs
-  );
 }
