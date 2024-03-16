@@ -9,7 +9,6 @@
   # hostname
   networking.hostName = "beelink-ser7";
 
-  services.gnome.gnome-browser-connector.enable = true;
   # TODO: linking with btop
   environment.systemPackages = [
     pkgs.rocmPackages.rocm-smi

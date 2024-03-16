@@ -10,6 +10,7 @@
     ./packages.nix
     ./dconf.nix
     ./theme.nix
+    ./features
   ];
 
   xdg.portal = {
