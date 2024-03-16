@@ -60,14 +60,8 @@
             }
           '';
         in {
-          # TODO: remove debug
           prePatch = ''
-            cat ${patch-file}
             cat <(echo '${patch}') ${patch-file} > ${patch-file}.patched
-            cat ${patch-file}.patched
-            echo '${patch}'
-            echo '${patch-file}'
-            echo '${patch-file}.patched'
             mv ${patch-file}.patched ${patch-file}
           '';
         });

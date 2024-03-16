@@ -12,9 +12,6 @@
     ./theme.nix
   ];
 
-  # TODO: temp
-  programs.kitty.enable = true;
-
   xdg.portal = {
     enable = true;
     extraPortals = [
@@ -24,8 +21,6 @@
     configPackages = [pkgs.hyprland];
     xdgOpenUsePortal = true;
   };
-
-  fonts.fontconfig.enable = true; # TODO
 
   home = {
     sessionVariables = {
@@ -147,18 +142,19 @@
         f = regex: "float, ^(${regex})$";
       in [
         (f "org.gnome.Calculator")
-        (f "org.gnome.Nautilus")
-        (f "pavucontrol")
-        (f "nm-connection-editor")
-        (f "blueberry.py")
-        (f "org.gnome.Settings")
-        (f "org.gnome.design.Palette")
-        (f "Color Picker")
-        (f "xdg-desktop-portal")
-        (f "xdg-desktop-portal-gnome")
-        (f "transmission-gtk")
+        (f "org.gnome.Nautilus") # FIXME: check
+        (f "gnome-font-viewer") # FIXME: check
+        (f "pavucontrol") # FIXME: check
+        (f "nm-connection-editor") # FIXME: check
+        (f "blueberry.py") # FIXME: check
+        (f "org.gnome.Settings") # FIXME: check
+        (f "org.gnome.design.Palette") # FIXME: check
+        (f "Color Picker") # FIXME: check
+        (f "xdg-desktop-portal") # FIXME: check
+        (f "xdg-desktop-portal-gnome") # FIXME: check
+        (f "transmission-gtk") # FIXME: check
         (f "com.github.Aylur.ags")
-        (f "Webex")
+        (f "Webex") # FIXME: did not work
       ];
 
       misc = {
