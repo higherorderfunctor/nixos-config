@@ -9,6 +9,7 @@
     ../gnome
     ./packages.nix
     ./dconf.nix
+    ./theme.nix
   ];
 
   # TODO: temp
@@ -29,40 +30,43 @@
   home = {
     sessionVariables = {
       NIXOS_OZONE_WL = 1; # fixes some apps in wayland
-      FREETYPE_PROPERTIES = "cff:no-stem-darkening=0 autofitter:no-stem-darkening=0";
+      # TODO: moved to theme, test
+      #FREETYPE_PROPERTIES = "cff:no-stem-darkening=0 autofitter:no-stem-darkening=0";
     };
-    pointerCursor = {
-      package = pkgs.catppuccin-cursors.mochaDark;
-      name = "Catppuccin-Mocha-Dark-Cursors";
-      size = 40;
-      gtk.enable = true;
-    };
-  };
-
-  gtk = {
-    enable = true;
-    font = {
-      name = "Ubuntu Nerd Font Regular";
-    };
-    iconTheme = {
-      name = "Vivid-Glassy-Dark-Icons";
-      package = pkgs.vivid-icons-themes;
-    };
-    # cursorTheme = {
+    # pointerCursor = {
+    #   package = pkgs.catppuccin-cursors.mochaDark;
     #   name = "Catppuccin-Mocha-Dark-Cursors";
-    #   package = pkgs.catppuccin-cursors;
+    #   size = 40;
+    #   gtk.enable = true;
     # };
-    theme = {
-      name = "Catppuccin-Macchiato-Compact-Sky-Dark";
-      package = pkgs.catppuccin-gtk.override {
-        accents = ["sky"];
-        size = "compact";
-        tweaks = ["rimless" "black"];
-        variant = "macchiato";
-      };
-    };
   };
 
+  # TODO: moved to theme
+  # gtk = {
+  #   enable = true;
+  #   font = {
+  #     name = "Ubuntu Nerd Font Regular";
+  #   };
+  #   iconTheme = {
+  #     name = "Vivid-Glassy-Dark-Icons";
+  #     package = pkgs.vivid-icons-themes;
+  #   };
+  #   # cursorTheme = {
+  #   #   name = "Catppuccin-Mocha-Dark-Cursors";
+  #   #   package = pkgs.catppuccin-cursors;
+  #   # };
+  #   theme = {
+  #     name = "Catppuccin-Macchiato-Compact-Sky-Dark";
+  #     package = pkgs.catppuccin-gtk.override {
+  #       accents = ["sky"];
+  #       size = "compact";
+  #       tweaks = ["rimless" "black"];
+  #       variant = "macchiato";
+  #     };
+  #   };
+  # };
+
+  # TODO: X11
   # services.xsettingsd = {
   #   enable = true;
   #   settings = {
@@ -71,10 +75,11 @@
   #   };
   # };
 
-  qt = {
-    enable = true;
-    platformTheme = "gtk3";
-  }; # TODO
+  # TODO: moved to theme test
+  # qt = {
+  #   enable = true;
+  #   platformTheme = "gtk3";
+  # }; # TODO
 
   # TODO: DISPLAY=:0 ags -b hypr
   wayland.windowManager.hyprland = {

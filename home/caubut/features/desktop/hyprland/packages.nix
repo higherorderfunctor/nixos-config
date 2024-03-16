@@ -1,10 +1,13 @@
 {pkgs, ...}: {
   home = {
-    packages = with pkgs; [
-      nerdfonts # patched fonts with icons
-      glib # gnome system libraries like gio
-      wl-clipboard # copy/paste utility for wayland
+    packages = with pkgs;
+    with gnome; [
       dconf # config backend for gnome
+      glib # gnome system libraries like gio
+      gnome-calculator # calendar app
+      gnome-calendar # calculator app
+      nerdfonts # patched fonts with icons
+      wl-clipboard # copy/paste utility for wayland
       xdg-utils # gnome utlities like xdg-open
     ];
   };

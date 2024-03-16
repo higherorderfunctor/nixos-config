@@ -28,16 +28,13 @@ in {
     #adwaita-icon-theme
     #nautilus
     #baobab
-    gnome-calendar
     gnome-boxes
     gnome-system-monitor
     gnome-control-center
     gnome-weather
-    gnome-calculator
     gnome-clocks
     gnome-software # for flatpak
     # wl-gammactl
-    wl-clipboard
     gnome-settings-daemon
     # wayshot
     # pavucontrol
