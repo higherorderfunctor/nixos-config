@@ -2,13 +2,13 @@
   services = {
     # TODO: services.gnome.gnome-keyring.enable
     # TODO: https://github.com/Aylur/dotfiles/blob/ffd0a66743affabe0083cb6ac14ce10b7f549039/nixos/gnome.nix
+    udev.packages = with pkgs; [gnome.gnome-settings-daemon];
     geoclue2.enable = true; # location services - used by gnome-calendar
-    services.gnome = {
+    gnome = {
       gnome-browser-connector.enable = true; # gnome integrations with web browsers
-      gnome-keyring.enable = true;
+      # gnome-keyring.enable = true;
       gnome-settings-daemon.enable = true;
     };
-    services.udev.packages = with pkgs; [gnome.gnome-settings-daemon];
   };
 
   security = {
@@ -23,14 +23,14 @@
     #adwaita-icon-theme
     #nautilus
     #baobab
-    gnome-boxes
-    gnome-system-monitor
-    gnome-control-center
-    gnome-weather
-    gnome-clocks
-    gnome-software # for flatpak
-    # wl-gammactl
-    gnome-settings-daemon
+    # gnome-boxes
+    # gnome-system-monitor
+    # gnome-control-center
+    # gnome-weather
+    # gnome-clocks
+    # gnome-software # for flatpak
+    # # wl-gammactl
+    # gnome-settings-daemon
     # wayshot
     # pavucontrol
     # brightnessctl

@@ -7,7 +7,6 @@
   imports = [
     inputs.hyprland.homeManagerModules.default
     ../gnome
-    ./packages.nix
     ./dconf.nix
     ./theme.nix
     ./features

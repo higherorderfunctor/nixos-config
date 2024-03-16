@@ -1,1 +1,5 @@
-{}
+{
+  imports = [
+    ./gnome-keyring.nix
+  ];
+}
