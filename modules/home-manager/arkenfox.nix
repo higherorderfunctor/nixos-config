@@ -6,46 +6,55 @@
 }:
 with lib; let
   cfg = config.programs.firefox;
-  isArkenfoxEnabled = filterAttrs (profile: profiles.arkenfox.enable);
-  arkenFoxProfiles = attrNames isArkenfoxEnabled cfg.profiles;
-  configureArkenfox = name: {
-    name = {
-      extraConfig =
-        lib.mkDefault ''
-        '';
-    };
-  };
-
-  numProfiles = builtins.length (builtins.attrNames cfq.profiles);
-  enumeratedProfiles = builtins.map (index: {
-    idx = index;
-    val = arkenFoxProfiles.index;
-  }) (builtins.genList (i: i) (builtins.length numProfiles));
-
-  foo =
-    mapAttrsRecursiveCond (attr: attr.idx < numProfiles) (name: profile: {
-      inherit name;
-      value = profile.arkenfox.enable;
-    })
-    enumeratedProfiles;
-  # modifyProfiles = profiles:
-  #   lib.mapAttrs (name: profile: {
-  #     inherit (profile) foo; # Carry over the original `foo` attribute
-  #     bar =
-  #       if profile.foo
-  #       then ""
-  #       else profile.bar; # Conditionally modify `bar`
+  # isArkenfoxEnabled = filterAttrs (profile: profiles.arkenfox.enable);
+  # arkenFoxProfiles = attrNames isArkenfoxEnabled cfg.profiles;
+  # configureArkenfox = name: {
+  #   name = {
+  #     extraConfig =
+  #       lib.mkDefault ''
+  #       '';
+  #   };
+  # };
+  # numProfiles = builtins.length (builtins.attrNames cfq.profiles);
+  # enumeratedProfiles = builtins.map (index: {
+  #   idx = index;
+  #   val = arkenFoxProfiles.index;
+  # }) (builtins.genList (i: i) (builtins.length numProfiles));
+  # foo =
+  #   mapAttrsRecursiveCond (attr: attr.idx < numProfiles) (name: profile: {
+  #     inherit name;
+  #     value = profile.arkenfox.enable;
   #   })
-  #   profiles;
+  #   enumeratedProfiles;
+  # # modifyProfiles = profiles:
+  # #   lib.mapAttrs (name: profile: {
+  # #     inherit (profile) foo; # Carry over the original `foo` attribute
+  # #     bar =
+  # #       if profile.foo
+  # #       then ""
+  # #       else profile.bar; # Conditionally modify `bar`
+  # #   })
+  # #   profiles;
 in {
-  ${cfg}.profiles = lib.mkOption {
+  # ${cfg}.profiles = lib.mkOption {
+  #   type = types.attrsOf (types.submodule {
+  #     options.arkenfox.enable = lib.mkEnableOption "Enable Arkenfox user.js for the profile";
+  #   });
+  # };
+
+  options.programs.firefox.profiles = lib.mkOption {
     type = types.attrsOf (types.submodule {
       options.arkenfox.enable = lib.mkEnableOption "Enable Arkenfox user.js for the profile";
     });
-    default = lib.mkDefault options.programs.firefox.profiles.default;
   };
 
-  programs.firefox.profiles = foo;
+  config = cfg.firefox.overrideAttrs (
+    attrs:
+      builtins.trace attrs attrs
+  );
+  #config = {};
+
+  #${cfg}.profiles = foo;
 }
 #   config = lib.mkIf (lib.length (lib.attrNames config.programs.firefox.profiles) > 0) {
 #   programs.firefox.profiles = lib.mapAttrs' (name: profile: {

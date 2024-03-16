@@ -178,7 +178,7 @@ in {
     ];
   };
 }
-#    enableGnomeExtensions = mkOption {
+# TODO:   enableGnomeExtensions = mkOption {
 #         type = types.bool;
 #         default = false;
 #         description = ''

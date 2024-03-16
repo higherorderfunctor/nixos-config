@@ -17,8 +17,8 @@ in {
       description = "Remote repository to clone from";
     };
   };
-  config = lib.mkIf cfg.enable {
-    systemd.user.services.nixos-config = {
+  config.systemd.user.services = lib.mkIf cfg.enable {
+    nixos-config = {
       Unit = {
         Description = "Clones nixos-config";
         # need networking and bind mounts to be ready
