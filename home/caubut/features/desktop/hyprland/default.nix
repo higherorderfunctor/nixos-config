@@ -38,8 +38,8 @@
   # TODO: DISPLAY=:0 ags -b hypr
   wayland.windowManager.hyprland = {
     enable = true;
-    # TODO overlay
     package = pkgs.hyprland;
+    xwayland.enable = true;
 
     systemd = {
       enable = true;
