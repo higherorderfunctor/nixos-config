@@ -1,8 +1,10 @@
-{ pkgs, username, ... }:
-let
-  homeDirectory = "/home/${username}";
-in
 {
+  pkgs,
+  username,
+  ...
+}: let
+  homeDirectory = "/home/${username}";
+in {
   imports = [
     ./ags.nix
     ./blackbox.nix
@@ -32,7 +34,7 @@ in
   nix = {
     package = pkgs.nix;
     settings = {
-      experimental-features = [ "nix-command" "flakes" ];
+      experimental-features = ["nix-command" "flakes"];
       warn-dirty = false;
     };
   };
@@ -46,7 +48,7 @@ in
       NIXPKGS_ALLOW_INSECURE = "1";
       BAT_THEME = "base16";
       GOPATH = "${homeDirectory}/.local/share/go";
-      GOMODCACHE="${homeDirectory}/.cache/go/pkg/mod";
+      GOMODCACHE = "${homeDirectory}/.cache/go/pkg/mod";
     };
 
     sessionPath = [
@@ -74,7 +76,4 @@ in
       indicator = true;
     };
   };
-
-  programs.home-manager.enable = true;
-  home.stateVersion = "21.11";
 }
