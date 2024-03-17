@@ -113,7 +113,10 @@
         (f "xdg-desktop-portal-gnome") # FIXME: check
         (f "transmission-gtk") # FIXME: check
         (f "com.github.Aylur.ags")
-        (f "Webex") # FIXME: did not work
+      ];
+
+      windowrulev2 = [
+        "float,class:(CiscoCollabHost),title:(.*)"
       ];
 
       misc = {
