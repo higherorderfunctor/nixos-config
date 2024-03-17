@@ -56,7 +56,6 @@
       # startup applications
       exec-once = [
         "ags -b hypr"
-        # "hyprctl setcursor Qogir 24"
       ];
 
       # keybinds

@@ -12,3 +12,4 @@
     evolution-ews
   ];
 }
+# (WebKitWebProcess:2): Gdk-WARNING **: 13:55:54.751: Failed to read portal settings: GDBus.Error:org.freedesktop.DBus.Error.UnknownMethod: No such interface “org.freedesktop.portal.Settings” on object at path /org/freedesktop/portal/desktop
