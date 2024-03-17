@@ -6,6 +6,7 @@
     .${final.system}
     .firefox-nightly-bin
     .override {
+      # FIXME: not working
       # system-wide policies
       extraPolicies = {
         DisableTelemetry = true;
