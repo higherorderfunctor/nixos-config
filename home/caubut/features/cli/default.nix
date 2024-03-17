@@ -25,6 +25,7 @@
     ./less.nix
     ./luajit.nix
     ./luarocks.nix
+    ./marksman.nix
     ./nil.nix
     ./nix-index.nix
     ./nixd.nix
