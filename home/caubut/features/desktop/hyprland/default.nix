@@ -104,7 +104,7 @@
       in [
         (f "org.gnome.Calculator")
         (f "org.gnome.Nautilus") # FIXME: check
-        (f "gnome-font-viewer") # FIXME: check
+        (f "org.gnome.font-viewer") # FIXME: check
         (f "pavucontrol") # FIXME: check
         (f "nm-connection-editor") # FIXME: check
         (f "blueberry.py") # FIXME: check
