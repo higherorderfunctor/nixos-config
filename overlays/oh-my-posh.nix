@@ -1,5 +1,6 @@
 _: let
   nv = (import ./nvpkgs.nix).oh-my-posh;
+  dropFirstChar = s: builtins.substring 1 (builtins.stringLength s) s;
 in
   final: prev: {
     oh-my-posh = let
@@ -12,7 +13,7 @@ in
         then
           lib.strings.concatStringsSep "=" [
             (builtins.head (lib.splitString "=" flag))
-            nv.version
+            (dropFirstChar nv.version)
           ]
         else flag;
       # skip tests that require internet access
