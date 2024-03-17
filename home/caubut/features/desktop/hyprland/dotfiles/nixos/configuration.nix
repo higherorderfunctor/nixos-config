@@ -1,5 +1,9 @@
-{ pkgs, username, hostname, ... }: {
-
+{
+  pkgs,
+  username,
+  hostname,
+  ...
+}: {
   imports = [
     /etc/nixos/hardware-configuration.nix
     ./audio.nix
@@ -32,19 +36,11 @@
   # dconf
   programs.dconf.enable = true;
 
-  # packages
-  environment.systemPackages = with pkgs; [
-    home-manager
-    neovim
-    git
-    wget
-  ];
-
   # services
   services = {
     xserver = {
       enable = true;
-      excludePackages = [ pkgs.xterm ];
+      excludePackages = [pkgs.xterm];
     };
     printing.enable = true;
     flatpak.enable = true;
@@ -59,7 +55,12 @@
 
   # kde connect
   networking.firewall = rec {
-    allowedTCPPortRanges = [{ from = 1714; to = 1764; }];
+    allowedTCPPortRanges = [
+      {
+        from = 1714;
+        to = 1764;
+      }
+    ];
     allowedUDPPortRanges = allowedTCPPortRanges;
   };
 
@@ -93,7 +94,7 @@
   # bootloader
   boot = {
     tmp.cleanOnBoot = true;
-    supportedFilesystems = [ "ntfs" ];
+    supportedFilesystems = ["ntfs"];
     loader = {
       timeout = 2;
       systemd-boot.enable = true;
@@ -104,13 +105,13 @@
       # black_hud circle_hud cross_hud square_hud
       # circuit connect cuts_alt seal_2 seal_3
       theme = "connect";
-      themePackages = with pkgs; [(
-        adi1090x-plymouth-themes.override {
-          selected_themes = [ theme ];
-        }
-      )];
+      themePackages = with pkgs; [
+        (
+          adi1090x-plymouth-themes.override {
+            selected_themes = [theme];
+          }
+        )
+      ];
     };
   };
-
-  system.stateVersion = "23.05";
 }
