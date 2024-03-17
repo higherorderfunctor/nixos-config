@@ -1,11 +1,12 @@
 _: let
   nv = (import ./nvpkgs.nix).oh-my-posh;
   dropFirstChar = s: builtins.substring 1 (builtins.stringLength s) s;
+  version = dropFirstChar nv.version;
 in
   final: prev: {
     oh-my-posh = let
       inherit (final) lib;
-      inherit (nv) version;
+      inherit version;
       src = final.fetchFromGitHub {inherit (nv.src) owner repo rev sha256;};
       vendorHash = "sha256-WuPEoDmp/SSf3AqHtYTtMb56PnjZLWr3weZQXEF7pbg=";
       replaceVersion = flag:
@@ -13,7 +14,7 @@ in
         then
           lib.strings.concatStringsSep "=" [
             (builtins.head (lib.splitString "=" flag))
-            (dropFirstChar nv.version)
+            version
           ]
         else flag;
       # skip tests that require internet access
@@ -30,7 +31,7 @@ in
             // {
               inherit version src vendorHash postPatch;
               ldflags = builtins.map replaceVersion orig.ldflags;
-              meta.changelog = "https://github.com/JanDeDobbeleer/oh-my-posh/releases/tag/${nv.version}";
+              meta.changelog = "https://github.com/JanDeDobbeleer/oh-my-posh/releases/tag/v${nv.version}";
             });
       });
   }
