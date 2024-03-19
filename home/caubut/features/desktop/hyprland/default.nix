@@ -115,7 +115,7 @@
       ];
 
       windowrulev2 = [
-        "float,class:(CiscoCollabHost),title:(.*)"
+        # "float,class:(CiscoCollabHost)"
       ];
 
       misc = {

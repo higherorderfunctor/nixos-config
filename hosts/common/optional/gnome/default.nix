@@ -17,6 +17,24 @@
     };
   };
 
+  services = {
+    xserver = {
+      enable = true;
+      excludePackages = [pkgs.xterm];
+    };
+    printing.enable = true;
+    flatpak.enable = true;
+  };
+
+  xdg.portal = {
+    enable = true; # required for flatpak even though enabled by home manager
+    config.common.default = "gtk";
+    extraPortals = with pkgs; [
+      xdg-desktop-portal-gtk # required to enable the portal
+    ];
+  };
+  # TODO: GDK_BACKEND=x11
+
   security = {
     polkit.enable = true;
     pam.services.ags = {};

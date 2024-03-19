@@ -304,4 +304,8 @@ pnpm exec node --version
 ```
 https://www.nerdfonts.com/font-downloads
 monaspice
+
+
+
+dbus-send --print-reply --dest=org.freedesktop.DBus  /org/freedesktop/DBus org.freedesktop.DBus.ListNames
 ```

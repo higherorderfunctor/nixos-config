@@ -98,10 +98,10 @@
             "name": null,
             "owner": "JanDeDobbeleer",
             "repo": "oh-my-posh",
-            "rev": "v19.17.2",
-            "sha256": "sha256-X2c0cUA03x4slQsSoyNJCJXYhVO9VhqDwLEnU5Q9HB0=",
+            "rev": "v19.18.0",
+            "sha256": "sha256-MNTsfZc/a0T4HbsAlpNgCaug+AjUx0brjhOJBQ3ZUMs=",
             "type": "github"
         },
-        "version": "v19.17.2"
+        "version": "v19.18.0"
     }
 }
