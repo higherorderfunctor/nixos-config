@@ -76,7 +76,7 @@
         # ags # TODO: merge if
         "$mod, R,             ${ags} quit; ags -b hypr" # reload ags
         "$mod, SPACE,         ${ags} -t applauncher" # app launcher
-        "$mod, P,         ${ags} -t iconbrowser" # app launcher
+        "$mod, P,             ${ags} -t iconbrowser" # icon browser
       ];
 
       monitor = [
@@ -118,6 +118,19 @@
         # "float,class:(CiscoCollabHost)"
       ];
 
+      input = {
+        #   kb_layout = "hu";
+        #   kb_model = "pc104";
+        follow_mouse = 2; # cursor focus will be detached from keyboard focus
+        #   touchpad = {
+        #     natural_scroll = "yes";
+        #     disable_while_typing = true;
+        #     drag_lock = true;
+        #   };
+        #   sensitivity = 0;
+        #   float_switch_override_focus = 2;
+      };
+
       misc = {
         layers_hog_keyboard_focus = true; # keyboard-interactive layers keep their focus on mouse move
         disable_splash_rendering = true; # disable startup splash screen
@@ -147,19 +160,6 @@
           ];
         };
       };
-
-      # # input = {
-      # #   kb_layout = "hu";
-      # #   kb_model = "pc104";
-      # #   follow_mouse = 1;
-      # #   touchpad = {
-      # #     natural_scroll = "yes";
-      # #     disable_while_typing = true;
-      # #     drag_lock = true;
-      # #   };
-      # #   sensitivity = 0;
-      # #   float_switch_override_focus = 2;
-      # # };
 
       #  binds = {
       #   allow_workspace_cycles = true;
