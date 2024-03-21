@@ -103,5 +103,24 @@
             "type": "github"
         },
         "version": "v19.18.1"
+    },
+    "vivid-plasma-themes": {
+        "cargoLocks": null,
+        "date": "2024-03-15",
+        "extract": null,
+        "name": "vivid-plasma-themes",
+        "passthru": null,
+        "pinned": false,
+        "src": {
+            "deepClone": false,
+            "fetchSubmodules": false,
+            "leaveDotGit": false,
+            "name": null,
+            "rev": "21d3ae5448b7508237d004754fc94e570fc76679",
+            "sha256": "sha256-ywS6Zae7KslTY8WJiAzm4Kb/sv1qstS0dsrlI2oz63Q=",
+            "type": "git",
+            "url": "https://github.com/L4ki/Vivid-Plasma-Themes.git"
+        },
+        "version": "21d3ae5448b7508237d004754fc94e570fc76679"
     }
 }

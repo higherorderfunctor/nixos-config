@@ -1,4 +1,5 @@
 {
+  config,
   inputs,
   lib,
   pkgs,
@@ -76,7 +77,7 @@
         # ags # TODO: merge if
         "$mod, R,             ${ags} quit; ags -b hypr" # reload ags
         "$mod, SPACE,         ${ags} -t applauncher" # app launcher
-        "$mod, P,             ${ags} -t iconbrowser" # icon browser
+        "$mod, P,             ${ags} -f ${config.xdg.configHome}/ags/iconbrowser.js" # icon browser
       ];
 
       monitor = [

@@ -13,9 +13,10 @@ with lib.hm.gvariant; {
     #  xkb-options = ["terminate:ctrl_alt_bksp"];
     #};
 
-    #"org/gnome/desktop/interface" = {
-    #  show-battery-percentage = true;
-    #};
+    "org/gnome/desktop/interface" = {
+      #  show-battery-percentage = true;
+      color-scheme = "prefer-dark";
+    };
 
     #"org/gnome/desktop/peripherals/touchpad" = {
     #  tap-to-click = true;

@@ -18,3 +18,9 @@ cargo_locks = ["Cargo.lock"]
 [oh-my-posh]
 src.github = "JanDeDobbeleer/oh-my-posh"
 fetch.github = "JanDeDobbeleer/oh-my-posh"
+
+[vivid-plasma-themes]
+src.git = "https://github.com/L4ki/Vivid-Plasma-Themes.git"
+src.use_commit = true
+src.branch = "main"
+fetch.git = "https://github.com/L4ki/Vivid-Plasma-Themes.git"
