@@ -1,4 +1,7 @@
 {
+  "include": [
+    "src"
+  ],
   "compilerOptions": {
     "strict": true,
     "exactOptionalPropertyTypes": true,
@@ -17,7 +20,6 @@
       "DOM",
       "DOM.Iterable"
     ],
-    "types": [],
     "isolatedModules": true,
     "sourceMap": true,
     "declarationMap": true,
@@ -44,5 +46,11 @@
         "name": "@effect/language-service"
       }
     ],
+    "typeRoots": [
+      "node_modules/@girs"
+    ],
+    "types": [
+      "gjs"
+    ]
   }
 }

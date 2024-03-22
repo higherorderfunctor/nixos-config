@@ -32,17 +32,20 @@ export const effectify = <
 >(
   proto: T,
   method: K,
-  onError: (e: unknown, args: [obj: InstanceType<T>, ...Parameters<InstanceType<T>[K]>]) => E
+  onError: (
+    e: unknown,
+    args: [obj: InstanceType<T>, ...RemoveLast<Parameters<InstanceType<T>[K]>>, cancellable?: Gio.Cancellable | null]
+  ) => E
 ): Effectify<T, K, E> => {
   Gio._promisify(proto.prototype, method as string)
-  return (
+  return ((
     obj: InstanceType<T>,
     ...args: [...RemoveLast<Parameters<InstanceType<T>[K]>>, cancellable?: Gio.Cancellable | null]
-  ) => {
+  ): Effect.Effect<Awaited<ReturnType<InstanceType<T>[K]>>, E> => {
     const cancellable = (args[args.length - 1] as Gio.Cancellable | null | undefined)
       ? (args[args.length - 1] as Gio.Cancellable)
       : Gio.Cancellable.new()
-    const result = Effect.tryPromise({
+    return Effect.tryPromise({
       try: (signal) => {
         signal.addEventListener("abort", () => {
           cancellable.cancel()
@@ -53,6 +56,5 @@ export const effectify = <
       },
       catch: (error) => onError(error, [obj, ...args])
     })
-    return result
-  }
+  }) as any
 }

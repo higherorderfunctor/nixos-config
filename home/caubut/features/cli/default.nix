@@ -17,6 +17,7 @@
     ./gawk.nix
     ./gcc.nix
     ./git.nix
+    ./gjs.nix
     ./gnumake.nix
     ./jq.nix
     ./keybase.nix

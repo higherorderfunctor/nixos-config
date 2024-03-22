@@ -422,9 +422,8 @@ const handleBadArgument = (method: string) => (err: unknown) =>
 
 const readFile = (path: string) => {
   const file = Gio.File.new_for_path(path)
-  const cancellable = Gio.Cancellable.new()
   const readFile = effectify(Gio.File, "load_contents_async", handleIOErrorException("FileSystem", "readFile", path))
-  return readFile(file, cancellable).pipe(Effect.map(([contents]) => contents))
+  return readFile(file).pipe(Effect.map(([contents]) => contents))
 }
 
 // // == readLink
