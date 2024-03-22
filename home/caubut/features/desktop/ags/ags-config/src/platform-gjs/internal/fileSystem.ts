@@ -11,9 +11,9 @@ import * as Stream from "effect/Stream"
 // import * as NFS from "node:fs"
 // import * as OS from "node:os"
 // import * as Path from "node:path"
-// import { handleErrnoException } from "./error.js"
 import { Gio } from "@girs/gio-2.0"
 import { effectify } from "../Effectify.js"
+import { handleIOErrorException } from "./error.js"
 
 const handleBadArgument = (method: string) => (err: unknown) =>
   Error.BadArgument({
