@@ -10,6 +10,12 @@ fetch.github = "aristocratos/btop"
 src.github = "catppuccin/btop"
 fetch.github = "catppuccin/btop"
 
+[catppuccin-gtk]
+src.git = "https://github.com/catppuccin/gtk.git"
+src.use_commit = true
+src.branch = "main"
+fetch.git = "https://github.com/catppuccin/gtk.git"
+
 [fblog]
 src.github = "brocode/fblog"
 fetch.github = "brocode/fblog"

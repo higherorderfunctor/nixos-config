@@ -17,6 +17,13 @@
     };
   };
 
+  # FIXME:
+  # Mar 22 18:58:28 beelink-ser7 agent[2865]: Geolocation service not in use
+  # Mar 22 18:58:30 beelink-ser7 .geoclue-wrappe[13975]: Failed to connect to avahi service: Daemon not running
+  # Mar 22 18:58:30 beelink-ser7 agent[2865]: Geolocation service in use
+  # Mar 22 18:58:31 beelink-ser7 .geoclue-wrappe[13975]: Failed to query location: No WiFi networks found
+  # Mar 22 18:58:52 beelink-ser7 agent[2865]: Geolocation service not in use
+
   services = {
     xserver = {
       enable = true;

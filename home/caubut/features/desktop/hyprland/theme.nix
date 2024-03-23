@@ -35,36 +35,13 @@
     theme = {
       name = "Catppuccin-Macchiato-Compact-Sky-Dark";
       package =
-        (pkgs.catppuccin-gtk.override
-          {
-            accents = ["sky"];
-            size = "compact";
-            tweaks = ["rimless" "black"];
-            variant = "macchiato";
-          })
-        .overrideAttrs (_: let
-          # FIXME: https://github.com/catppuccin/gtk/issues/145
-          patch-file = "colloid/src/sass/_colors.scss";
-          patch = ''
-            @function gtkmix($c1,$c2,$r) {
-              $ratio: 1 -  $r / 100%; // match SCSS mix()
-              @return unquote("mix(#{$c1},#{$c2},#{$ratio})");
-            }
-
-            @function gtkshade($c,$s) {
-              @return unquote("shade(#{$c},#{$s})");
-            }
-
-            @function gtkcolor($c) {
-              @return unquote("@#{$c}");
-            }
-          '';
-        in {
-          prePatch = ''
-            cat <(echo '${patch}') ${patch-file} > ${patch-file}.patched
-            mv ${patch-file}.patched ${patch-file}
-          '';
-        });
+        pkgs.catppuccin-gtk.override
+        {
+          accents = ["sky"];
+          size = "compact";
+          tweaks = ["rimless" "black"];
+          variant = "macchiato";
+        };
     };
   };
 }
