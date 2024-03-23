@@ -1,4 +1,8 @@
-{pkgs, ...}: {
+{
+  inputs,
+  pkgs,
+  ...
+}: {
   services = {
     # udev.packages = with pkgs; [gnome.gnome-settings-daemon]; # TODO: needed?
     accounts-daemon.enable = true; # dbus service for accessing the list of user accounts and information attached to those accounts
@@ -23,6 +27,30 @@
   # Mar 22 18:58:30 beelink-ser7 agent[2865]: Geolocation service in use
   # Mar 22 18:58:31 beelink-ser7 .geoclue-wrappe[13975]: Failed to query location: No WiFi networks found
   # Mar 22 18:58:52 beelink-ser7 agent[2865]: Geolocation service not in use
+  #  caubut@beelink-ser7 ~/..../nixos-config  dotfiles  systemctl status | grep dbus
+  #           │ ├─dbus.service
+  #           │ │ └─1527 /nix/store/f9w2kp8y55zvcyz33b5lnr7qwhx652y8-dbus-1.14.10/bin/dbus-daemon --system --address=systemd: --nofork --nopidfile --systemd-activation --syslog-only
+  #                 │ ├─dbus.service
+  #                 │ │ └─3219 /nix/store/f9w2kp8y55zvcyz33b5lnr7qwhx652y8-dbus-1.14.10/bin/dbus-daemon --session --address=systemd: --nofork --nopidfile --systemd-activation --syslog-only
+  #                 │ └─38204 grep -i --color=auto dbus
+  # caubut@beelink-ser7 ~/..../nixos-config  dotfiles  systemctl status | grep portal
+  #                 │ └─xdg-desktop-portal-gtk.service
+  #                 │   └─3338 /nix/store/z8jcgkp8vy51gzd1map5wj1ppdkwxvzl-xdg-desktop-portal-gtk-1.15.1/libexec/xdg-desktop-portal-gtk
+  #                 │ ├─xdg-desktop-portal-hyprland.service
+  #                 │ │ └─3382 /nix/store/ibj971mkvcv2dqzfg4v5dkzr625dr2ya-xdg-desktop-portal-hyprland-1.3.1+date=2024-03-01_2d2fb54/libexec/xdg-desktop-portal-hyprland
+  #                 │ ├─xdg-desktop-portal.service
+  #                 │ │ └─35048 /nix/store/px78aqkcxncqq9hd99ylva44nb6qxp1n-xdg-desktop-portal-1.18.2/libexec/xdg-desktop-portal
+  #                 │ ├─xdg-document-portal.service
+  #                 │ │ ├─3324 /nix/store/px78aqkcxncqq9hd99ylva44nb6qxp1n-xdg-desktop-portal-1.18.2/libexec/xdg-document-portal
+  #                 │ │ └─3335 fusermount3 -o rw,nosuid,nodev,fsname=portal,auto_unmount,subtype=portal -- /run/user/1000/doc
+  #                 │   └─3328 /nix/store/px78aqkcxncqq9hd99ylva44nb6qxp1n-xdg-desktop-portal-1.18.2/libexec/xdg-permission-store
+  #                 │ ├─28993 systemctl --user status xdg-desktop-portal
+  #                 │ └─38242 grep -i --color=auto portal
+  # caubut@beelink-ser7 ~/..../nixos-config  dotfiles  journal^Asystemcl -
+  # caubut@beelink-ser7 ~/..../nixos-config  dotfiles  systemctl status xdg-desktop-portal-hyprland
+  # caubut@beelink-ser7 ~/..../nixos-config  dotfiles  systemctl --user status xdg-desktop-portal-hyprland
+  # caubut@beelink-ser7 ~/..../nixos-config  dotfiles  systemctl --user status xdg-desktop-portal
+  # caubut@beelink-ser7 ~/..../nixos-config  dotfiles  systemctl --user status xdg-desktop-portal-gtk
 
   services = {
     xserver = {
@@ -31,6 +59,12 @@
     };
     printing.enable = true;
     flatpak.enable = true;
+  };
+
+  programs.hyprland = {
+    enable = true;
+    package = pkgs.hyprland;
+    xwayland.enable = true;
   };
 
   xdg.portal = {

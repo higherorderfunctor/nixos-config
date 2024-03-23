@@ -43,10 +43,17 @@ in {
       extraConfig = ''
         set-option -g focus-events on
 
-        bind-key -T copy-mode-vi MouseDragEnd1Pane send-keys -X copy-pipe-and-cancel "xclip -i -f -selection primary | xclip -i -selection clipboard"
-        bind-key -T copy-mode-vi Enter             send-keys -X copy-pipe-and-cancel "xclip -i -f -selection primary | xclip -i -selection clipboard"
-        bind-key -T copy-mode-vi 'y'               send-keys -X copy-pipe-and-cancel "xclip -i -f -selection primary | xclip -i -selection clipboard"
         bind-key -T copy-mode-vi 'v' send -X       begin-selection
+
+        if-shell -b 'echo $XDG_SESSION_TYPE | grep -q x11' "\
+            bind-key -T copy-mode-vi MouseDragEnd1Pane send-keys -X copy-pipe-and-cancel 'xclip -i -f -selection primary | xclip -i -selection clipboard'; \
+            bind-key -T copy-mode-vi Enter             send-keys -X copy-pipe-and-cancel 'xclip -i -f -selection primary | xclip -i -selection clipboard'; \
+            bind-key -T copy-mode-vi 'y'               send-keys -X copy-pipe-and-cancel 'xclip -i -f -selection primary | xclip -i -selection clipboard';"
+
+        if-shell -b 'echo $XDG_SESSION_TYPE | grep -q wayland' "\
+            bind-key -T copy-mode-vi MouseDragEnd1Pane send-keys -X copy-pipe-and-cancel 'wl-copy'; \
+            bind-key -T copy-mode-vi Enter             send-keys -X copy-pipe-and-cancel 'wl-copy'; \
+            bind-key -T copy-mode-vi 'y'               send-keys -X copy-pipe-and-cancel 'wl-copy';"
       '';
       plugins = [
         {

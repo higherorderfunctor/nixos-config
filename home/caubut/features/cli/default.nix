@@ -19,6 +19,7 @@
     ./git.nix
     ./gjs.nix
     ./gnumake.nix
+    ./inotify-info.nix
     ./jq.nix
     ./keybase.nix
     ./lazygit.nix
