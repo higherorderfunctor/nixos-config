@@ -1,5 +1,6 @@
 {
   imports = [
+    ./code
     ./alejandra.nix
     ./aspell.nix
     ./bash-language-server.nix
@@ -12,6 +13,7 @@
     ./curl.nix
     ./deadnix.nix
     ./dircolors.nix
+    ./dotenv-linter.nix
     ./fblog.nix
     ./fd.nix
     ./fzf.nix
@@ -47,6 +49,7 @@
     ./rclone
     ./ripgrep.nix
     ./rust.nix
+    ./selene.nix
     ./shellcheck.nix
     ./shellharden.nix
     ./shfmt.nix

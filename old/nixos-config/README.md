@@ -22,7 +22,7 @@ cp ~/.ssh/id_ed25519.pub home/caubut/secrets
 
 ### Generate Host Keys
 
-Same steps as above, just for hosts to decrypt secrets.  Again, no password.  This
+Same steps as above. For hosts to decrypt secrets.  Again, no password.  This
 key will also be the host's SSH key.
 
 ```sh

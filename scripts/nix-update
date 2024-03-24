@@ -3,7 +3,7 @@
 set -euETo pipefail
 shopt -s inherit_errexit 2>/dev/null || :
 
-cd "$(dirname "$0")/.."
+cd "$(dirname "$0")"/..
 
 nvfetcher -o overlays/.nvfetcher
 

@@ -1,5 +1,3 @@
 {pkgs, ...}: {
-  home.packages = [
-    pkgs.marksman
-  ];
+  home.packages = [pkgs.marksman];
 }

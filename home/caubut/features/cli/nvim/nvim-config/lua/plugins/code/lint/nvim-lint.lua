@@ -1,23 +1,19 @@
-local lint_progress = function()
+local show_active_linters = function()
   local linters = require("lint")._resolve_linter_by_ft(vim.bo.filetype)
-  for _, linter in pairs(linters) do
-    require("notify")(linter)
-  end
+  require("notify")(vim.inspect(linters))
 end
 
 return {
   "mfussenegger/nvim-lint",
   opts = {
     linters_by_ft = {
-      bash = { "shellcheck", "shellharden" },
       docker = { "hadolint" },
       lua = { "luacheck" },
-      markdown = { "markdownlint" },
+      markdown = {}, -- override LazyVim, handled by none-ls
       openapi = { "vacuum" },
-      nix = { "statix" },
     },
   },
   keys = {
-    { "<leader>xz", lint_progress, desc = "Show Active Linters" },
+    { "<leader>xz", show_active_linters, desc = "Show Active Linters" },
   },
 }
