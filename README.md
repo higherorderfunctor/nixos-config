@@ -291,6 +291,7 @@ vault unmount local <VAULT>
 ```
 
 # NodeJS
+
 Download the latest LTS or Current version of [nodejs](https://nodejs.org/en/download/current).
 
 ```console

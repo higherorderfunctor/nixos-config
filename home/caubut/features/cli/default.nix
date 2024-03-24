@@ -2,6 +2,7 @@
   imports = [
     ./alejandra.nix
     ./aspell.nix
+    ./bash-language-server.nix
     ./bash.nix
     ./beautysh.nix
     ./bitwarden.nix
@@ -19,14 +20,19 @@
     ./git.nix
     ./gjs.nix
     ./gnumake.nix
+    ./hadolint.nix
     ./inotify-info.nix
     ./jq.nix
+    ./json-lsp.nix
     ./keybase.nix
     ./lazygit.nix
     ./lcov.nix
     ./less.nix
+    ./lua-language-server.nix
+    ./luacheck.nix
     ./luajit.nix
     ./luarocks.nix
+    ./markdownlint.nix
     ./marksman.nix
     ./nil.nix
     ./nix-index.nix
@@ -36,11 +42,14 @@
     ./nvim
     ./oh-my-posh.nix
     ./poetry.nix
+    ./prettierd.nix
     ./python_311.nix
     ./rclone
     ./ripgrep.nix
     ./rust.nix
     ./shellcheck.nix
+    ./shellharden.nix
+    ./shfmt.nix
     ./sops.nix
     ./sqlite.nix
     ./ssh-to-age.nix

@@ -12,7 +12,6 @@ in {
     defaultEditor = true;
     extraPackages = with pkgs; [
       fswatch
-      lua-language-server
       tree-sitter
     ];
   };
