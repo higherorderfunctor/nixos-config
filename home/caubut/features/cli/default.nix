@@ -22,7 +22,6 @@
     ./git.nix
     ./gjs.nix
     ./gnumake.nix
-    ./hadolint.nix
     ./inotify-info.nix
     ./jq.nix
     ./json-lsp.nix

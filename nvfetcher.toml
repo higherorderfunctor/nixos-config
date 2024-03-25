@@ -25,6 +25,14 @@ cargo_locks = ["Cargo.lock"]
 src.github = "JanDeDobbeleer/oh-my-posh"
 fetch.github = "JanDeDobbeleer/oh-my-posh"
 
+[spectral]
+src.github = "stoplightio/spectral"
+fetch.github = "stoplightio/spectral"
+
+[vacuum]
+src.github = "daveshanley/vacuum"
+fetch.github = "daveshanley/vacuum"
+
 [vivid-plasma-themes]
 src.git = "https://github.com/L4ki/Vivid-Plasma-Themes.git"
 src.use_commit = true
