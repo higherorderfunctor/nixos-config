@@ -27,5 +27,9 @@
       "/home/${config.home.username}/.ssh/id_ed25519"
     ];
     defaultSopsFile = ../../secrets/secrets.yaml;
+    # TODO: https://github.com/Mic92/sops-nix/pull/305
+    # https://discourse.nixos.org/t/access-nixos-sops-secret-via-home-manager/38909/10
+    defaultSymlinkPath = "/run/user/1000/secrets";
+    defaultSecretsMountPoint = "/run/user/1000/secrets.d";
   };
 }
