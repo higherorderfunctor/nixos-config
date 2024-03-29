@@ -11,6 +11,7 @@ return {
       marksman = { mason = false },
       nil_ls = { mason = false },
       nixd = { mason = false },
+      yamlls = { mason = false },
     },
   },
   init = function()

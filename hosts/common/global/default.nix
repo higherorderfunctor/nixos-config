@@ -32,13 +32,20 @@
   users.users.root.hashedPassword = "!";
 
   # bootloader
-  boot.loader = {
-    systemd-boot = {
-      enable = true;
-      consoleMode = "max";
-      configurationLimit = 64;
+  boot = {
+    loader = {
+      systemd-boot = {
+        enable = true;
+        consoleMode = "max";
+        configurationLimit = 64;
+      };
+      efi.canTouchEfiVariables = true;
     };
-    efi.canTouchEfiVariables = true;
+    kernel = {
+      sysctl = {
+        "fs.inotify.max_queued_events" = "524288";
+      };
+    };
   };
 
   # timezone

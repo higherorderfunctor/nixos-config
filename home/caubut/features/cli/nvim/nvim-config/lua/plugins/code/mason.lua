@@ -20,6 +20,7 @@ local exclude_packages = {
   "nil_ls",
   "shfmt",
   "stylua",
+  "yamlls",
 }
 
 -- patch to prevent excluded packages from being installed

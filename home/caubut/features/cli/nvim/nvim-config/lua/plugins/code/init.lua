@@ -7,6 +7,8 @@ return {
   require("plugins.code.mason"),
 }
 
+-- FIXME: auto-complete sources
+
 -----------------------------------------------------------------------------------------------------------------------
 -- Legend
 -----------------------------------------------------------------------------------------------------------------------
@@ -96,7 +98,7 @@ return {
 -- Linter:
 --   # markdownlint               plugins.code.lsp.none-ls
 -- Formatter:
---   # markdownlint               plugins.code.lsp.none-ls
+--   # markdownlint               plugins.code.lsp.none-ls via conform
 -- Hover
 --   # dictionary                 plugins.code.lsp.none-ls
 
@@ -154,7 +156,10 @@ return {
 -- YAML
 -----------------------------------------------------------------------------------------------------------------------
 
---     ◍ yaml-language-server yamlls
+-- LSP:
+--   # yamlls                     plugins.code.lsp.lspconfig via config.lazy
+-- Formatter:
+--   # yamlls                     plugins.code.lsp.lspconfig via conform
 
 -----------------------------------------------------------------------------------------------------------------------
 -- OpenAPI
@@ -188,4 +193,15 @@ return {
 --    ◍ eslint-lsp eslint, eslint
 --    ◍ markdownlint
 --    ◍ typescript-language-server tsserver, tsserver
---    ◍ yaml-language-server yamlls, yamlls
+--
+-- { import = "lazyvim.plugins.extras.coding.copilot" },
+-- { import = "lazyvim.plugins.extras.lang.docker" },
+-- { import = "lazyvim.plugins.extras.lang.json" },
+-- { import = "lazyvim.plugins.extras.lang.markdown" },
+-- { import = "lazyvim.plugins.extras.lang.typescript" },
+-- { import = "lazyvim.plugins.extras.lang.yaml" },
+-- { import = "lazyvim.plugins.extras.linting.eslint" },
+-- { import = "lazyvim.plugins.extras.lsp.none-ls" },
+-- { import = "lazyvim.plugins.extras.ui.edgy" },
+-- { import = "lazyvim.plugins.extras.ui.mini-animate" },
+-- { import = "lazyvim.plugins.extras.editor.aerial" }, -- don't sort, edgy must come first
