@@ -3,6 +3,8 @@ return {
   opts = {
     servers = {
       bashls = { mason = false },
+      docker_compose_language_service = { mason = false },
+      dockerls = { mason = false },
       jsonls = {
         cmd = { "vscode-json-languageserver", "--stdio" },
         mason = false,

@@ -18,6 +18,7 @@
     ./slack.nix
     ./standardnotes.nix
     ./sxiv.nix
+    ./transmission.nix
     ./vlc.nix
     ./webex.nix
     ./zoom.nix

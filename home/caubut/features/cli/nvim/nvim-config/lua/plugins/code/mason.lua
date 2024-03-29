@@ -12,6 +12,8 @@ end
 
 -- installed by nix
 local exclude_packages = {
+  "docker_compose_language_service",
+  "dockerls",
   "hadolint",
   "jsonls",
   "lua_ls",
