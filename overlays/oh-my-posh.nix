@@ -12,7 +12,7 @@ _: final: prev: let
     else flag;
   version = dropFirstChar nv.version;
   src = final.fetchFromGitHub {inherit (nv.src) owner repo rev sha256;};
-  vendorHash = "sha256-WuPEoDmp/SSf3AqHtYTtMb56PnjZLWr3weZQXEF7pbg=";
+  vendorHash = "sha256-7xoA+yA6ZWQfc6PPqNoNDCpbrqZEbaU2owQIo9fdtVE=";
 in {
   oh-my-posh =
     prev.oh-my-posh.override
