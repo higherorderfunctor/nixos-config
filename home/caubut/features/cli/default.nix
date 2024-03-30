@@ -1,5 +1,6 @@
 {
   imports = [
+# FIXME: nix-tree
     ./code
     ./alejandra.nix
     ./aspell.nix
