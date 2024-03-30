@@ -38,6 +38,7 @@
     ./marksman.nix
     ./nil.nix
     ./nix-index.nix
+    ./nix-tree.nix
     ./nixd.nix
     ./nodejs_20.nix
     ./nvfetcher.nix
