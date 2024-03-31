@@ -37,6 +37,7 @@
       mode = "400";
     };
   };
+  # TODO: in system nix
   # sops.templates."nix-conf-secrets.conf".content = ''
   #   access-tokens = github.com=${config.sops.placeholder."${config.home.username}-github"}
   # '';

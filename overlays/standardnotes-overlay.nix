@@ -1,22 +1,29 @@
-
 {inputs, ...}: (final: _: let
+  nv = (import ./nvpkgs.nix).standardnotes;
+in {
+  # standardnotes = final.mkYarnPackage {
+  #   inherit (nv) version;
+  #   pname = nv.name;
 
-  srcjson = {
-    "version" = "3.181.23";
-    "deb" = {
-      "x86_64-linux" = {
-        "url" = "https://github.com/standardnotes/app/releases/download/%40standardnotes/desktop%403.181.23/standard-notes-3.181.23-linux-amd64.deb";
-        "hash" = "sha512-zWjST3guI0qifvZIwSLJ0nIpU12Mu3+m25Xdoqv0BQC7tscChEdCGUAJRUKHEf0b8l4uvp8qBGHiBOfbrIi//w==";
-      };
-      "aarch64-linux" = {
-        "url" = "https://github.com/standardnotes/app/releases/download/%40standardnotes/desktop%403.181.23/standard-notes-3.181.23-linux-arm64.deb";
-        "hash" = "sha512-7R5Ym44mrVgUiqdt6NL8F9uUUOroQRxwn30xKThyIQm2HGRUJivRfOws98El9zV8bKG1khk4DZaMiLQSMjrtaQ==";
-      };
-    };
-  }; in {
-    standardnotes = 
-  }
+  #   src = final.fetchurl {
+  #     inherit (nv.src) url name sha256;
+  #     postFetch = ''
+  #       cat "$downloadedFile" \
+  #       | tar -xzf - \
+  #         --one-top-level=source \
+  #         --strip-components=1
+  #     '';
+  #   };
 
+  #   buildInputs = [final.electron];
+
+  #   # phases = ["unpackPhase" "installPhase" "fixupPhase"];
+
+  #   # unpackPhase = ''
+  #   #   tar -xzf $src
+  #   # '';
+  # };
+})
 # (final: _: {
 #   nix-gl-host = inputs.nix-gl-host.defaultPackage.${final.system};
 # })

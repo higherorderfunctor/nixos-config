@@ -151,17 +151,12 @@
         "passthru": null,
         "pinned": false,
         "src": {
-            "deepClone": false,
-            "fetchSubmodules": false,
-            "leaveDotGit": false,
-            "name": null,
-            "owner": "standardnotes",
-            "repo": "app",
-            "rev": "v3.21.0",
-            "sha256": "sha256-+0641TcTI0l+XUIR3Okzlhtmakqewr3FtLHRQ+Dp+jY=",
-            "type": "github"
+            "name": "standardnotes-desktop.tar.gz",
+            "sha256": "sha256-qKE2cVtjXVHKsRuEmfXwxyjyYWKgKTiaQfsLHKSpmdU=",
+            "type": "url",
+            "url": "https://github.com/standardnotes/app/archive/refs/tags/@standardnotes/desktop@3.192.8.tar.gz"
         },
-        "version": "v3.21.0"
+        "version": "3.192.8"
     },
     "vacuum": {
         "cargoLocks": null,
