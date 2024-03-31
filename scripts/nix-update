@@ -5,6 +5,6 @@ shopt -s inherit_errexit 2>/dev/null || :
 
 cd "$(dirname "$0")"/..
 
-nvfetcher -o overlays/.nvfetcher
+nvfetcher -k "/run/user/$(id -u)/secrets/${USER}-nvfetcher-keyfile" -o overlays/.nvfetcher
 
 nix flake update
