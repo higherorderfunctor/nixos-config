@@ -16,17 +16,20 @@
         "github.com" = {
           hostname = "github.com";
           user = "git";
-          identityFile = config.sops.secrets."${config.home.username}-personal-ed25519-key".path;
+          identityFile = "/home/${config.home.username}/.ssh/personal_ed25519_key";
+          # identityFile = config.sops.secrets."${config.home.username}-personal-ed25519-key".path;
         };
         "github-professional" = {
           hostname = "github.com";
           user = "git";
-          identityFile = config.sops.secrets."${config.home.username}-professional-ed25519-key".path;
+          identityFile = "/home/${config.home.username}/.ssh/professional_ed25519_key";
+          # identityFile = config.sops.secrets."${config.home.username}-professional-ed25519-key".path;
         };
         "gitlab.spectrumflow.net" = {
           hostname = "gitlab.spectrumflow.net";
           user = "git";
-          identityFile = config.sops.secrets."${config.home.username}-professional-ed25519-key".path;
+          identityFile = "/home/${config.home.username}/.ssh/professional_ed25519_key";
+          # identityFile = config.sops.secrets."${config.home.username}-professional-ed25519-key".path;
         };
       };
     };
