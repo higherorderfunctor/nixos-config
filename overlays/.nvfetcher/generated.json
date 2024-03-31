@@ -143,6 +143,26 @@
         },
         "version": "v6.11.0"
     },
+    "standardnotes": {
+        "cargoLocks": null,
+        "date": null,
+        "extract": null,
+        "name": "standardnotes",
+        "passthru": null,
+        "pinned": false,
+        "src": {
+            "deepClone": false,
+            "fetchSubmodules": false,
+            "leaveDotGit": false,
+            "name": null,
+            "owner": "standardnotes",
+            "repo": "app",
+            "rev": "v3.21.0",
+            "sha256": "sha256-+0641TcTI0l+XUIR3Okzlhtmakqewr3FtLHRQ+Dp+jY=",
+            "type": "github"
+        },
+        "version": "v3.21.0"
+    },
     "vacuum": {
         "cargoLocks": null,
         "date": null,
