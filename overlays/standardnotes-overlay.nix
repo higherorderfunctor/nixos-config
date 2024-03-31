@@ -1,4 +1,4 @@
-{inputs, ...}: (final: _: let
+_: (final: _: let
   systemMap = {
     x86_64-linux = "linux-amd64";
     aarch64-linux = "linux-arm64";
