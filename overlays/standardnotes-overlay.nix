@@ -1,28 +1,81 @@
 {inputs, ...}: (final: _: let
-  nv = (import ./nvpkgs.nix).standardnotes;
+  systemMap = {
+    x86_64-linux = "linux-amd64";
+    aarch64-linux = "linux-arm64";
+  };
+  nv = (import ./nvpkgs.nix)."standardnotes-${systemMap.${final.system}}-deb";
+  # Two stage derivation to fetch and unpack so the hash from nvfetcher is accurate.
+  # Unpacking is not done with nvfetcher because standardnotes uses '@' in their tags
+  # which nix cannot handle.  fetch.url with url.name in nvfetcher.toml is used as a
+  # work around.
+  # https://github.com/standardnotes/app/releases/download/%40standardnotes%2Fdesktop%403.192.4/standard-notes-3.192.4-linux-arm64.deb
+  src = final.stdenvNoCC.mkDerivation {
+    inherit (nv) version;
+    name = "${nv.name}-${nv.version}-source";
+    src = final.fetchurl {
+      inherit (nv.src) url sha256;
+      name = "${nv.name}-${nv.version}-source.tar.gz";
+    };
+    phases = ["unpackPhase"];
+    unpackPhase = ''
+      mkdir $out
+      tar -xzf $src \
+        --one-top-level=$out \
+        --strip-components=1
+    '';
+  };
 in {
-  # standardnotes = final.mkYarnPackage {
-  #   inherit (nv) version;
-  #   pname = nv.name;
+  standardnotes = final.stdenvNoCC.mkDerivation {
+    # standardnotes = final.mkYarnPackage {
+    inherit (nv) version;
 
-  #   src = final.fetchurl {
-  #     inherit (nv.src) url name sha256;
-  #     postFetch = ''
-  #       cat "$downloadedFile" \
-  #       | tar -xzf - \
-  #         --one-top-level=source \
-  #         --strip-components=1
-  #     '';
-  #   };
+    pname = nv.name;
 
-  #   buildInputs = [final.electron];
+    src = final.fetchurl {
+      inherit (nv.src) url sha256;
+      name = "${nv.name}-${nv.version}.deb";
+    };
 
-  #   # phases = ["unpackPhase" "installPhase" "fixupPhase"];
+    dontConfigure = true;
 
-  #   # unpackPhase = ''
-  #   #   tar -xzf $src
-  #   # '';
-  # };
+    dontBuild = true;
+
+    # buildInputs = [final.electron];
+
+    # FIXME: https://github.com/NixOS/nixpkgs/issues/254369
+    # offlineCache = final.fetchYarnDeps {
+    #   yarnLock = src + "/yarn.lock";
+    #   # sha256 = "sha256-H37vD0GTSsWV5UH7C6UANDWnExTGh8yqajLn3y7P2T8=";
+    #   sha256 = final.lib.fakeSha256;
+    # };
+
+    nativeBuildInputs = with final; [makeWrapper dpkg desktop-file-utils];
+
+    unpackPhase = "dpkg-deb --fsys-tarfile $src | tar -x --no-same-permissions --no-same-owner";
+
+    installPhase = ''
+      runHook preInstall
+
+      mkdir -p $out/bin $out/share/standardnotes
+      cp -R usr/share/{applications,icons} $out/share
+      cp -R opt/Standard\ Notes/resources/app.asar $out/share/standardnotes/
+
+      makeWrapper ${final.electron}/bin/electron $out/bin/standardnotes \
+        --add-flags $out/share/standardnotes/app.asar \
+        --prefix LD_LIBRARY_PATH : ${final.lib.makeLibraryPath (with final; [libsecret stdenv.cc.cc.lib])}
+
+      ${final.desktop-file-utils}/bin/desktop-file-install --dir $out/share/applications \
+        --set-key Exec --set-value standardnotes usr/share/applications/standard-notes.desktop
+
+      runHook postInstall
+    '';
+
+    passthru.updateScript = final.callPackage ./update.nix {};
+
+    #   # unpackPhase = ''
+    #   #   tar -xzf $src
+    #   # '';
+  };
 })
 # (final: _: {
 #   nix-gl-host = inputs.nix-gl-host.defaultPackage.${final.system};

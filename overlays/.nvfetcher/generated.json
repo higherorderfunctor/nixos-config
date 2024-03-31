@@ -143,18 +143,18 @@
         },
         "version": "v6.11.0"
     },
-    "standardnotes": {
+    "standardnotes-linux-amd64-deb": {
         "cargoLocks": null,
         "date": null,
         "extract": null,
-        "name": "standardnotes",
+        "name": "standardnotes-linux-amd64-deb",
         "passthru": null,
         "pinned": false,
         "src": {
-            "name": "standardnotes-desktop.tar.gz",
-            "sha256": "sha256-qKE2cVtjXVHKsRuEmfXwxyjyYWKgKTiaQfsLHKSpmdU=",
+            "name": "standardnotes-desktop-linux-amd64.deb",
+            "sha256": "sha256-d1mYT88UuUWPjQahskQ1PTL3vszRcCxiMIwZceWfgmA=",
             "type": "url",
-            "url": "https://github.com/standardnotes/app/archive/refs/tags/@standardnotes/desktop@3.192.8.tar.gz"
+            "url": "https://github.com/standardnotes/app/releases/download/@standardnotes/desktop@3.192.8/standard-notes-3.192.8-linux-amd64.deb"
         },
         "version": "3.192.8"
     },
