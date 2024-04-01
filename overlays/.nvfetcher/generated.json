@@ -61,7 +61,7 @@
     },
     "catppuccin-gtk": {
         "cargoLocks": null,
-        "date": "2024-03-14",
+        "date": "2024-04-01",
         "extract": null,
         "name": "catppuccin-gtk",
         "passthru": null,
@@ -71,12 +71,12 @@
             "fetchSubmodules": false,
             "leaveDotGit": false,
             "name": null,
-            "rev": "8d9803f089c1db361d0453c8eaff69d716c28081",
-            "sha256": "sha256-7EvKcyh9gH/QbiXKlyAKMSBXMF3DmbHD+wJD3Sq39DE=",
+            "rev": "355e12387f73b27cf4734a6a3eb431554fabb74f",
+            "sha256": "sha256-pGL8vaE63ss2ZT2FoNDfDkeuCxjcbl02RmwwfHC/Vxg=",
             "type": "git",
             "url": "https://github.com/catppuccin/gtk.git"
         },
-        "version": "8d9803f089c1db361d0453c8eaff69d716c28081"
+        "version": "355e12387f73b27cf4734a6a3eb431554fabb74f"
     },
     "fblog": {
         "cargoLocks": {
@@ -152,11 +152,11 @@
         "pinned": false,
         "src": {
             "name": "standardnotes-desktop-linux-amd64.deb",
-            "sha256": "sha256-d1mYT88UuUWPjQahskQ1PTL3vszRcCxiMIwZceWfgmA=",
+            "sha256": "sha256-ezHrTGyZnKo19VAAHRx4DGNqhfZKqYOh3mBEBmmWeN0=",
             "type": "url",
-            "url": "https://github.com/standardnotes/app/releases/download/@standardnotes/desktop@3.192.8/standard-notes-3.192.8-linux-amd64.deb"
+            "url": "https://github.com/standardnotes/app/releases/download/@standardnotes/desktop@3.192.9/standard-notes-3.192.9-linux-amd64.deb"
         },
-        "version": "3.192.8"
+        "version": "3.192.9"
     },
     "vacuum": {
         "cargoLocks": null,
