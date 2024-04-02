@@ -6,10 +6,10 @@
   ...
 }: {
   imports = [
-    inputs.hypridle.homeManagerModules.default
     inputs.hyprland.homeManagerModules.default
     ./theme.nix
     ./features
+    ./hypridle.nix
     ./hyprlock.nix
   ];
 
@@ -169,8 +169,8 @@
             maximizeAction = "hyprctl dispatch togglefloating";
           in [
             "$red,12,,${closeAction}"
-            "$yellow,12,,${maximizeAction}"
-            "$green,12,,${minimizeAction}"
+            "$green,12,,${maximizeAction}"
+            "$yellow,12,,${minimizeAction}"
           ];
         };
       };
