@@ -78,6 +78,26 @@
         },
         "version": "355e12387f73b27cf4734a6a3eb431554fabb74f"
     },
+    "catppuccin-python": {
+        "cargoLocks": null,
+        "date": null,
+        "extract": null,
+        "name": "catppuccin-python",
+        "passthru": null,
+        "pinned": false,
+        "src": {
+            "deepClone": false,
+            "fetchSubmodules": false,
+            "leaveDotGit": false,
+            "name": null,
+            "owner": "catppuccin",
+            "repo": "python",
+            "rev": "v2.2.0",
+            "sha256": "sha256-+V1rln3FlFvs1FEIANIch7k/b2EsI9xBxhg3Bwg99+I=",
+            "type": "github"
+        },
+        "version": "v2.2.0"
+    },
     "fblog": {
         "cargoLocks": {
             "Cargo.lock": [

@@ -1,24 +1,20 @@
 _: final: prev: let
   nv = (import ./nvpkgs.nix).catppuccin-gtk;
+  catppuccin-python-nv = (import ./nvpkgs.nix).catppuccin-python;
   # FIXME: https://github.com/catppuccin/gtk/issues/152
   # FIXME: https://github.com/NixOS/nixpkgs/issues/298043
   catppuccin-python =
     prev.python311Packages.catppuccin.overridePythonAttrs
-    (_: rec {
-      version = "1.3.2";
+    {
+      inherit (catppuccin-python-nv) version;
 
       src = prev.fetchFromGitHub {
-        owner = "catppuccin";
-        repo = "python";
-        rev = "refs/tags/v${version}";
-        hash = "sha256-spPZdQ+x3isyeBXZ/J2QE6zNhyHRfyRQGiHreuXzzik=";
+        inherit (catppuccin-python-nv.src) owner repo rev sha256;
       };
 
       # can be removed next version
-      disabledTestPaths = [
-        "tests/test_flavour.py" # would download a json to check correctness of flavours
-      ];
-    });
+      disabledTestPaths = [];
+    };
 in {
   catppuccin-gtk = prev.catppuccin-gtk.overrideAttrs (_: let
     # FIXME: https://github.com/catppuccin/gtk/issues/145

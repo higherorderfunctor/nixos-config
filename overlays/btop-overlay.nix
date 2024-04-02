@@ -1,10 +1,10 @@
 _: final: prev: let
   nv = (import ./nvpkgs.nix).btop;
-  catppuccin-nv = (import ./nvpkgs.nix).catppuccin-btop;
+  catppuccin-btop-nv = (import ./nvpkgs.nix).catppuccin-btop;
   catppuccin-btop = final.stdenv.mkDerivation {
     inherit (nv) version;
-    pname = catppuccin-nv.name;
-    src = final.fetchFromGitHub {inherit (catppuccin-nv.src) owner repo rev sha256;};
+    pname = catppuccin-btop-nv.name;
+    src = final.fetchFromGitHub {inherit (catppuccin-btop-nv.src) owner repo rev sha256;};
     dontConfigure = true;
     dontBuild = true;
     installPhase = ''
