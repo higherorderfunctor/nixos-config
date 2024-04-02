@@ -6,9 +6,11 @@
   ...
 }: {
   imports = [
+    inputs.hypridle.homeManagerModules.default
     inputs.hyprland.homeManagerModules.default
     ./theme.nix
     ./features
+    ./hyprlock.nix
   ];
 
   xdg.portal = {
@@ -54,8 +56,16 @@
     plugins = [pkgs.hyprbars];
 
     settings = {
+      source = [
+        "${pkgs.catppuccin-hyprland}/mocha.conf"
+      ];
+
       # startup applications
       exec-once = [
+        # gnome-keyring + other fixes
+        # https://wiki.hyprland.org/Useful-Utilities/Hyprland-desktop-portal/
+        # https://github.com/NixOS/nixpkgs/issues/174099
+        "${pkgs.dbus}/bin/dbus-update-activation-environment --systemd --all"
         "ags -b hypr"
       ];
 
@@ -68,6 +78,8 @@
         "$mod, Y,     exec,   kitty"
         "$mod, F,     exec,   firefox-nightly"
         "$mod, D,     exec,   discord"
+        "$mod, L,     exec,   ${lib.getExe config.programs.hyprlock.package}"
+
         "CTRL ALT, Delete,    exit"
 
         # movement keybinds
@@ -89,7 +101,8 @@
       general = {
         layout = "dwindle";
         resize_on_border = true; # resize windows by dragging their borders
-        "col.active_border" = "0x00000000"; # active window border color
+        "col.active_border" = "$mauve"; # active window border color
+        "col.inactive_border" = "$crust"; # active window border color
       };
 
       dwindle = {
@@ -140,9 +153,9 @@
 
       plugin = {
         hyprbars = {
-          bar_color = "rgb(2a2a2a)";
+          bar_color = "$surface0";
           bar_height = 28;
-          col_text = "rgba(ffffffdd)";
+          col_text = "$text";
           bar_text_size = 11;
           bar_text_font = "Ubuntu Nerd Font";
           hyprbars-button = let
@@ -155,9 +168,9 @@
 
             maximizeAction = "hyprctl dispatch togglefloating";
           in [
-            "rgb(f38ba8),12,,${closeAction}"
-            "rgb(a6e3a1),12,,${maximizeAction}"
-            "rgb(f9e2af),12,,${minimizeAction}"
+            "$red,12,,${closeAction}"
+            "$yellow,12,,${maximizeAction}"
+            "$green,12,,${minimizeAction}"
           ];
         };
       };

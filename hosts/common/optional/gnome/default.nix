@@ -3,8 +3,12 @@
   pkgs,
   ...
 }: {
+  # https://nixos.wiki/wiki/GNOME#Running_GNOME_programs_outside_of_GNOME
+  # FIXME: https://github.com/NixOS/nixpkgs/issues/174099
+  # systemctl --user status gnome-keyring.services
+  #
   services = {
-    # udev.packages = with pkgs; [gnome.gnome-settings-daemon]; # TODO: needed?
+    udev.packages = with pkgs; [gnome.gnome-settings-daemon];
     accounts-daemon.enable = true; # dbus service for accessing the list of user accounts and information attached to those accounts
     devmon.enable = true; # automatic device mounting daemon
     geoclue2.enable = true; # dbus service that provides location information for accessing - used by gnome-calendar
@@ -76,9 +80,15 @@
   };
   # TODO: GDK_BACKEND=x11
 
+  # review options
+  # FIXME: https://github.com/fufexan/dotfiles/blob/15b42970336a81d40d8ec0f464a2f8662891c813/system/core/security.nix#L48
   security = {
     polkit.enable = true;
-    pam.services.ags = {};
+    pam.services = {
+      ags = {};
+      # allow wayland lockers to unlock the screen
+      hyprlock.text = "auth include login";
+    };
   };
 
   # TODO: clean up

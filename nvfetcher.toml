@@ -16,6 +16,18 @@ src.use_commit = true
 src.branch = "main"
 fetch.git = "https://github.com/catppuccin/gtk.git"
 
+[catppuccin-hyprland ]
+src.git = "https://github.com/catppuccin/hyprland.git"
+src.use_commit = true
+src.branch = "main"
+fetch.git = "https://github.com/catppuccin/hyprland.git"
+
+[catppuccin-hyprlock ]
+src.git = "https://github.com/catppuccin/hyprlock.git"
+src.use_commit = true
+src.branch = "main"
+fetch.git = "https://github.com/catppuccin/hyprlock.git"
+
 [catppuccin-python]
 src.github = "catppuccin/python"
 fetch.github = "catppuccin/python"

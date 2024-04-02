@@ -4,7 +4,6 @@
   (import ./catppuccin-gtk-overlay.nix {inherit inputs;})
   (import ./fblog-overlay.nix {inherit inputs;})
   (import ./firefox-nightly-overlay.nix {inherit inputs;})
-  (import ./hyprbars-overlay.nix {inherit inputs;})
   (import ./hyprland-overlay.nix {inherit inputs;})
   (import ./neovim-nightly-overlay.nix {inherit inputs;})
   (import ./nix-gl-host-overlay.nix {inherit inputs;})

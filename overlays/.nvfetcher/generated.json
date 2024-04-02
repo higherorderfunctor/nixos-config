@@ -78,6 +78,44 @@
         },
         "version": "355e12387f73b27cf4734a6a3eb431554fabb74f"
     },
+    "catppuccin-hyprland": {
+        "cargoLocks": null,
+        "date": "2024-03-31",
+        "extract": null,
+        "name": "catppuccin-hyprland",
+        "passthru": null,
+        "pinned": false,
+        "src": {
+            "deepClone": false,
+            "fetchSubmodules": false,
+            "leaveDotGit": false,
+            "name": null,
+            "rev": "13d7b4e3db178bb01520eb68e16e4cf4e11da6ab",
+            "sha256": "sha256-jkk021LLjCLpWOaInzO4Klg6UOR4Sh5IcKdUxIn7Dis=",
+            "type": "git",
+            "url": "https://github.com/catppuccin/hyprland.git"
+        },
+        "version": "13d7b4e3db178bb01520eb68e16e4cf4e11da6ab"
+    },
+    "catppuccin-hyprlock": {
+        "cargoLocks": null,
+        "date": "2024-04-01",
+        "extract": null,
+        "name": "catppuccin-hyprlock",
+        "passthru": null,
+        "pinned": false,
+        "src": {
+            "deepClone": false,
+            "fetchSubmodules": false,
+            "leaveDotGit": false,
+            "name": null,
+            "rev": "d5a6767000409334be8413f19bfd1cf5b6bb5cc6",
+            "sha256": "sha256-pjMFPaonq3h3e9fvifCneZ8oxxb1sufFQd7hsFe6/i4=",
+            "type": "git",
+            "url": "https://github.com/catppuccin/hyprlock.git"
+        },
+        "version": "d5a6767000409334be8413f19bfd1cf5b6bb5cc6"
+    },
     "catppuccin-python": {
         "cargoLocks": null,
         "date": null,

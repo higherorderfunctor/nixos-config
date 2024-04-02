@@ -29,6 +29,22 @@
       url = "github:hyprwm/hyprland-plugins";
       inputs.hyprland.follows = "hyprland";
     };
+    hyprlock = {
+      url = "github:hyprwm/hyprlock";
+      inputs = {
+        nixpkgs.follows = "hyprland/nixpkgs";
+        systems.follows = "hyprland/systems";
+        hyprlang.follows = "hyprland/hyprlang";
+      };
+    };
+    hypridle = {
+      url = "github:hyprwm/hypridle";
+      inputs = {
+        nixpkgs.follows = "hyprland/nixpkgs";
+        systems.follows = "hyprland/systems";
+        hyprlang.follows = "hyprland/hyprlang";
+      };
+    };
     impermanence = {
       url = "github:nix-community/impermanence";
     };
