@@ -8,6 +8,7 @@
     ../../features/cli/nix.nix
     ../../features/system/nix-gl-host.nix
     ../../features/desktop
+    ../../features/system/openconnect.nix
   ];
   # disable impermanence
   home.persistence = lib.mkForce {};

@@ -1,3 +1,7 @@
 {pkgs, ...}: {
-  home.packages = [pkgs.openconnect_openssl];
+  home.packages = with pkgs; [
+    openconnect_openssl
+    oath-toolkit
+    vpn-slice
+  ];
 }
