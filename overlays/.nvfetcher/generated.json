@@ -80,7 +80,7 @@
     },
     "catppuccin-hyprland": {
         "cargoLocks": null,
-        "date": "2024-03-31",
+        "date": "2024-04-03",
         "extract": null,
         "name": "catppuccin-hyprland",
         "passthru": null,
@@ -90,12 +90,12 @@
             "fetchSubmodules": false,
             "leaveDotGit": false,
             "name": null,
-            "rev": "13d7b4e3db178bb01520eb68e16e4cf4e11da6ab",
+            "rev": "4632003607c27475d15bd86abbd8a18d52ca085f",
             "sha256": "sha256-jkk021LLjCLpWOaInzO4Klg6UOR4Sh5IcKdUxIn7Dis=",
             "type": "git",
             "url": "https://github.com/catppuccin/hyprland.git"
         },
-        "version": "13d7b4e3db178bb01520eb68e16e4cf4e11da6ab"
+        "version": "4632003607c27475d15bd86abbd8a18d52ca085f"
     },
     "catppuccin-hyprlock": {
         "cargoLocks": null,
@@ -139,7 +139,7 @@
     "fblog": {
         "cargoLocks": {
             "Cargo.lock": [
-                "./fblog-v4.8.0/Cargo.lock",
+                "./fblog-v4.9.0/Cargo.lock",
                 {}
             ]
         },
@@ -155,11 +155,11 @@
             "name": null,
             "owner": "brocode",
             "repo": "fblog",
-            "rev": "v4.8.0",
-            "sha256": "sha256-ByojMOkdE3B9KrApOWPihg6vJHpLQy0gsIlKPd5xJog=",
+            "rev": "v4.9.0",
+            "sha256": "sha256-9v8bn68anWB0vkRIixa6YvNl54z6X8u+MyYs38Zgc5A=",
             "type": "github"
         },
-        "version": "v4.8.0"
+        "version": "v4.9.0"
     },
     "oh-my-posh": {
         "cargoLocks": null,
@@ -175,11 +175,11 @@
             "name": null,
             "owner": "JanDeDobbeleer",
             "repo": "oh-my-posh",
-            "rev": "v19.19.0",
-            "sha256": "sha256-6c6e0/z8ATIQHY/v9V6v/W19HloYsz9SfLTGDg7t7M0=",
+            "rev": "v19.20.0",
+            "sha256": "sha256-f85CKfYPNh06eVHu5nn4MhX5wuptpJCmvSiPHWGzjkg=",
             "type": "github"
         },
-        "version": "v19.19.0"
+        "version": "v19.20.0"
     },
     "spectral": {
         "cargoLocks": null,
