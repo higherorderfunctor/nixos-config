@@ -210,11 +210,11 @@
         "pinned": false,
         "src": {
             "name": "standardnotes-desktop-linux-amd64.deb",
-            "sha256": "sha256-ezHrTGyZnKo19VAAHRx4DGNqhfZKqYOh3mBEBmmWeN0=",
+            "sha256": "sha256-hrDjoIC+o4OJh72R26zXgr0CU8VYKSDKc2qmqOuKCAA=",
             "type": "url",
-            "url": "https://github.com/standardnotes/app/releases/download/@standardnotes/desktop@3.192.9/standard-notes-3.192.9-linux-amd64.deb"
+            "url": "https://github.com/standardnotes/app/releases/download/@standardnotes/desktop@3.192.10/standard-notes-3.192.10-linux-amd64.deb"
         },
-        "version": "3.192.9"
+        "version": "3.192.10"
     },
     "vacuum": {
         "cargoLocks": null,

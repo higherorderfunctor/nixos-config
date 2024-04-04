@@ -1,5 +1,7 @@
 {
+  config,
   inputs,
+  lib,
   pkgs,
   ...
 }: {
@@ -20,10 +22,21 @@
       evolution-data-server.enable = true; # collection of services for storing addressbooks and calendars
       glib-networking.enable = true; # network extensions for glib
       gnome-browser-connector.enable = true; # gnome integrations with web browsers
-      gnome-keyring.enable = true; # service designed to take care of the user’s security credentials, such as user names and passwords
+      # Service designed to take care of the user’s security credentials, such as user names and passwords.
+      #
+      # This configures system components, but not a service for GNOME keyring, the GNOME keyring service is configured
+      # under home-manager.
+      gnome-keyring.enable = true;
       gnome-settings-daemon.enable = true; # gnome settings daemon
     };
   };
+  # TODO: good repo for settings
+  # https://github.com/matthewpi/nixos-config/blob/38ebf6fee440ed4e745b178bac245300fadf2491/modules/hyprland/gsettings.nix
+
+  # Enable hyprlock PAM (and gnome-keyring integration)
+  #
+  # Won't do anything until https://github.com/hyprwm/hyprlock/issues/4#issuecomment-1960904526 is resolved.
+  # security.pam.services.hyprlock.enableGnomeKeyring = lib.mkDefault config.services.gnome.gnome-keyring.enable;
 
   # FIXME:
   # Mar 22 18:58:28 beelink-ser7 agent[2865]: Geolocation service not in use
@@ -89,8 +102,10 @@
     polkit.enable = true;
     pam.services = {
       ags = {};
+      # Enable hyprlock PAM (and gnome-keyring integration)
+      hyprlock.enableGnomeKeyring = lib.mkDefault config.services.gnome.gnome-keyring.enable;
       # allow wayland lockers to unlock the screen
-      hyprlock.text = "auth include login";
+      # hyprlock.text = "auth include login";
       #hyprland.enableGnomeKeyring = true;
     };
   };
