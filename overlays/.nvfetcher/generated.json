@@ -90,12 +90,12 @@
             "fetchSubmodules": false,
             "leaveDotGit": false,
             "name": null,
-            "rev": "4632003607c27475d15bd86abbd8a18d52ca085f",
-            "sha256": "sha256-jkk021LLjCLpWOaInzO4Klg6UOR4Sh5IcKdUxIn7Dis=",
+            "rev": "b57375545f5da1f7790341905d1049b1873a8bb3",
+            "sha256": "sha256-XTqpmucOeHUgSpXQ0XzbggBFW+ZloRD/3mFhI+Tq4O8=",
             "type": "git",
             "url": "https://github.com/catppuccin/hyprland.git"
         },
-        "version": "4632003607c27475d15bd86abbd8a18d52ca085f"
+        "version": "b57375545f5da1f7790341905d1049b1873a8bb3"
     },
     "catppuccin-hyprlock": {
         "cargoLocks": null,
@@ -230,11 +230,11 @@
             "name": null,
             "owner": "daveshanley",
             "repo": "vacuum",
-            "rev": "v0.9.10",
-            "sha256": "sha256-5a7j5r/k8gj9PLgIRRDxWu4wYQAK0M6ezJVJOZ4qD5U=",
+            "rev": "v0.9.11",
+            "sha256": "sha256-uC1g1L/S3rYtTIJwGZdT+oTzRortM96RAMVSFjsFgos=",
             "type": "github"
         },
-        "version": "v0.9.10"
+        "version": "v0.9.11"
     },
     "vivid-plasma-themes": {
         "cargoLocks": null,
