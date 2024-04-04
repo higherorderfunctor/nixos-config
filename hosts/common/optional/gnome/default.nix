@@ -65,6 +65,9 @@
     flatpak.enable = true;
   };
 
+  # TODO: clean up
+  services.xserver.displayManager.startx.enable = true;
+
   programs.hyprland = {
     enable = true;
     package = pkgs.hyprland;
@@ -88,11 +91,9 @@
       ags = {};
       # allow wayland lockers to unlock the screen
       hyprlock.text = "auth include login";
+      #hyprland.enableGnomeKeyring = true;
     };
   };
-
-  # TODO: clean up
-  services.xserver.displayManager.startx.enable = true;
 
   systemd = {
     user.services.polkit-gnome-authentication-agent-1 = {
