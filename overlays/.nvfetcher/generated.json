@@ -195,11 +195,11 @@
             "name": null,
             "owner": "stoplightio",
             "repo": "spectral",
-            "rev": "v6.11.0",
-            "sha256": "sha256-uk+l32Hbtnit5RW9x7PWpnvXbGzFGYJOE6ORrLXAU6A=",
+            "rev": "v6.11.1",
+            "sha256": "sha256-ivuu7kpVJIn2RiFAe/slMffcisVeq7yeG1TwoXMOMeA=",
             "type": "github"
         },
-        "version": "v6.11.0"
+        "version": "v6.11.1"
     },
     "standardnotes-linux-amd64-deb": {
         "cargoLocks": null,
