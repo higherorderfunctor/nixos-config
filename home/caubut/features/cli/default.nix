@@ -1,6 +1,6 @@
 {
   imports = [
-# FIXME: nix-tree
+    # FIXME: nix-tree
     ./code
     ./alejandra.nix
     ./aspell.nix
@@ -14,6 +14,7 @@
     ./curl.nix
     ./deadnix.nix
     ./dircolors.nix
+    ./dnsutils.nix
     ./dotenv-linter.nix
     ./fblog.nix
     ./fd.nix
