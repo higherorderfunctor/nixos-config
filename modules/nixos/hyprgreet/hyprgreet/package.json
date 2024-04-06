@@ -1,0 +1,92 @@
+{
+  "name": "hyprgreet",
+  "version": "0.0.0",
+  "description": "Hyprland Greetd Greeter with Astal",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "packageManager": "pnpm@8.13.1",
+  "scripts": {
+    "serve": "pnpm build && cp -R assets dist/esm/ && astal -c \"$PWD/dist/esm/index.js\"",
+    "build": "bun esbuild.config.ts",
+    "clean": "rimraf -g ./*.orig ./dist ./.eslintcache .tsbuildinfo",
+    "lint": "pnpm run lint:package-json;pnpm run lint:tsc;pnpm run lint:eslint;pnpm run lint:circular;pnpm run lint:audit",
+    "lint:fix": "pnpm run lint:eslint:fix;",
+    "lint:eslint": "ESLINT_USE_FLAT_CONFIG=true eslint_d --cache .",
+    "lint:eslint:fix": "pnpm run lint:eslint --fix",
+    "lint:eslint:restart": "eslint_d restart",
+    "lint:eslint:stop": "eslint_d stop && rm -rf .eslintcache",
+    "lint:package-json": "npmPkgJsonLint .",
+    "lint:circular": "madge --extensions ts --circular --no-color --no-spinner packages/*/lib",
+    "lint:audit": "pnpm audit",
+    "lint:tsc": "tsc -b tsconfig.json",
+    "outdated": "pnpm outdated -r",
+    "update": "pnpm up -r --latest"
+  },
+  "dependencies": {
+    "@effect/platform": "^0.48.26",
+    "@effect/schema": "^0.64.19",
+    "@girs/gio-2.0": "2.78.0-3.3.0",
+    "@girs/glib-2.0": "2.78.0-3.3.0",
+    "@girs/gtk-4.0": "4.12.5-3.3.0",
+    "effect": "^2.4.18"
+  },
+  "devDependencies": {
+    "@eslint/eslintrc": "^3.0.2",
+    "@eslint/js": "^8.57.0",
+    "@stylistic/eslint-plugin": "^1.7.0",
+    "@typescript-eslint/eslint-plugin": "^7.5.0",
+    "@typescript-eslint/parser": "^7.5.0",
+    "esbuild": "^0.20.2",
+    "eslint": "^8.57.0",
+    "eslint-config-airbnb-base": "^15.0.0",
+    "eslint-config-airbnb-typescript": "^18.0.0",
+    "eslint-config-prettier": "^9.1.0",
+    "eslint-import-resolver-typescript": "^3.6.1",
+    "eslint-plugin-codegen": "0.28.0",
+    "eslint-plugin-deprecation": "^2.0.0",
+    "eslint-plugin-import": "^2.29.1",
+    "eslint-plugin-jsonc": "^2.15.0",
+    "eslint-plugin-markdown": "^4.0.1",
+    "eslint-plugin-prefer-arrow-functions": "^3.3.2",
+    "eslint-plugin-prettier": "^5.1.3",
+    "eslint-plugin-promise": "^6.1.1",
+    "eslint-plugin-simple-import-sort": "^12.0.0",
+    "eslint-plugin-sort-destructure-keys": "^1.5.0",
+    "eslint_d": "^13.1.2",
+    "jsonc-eslint-parser": "^2.4.0",
+    "madge": "^6.1.0",
+    "npm-package-json-lint": "^7.1.0",
+    "npm-package-json-lint-config-default": "^6.0.0",
+    "prettier": "^3.2.5",
+    "rimraf": "^5.0.5",
+    "typescript": "^5.4.4"
+  },
+  "prettier": {
+    "semi": true,
+    "trailingComma": "all",
+    "singleQuote": true,
+    "printWidth": 120,
+    "tabWidth": 2
+  },
+  "npmpackagejsonlint": {
+    "extends": "npm-package-json-lint-config-default",
+    "rules": {
+      "license-type": "error"
+    }
+  },
+  "madge": {
+    "tsConfig": {
+      "compilerOptions": {
+        "baseUrl": "."
+      }
+    },
+    "detectiveOptions": {
+      "ts": {
+        "skipTypeImports": true
+      }
+    }
+  }
+}

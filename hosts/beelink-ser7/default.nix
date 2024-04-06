@@ -5,6 +5,7 @@
     ../common/optional/openssh.nix
     ../common/optional/gnome # system support for Hyprland
     ../common/optional/networking/openconnect.nix
+    ../../modules/nixos/hyprgreet
   ];
 
   # hostname
