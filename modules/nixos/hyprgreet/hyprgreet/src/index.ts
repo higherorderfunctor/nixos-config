@@ -1,7 +1,8 @@
 import { FileSystem } from '@effect/platform/FileSystem';
 import { ParseResult } from '@effect/schema';
 import * as S from '@effect/schema/Schema';
-import { Console, Effect, Option, pipe, ReadonlyArray } from 'effect';
+import { Gtk } from '@girs/gtk-4.0';
+import { Cause, Console, Context, Effect, Exit, Layer, Option, pipe, ReadonlyArray } from 'effect';
 
 import { GjsFileSystem } from './platform-gjs/index.js';
 
@@ -56,35 +57,6 @@ export const PasswdToUser = S.transformOrFail(
     ]),
 );
 
-// class User extends Data.TaggedClass('User')<{
-//   username: string;
-//   uid: number;
-//   gid: number;
-//   name: string;
-//   homedir: string;
-//   shell: string;
-// }> {
-//   static fromPasswd = (passwd: string) => {
-//     const [username, , uid, gid, gecos, homedir, shell] = passwd.split(':');
-//     const [name] = gecos.split(',');
-//     return new User({
-//       username,
-//       uid: parseInt(uid),
-//       gid: parseInt(gid),
-//       name,
-//       homedir,
-//       shell,
-//     });
-//   };
-// }
-// - Username: jdoe
-// - Password: An x, indicating the hashed password is stored in /etc/shadow
-// - UID: 1001
-// - GID: 1001
-// - GECOS: John Doe,,, (additional user information, with some fields left blank)
-// - Home Directory: /home/jdoe
-// - Login Shell: /bin/bash
-
 const getUsers = Effect.gen(function* (_) {
   const fs = yield* _(FileSystem);
   const passwd = yield* _(fs.readFileString('/etc/passwd', 'utf-8'));
@@ -102,7 +74,130 @@ const getUsers = Effect.gen(function* (_) {
   );
 });
 
-await Effect.runPromise(getUsers.pipe(Effect.tap(Console.log), Effect.provide(GjsFileSystem.layer)));
+const LoginBox = (usernameField: Gtk.Widget, passwordField: Gtk.Widget) =>
+  Widget.Box({
+    // setup: (self) => {
+    //   console.log('here');
+    // },
+    // on_focus_enter: () => {
+    //   console.log('hi');
+    // },
+    children: [
+      Widget.Overlay({
+        hexpand: true,
+        vexpand: true,
+        child: Widget.Box({
+          vertical: true,
+          vpack: 'center',
+          hpack: 'center',
+          spacing: 16,
+          children: [
+            //   Widget.Box({
+            //     hpack: 'center',
+            //     class_name: 'avatar',
+            //   }),
+            Widget.Box({
+              cssClasses: ['entry-box'],
+              vertical: true,
+              children: [usernameField, Widget.Separator(), passwordField],
+            }),
+          ],
+        }),
+        // overlays: [
+        //   RoundedCorner('topleft', { class_name: 'corner' }),
+        //   RoundedCorner('topright', { class_name: 'corner' }),
+        // ],
+      }),
+    ],
+  });
+
+const GreeterWindow = <Child extends Gtk.Widget = Gtk.Widget>(child: Child) =>
+  Widget.Window({
+    name: 'greeter',
+    keymode: 'on-demand', // TODO: exclusive
+    cssClasses: ['base'],
+    child: Widget.Box({
+      vertical: true,
+      children: [child],
+    }),
+  });
+
+class Greeter extends Context.Tag('Greeter')<Greeter, { window: Gtk.Window }>() {}
+// const password = Entry({
+//     placeholderText: 'Password',
+//     visibility: false,
+//
+//     setup: (self) => idle(() => {
+//         self.grab_focus();
+//     }),
+//
+//     on_accept: () => {
+//         greetd.login(
+//             (dropdown.selectedItem as StringObject)['string'] || '',
+//             password.text || '',
+//             'Hyprland',
+//
+//         ).catch((error) => {
+//             response.label = JSON.stringify(error);
+//         });
+//     },
+//
+// });
+
+const GreeterLive = Layer.effect(
+  Greeter,
+  Effect.gen(function* (_) {
+    const users = yield* _(getUsers);
+
+    const usernameDropdown = Gtk.DropDown.new_from_strings([
+      'asdf',
+      ...users.map((u) => Option.getOrElse(u.name, () => u.username)),
+    ]);
+
+    // https://github.com/matt1432/nixos-configs/blob/2226b33bc866e17d8752396046367a49d235a8c7/modules/ags/astal/ts/greetd/main.ts#L6
+    const passwordField = Widget.Entry({
+      placeholderText: 'Password',
+      visibility: false,
+      setup: (self) =>
+        Utils.idle(() => {
+          self.grab_focus();
+        }),
+      // onAccept: () => handle_input().catch(logError),
+    }); // .on('realize', (entry) => entry.grabFocus());
+
+    const loginBox = LoginBox(usernameDropdown, passwordField);
+
+    const greeterWindow = GreeterWindow(loginBox);
+
+    return Greeter.of({
+      window: greeterWindow,
+    });
+  }),
+);
+
+Effect.gen(function* (_) {
+  const greeter = yield* _(Greeter);
+
+  App.config({
+    // icons: './assets',
+    style: `${App.configDir}/assets/css/style.css`,
+    windows: () => [greeter.window],
+  });
+})
+  .pipe(
+    Effect.tapError(Console.log),
+    Effect.tapDefect(Console.log),
+    // Effect.forkDaemon,
+    Effect.provide(GreeterLive.pipe(Layer.provide(GjsFileSystem.layer))),
+    Effect.runPromiseExit,
+  )
+  .then((exit) => {
+    if (Exit.isFailure(exit)) print(Cause.pretty(exit.cause));
+    return exit;
+  })
+  .catch((error: unknown) => {
+    print(error);
+  });
 
 // const handle_response = async (res) => {
 //   if (!res) return;
@@ -154,11 +249,6 @@ await Effect.runPromise(getUsers.pipe(Effect.tap(Console.log), Effect.provide(Gj
 //   return handle_response(res);
 // };
 
-// const UsernameField = () =>
-const UsernameField = Widget.Entry({
-  placeholderText: 'Username',
-  // on_accept: () => PasswordEntry.grab_focus(),
-});
 // const password = Entry({
 //     placeholderText: 'Password',
 //     visibility: false,
@@ -179,72 +269,6 @@ const UsernameField = Widget.Entry({
 //     },
 //
 // });
-
-// const PasswordEntry = () =>
-const PasswordEntry = Widget.Entry({
-  placeholderText: 'Password',
-  visibility: false,
-  setup: (self) =>
-    Utils.idle(() => {
-      console.log('focus me');
-      // self.grab_focus();
-    }),
-  // onAccept: () => handle_input().catch(logError),
-}); // .on('realize', (entry) => entry.grabFocus());
-
-const LoginBox = () =>
-  Widget.Box({
-    setup: (self) => {
-      console.log('here');
-    },
-    on_focus_enter: () => {
-      console.log('hi');
-    },
-    children: [
-      Widget.Overlay({
-        hexpand: true,
-        vexpand: true,
-        child: Widget.Box({
-          vertical: true,
-          vpack: 'center',
-          hpack: 'center',
-          spacing: 16,
-          children: [
-            //   Widget.Box({
-            //     hpack: 'center',
-            //     class_name: 'avatar',
-            //   }),
-            Widget.Box({
-              cssClasses: ['entry-box'],
-              vertical: true,
-              children: [UsernameField, Widget.Separator(), PasswordEntry],
-            }),
-          ],
-        }),
-        // overlays: [
-        //   RoundedCorner('topleft', { class_name: 'corner' }),
-        //   RoundedCorner('topright', { class_name: 'corner' }),
-        // ],
-      }),
-    ],
-  });
-
-const Greeter = () =>
-  Widget.Window({
-    name: 'greeter',
-    keymode: 'on-demand', // TODO: exclusive
-    cssClasses: ['base'],
-    child: Widget.Box({
-      vertical: true,
-      children: [LoginBox()],
-    }),
-  });
-
-App.config({
-  // icons: './assets',
-  style: `${App.configDir}/assets/css/style.css`,
-  windows: () => [Greeter()],
-});
 
 // App.config({
 //   style: `${App.configDir}/style.css`,
