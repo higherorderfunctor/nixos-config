@@ -48,5 +48,7 @@ in {
       cat <(echo '${patch}') ${patch-file} > ${patch-file}.patched
       mv ${patch-file}.patched ${patch-file}
     '';
+    # FIXME: upstream patches break for catppuccin-python 1.x.x -> 2.xx
+    patches = [];
   });
 }
