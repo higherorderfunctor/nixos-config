@@ -248,8 +248,8 @@ class DropDown extends Gtk.DropDown {
 
     const model = new Gio.ListStore<DropDownItem>(DropDownItem.$gtype);
     model.append(new DropDownItem({ id: 'apple', text: 'APPLE' }));
-    model.append(new DropDownItem({ id: 'banana', text: 'BANANA' }));
-    model.append(new DropDownItem({ id: 'cherry', text: 'CHERRY' }));
+    // model.append(new DropDownItem({ id: 'banana', text: 'BANANA' }));
+    // model.append(new DropDownItem({ id: 'cherry', text: 'CHERRY' }));
 
     const filter = new Gtk.StringFilter({
       expression: new Gtk.PropertyExpression(DropDownItem.$gtype, null, 'text'),
@@ -259,12 +259,10 @@ class DropDown extends Gtk.DropDown {
 
     const factory = new Gtk.SignalListItemFactory();
     factory.connect('setup', (_, listItem: Gtk.ListItem) => {
-      console.log('setup');
       const label = new Gtk.Label({ xalign: 0 });
       listItem.set_child(label);
     });
     factory.connect('bind', (_, listItem: Gtk.ListItem) => {
-      console.log('bind');
       const label = listItem.get_child() as unknown as Gtk.Label;
       const item = listItem.get_item() as unknown as DropDownItem;
       label.set_text(item.text);
@@ -276,20 +274,20 @@ class DropDown extends Gtk.DropDown {
       factory,
     });
 
-    filter.set_search('A');
-    const popover = Option.fromNullable(this.get_last_child()).pipe(
-      Option.flatMap((self) => Option.fromNullable(self.get_first_child())),
-      Option.flatMap((self) => Option.fromNullable(self.get_first_child())),
-      Option.flatMap((self) => Option.fromNullable(self.get_first_child())),
-      Option.flatMap((self) => Option.fromNullable(self.get_first_child())),
-      Option.tap((searchEntry) => {
-        searchEntry.connect('search-changed', (search: Gtk.SearchEntry) => {
-          console.log(search.text);
-          filter.set_search(search.text);
-        });
-        return Option.some(searchEntry);
-      }),
-    );
+    // filter.set_search('A');
+    // const popover = Option.fromNullable(this.get_last_child()).pipe(
+    //   Option.flatMap((self) => Option.fromNullable(self.get_first_child())),
+    //   Option.flatMap((self) => Option.fromNullable(self.get_first_child())),
+    //   Option.flatMap((self) => Option.fromNullable(self.get_first_child())),
+    //   Option.flatMap((self) => Option.fromNullable(self.get_first_child())),
+    //   Option.tap((searchEntry) => {
+    //     searchEntry.connect('search-changed', (search: Gtk.SearchEntry) => {
+    //       console.log(search.text);
+    //       filter.set_search(search.text);
+    //     });
+    //     return Option.some(searchEntry);
+    //   }),
+    // );
     // const content = this.get_last_child();
     // const box = content.get_first_child();
     // const box2 = box.get_first_child();
@@ -351,14 +349,8 @@ const GreeterLive = Layer.effect(
     // usernameDropdown.enableSearch = true;
 
     const usernameDropdown = new DropDown({
-      model: [
-        // FIXME: 'asdf',
-        'asdf',
-        'select',
-        ...users.map((u) => Option.getOrElse(u.name, () => u.username)),
-      ],
+      model: [...users.map((u) => Option.getOrElse(u.name, () => u.username))],
     });
-
     // const stringList = new Gtk.StringList();
 
     // Add items to the string list
