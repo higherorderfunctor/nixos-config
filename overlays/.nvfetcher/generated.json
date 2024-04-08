@@ -230,11 +230,11 @@
             "name": null,
             "owner": "daveshanley",
             "repo": "vacuum",
-            "rev": "v0.9.11",
-            "sha256": "sha256-uC1g1L/S3rYtTIJwGZdT+oTzRortM96RAMVSFjsFgos=",
+            "rev": "v0.9.12",
+            "sha256": "sha256-tHxM9ff4nawwN15wCbyjIUKHReEluhtg3AftKusKexk=",
             "type": "github"
         },
-        "version": "v0.9.11"
+        "version": "v0.9.12"
     },
     "vivid-plasma-themes": {
         "cargoLocks": null,
