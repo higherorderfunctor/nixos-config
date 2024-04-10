@@ -1,5 +1,6 @@
 {
   lib,
+  config,
   pkgs,
   ...
 }: {
@@ -25,5 +26,14 @@
       # Keep the last 60 days of generations
       options = "--delete-older-than 60d";
     };
+    extraOptions = ''
+      !include ${config.sops.secrets."nix-conf-secrets".path}
+    '';
+  };
+  sops.templates."nix-conf-secrets.conf" = {
+    content = ''
+      access-tokens = github.com=${config.sops.placeholder."caubut-github"}
+    '';
+    sopsFile = ../../../home/caubut/secrets/secrets.yaml;
   };
 }

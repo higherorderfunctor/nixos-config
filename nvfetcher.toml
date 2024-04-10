@@ -6,6 +6,11 @@ fetch.github = "arkenfox/user.js"
 src.github = "aristocratos/btop"
 fetch.github = "aristocratos/btop"
 
+[bun-x86_64-linux]
+src.github = "oven-sh/bun"
+fetch.url = "https://github.com/oven-sh/bun/releases/download/$ver/bun-linux-x64.zip"
+url.name = "bun-x86_64-linux.zip"
+
 [catppuccin-btop]
 src.github = "catppuccin/btop"
 fetch.github = "catppuccin/btop"
@@ -45,13 +50,13 @@ fetch.github = "JanDeDobbeleer/oh-my-posh"
 src.github = "stoplightio/spectral"
 fetch.github = "stoplightio/spectral"
 
-[standardnotes-linux-amd64-deb]
+[standardnotes-desktop-deb-x86_64-linux]
 src.github_tag = "standardnotes/app"
 src.include_regex = "^@standardnotes/desktop@[0-9]+\\.[0-9]+\\.[0-9]+$"
 src.from_pattern = "^@standardnotes/desktop@([0-9]+\\.[0-9]+\\.[0-9]+)$"
 src.to_pattern = "\\1"
 fetch.url = "https://github.com/standardnotes/app/releases/download/@standardnotes/desktop@$ver/standard-notes-$ver-linux-amd64.deb"
-url.name = "standardnotes-desktop-linux-amd64.deb"
+url.name = "standardnotes-desktop-x86_64-linux.deb"
 
 [vacuum]
 src.github = "daveshanley/vacuum"

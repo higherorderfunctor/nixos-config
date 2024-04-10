@@ -39,6 +39,21 @@
         },
         "version": "v1.3.2"
     },
+    "bun-x86_64-linux": {
+        "cargoLocks": null,
+        "date": null,
+        "extract": null,
+        "name": "bun-x86_64-linux",
+        "passthru": null,
+        "pinned": false,
+        "src": {
+            "name": "bun-x86_64-linux.zip",
+            "sha256": "sha256-0/Z0wkKm2RlNr1nLWU6U5mz0SluBDKaIJi4GG9LAxz4=",
+            "type": "url",
+            "url": "https://github.com/oven-sh/bun/releases/download/bun-v1.1.3/bun-linux-x64.zip"
+        },
+        "version": "bun-v1.1.3"
+    },
     "catppuccin-btop": {
         "cargoLocks": null,
         "date": null,
@@ -201,15 +216,15 @@
         },
         "version": "v6.11.1"
     },
-    "standardnotes-linux-amd64-deb": {
+    "standardnotes-desktop-deb-x86_64-linux": {
         "cargoLocks": null,
         "date": null,
         "extract": null,
-        "name": "standardnotes-linux-amd64-deb",
+        "name": "standardnotes-desktop-deb-x86_64-linux",
         "passthru": null,
         "pinned": false,
         "src": {
-            "name": "standardnotes-desktop-linux-amd64.deb",
+            "name": "standardnotes-desktop-x86_64-linux.deb",
             "sha256": "sha256-gJjXDbpb9K9xgBZIYj5aW0WflnIaw5ZU0HxvkH6BwKk=",
             "type": "url",
             "url": "https://github.com/standardnotes/app/releases/download/@standardnotes/desktop@3.192.13/standard-notes-3.192.13-linux-amd64.deb"
@@ -230,11 +245,11 @@
             "name": null,
             "owner": "daveshanley",
             "repo": "vacuum",
-            "rev": "v0.9.12",
-            "sha256": "sha256-tHxM9ff4nawwN15wCbyjIUKHReEluhtg3AftKusKexk=",
+            "rev": "v0.9.13",
+            "sha256": "sha256-4b5wKCuM/1cOa52WhSnZ4s8Z0B6HS77QguLxj3tIsh4=",
             "type": "github"
         },
-        "version": "v0.9.12"
+        "version": "v0.9.13"
     },
     "vivid-plasma-themes": {
         "cargoLocks": null,
