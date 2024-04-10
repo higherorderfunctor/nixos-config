@@ -8,7 +8,9 @@ fetch.github = "aristocratos/btop"
 
 [bun-x86_64-linux]
 src.github = "oven-sh/bun"
-fetch.url = "https://github.com/oven-sh/bun/releases/download/$ver/bun-linux-x64.zip"
+src.from_pattern = "bun-v([0-9]+\\.[0-9]+\\.[0-9]+)"
+src.to_pattern = "\\1"
+fetch.url = "https://github.com/oven-sh/bun/releases/download/bun-v$ver/bun-linux-x64.zip"
 url.name = "bun-x86_64-linux.zip"
 
 [catppuccin-btop]

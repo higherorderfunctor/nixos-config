@@ -52,7 +52,7 @@
             "type": "url",
             "url": "https://github.com/oven-sh/bun/releases/download/bun-v1.1.3/bun-linux-x64.zip"
         },
-        "version": "bun-v1.1.3"
+        "version": "1.1.3"
     },
     "catppuccin-btop": {
         "cargoLocks": null,
@@ -225,11 +225,11 @@
         "pinned": false,
         "src": {
             "name": "standardnotes-desktop-x86_64-linux.deb",
-            "sha256": "sha256-gJjXDbpb9K9xgBZIYj5aW0WflnIaw5ZU0HxvkH6BwKk=",
+            "sha256": "sha256-Thgmk70z1bGbapMuXeIx4WxKn9GE4hbxUlzCXQqviKQ=",
             "type": "url",
-            "url": "https://github.com/standardnotes/app/releases/download/@standardnotes/desktop@3.192.13/standard-notes-3.192.13-linux-amd64.deb"
+            "url": "https://github.com/standardnotes/app/releases/download/@standardnotes/desktop@3.192.14/standard-notes-3.192.14-linux-amd64.deb"
         },
-        "version": "3.192.13"
+        "version": "3.192.14"
     },
     "vacuum": {
         "cargoLocks": null,
