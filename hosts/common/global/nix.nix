@@ -3,7 +3,9 @@
   config,
   pkgs,
   ...
-}: {
+}: let
+  username = "caubut";
+in {
   nix = {
     package = pkgs.nix;
     settings = {
@@ -27,13 +29,11 @@
       options = "--delete-older-than 60d";
     };
     extraOptions = ''
-      !include ${config.sops.secrets."nix-conf-secrets".path}
+      !include ${config.sops.secrets."${username}-nix-conf-secrets".path}
     '';
   };
-  sops.templates."nix-conf-secrets.conf" = {
-    content = ''
-      access-tokens = github.com=${config.sops.placeholder."caubut-github"}
-    '';
+  sops.secrets."${username}-nix-conf-secrets" = {
+    mode = "400";
     sopsFile = ../../../home/caubut/secrets/secrets.yaml;
   };
 }
