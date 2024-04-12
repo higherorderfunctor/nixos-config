@@ -231,6 +231,26 @@
         },
         "version": "3.192.17"
     },
+    "tree-sitter-cql": {
+        "cargoLocks": null,
+        "date": null,
+        "extract": null,
+        "name": "tree-sitter-cql",
+        "passthru": null,
+        "pinned": false,
+        "src": {
+            "deepClone": false,
+            "fetchSubmodules": false,
+            "leaveDotGit": false,
+            "name": null,
+            "owner": "shotover",
+            "repo": "tree-sitter-cql",
+            "rev": "v0.1.1",
+            "sha256": "sha256-DVeXiXyapYLn4CVJ1spEII5Uv/g7dlLxcLNVujM5AyE=",
+            "type": "github"
+        },
+        "version": "v0.1.1"
+    },
     "vacuum": {
         "cargoLocks": null,
         "date": null,
@@ -245,11 +265,11 @@
             "name": null,
             "owner": "daveshanley",
             "repo": "vacuum",
-            "rev": "v0.9.13",
-            "sha256": "sha256-4b5wKCuM/1cOa52WhSnZ4s8Z0B6HS77QguLxj3tIsh4=",
+            "rev": "v0.9.14",
+            "sha256": "sha256-1hopeJ/4nWSmkXWPLo7BIINkuIsL2PiNNjokNRyx2e4=",
             "type": "github"
         },
-        "version": "v0.9.13"
+        "version": "v0.9.14"
     },
     "vivid-plasma-themes": {
         "cargoLocks": null,
