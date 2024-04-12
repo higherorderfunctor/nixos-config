@@ -4,9 +4,7 @@
   inputs = {
     nixos.url = "github:nixos/nixpkgs/nixos-unstable";
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
-    # FIXME: https://github.com/NixOS/nixpkgs/issues/302457
-    # temporary patch pulled in from master
-    nixpkgs-master.url = "github:Nixos/nixpkgs?rev=76b199e34be37ca7c807c6bd19872a9de0efc15b";
+    # nixpkgs-master.url = "github:Nixos/nixpkgs?rev=76b199e34be37ca7c807c6bd19872a9de0efc15b";
     home-manager = {
       url = "github:nix-community/home-manager";
     };

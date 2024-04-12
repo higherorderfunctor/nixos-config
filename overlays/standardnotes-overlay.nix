@@ -1,13 +1,6 @@
-{inputs}: (final: prev: let
+_: (final: prev: let
   nv = (import ./nvpkgs.nix)."standardnotes-desktop-deb-${final.system}";
 in {
-  # FIXME: https://github.com/NixOS/nixpkgs/issues/302457
-  # temporary patch pulled in from master
-  inherit
-    (inputs.nixpkgs-master.legacyPackages.${final.system})
-    electron_27
-    electron_28 # 27 in standardnotes builds 27 & 28 for some reason
-    ;
   standardnotes =
     (prev.standardnotes.override {
       electron = final.electron_27;
