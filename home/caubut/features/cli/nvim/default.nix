@@ -22,12 +22,12 @@ in {
     config.lib.file.mkOutOfStoreSymlink
     "${config.xdg.userDirs.documents}/projects/nixos-config/home/${username}/features/cli/nvim/nvim-config";
 
-  # xdg.dataFile = {
-  #   "nvim/lazy/nvim-treesitter/parser/cql.so".source = "${pkgs.tree-sitter-grammars.tree-sitter-cql}/parser";
-  #   "nvim/lazy/nvim-treesitter/queries/cql".source =
-  #     config.lib.file.mkOutOfStoreSymlink
-  #     "${config.xdg.userDirs.documents}/projects/nixos-config/home/${username}/features/cli/nvim/nvim-runtime/nvim-treesitter/queries/cql";
-  # };
+  xdg.dataFile = {
+    "nvim/lazy/nvim-treesitter/parser/cql.so".source = "${pkgs.tree-sitter-grammars.tree-sitter-cql}/parser";
+    "nvim/lazy/nvim-treesitter/queries/cql".source =
+      config.lib.file.mkOutOfStoreSymlink
+      "${config.xdg.userDirs.documents}/projects/nixos-config/home/${username}/features/cli/nvim/nvim-runtime/nvim-treesitter/queries/cql";
+  };
 
   # permission fixes
   systemd.user.tmpfiles.rules = [

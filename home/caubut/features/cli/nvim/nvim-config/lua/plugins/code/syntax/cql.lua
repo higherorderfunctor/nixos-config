@@ -1,9 +1,9 @@
--- vim.filetype.add({
---   extension = {
---     cql = "cql",
---   },
--- })
+vim.filetype.add({
+  extension = {
+    cql = "cql",
+  },
+})
 
 return {
-  "elubow/cql-vim",
+  --  "elubow/cql-vim",
 }

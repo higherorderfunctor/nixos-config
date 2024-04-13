@@ -4,9 +4,34 @@
 ] @keyword
 
 [
+  (durable_writes)
+] @attribute
+
+[
+  (replication_list)
+] @punctuation.bracket
+
+[
+  (replication_list_item)
+] @field
+
+[
   (keyspace_name)
   (table_name)
 ] @text.literal
+
+"(" @punctuation.bracket
+")" @punctuation.bracket
+"[" @punctuation.bracket
+"]" @punctuation.bracket
+"{" @punctuation.bracket
+"}" @punctuation.bracket
+
+":" @punctuation.delimiter
+"." @punctuation.delimiter
+"," @punctuation.delimiter
+";" @punctuation.delimiter
+
 
 ; aggregate_name : $ => dotted_name( $.object_name, $.object_name, "aggregate"),
 ; function_name : $ => dotted_name( $.object_name, $.object_name, "function"),
