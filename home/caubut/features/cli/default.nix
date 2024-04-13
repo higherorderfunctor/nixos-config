@@ -63,10 +63,10 @@
     ./statix.nix
     ./stylua.nix
     ./tmux.nix
-    ./unzip.nix
     ./vim.nix
     ./wget.nix
     ./xclip.nix
+    ./zip.nix
     ./zsh-fast-syntax-highlighting.nix
     ./zsh.nix
   ];
