@@ -22,6 +22,8 @@ in {
     config.lib.file.mkOutOfStoreSymlink
     "${config.xdg.userDirs.documents}/projects/nixos-config/home/${username}/features/cli/nvim/nvim-config";
 
+  xdg.dataFile."nvim/lazy/nvim-treesitter/parser/cql.so".source = "${pkgs.tree-sitter-grammars.tree-sitter-cql}/parser";
+
   # permission fixes
   systemd.user.tmpfiles.rules = [
     "z ${config.xdg.dataHome}/nvim 0700 ${username} ${username} - -"
