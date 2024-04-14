@@ -12,6 +12,7 @@ in {
     userName = "Christopher Aubut";
     userEmail = "christopher@aubut.me";
     extraConfig = {
+      init.defaultBranch = "main";
       merge.tool = "nvim";
       mergetool = {
         prompt = false;

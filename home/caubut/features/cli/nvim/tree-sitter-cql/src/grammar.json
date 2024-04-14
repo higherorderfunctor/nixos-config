@@ -1012,10 +1012,10 @@
       "members": [
         {
           "type": "FIELD",
-          "name": "open_parenthesis",
+          "name": "open_square_braket",
           "content": {
             "type": "STRING",
-            "value": "("
+            "value": "["
           }
         },
         {
@@ -1046,10 +1046,10 @@
         },
         {
           "type": "FIELD",
-          "name": "close_parenthesis",
+          "name": "close_square_bracket",
           "content": {
             "type": "STRING",
-            "value": ")"
+            "value": "]"
           }
         }
       ]

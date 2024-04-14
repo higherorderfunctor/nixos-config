@@ -362,16 +362,18 @@ module.exports = grammar({
      * https://cassandra.apache.org/doc/4.1/cassandra/cql/types.html#tuples
      * TODO:
      */
+    // open_angle_bracket: field("open_angle_bracket", "<"),
+    // close_angle_bracket: field("close_angle_bracket", ">"),
 
-    // tuple_type::= TUPLE '<' cql_type( ',' cql_type)* '>'
-    tuple_type: ($) => ...,
-    // tuple_literal::= '(' term( ',' term )* ')'
-    tuple_literal: ($) =>
-      seq(
-        field("open_parenthesis", "("),
-        field("content", seq($.term, seq($.comma_sep, $.term))), // FIXME: filter types
-        field("close_parenthesis", ")"),
-      ),
+    // // tuple_type::= TUPLE '<' cql_type( ',' cql_type)* '>'
+    // tuple_type: ($) => seq("TUPLE", "<", $.cql_type, ">"),
+    // // tuple_literal::= '(' term( ',' term )* ')'
+    // tuple_literal: ($) =>
+    //   seq(
+    //     field("open_parenthesis", "("),
+    //     field("content", seq($.term, seq($.comma_sep, $.term))), // FIXME: filter types
+    //     field("close_parenthesis", ")"),
+    //   ),
 
     assignment_tuple: ($) => seq("(", $.expression_list, ")"),
 
