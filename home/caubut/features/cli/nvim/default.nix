@@ -22,6 +22,7 @@
     generate = true;
   };
 in {
+  home.packages = [pkgs.tree-sitter];
   programs.neovim = {
     enable = true;
     package = pkgs.neovim-nightly;
@@ -34,9 +35,15 @@ in {
   };
 
   # symlink to clone of project to allow for easy editing
-  xdg.configFile.nvim.source =
-    config.lib.file.mkOutOfStoreSymlink
-    "${config.xdg.userDirs.documents}/projects/nixos-config/home/${username}/features/cli/nvim/nvim-config";
+  xdg.configFile = {
+    nvim.source =
+      config.lib.file.mkOutOfStoreSymlink
+      "${config.xdg.userDirs.documents}/projects/nixos-config/home/${username}/features/cli/nvim/nvim-config";
+
+    "tree-sitter/config.json".source =
+      config.lib.file.mkOutOfStoreSymlink
+      "${config.xdg.userDirs.documents}/projects/nixos-config/home/${username}/features/cli/nvim/tree-sitter-config.json";
+  };
 
   xdg.dataFile = {
     "nvim/lazy/nvim-treesitter/parser/cql.so".source = "${tree-sitter-cql}/parser";

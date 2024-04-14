@@ -22,13 +22,6 @@ const kw = (keyword) => {
 const sep1 = (rule, separator) => seq(rule, repeat(seq(separator, rule)));
 
 const commaSep1 = (rule) => sep1(rule, ",");
-
-const dotted_name = (rule1, rule2, name) =>
-  choice(
-    seq(alias(rule1, "keyspace"), ".", alias(rule2, name)),
-    alias(rule2, name),
-  );
-
 const PREC = {
   primary: 7,
   unary: 6,
@@ -39,22 +32,16 @@ const PREC = {
   or: 1,
   composite_literal: -1,
 };
-const squote = "'";
-const dquote = '"';
 const dot = ".";
 const star = "*";
 const comparative_operators = choice("<", "<=", "<>", "=", ">", ">=");
-const arithmetic_operators = choice("+", "-", star, "/", "%");
-const plus_or_minus = choice("+", "-");
+const plus_or_minus = /[+-]/;
 
 const if_not_exists = seq(kw("IF"), kw("NOT"), kw("EXISTS"));
 const if_exists = seq(kw("IF"), kw("EXISTS"));
 const primary_key = seq(kw("PRIMARY"), kw("KEY"));
 const or_replace = seq(kw("OR"), kw("REPLACE"));
 const order_direction = choice(kw("ASC"), kw("DESC"));
-
-const string_str = seq(squote, field("content", /([^']|(''))*/), squote);
-
 const uuid_str =
   /[0-9a-fA-F]{8}-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}/;
 const hex_digit = /[0-9a-fA-F]/;
@@ -75,11 +62,17 @@ const timestamp = seq(kw("TIMESTAMP"), alias(token(decimal_str), "time"));
 const ttl = seq(kw("TTL"), alias(token(decimal_str), "ttl"));
 
 // https://docs.datastax.com/en/cql-oss/3.3/cql/cql_reference/ref-lexical-valid-chars.html
-const underscore = "_"; // NOTE:
-const alpha = /[a-zA-Z]/; // NOTE:
-const num = /[0-9]/; // NOTE:
-const alphanum = choice(alpha, num); // NOTE:
-const special_chars = /-|[`~!@#$%^&*().,<>/?;:'"{}\[\]|\\=+_]/; // FIXME: )_=+}{\][\\|;:'",.<>/?
+const underscore = "_";
+const alpha = /[a-zA-Z]/;
+const digit = /[0-9]/;
+const digits = repeat1(digit);
+const alphanum = choice(alpha, digit);
+
+const dotted_name = (rule1, rule2, name) =>
+  choice(
+    seq(alias(rule1, "keyspace"), ".", alias(rule2, name)),
+    alias(rule2, name),
+  );
 
 module.exports = grammar({
   name: "cql",
@@ -89,18 +82,379 @@ module.exports = grammar({
   rules: {
     source_file: ($) => repeat($._statement),
 
-    double_quote: () => '"', // NOTE:
-    keyspace_name: () => seq(alphanum, repeat(choice(underscore, alphanum))), // NOTE:
-    table_name: () => seq(alphanum, repeat(choice(underscore, alphanum))), // NOTE:
-    column_name: ($) =>
-      // NOTE:
+    // worked ////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    comma_sep: () => ",",
+    dot_sep: () => ".",
+    semi_sep: () => ";",
+
+    single_quote: () => "'",
+    escaped_single_quote: ($) => seq(field("escape_char", $.single_quote), "'"),
+
+    double_quote: () => '"',
+    escaped_double_quote: ($) => seq(field("escape_char", $.double_quote), '"'),
+
+    double_dollar: () => "$$",
+
+    /**
+     * https://cassandra.apache.org/doc/5.0/cassandra/developing/cql/definitions.html#identifiers
+     */
+
+    // unquoted_identifier::= re('[a-zA-Z][link:[a-zA-Z0-9]]*')
+    // NOTE: no idea what "link:" is and the section above the
+    // documentation includes underscore in the identifier
+    unquoted_identifier: () => seq(alpha, repeat(choice(underscore, alphanum))),
+    // quoted_identifier::= '"' (any character where " can appear if doubled)+ '"'
+    quoted_identifier: ($) =>
+      seq(
+        field("left_quote", $.double_quote),
+        field("content", repeat1(choice(/[^"]/, $.escaped_double_quote))),
+        field("right_quote", $.double_quote),
+      ),
+    // identifier::= unquoted_identifier | quoted_identifier
+    identifier: ($) => choice($.unquoted_identifier, $.quoted_identifier),
+
+    /**
+     * https://cassandra.apache.org/doc/stable/cassandra/cql/definitions.html#constants
+     */
+
+    // string::= ''' (any character where ' can appear if doubled)+ ''' : '$$' (any character other than '$$') '$$'
+    string_literal: ($) =>
       choice(
-        repeat1(alphanum),
         seq(
-          $.double_quote,
-          repeat1(choice(alphanum, special_chars)),
-          $.double_quote,
+          field("left_quote", $.single_quote),
+          field("content", repeat1(choice(/[^']/, $.escaped_single_quote))),
+          field("right_quote", $.single_quote),
         ),
+        seq(
+          field("left_quote", $.double_dollar),
+          field("content", /([$][^$]|[^$])+/), // TODO: test this
+          field("right_quote", $.double_dollar),
+        ),
+      ),
+
+    // integer::= re('-?[0-9]+')
+    // negative_integer: ($) => prec.right(seq("-", $.term)),
+    integer: () => prec(PREC.unary, prec.right(seq(optional("-"), digits))),
+
+    // float::= re('-?[0-9]+(.[0-9]*)?([eE][+-]?[0-9+])?') | NAN | INFINITY
+    nan: () => "NAN",
+    infinity: () => "INFINITY",
+    decimal_fraction: ($) => seq($.dot_sep, digits),
+    standard_decimal_notation: ($) => seq($.integer, $.decimal_fraction),
+    scientific_notation_exponent: () => /[eE]/,
+    scientific_notation: ($) =>
+      seq(
+        $.integer,
+        optional($.decimal_fraction),
+        $.scientific_notation_exponent,
+        optional(plus_or_minus),
+        digits,
+      ),
+    float_literal: ($) =>
+      choice(
+        $.scientific_notation,
+        $.standard_decimal_notation,
+        $.nan,
+        $.infinity,
+      ),
+
+    // boolean::= TRUE | FALSE
+    true_literal: () => "TRUE",
+    false_literal: () => "FALSE",
+    boolean_literal: ($) => choice($.true_literal, $.false_literal),
+
+    // uuid::= hex\{8}-hex\{4}-hex\{4}-hex\{4}-hex\{12}
+    uuid_literal: () =>
+      /[0-9a-fA-f]{8}-[0-9a-fA-f]{4}-[0-9a-fA-f]{4}-[0-9a-fA-f]{4}-[0-9a-fA-f]{12}/,
+
+    // hex::= re("[0-9a-fA-F]")
+
+    // blob::= '0' ('x' | 'X') hex+
+    blob_literal: () => /0[xX][0-9a-fA-F]+/,
+
+    // constant::= string | integer | float | boolean | uuid | blob | NULL
+    null_literal: () => "NULL",
+    constant: ($) =>
+      choice(
+        $.string_literal,
+        $.integer,
+        $.float_literal,
+        $.boolean_literal,
+        $.uuid_literal,
+        $.blob_literal,
+        $.null_literal,
+      ),
+
+    /**
+     * https://cassandra.apache.org/doc/stable/cassandra/cql/definitions.html#terms
+     */
+
+    // term::= constant | literal | function_call | arithmetic_operation | type_hint | bind_marker
+    term: ($) =>
+      choice(
+        $.constant,
+        $.function_call,
+        $.arithmetic_operation,
+        $.bind_marker,
+      ),
+
+    // literal::= collection_literal | vector_literal | udt_literal | tuple_literal
+
+    // function_call::= identifier '(' [ term (',' term)* ] ')'
+    // function_name: ($) => dotted_name($.object_name, $.object_name, "function"),
+    function_name: ($) => $.identifier,
+    // function_args: ($) =>
+    //   commaSep1(choice($.constant, $.object_name, $.function_call)),
+    function_args: ($) => seq($.term, repeat(seq($.comma_sep, $.term))),
+    function_call: ($) =>
+      seq(
+        field("name", $.function_name),
+        field("open_parenthesis", "("),
+        field("args", $.function_args),
+        field("close_parenthesis", ")"),
+      ),
+
+    // function_call: ($) =>
+    //   seq(
+    //     alias($.object_name, "function_name"),
+    //     "(",
+    //     choice(star, $.function_args),
+    //     ")",
+    //   ),
+
+    // arithmetic_operation::= '-' term | term ('+' | '-' | '*' | '/' | '%') term
+    arithmetic_operator: () => /[-+*/%]/,
+    //     const PREC = {
+    //   primary: 7,
+    //   unary: 6,
+    //   multiplicative: 5,
+    //   additive: 4,
+    //   comparative: 3,
+    //   and: 2,
+    //   or: 1,
+    //   composite_literal: -1,
+    // };
+
+    arithmetic_operation: ($) =>
+      choice(
+        // prec(PREC.unary, prec.right(seq("-", $.term))), FIXME:
+        prec(PREC.multiplicative, prec.left(seq($.term, /[*/]/, $.term))),
+        prec(PREC.additive, prec.left(seq($.term, /[+-]/, $.term))),
+      ),
+
+    // type_hint::= '(' cql_type ')' term
+
+    // bind_marker::= '?' | ':' identifier
+    bind_marker: ($) => choice("?", seq(":", $.identifier)),
+
+    /**
+     * https://cassandra.apache.org/doc/4.1/cassandra/cql/types.html
+     */
+
+    // cql_type::= native_type| collection_type| user_defined_type | tuple_type | custom_type
+    cql_type: ($) => choice($.native_type, $.collection_type),
+
+    // https://cassandra.apache.org/doc/4.1/cassandra/cql/types.html#native-types
+
+    // native_type::= ASCII | BIGINT | BLOB | BOOLEAN | COUNTER | DATE
+    // | DECIMAL | DOUBLE | DURATION | FLOAT | INET | INT |
+    // SMALLINT | TEXT | TIME | TIMESTAMP | TIMEUUID | TINYINT |
+    // UUID | VARCHAR | VARINT
+    ascii_type: () => "ASCII",
+    bigint_type: () => "BIGINT",
+    blob_type: () => "BLOB",
+    boolean_type: () => "BOOLEAN",
+    counter_type: () => "COUNTER",
+    date_type: () => "DATE",
+    decimal_type: () => "DECIMAL",
+    double_type: () => "DOUBLE",
+    duration_type: () => "DURATION",
+    float_type: () => "FLOAT",
+    inet_type: () => "INET",
+    int_type: () => "INT",
+    smallint_type: () => "SMALLINT",
+    text_type: () => "TEXT",
+    time_type: () => "TIME",
+    timestamp_type: () => "TIMESTAMP",
+    timeuuid_type: () => "TIMEUUID",
+    tinyint_type: () => "TINYINT",
+    uuid_type: () => "UUID",
+    varchar_type: () => "VARCHAR",
+    varint_type: () => "VARINT",
+    native_type: ($) =>
+      choice(
+        $.ascii_type,
+        $.bigint_type,
+        $.blob_type,
+        $.boolean_type,
+        $.counter_type,
+        $.date_type,
+        $.decimal_type,
+        $.double_type,
+        $.duration_type,
+        $.float_type,
+        $.inet_type,
+        $.int_type,
+        $.smallint_type,
+        $.text_type,
+        $.time_type,
+        $.timestamp_type,
+        $.timeuuid_type,
+        $.tinyint_type,
+        $.uuid_type,
+        $.varchar_type,
+        $.varint_type,
+      ),
+
+    /**
+     * https://cassandra.apache.org/doc/4.1/cassandra/cql/types.html#collections
+     * FIXME: neither bind_marker nor NULL are supported inside collection literals.
+     * FIXME: term cohesivness
+     */
+
+    // collection_type::= MAP '<' cql_type',' cql_type'>'
+    // | SET '<' cql_type '>'
+    // | LIST '<' cql_type'>'
+    collection_type: ($) => choice($.map_type, $.set_type, $.list_type),
+    map_type: ($) => seq("MAP", "<", $.cql_type, $.comma_sep, ">"),
+    set_type: ($) => seq("SET", "<", $.cql_type, ">"),
+    list_type: ($) => seq("LIST", "<", $.cql_type, ">"),
+
+    // collection_literal::= map_literal | set_literal | list_literal
+    collection_literal: ($) =>
+      choice($.map_literal, $.set_literal, $.list_literal),
+    // map_literal::= '\{' [ term ':' term (',' term : term)* ] '}'
+    map_key: ($) => $.term,
+    map_value: ($) => $.term,
+    map_entry: ($) => seq($.map_key, ":", $.map_value),
+    map_literal: ($) =>
+      seq(
+        field("open_curly_brace", "{"),
+        field("content", seq($.map_entry, seq($.comma_sep, $.map_entry))), // FIXME: filter types
+        field("close_curly_brace", "}"),
+      ),
+    // assignment_map: ($) =>
+    //  seq("{", commaSep1(seq($.constant, ":", $._value_marker)), "}"),
+    // set_literal::= '\{' [ term (',' term)* ] '}'
+    set_literal: ($) =>
+      seq(
+        field("open_curly_brace", "{"),
+        field("content", seq($.term, seq($.comma_sep, $.term))), // FIXME: filter types
+        field("close_curly_brace", "}"),
+      ),
+    //     assignment_set: ($) => seq("{", optional(commaSep1($._value_marker)), "}"),
+    // list_literal::= '[' [ term (',' term)* ] ']'
+    list_literal: ($) =>
+      seq(
+        field("open_square_braket", "["),
+        field("content", seq($.term, seq($.comma_sep, $.term))), // FIXME: filter types
+        field("close_square_bracket", "]"),
+      ),
+    // assignment_list: ($) => seq("[", commaSep1($._value_marker), "]"),
+
+    /**
+     * https://cassandra.apache.org/doc/4.1/cassandra/cql/types.html#udts
+     * TODO:
+     */
+
+    /**
+     * https://cassandra.apache.org/doc/4.1/cassandra/cql/types.html#tuples
+     * TODO:
+     */
+
+    // tuple_type::= TUPLE '<' cql_type( ',' cql_type)* '>'
+    tuple_type: ($) => ...,
+    // tuple_literal::= '(' term( ',' term )* ')'
+    tuple_literal: ($) =>
+      seq(
+        field("open_parenthesis", "("),
+        field("content", seq($.term, seq($.comma_sep, $.term))), // FIXME: filter types
+        field("close_parenthesis", ")"),
+      ),
+
+    assignment_tuple: ($) => seq("(", $.expression_list, ")"),
+
+    /**
+     * https://cassandra.apache.org/doc/4.1/cassandra/cql/types.html#custom-types
+     * TODO:
+     */
+
+    /// ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    // constant: ($) =>
+    //   choice(
+    //     $._integer,
+    //     $.float_literal,
+    //     token(hex_str),
+    //     $.boolean_literal,
+    //     $._code_block,
+    //     kw("NULL"),
+    //     $.string_literal,
+    //     token(uuid_str),
+    //   ),
+    // _value_marker: ($) => choice($.constant, $.bind_marker),
+    // _code_block: ($) => token(code),
+    keyspace_name: () => unquoted_identifier,
+
+    table_name: () => seq(alphanum, repeat(choice(underscore, alphanum))),
+    table_expression: ($) =>
+      choice(seq($.keyspace_name, $.dot_sep, $.table_name), $.table_name),
+
+    column_name: ($) => $.identifier,
+
+    column_glob: () => "*",
+    /// ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    from_spec: ($) => seq(kw("FROM"), $.table_expression),
+    //
+    // -- This is a comment
+    // This is a comment too
+    /* This is
+   a multi-line comment */
+
+    // column_alias: () =>
+
+    // https://docs.datastax.com/en/cql-oss/3.3/cql/cql_reference/cqlSelect.html
+    // select_expression
+    // *
+    //
+    //
+    // SELECT * | select_expression | DISTINCT partition
+    // FROM [keyspace_name.] table_name
+    // [WHERE partition_value
+    //    [AND clustering_filters
+    //    [AND static_filters]]]
+    // [ORDER BY PK_column_name ASC|DESC]
+    // [LIMIT N]
+    // [ALLOW FILTERING]
+
+    select_element: ($) =>
+      // seq(
+      $.column_name, // FIXME: $.function_call
+    // optional(seq(kw("AS"), alias($.object_name, "alias"))),
+    // ),
+
+    select_expression: (
+      $, // FIXME:
+    ) =>
+      choice(
+        $.column_glob, // NOTE:
+        seq($.select_element, repeat(seq($.comma_sep, $.select_element))),
+      ),
+
+    select_statement: ($) =>
+      seq(
+        kw("SELECT"),
+        optional(kw("DISTINCT")),
+        optional(kw("JSON")),
+        $.select_expression,
+        $.from_spec,
+        optional($.where_spec),
+        optional($.order_spec),
+        optional($.limit_spec),
+        optional(seq(kw("ALLOW"), kw("FILTERING"))),
+        $.semi_sep,
       ),
 
     _statement: ($) =>
@@ -147,83 +501,21 @@ module.exports = grammar({
         optional(";"),
       ),
 
-    // https://docs.datastax.com/en/cql-oss/3.3/cql/cql_reference/cqlSelect.html
-    // select_expression
-    // *
-    //
-    //
-    // SELECT * | select_expression | DISTINCT partition
-    // FROM [keyspace_name.] table_name
-    // [WHERE partition_value
-    //    [AND clustering_filters
-    //    [AND static_filters]]]
-    // [ORDER BY PK_column_name ASC|DESC]
-    // [LIMIT N]
-    // [ALLOW FILTERING]
-
-    comma_sep: () => ",", // NOTE:
-    column_glob: () => "*", // NOTE:
-    // column_alias: () =>
-
-    select_statement: ($) =>
-      seq(
-        kw("SELECT"),
-        optional(kw("DISTINCT")),
-        optional(kw("JSON")),
-        $.select_expression,
-        $.from_spec,
-        optional($.where_spec),
-        optional($.order_spec),
-        optional($.limit_spec),
-        optional(seq(kw("ALLOW"), kw("FILTERING"))),
-      ),
-
-    limit_spec: ($) =>
-      seq(kw("LIMIT"), alias($._decimal_literal, "limit_value")),
-
-    select_expression: (
-      $, // FIXME:
-    ) =>
-      seq(
-        choice(
-          $.column_glob, // NOTE:
-          seq($.select_element, repeat(seq($.comma_sep, $.select_element))),
-        ),
-      ),
-
-    select_element: ($) =>
-      seq(
-        choice($.column_name, $.function_call),
-        optional(seq(kw("AS"), alias($.object_name, "alias"))),
-      ),
-    function_call: ($) =>
-      seq(
-        alias($.object_name, "function_name"),
-        "(",
-        choice(star, $.function_args),
-        ")",
-      ),
-    function_args: ($) =>
-      commaSep1(choice($.constant, $.object_name, $.function_call)),
-    constant: ($) =>
-      choice(
-        $._decimal_literal,
-        $._float_literal,
-        token(hex_str),
-        $._boolean_literal,
-        $._code_block,
-        kw("NULL"),
-        $._string_literal,
-        token(uuid_str),
-      ),
+    limit_spec: ($) => seq(kw("LIMIT"), alias($.integer, "limit_value")),
+    // constant: ($) =>
+    //   choice(
+    //     $._integer,
+    //     $.float_literal,
+    //     token(hex_str),
+    //     $.boolean_literal,
+    //     $._code_block,
+    //     kw("NULL"),
+    //     $.string_literal,
+    //     token(uuid_str),
+    //   ),
     bind_marker: ($) => choice("?", seq(":", $.object_name)),
     _value_marker: ($) => choice($.constant, $.bind_marker),
-    _string_literal: ($) => token(string_str),
-    _decimal_literal: ($) => token(decimal_str),
-    _float_literal: ($) => token(float_str),
-    _boolean_literal: ($) => token(choice(kw("TRUE"), kw("FALSE"))),
     _code_block: ($) => token(code),
-    from_spec: ($) => seq(kw("FROM"), $.table_name),
     where_spec: ($) => seq(kw("WHERE"), $.relation_elements),
     relation_elements: ($) =>
       prec.left(PREC.and, sep1($.relation_element, kw("AND"))),
@@ -296,11 +588,7 @@ module.exports = grammar({
       seq(
         alias($.object_name, "column"),
         optional(
-          seq(
-            "[",
-            alias(choice($._string_literal, $._decimal_literal), "index"),
-            "]",
-          ),
+          seq("[", alias(choice($.string_literal, $.integer), "index"), "]"),
         ),
       ),
     using_timestamp_spec: ($) => seq(kw("USING"), timestamp),
@@ -329,16 +617,11 @@ module.exports = grammar({
       choice(
         $.constant,
         $.bind_marker,
-        $.assignment_map,
-        $.assignment_set,
-        $.assignment_list,
+        $.map_literal,
+        $.set_literal,
+        $.list_literal,
         $.assignment_tuple,
       ),
-    assignment_map: ($) =>
-      seq("{", commaSep1(seq($.constant, ":", $._value_marker)), "}"),
-    assignment_set: ($) => seq("{", optional(commaSep1($._value_marker)), "}"),
-    assignment_list: ($) => seq("[", commaSep1($._value_marker), "]"),
-    assignment_tuple: ($) => seq("(", $.expression_list, ")"),
     using_ttl_timestamp: ($) =>
       seq(
         kw("USING"),
@@ -347,7 +630,7 @@ module.exports = grammar({
           seq(timestamp, optional(seq(kw("AND"), ttl))),
         ),
       ),
-    // ttl : $ => seq( kw("TTL"), $._decimal_literal),
+    // ttl : $ => seq( kw("TTL"), $._integer),
     truncate: ($) => seq(kw("TRUNCATE"), optional(kw("TABLE")), $.table_name),
     create_index: ($) =>
       seq(
@@ -392,54 +675,43 @@ module.exports = grammar({
         seq(
           $.object_name,
           "=",
-          choice(
-            $.constant,
-            $.assignment_map,
-            $.assignment_set,
-            $.assignment_list,
-          ),
+          choice($.constant, $.map_literal, $.set_literal, $.list_literal),
         ),
         seq(
           $.object_name,
           "=",
           $.object_name,
           plus_or_minus,
-          alias($._decimal_literal, "assignment_operand"),
+          alias($.integer, "assignment_operand"),
         ),
-        seq($.object_name, "=", $.object_name, plus_or_minus, $.assignment_set),
+        seq($.object_name, "=", $.object_name, plus_or_minus, $.set_literal),
         seq(
           $.object_name,
           "=",
-          $.assignment_set,
+          $.set_literal,
           plus_or_minus,
           alias($.object_name, "assignment_operand"),
         ),
-        seq($.object_name, "=", $.object_name, plus_or_minus, $.assignment_map),
+        seq($.object_name, "=", $.object_name, plus_or_minus, $.map_literal),
         seq(
           $.object_name,
           "=",
-          $.assignment_map,
+          $.map_literal,
           plus_or_minus,
           alias($.object_name, "assignment_operand"),
         ),
+        seq($.object_name, "=", $.object_name, plus_or_minus, $.list_literal),
         seq(
           $.object_name,
           "=",
-          $.object_name,
-          plus_or_minus,
-          $.assignment_list,
-        ),
-        seq(
-          $.object_name,
-          "=",
-          $.assignment_list,
+          $.list_literal,
           plus_or_minus,
           alias($.object_name, "assignment_operand"),
         ),
         seq($.indexed_column, "=", $.constant),
       ),
     indexed_column: ($) =>
-      seq($.object_name, "[", alias($._decimal_literal, "index"), "]"),
+      seq($.object_name, "[", alias($.integer, "index"), "]"),
 
     use: ($) => seq(kw("USE"), alias($.object_name, "keyspace")),
     grant: ($) =>
@@ -672,18 +944,14 @@ module.exports = grammar({
     replication_list_item: ($) =>
       choice(
         seq(
-          alias($._string_literal, "key"),
+          alias($.string_literal, "key"),
           ":",
-          alias($._string_literal, "value"),
+          alias($.string_literal, "value"),
         ),
-        seq(
-          alias($._string_literal, "key"),
-          ":",
-          alias($._decimal_literal, "value"),
-        ),
+        seq(alias($.string_literal, "key"), ":", alias($.integer, "value")),
       ),
     durable_writes: ($) =>
-      seq(kw("DURABLE_WRITES"), "=", alias($._boolean_literal, "value")),
+      seq(kw("DURABLE_WRITES"), "=", alias($.boolean_literal, "value")),
     create_role: ($) =>
       seq(
         kw("CREATE"),
@@ -695,17 +963,17 @@ module.exports = grammar({
     role_with: ($) => seq(kw("WITH"), sep1($.role_with_option, kw("AND"))),
     role_with_option: ($) =>
       choice(
-        seq(kw("PASSWORD"), "=", alias($._string_literal, "password")),
-        seq(kw("LOGIN"), "=", alias($._boolean_literal, "login")),
-        seq(kw("SUPERUSER"), "=", alias($._boolean_literal, "user")),
+        seq(kw("PASSWORD"), "=", alias($.string_literal, "password")),
+        seq(kw("LOGIN"), "=", alias($.boolean_literal, "login")),
+        seq(kw("SUPERUSER"), "=", alias($.boolean_literal, "user")),
         seq(kw("OPTIONS"), "=", $.option_hash),
       ),
     option_hash: ($) => seq("{", commaSep1($.option_hash_item), "}"),
     option_hash_item: ($) =>
       seq(
-        alias($._string_literal, "key"),
+        alias($.string_literal, "key"),
         ":",
-        alias(choice($._string_literal, $._float_literal), "value"),
+        alias(choice($.string_literal, $.float_literal), "value"),
       ),
     create_table: ($) =>
       seq(
@@ -759,7 +1027,7 @@ module.exports = grammar({
         seq($.table_option_name, "=", $.option_hash),
       ),
     table_option_name: ($) => $.object_name,
-    table_option_value: ($) => choice($._string_literal, $._float_literal),
+    table_option_value: ($) => choice($.string_literal, $.float_literal),
     compact_storage: ($) => seq(kw("COMPACT"), kw("STORAGE")),
     clustering_order: ($) =>
       seq(
@@ -780,7 +1048,7 @@ module.exports = grammar({
         kw("USING"),
         $.trigger_class,
       ),
-    trigger_class: ($) => $._string_literal,
+    trigger_class: ($) => $.string_literal,
     create_type: ($) =>
       seq(
         kw("CREATE"),
@@ -803,7 +1071,7 @@ module.exports = grammar({
     user_with: ($) =>
       seq(kw("WITH"), $.user_password, optional($.user_super_user)),
     user_password: ($) =>
-      seq(kw("PASSWORD"), alias($._string_literal, "password")),
+      seq(kw("PASSWORD"), alias($.string_literal, "password")),
     user_super_user: ($) => choice(kw("SUPERUSER"), kw("NOSUPERUSER")),
 
     alter_materialized_view: ($) =>
@@ -872,15 +1140,13 @@ module.exports = grammar({
     // names
     aggregate_name: ($) =>
       dotted_name($.object_name, $.object_name, "aggregate"),
-    function_name: ($) => dotted_name($.object_name, $.object_name, "function"),
     short_index_name: ($) =>
-      alias(choice($.object_name, $._string_literal), "index"),
+      alias(choice($.object_name, $.string_literal), "index"),
     index_name: ($) => dotted_name($.object_name, $.object_name, "index"),
     keyspace_name: ($) => alias($.object_name, "keyspace"),
     materialized_view_name: ($) =>
       dotted_name($.object_name, $.object_name, "materialized_view"),
     role_name: ($) => alias($.object_name, "role"),
-    table_name: ($) => dotted_name($.object_name, $.object_name, "table"),
     trigger_name: ($) => dotted_name($.object_name, $.object_name, "trigger"),
     type_name: ($) => dotted_name($.object_name, $.object_name, "type"),
     user_name: ($) => alias($.object_name, "user"),

@@ -22,7 +22,7 @@ import { fileURLToPath } from "url";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-const jsFiles = ["**/*.js"];
+const jsFiles = ["**/*.js", "**/*.cjs", "**/*.mjs"];
 const tsFiles = ["**/*.ts"];
 const jsonFiles = ["**/*.json", "**/*.json5", "**/*.jsonc"];
 
@@ -38,8 +38,9 @@ const common = {
     parser: TypescriptEslintParser,
     parserOptions: {
       project: ["[tj]sconfig.json", "packages/*/[tj]sconfig.json"],
-      ecmaVersion: "latest",
-      sourceType: "module",
+      // ecmaVersion: "latest",
+      // sourceType: "module",
+      sourceType: "commonjs",
       tsconfigRootDir: __dirname,
     },
     globals: {
@@ -453,6 +454,8 @@ const eslintConfig = [
           devDependencies: [
             "esbuild.*.ts",
             "eslint.*.[tj]s",
+            "eslint.*.c[tj]s",
+            "eslint.*.m[tj]s",
             "jest.*.[tj]s",
             "packages/*/esbuild.*.ts",
             "packages/*/tests/*.[tj]s",

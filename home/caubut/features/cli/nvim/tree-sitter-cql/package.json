@@ -1,19 +1,27 @@
 {
   "name": "tree-sitter-cql",
   "version": "1.0.0",
-  "description": "",
-  "type": "module",
+  "type": "commonjs",
+  "main": "bindings/node",
   "exports": {
     ".": "./grammar.js"
   },
   "scripts": {
+    "generate": "tree-sitter generate",
+    "parse": "pnpm generate && tree-sitter parse",
+    "highlight": "pnpm generate && tree-sitter highlight",
     "lint": "pnpm lint:eslint",
     "lint:eslint": "ESLINT_USE_FLAT_CONFIG=true eslint_d --cache grammar.js",
     "lint:eslint:stop": "eslint_d stop && rm -rf .eslintcache"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
+  "tree-sitter": [
+    {
+      "scope": "source.cql",
+      "file-types": [
+        "cql"
+      ]
+    }
+  ],
   "devDependencies": {
     "@eslint/eslintrc": "^3.0.2",
     "@eslint/js": "^9.0.0",
