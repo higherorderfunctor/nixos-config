@@ -37,6 +37,7 @@ _: (final: _: let
     xorg.libXtst
   ]);
 in {
+  # unfree version which supports golden edition
   bruno = final.stdenv.mkDerivation {
     pname = "bruno";
     inherit (nv) version;
