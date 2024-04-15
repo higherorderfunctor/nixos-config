@@ -1,6 +1,7 @@
 {inputs, ...}: [
   (import ./arkenfox-overlay.nix {inherit inputs;})
   (import ./astal-overlay.nix {inherit inputs;})
+  (import ./bruno-overlay.nix {inherit inputs;})
   (import ./btop-overlay.nix {inherit inputs;})
   (import ./bun-overlay.nix {inherit inputs;})
   (import ./catppuccin-gtk-overlay.nix {inherit inputs;})

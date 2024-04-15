@@ -19,6 +19,21 @@
         },
         "version": "122.0"
     },
+    "bruno-deb-x86_64-linux": {
+        "cargoLocks": null,
+        "date": null,
+        "extract": null,
+        "name": "bruno-deb-x86_64-linux",
+        "passthru": null,
+        "pinned": false,
+        "src": {
+            "name": "bruno-x86_64-linux.zip",
+            "sha256": "sha256-fIFhEhsMkiiowzvo884NA9cViTxsYGyLWnxQj7DESVg=",
+            "type": "url",
+            "url": "https://github.com/usebruno/bruno/releases/download/v1.13.0/bruno_1.13.0_amd64_linux.deb"
+        },
+        "version": "1.13.0"
+    },
     "btop": {
         "cargoLocks": null,
         "date": null,
@@ -225,11 +240,11 @@
         "pinned": false,
         "src": {
             "name": "standardnotes-desktop-x86_64-linux.deb",
-            "sha256": "sha256-eLXvjeEpagOYulyNuXJxl/aKQCNvbLud1nx2Ep8jH78=",
+            "sha256": "sha256-n8bcVeTroSOOQ4ji98GF5A1e0KQ8KPKTYH0B7I1WOAM=",
             "type": "url",
-            "url": "https://github.com/standardnotes/app/releases/download/@standardnotes/desktop@3.193.0/standard-notes-3.193.0-linux-amd64.deb"
+            "url": "https://github.com/standardnotes/app/releases/download/@standardnotes/desktop@3.193.4/standard-notes-3.193.4-linux-amd64.deb"
         },
-        "version": "3.193.0"
+        "version": "3.193.4"
     },
     "tree-sitter-cql": {
         "cargoLocks": null,
@@ -273,7 +288,7 @@
     },
     "vivid-plasma-themes": {
         "cargoLocks": null,
-        "date": "2024-04-12",
+        "date": "2024-04-14",
         "extract": null,
         "name": "vivid-plasma-themes",
         "passthru": null,
@@ -283,11 +298,11 @@
             "fetchSubmodules": false,
             "leaveDotGit": false,
             "name": null,
-            "rev": "51050f01e81774abeaaa06784200b4a11dfaf6c5",
-            "sha256": "sha256-9IRa6Kv2dAYGTzjQreY0PIHs/GQAKRo1lhkNhlUZFTM=",
+            "rev": "4a7b397f3d00a6c8d46cbb34e0db41490770360b",
+            "sha256": "sha256-N8f1yNa+rhs+ewQYfv/987AlM15RDDC0Kx1vjNf5Q8Q=",
             "type": "git",
             "url": "https://github.com/L4ki/Vivid-Plasma-Themes.git"
         },
-        "version": "51050f01e81774abeaaa06784200b4a11dfaf6c5"
+        "version": "4a7b397f3d00a6c8d46cbb34e0db41490770360b"
     }
 }
