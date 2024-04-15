@@ -27,6 +27,7 @@
     sessionVariables = {
       NIXOS_OZONE_WL = 1; # fixes some apps in wayland
     };
+    packages = with pkgs; [hyprshot];
   };
 
   # TODO: X11
