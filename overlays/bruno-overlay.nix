@@ -1,11 +1,6 @@
 _: (final: _: let
   nv = (import ./nvpkgs.nix)."bruno-deb-${final.system}";
   rpath = final.lib.makeLibraryPath (with final; [
-    stdenv.cc.cc
-    fontconfig
-    freetype
-    gdk-pixbuf
-    udev
     alsa-lib
     at-spi2-atk
     at-spi2-core
@@ -14,27 +9,32 @@ _: (final: _: let
     cups
     dbus
     expat
+    fontconfig
+    freetype
+    gdk-pixbuf
     glib
     gtk3
     libdrm
+    libglvnd
     libxkbcommon
     mesa
     nspr
     nss
     pango
+    stdenv.cc.cc
+    udev
     xorg.libX11
+    xorg.libXScrnSaver
     xorg.libXcomposite
+    xorg.libXcursor
     xorg.libXdamage
     xorg.libXext
     xorg.libXfixes
-    xorg.libXrandr
-    xorg.libxcb
-    libglvnd
-    xorg.libXScrnSaver
-    xorg.libXcursor
     xorg.libXi
+    xorg.libXrandr
     xorg.libXrender
     xorg.libXtst
+    xorg.libxcb
   ]);
 in {
   # unfree version which supports golden edition
