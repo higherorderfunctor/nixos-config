@@ -28,11 +28,11 @@
         "pinned": false,
         "src": {
             "name": "bruno-x86_64-linux.zip",
-            "sha256": "sha256-fIFhEhsMkiiowzvo884NA9cViTxsYGyLWnxQj7DESVg=",
+            "sha256": "sha256-ypXUoLka5g/T0w3AIgAEHGh/SEHPPRQYZkw8eX+60d0=",
             "type": "url",
-            "url": "https://github.com/usebruno/bruno/releases/download/v1.13.0/bruno_1.13.0_amd64_linux.deb"
+            "url": "https://github.com/usebruno/bruno/releases/download/v1.13.1/bruno_1.13.1_amd64_linux.deb"
         },
-        "version": "1.13.0"
+        "version": "1.13.1"
     },
     "btop": {
         "cargoLocks": null,
