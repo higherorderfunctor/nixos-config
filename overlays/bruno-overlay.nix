@@ -64,26 +64,28 @@ in {
       mkdir -p $out
       mkdir $out/{bin,share}
 
-      # NOTE: libGLESv2.so seems to get loaded relative to the binary so leaving all next to binary
+      # NOTE: libGLESv2.so seems to get loaded relative to the binary so leaving all packed libs next to the binary
       mv opt/Bruno $out/share/Bruno
 
-      # NOTE: fixes path for case sensitive filesystems
+      mv usr/share/{applications,icons} $out/share
+
+      # NOTE: fixes filename for case sensitive filesystems
       asarBundle="$TMPDIR/app"
       asar e "$out/share/Bruno/resources/app.asar" "$asarBundle"
       mv "$asarBundle/web/static/diff2Html.min.css" "$asarBundle/web/static/diff2html.min.css"
       asar p "$asarBundle" "$out/share/Bruno/resources/app.asar"
       rm -rf "$asarBundle"
 
-      cp -R usr/share/{applications,icons} $out/share
-
       patchelf \
         --set-interpreter $(cat $NIX_CC/nix-support/dynamic-linker) \
         --set-rpath ${rpath}:$out/share/Bruno \
         $out/share/Bruno/bruno
 
+      # NOTE: patchelf didn't seem to work with libglvnd.  may need to patch the bundled .so's?
       wrapProgram $out/share/Bruno/bruno \
         --add-flags $out/share/Bruno/app.asar \
         --add-flags --no-sandbox \
+        --add-flags "\''${NIXOS_OZONE_WL:+\''${WAYLAND_DISPLAY:+--ozone-platform-hint=auto --enable-features=WaylandWindowDecorations}}" \
         --suffix-each GTK_PATH : "$gtk_modules" \
         --prefix LD_LIBRARY_PATH : ${rpath}
 
