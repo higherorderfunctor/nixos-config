@@ -61,13 +61,13 @@ in {
 
       shopt -s extglob
 
-      mkdir -p $out
-      mkdir $out/{bin,share}
+      mkdir -p "$out"
+      mkdir "$out"/{bin,share}
 
       # NOTE: libGLESv2.so seems to get loaded relative to the binary so leaving all packed libs next to the binary
-      mv opt/Bruno $out/share/Bruno
+      mv opt/Bruno "$out/share/Bruno"
 
-      mv usr/share/{applications,icons} $out/share
+      mv usr/share/{applications,icons} "$out/share"
 
       # NOTE: fixes filename for case sensitive filesystems
       asarBundle="$TMPDIR/app"
@@ -82,17 +82,17 @@ in {
         $out/share/Bruno/bruno
 
       # NOTE: patchelf didn't seem to work with libglvnd.  may need to patch the bundled .so's?
-      wrapProgram $out/share/Bruno/bruno \
-        --add-flags $out/share/Bruno/app.asar \
+      wrapProgram "$out/share/Bruno/bruno" \
+        --add-flags "$out/share/Bruno/app.asar" \
         --add-flags --no-sandbox \
         --add-flags "\''${NIXOS_OZONE_WL:+\''${WAYLAND_DISPLAY:+--ozone-platform-hint=auto --enable-features=WaylandWindowDecorations}}" \
         --suffix-each GTK_PATH : "$gtk_modules" \
         --prefix LD_LIBRARY_PATH : ${rpath}
 
-      ln -s $out/share/Bruno/bruno $out/bin/bruno
+      ln -s "$out/share/Bruno/bruno" $out/bin/bruno
 
-      ${final.desktop-file-utils}/bin/desktop-file-install --dir $out/share/applications \
-        --set-key Exec --set-value bruno usr/share/applications/bruno.desktop
+      desktop-file-install --dir "$out/share/applications" \
+        --set-key Exec --set-value bruno "$out/share/applications/bruno.desktop"
 
       runHook postInstall
     '';
