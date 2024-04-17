@@ -240,11 +240,11 @@
         "pinned": false,
         "src": {
             "name": "standardnotes-desktop-x86_64-linux.deb",
-            "sha256": "sha256-n8bcVeTroSOOQ4ji98GF5A1e0KQ8KPKTYH0B7I1WOAM=",
+            "sha256": "sha256-hX6+qLv6xNruisNdkP5fpLkIaqVNVfl3TF5lutm/vug=",
             "type": "url",
-            "url": "https://github.com/standardnotes/app/releases/download/@standardnotes/desktop@3.193.4/standard-notes-3.193.4-linux-amd64.deb"
+            "url": "https://github.com/standardnotes/app/releases/download/@standardnotes/desktop@3.193.5/standard-notes-3.193.5-linux-amd64.deb"
         },
-        "version": "3.193.4"
+        "version": "3.193.5"
     },
     "tree-sitter-cql": {
         "cargoLocks": null,
