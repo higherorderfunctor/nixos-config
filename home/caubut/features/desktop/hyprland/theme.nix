@@ -16,7 +16,7 @@
   # QT theme
   qt = {
     enable = true;
-    platformTheme = "gtk3"; # follow GTK
+    platformTheme.name = "gtk3"; # follow GTK
   }; # TODO: other options?
 
   # GTK theme
