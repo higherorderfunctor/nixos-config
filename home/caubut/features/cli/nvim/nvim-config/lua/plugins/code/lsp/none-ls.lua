@@ -1,4 +1,6 @@
 return {
+  -- echo 2048 | sudo tee /proc/sys/fs/inotify/max_user_instances
+  -- cat /proc/sys/fs/inotify/max_user_instances
   {
     "ThePrimeagen/refactoring.nvim",
     dependencies = {
@@ -22,6 +24,7 @@ return {
         none_ls.builtins.diagnostics.deadnix, -- nix
         none_ls.builtins.diagnostics.dotenv_linter, -- sh
         none_ls.builtins.diagnostics.markdownlint, -- markdown
+        none_ls.builtins.diagnostics.pylint, -- python
         none_ls.builtins.diagnostics.selene, -- lua
         none_ls.builtins.diagnostics.statix, -- nix
         -- formatting

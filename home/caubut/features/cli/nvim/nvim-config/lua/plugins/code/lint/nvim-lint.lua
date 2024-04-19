@@ -10,6 +10,7 @@ return {
       docker = { "hadolint" },
       lua = { "luacheck" },
       markdown = {}, -- override LazyVim, handled by none-ls
+      python = { "mypy" },
       openapi = { "vacuum" },
     },
   },
