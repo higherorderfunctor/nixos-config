@@ -12,7 +12,7 @@
   (import ./nix-gl-host-overlay.nix {inherit inputs;})
   (import ./nvfetcher-overlay.nix {inherit inputs;})
   # (import ./nixd-overlay.nix {inherit inputs;})
-  (import ./oh-my-posh.nix {inherit inputs;})
+  (import ./oh-my-posh-overlay.nix {inherit inputs;})
   (import ./spectral-overlay.nix {inherit inputs;})
   (import ./standardnotes-overlay.nix {inherit inputs;})
   (import ./rust-overlay.nix {inherit inputs;})

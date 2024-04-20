@@ -91,7 +91,7 @@
     },
     "catppuccin-gtk": {
         "cargoLocks": null,
-        "date": "2024-04-06",
+        "date": "2024-04-20",
         "extract": null,
         "name": "catppuccin-gtk",
         "passthru": null,
@@ -101,12 +101,12 @@
             "fetchSubmodules": false,
             "leaveDotGit": false,
             "name": null,
-            "rev": "edef76faba00f1f8bd8311fc487f0f0b2670dd0d",
+            "rev": "9da440ced621d1bff58676efdcec9f64284c52a6",
             "sha256": "sha256-pGL8vaE63ss2ZT2FoNDfDkeuCxjcbl02RmwwfHC/Vxg=",
             "type": "git",
             "url": "https://github.com/catppuccin/gtk.git"
         },
-        "version": "edef76faba00f1f8bd8311fc487f0f0b2670dd0d"
+        "version": "9da440ced621d1bff58676efdcec9f64284c52a6"
     },
     "catppuccin-hyprland": {
         "cargoLocks": null,
@@ -205,11 +205,11 @@
             "name": null,
             "owner": "JanDeDobbeleer",
             "repo": "oh-my-posh",
-            "rev": "v19.21.1",
-            "sha256": "sha256-AejZKUtNQYWp4T8uk15O0lvX2I59CndE/21pjUksFXE=",
+            "rev": "v19.24.1",
+            "sha256": "sha256-UhlD4YUbX/CUtDDqzNZ0VZBph7TOJ6tGNavKnEO7v04=",
             "type": "github"
         },
-        "version": "v19.21.1"
+        "version": "v19.24.1"
     },
     "spectral": {
         "cargoLocks": null,
@@ -240,11 +240,11 @@
         "pinned": false,
         "src": {
             "name": "standardnotes-desktop-x86_64-linux.deb",
-            "sha256": "sha256-CARv/81lHo53i7S5K+Lf2URLCK2sM/jmyOK/M+ZCGtU=",
+            "sha256": "sha256-dHGMemllULYauaLgsrBzHzTmeyyT2/p4mKpXUbKtPkQ=",
             "type": "url",
-            "url": "https://github.com/standardnotes/app/releases/download/@standardnotes/desktop@3.193.7/standard-notes-3.193.7-linux-amd64.deb"
+            "url": "https://github.com/standardnotes/app/releases/download/@standardnotes/desktop@3.193.8/standard-notes-3.193.8-linux-amd64.deb"
         },
-        "version": "3.193.7"
+        "version": "3.193.8"
     },
     "tree-sitter-cql": {
         "cargoLocks": null,
@@ -288,7 +288,7 @@
     },
     "vivid-plasma-themes": {
         "cargoLocks": null,
-        "date": "2024-04-14",
+        "date": "2024-04-19",
         "extract": null,
         "name": "vivid-plasma-themes",
         "passthru": null,
@@ -298,11 +298,11 @@
             "fetchSubmodules": false,
             "leaveDotGit": false,
             "name": null,
-            "rev": "4a7b397f3d00a6c8d46cbb34e0db41490770360b",
-            "sha256": "sha256-N8f1yNa+rhs+ewQYfv/987AlM15RDDC0Kx1vjNf5Q8Q=",
+            "rev": "be59fbaea1c414fda300b71fbba1f09bcf59705e",
+            "sha256": "sha256-HEHvxSTK7toZdAF/Gdz3HuXTJ1cYopA9BCaoagCKNRg=",
             "type": "git",
             "url": "https://github.com/L4ki/Vivid-Plasma-Themes.git"
         },
-        "version": "4a7b397f3d00a6c8d46cbb34e0db41490770360b"
+        "version": "be59fbaea1c414fda300b71fbba1f09bcf59705e"
     }
 }
