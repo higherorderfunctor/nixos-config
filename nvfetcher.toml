@@ -71,9 +71,9 @@ url.name = "standardnotes-desktop-x86_64-linux.deb"
 src.github_tag = "shotover/tree-sitter-cql"
 fetch.github = "shotover/tree-sitter-cql"
 
-[vacuum]
-src.github = "daveshanley/vacuum"
-fetch.github = "daveshanley/vacuum"
+# [vacuum]
+# src.github = "daveshanley/vacuum"
+# fetch.github = "daveshanley/vacuum"
 
 [vivid-plasma-themes]
 src.git = "https://github.com/L4ki/Vivid-Plasma-Themes.git"

@@ -240,11 +240,11 @@
         "pinned": false,
         "src": {
             "name": "standardnotes-desktop-x86_64-linux.deb",
-            "sha256": "sha256-dHGMemllULYauaLgsrBzHzTmeyyT2/p4mKpXUbKtPkQ=",
+            "sha256": "sha256-IVwIa/rpnJx8GFHmjVrOkjWwBOgyR0PZtW9fpmWYEuY=",
             "type": "url",
-            "url": "https://github.com/standardnotes/app/releases/download/@standardnotes/desktop@3.193.8/standard-notes-3.193.8-linux-amd64.deb"
+            "url": "https://github.com/standardnotes/app/releases/download/@standardnotes/desktop@3.193.9/standard-notes-3.193.9-linux-amd64.deb"
         },
-        "version": "3.193.8"
+        "version": "3.193.9"
     },
     "tree-sitter-cql": {
         "cargoLocks": null,
@@ -265,26 +265,6 @@
             "type": "github"
         },
         "version": "v0.1.1"
-    },
-    "vacuum": {
-        "cargoLocks": null,
-        "date": null,
-        "extract": null,
-        "name": "vacuum",
-        "passthru": null,
-        "pinned": false,
-        "src": {
-            "deepClone": false,
-            "fetchSubmodules": false,
-            "leaveDotGit": false,
-            "name": null,
-            "owner": "daveshanley",
-            "repo": "vacuum",
-            "rev": "v0.9.14",
-            "sha256": "sha256-1hopeJ/4nWSmkXWPLo7BIINkuIsL2PiNNjokNRyx2e4=",
-            "type": "github"
-        },
-        "version": "v0.9.14"
     },
     "vivid-plasma-themes": {
         "cargoLocks": null,
