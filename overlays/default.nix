@@ -18,5 +18,6 @@
   (import ./rust-overlay.nix {inherit inputs;})
   # (import ./tree-sitter-cql-overlay.nix {inherit inputs;})
   (import ./vivid-icons-themes-overlay.nix {inherit inputs;})
+  (import ./spamassassin-fix-overlay.nix {inherit inputs;})
 ]
 # TODO: add modules?
