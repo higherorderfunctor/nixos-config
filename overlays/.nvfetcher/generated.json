@@ -28,11 +28,11 @@
         "pinned": false,
         "src": {
             "name": "bruno-x86_64-linux.zip",
-            "sha256": "sha256-ypXUoLka5g/T0w3AIgAEHGh/SEHPPRQYZkw8eX+60d0=",
+            "sha256": "sha256-XRPoY9srRAmprzHku/33CRFTa0iKk4w+FyFa/1DFlIQ=",
             "type": "url",
-            "url": "https://github.com/usebruno/bruno/releases/download/v1.13.1/bruno_1.13.1_amd64_linux.deb"
+            "url": "https://github.com/usebruno/bruno/releases/download/v1.14.0/bruno_1.14.0_amd64_linux.deb"
         },
-        "version": "1.13.1"
+        "version": "1.14.0"
     },
     "btop": {
         "cargoLocks": null,
@@ -240,11 +240,11 @@
         "pinned": false,
         "src": {
             "name": "standardnotes-desktop-x86_64-linux.deb",
-            "sha256": "sha256-IVwIa/rpnJx8GFHmjVrOkjWwBOgyR0PZtW9fpmWYEuY=",
+            "sha256": "sha256-BYFj45MRT/RNU6hywLWgzGkg2bRqBhWuvEXFL5nAMjI=",
             "type": "url",
-            "url": "https://github.com/standardnotes/app/releases/download/@standardnotes/desktop@3.193.9/standard-notes-3.193.9-linux-amd64.deb"
+            "url": "https://github.com/standardnotes/app/releases/download/@standardnotes/desktop@3.193.10/standard-notes-3.193.10-linux-amd64.deb"
         },
-        "version": "3.193.9"
+        "version": "3.193.10"
     },
     "tree-sitter-cql": {
         "cargoLocks": null,
