@@ -205,11 +205,11 @@
             "name": null,
             "owner": "JanDeDobbeleer",
             "repo": "oh-my-posh",
-            "rev": "v19.24.2",
-            "sha256": "sha256-xr6ULlOBmRF1s/oge+AnANLGkP30U6T1tgoBvnCLf/4=",
+            "rev": "v19.24.3",
+            "sha256": "sha256-sgtMK1ccf1rX5ZdQpTRClxx112eOFV+BWyTIpMlzLVA=",
             "type": "github"
         },
-        "version": "v19.24.2"
+        "version": "v19.24.3"
     },
     "spectral": {
         "cargoLocks": null,
