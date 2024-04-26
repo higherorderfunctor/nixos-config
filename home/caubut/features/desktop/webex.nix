@@ -15,6 +15,8 @@
     #     '';
     #   })
 
+    # WAYLAND_DISPLAY=:0 webex "$(readlink -f $(dirname $(readlink -f $(which webex)))/../lib)/" libWebexAppLoader.so /Start &
+
     # persistence
     persistence = {
       "/persist${config.home.homeDirectory}".directories = [

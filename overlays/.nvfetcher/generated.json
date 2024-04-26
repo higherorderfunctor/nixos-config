@@ -63,11 +63,11 @@
         "pinned": false,
         "src": {
             "name": "bun-x86_64-linux.zip",
-            "sha256": "sha256-9H/1qR6ZHHy5/abq2SjoUbUX6Y92/8MQem2inuWhVC8=",
+            "sha256": "sha256-4iv6had7KaEpI0ng1ZnZFCqeVM+R3OEf0KPAtsc6K60=",
             "type": "url",
-            "url": "https://github.com/oven-sh/bun/releases/download/bun-v1.1.4/bun-linux-x64.zip"
+            "url": "https://github.com/oven-sh/bun/releases/download/bun-v1.1.5/bun-linux-x64.zip"
         },
-        "version": "1.1.4"
+        "version": "1.1.5"
     },
     "catppuccin-btop": {
         "cargoLocks": null,
@@ -268,7 +268,7 @@
     },
     "vivid-plasma-themes": {
         "cargoLocks": null,
-        "date": "2024-04-19",
+        "date": "2024-04-26",
         "extract": null,
         "name": "vivid-plasma-themes",
         "passthru": null,
@@ -278,11 +278,11 @@
             "fetchSubmodules": false,
             "leaveDotGit": false,
             "name": null,
-            "rev": "be59fbaea1c414fda300b71fbba1f09bcf59705e",
-            "sha256": "sha256-HEHvxSTK7toZdAF/Gdz3HuXTJ1cYopA9BCaoagCKNRg=",
+            "rev": "2d91d4a0fc2dda873ddc85e1d52c86e1276600db",
+            "sha256": "sha256-6f9r/4u73zF1yq3fE7X0KfKwaNG79U/H6mO/PsQglbs=",
             "type": "git",
             "url": "https://github.com/L4ki/Vivid-Plasma-Themes.git"
         },
-        "version": "be59fbaea1c414fda300b71fbba1f09bcf59705e"
+        "version": "2d91d4a0fc2dda873ddc85e1d52c86e1276600db"
     }
 }
