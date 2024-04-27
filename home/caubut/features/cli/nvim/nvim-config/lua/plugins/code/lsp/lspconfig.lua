@@ -14,7 +14,15 @@ return {
       nil_ls = { mason = false },
       nixd = { mason = false },
       yamlls = { mason = false },
+      tsserver = {
+        cmd = {
+          "bunx",
+          "typescript-language-server",
+          "--stdio",
+        },
+      },
     },
+    format = { timeout_ms = 10000 },
   },
   init = function()
     local keys = require("lazyvim.plugins.lsp.keymaps").get()
