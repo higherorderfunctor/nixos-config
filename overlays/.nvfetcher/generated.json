@@ -63,11 +63,11 @@
         "pinned": false,
         "src": {
             "name": "bun-x86_64-linux.zip",
-            "sha256": "sha256-4iv6had7KaEpI0ng1ZnZFCqeVM+R3OEf0KPAtsc6K60=",
+            "sha256": "sha256-IzjuIPXljt8EStcRdGj55SWIpqJdGQeVZVAS5u9sW+Y=",
             "type": "url",
-            "url": "https://github.com/oven-sh/bun/releases/download/bun-v1.1.5/bun-linux-x64.zip"
+            "url": "https://github.com/oven-sh/bun/releases/download/bun-v1.1.6/bun-linux-x64.zip"
         },
-        "version": "1.1.5"
+        "version": "1.1.6"
     },
     "catppuccin-btop": {
         "cargoLocks": null,
