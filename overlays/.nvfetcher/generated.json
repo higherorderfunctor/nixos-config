@@ -28,11 +28,11 @@
         "pinned": false,
         "src": {
             "name": "bruno-x86_64-linux.zip",
-            "sha256": "sha256-XRPoY9srRAmprzHku/33CRFTa0iKk4w+FyFa/1DFlIQ=",
+            "sha256": "sha256-rAMexQsGsIspptPwGf6BMXIckIpXrzLVG4Bn2YtiEPI=",
             "type": "url",
-            "url": "https://github.com/usebruno/bruno/releases/download/v1.14.0/bruno_1.14.0_amd64_linux.deb"
+            "url": "https://github.com/usebruno/bruno/releases/download/v1.16.1/bruno_1.16.1_amd64_linux.deb"
         },
-        "version": "1.14.0"
+        "version": "1.16.1"
     },
     "btop": {
         "cargoLocks": null,
@@ -91,7 +91,7 @@
     },
     "catppuccin-gtk": {
         "cargoLocks": null,
-        "date": "2024-04-20",
+        "date": "2024-04-30",
         "extract": null,
         "name": "catppuccin-gtk",
         "passthru": null,
@@ -101,12 +101,12 @@
             "fetchSubmodules": false,
             "leaveDotGit": false,
             "name": null,
-            "rev": "9da440ced621d1bff58676efdcec9f64284c52a6",
-            "sha256": "sha256-pGL8vaE63ss2ZT2FoNDfDkeuCxjcbl02RmwwfHC/Vxg=",
+            "rev": "0c3e8817da94769887c690b2211e006b287b27b1",
+            "sha256": "sha256-dCLpRitg1S/WKS3YY+kS0qdLn6KRC1FhWpqhw4tuWlM=",
             "type": "git",
             "url": "https://github.com/catppuccin/gtk.git"
         },
-        "version": "9da440ced621d1bff58676efdcec9f64284c52a6"
+        "version": "0c3e8817da94769887c690b2211e006b287b27b1"
     },
     "catppuccin-hyprland": {
         "cargoLocks": null,
@@ -205,11 +205,11 @@
             "name": null,
             "owner": "JanDeDobbeleer",
             "repo": "oh-my-posh",
-            "rev": "v19.24.3",
-            "sha256": "sha256-sgtMK1ccf1rX5ZdQpTRClxx112eOFV+BWyTIpMlzLVA=",
+            "rev": "v19.25.0",
+            "sha256": "sha256-TsFLDQBHYlwTFWbIrHsOeYXdnYENIhnxV28CtSuw3Ps=",
             "type": "github"
         },
-        "version": "v19.24.3"
+        "version": "v19.25.0"
     },
     "spectral": {
         "cargoLocks": null,
