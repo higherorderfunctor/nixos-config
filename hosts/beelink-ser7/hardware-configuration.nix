@@ -9,7 +9,7 @@
     inputs.hardware.nixosModules.common-cpu-amd
     inputs.hardware.nixosModules.common-gpu-amd
     ./disk-config.nix
-    ../common/optional/wireless.nix
+    #../common/optional/wireless.nix
   ];
 
   nixpkgs.hostPlatform = "x86_64-linux";
