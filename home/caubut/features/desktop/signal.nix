@@ -4,12 +4,14 @@
   pkgs,
   ...
 }: {
-  home.packages = [pkgs.signal-desktop];
+  home = {
+    packages = [pkgs.signal-desktop];
 
-  # persistence
-  persistence = {
-    "/persist${config.home.homeDirectory}".directories = [
-      (lib.strings.removePrefix "${config.home.homeDirectory}/" "${config.xdg.configHome}/Signal")
-    ];
+    # persistence
+    persistence = {
+      "/persist${config.home.homeDirectory}".directories = [
+        (lib.strings.removePrefix "${config.home.homeDirectory}/" "${config.xdg.configHome}/Signal")
+      ];
+    };
   };
 }
