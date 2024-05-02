@@ -61,7 +61,8 @@
 
   # networking
   networking = {
-    useDHCP = lib.mkDefault true;
+    #useDHCP = lib.mkDefault true;
+    networkmanager.enable = true;
   };
 
   # https://nixos.wiki/wiki/Fwupd
