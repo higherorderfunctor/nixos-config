@@ -18,6 +18,12 @@ in {
   programs = {
     home-manager.enable = true;
     oh-my-posh.enable = true;
+    direnv = {
+      enable = true;
+      enableBashIntegration = config.programs.bash.enable;
+      enableZshIntegration = config.programs.zsh.enable;
+      nix-direnv.enable = true;
+    };
   };
 
   xdg = {
