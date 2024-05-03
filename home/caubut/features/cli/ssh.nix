@@ -48,6 +48,13 @@
           config.lib.file.mkOutOfStoreSymlink
           "/run/secrets/${config.home.username}-personal-ed25519-key";
       };
+
+    # persistence
+    persistence = {
+      "/persist${config.home.homeDirectory}".files = [
+        ".ssh/known_hosts"
+      ];
+    };
   };
 
   sops = {

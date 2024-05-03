@@ -37,4 +37,10 @@
       mode = "400";
     };
   };
+
+  home.persistence = {
+    "/persist${config.home.homeDirectory}".directories = [
+      (lib.strings.removePrefix "${config.home.homeDirectory}/" "${config.xdg.dataHome}/nix") # repl history
+    ];
+  };
 }

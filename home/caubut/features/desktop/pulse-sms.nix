@@ -1,8 +1,10 @@
 {
+  config,
   lib,
   pkgs,
   ...
 }: let
+  # FIXME: overlay
   pname = "pulse-sms";
   version = "4.5.3";
   src = pkgs.fetchurl {
@@ -47,5 +49,14 @@
     };
   };
 in {
-  home.packages = [pulse-sms];
+  home = {
+    packages = [pulse-sms];
+
+    # persistence
+    persistence = {
+      "/persist${config.home.homeDirectory}".directories = [
+        (lib.strings.removePrefix "${config.home.homeDirectory}/" "${config.xdg.configHome}/pulse-sms")
+      ];
+    };
+  };
 }
