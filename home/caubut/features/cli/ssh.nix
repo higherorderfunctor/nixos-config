@@ -51,8 +51,8 @@
 
     # persistence
     persistence = {
-      "/persist${config.home.homeDirectory}".files = [
-        ".ssh/known_hosts"
+      "/persist${config.home.homeDirectory}".directories = [
+        ".ssh"
       ];
     };
   };
