@@ -10,6 +10,14 @@ in {
     gid = 1000;
   };
 
+  # FIXME:
+  virtualisation.docker.enable = true;
+  virtualisation.docker.storageDriver = "btrfs";
+  virtualisation.docker.rootless = {
+    enable = true;
+    setSocketVariable = true;
+  };
+
   users.users.${username} = {
     uid = 1000;
     group = "${username}";
@@ -22,6 +30,7 @@ in {
         "audio"
       ]
       ++ ifGroupExist [
+        "docker"
         "network"
       ];
     hashedPasswordFile = config.sops.secrets."${username}-password".path;
