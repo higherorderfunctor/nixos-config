@@ -1,11 +1,14 @@
 {
   config,
   inputs,
-  pkgs,
+  lib,
   outputs,
+  pkgs,
   ...
 }: let
   username = "caubut";
+
+  toml = pkgs.formats.toml {};
 in {
   imports =
     [
@@ -23,6 +26,15 @@ in {
       enableBashIntegration = config.programs.bash.enable;
       enableZshIntegration = config.programs.zsh.enable;
       nix-direnv.enable = true;
+    };
+  };
+
+  xdg.configFile."direnv/direnv.toml".source = toml.generate "direnv.toml" {
+    global = {
+      hide_env_diff = true;
+    };
+    whitelist = {
+      prefix = ["${config.xdg.userDirs.documents}/projects" "${config.xdg.userDirs.documents}/work"];
     };
   };
 
