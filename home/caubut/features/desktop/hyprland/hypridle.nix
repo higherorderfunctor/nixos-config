@@ -11,17 +11,19 @@
   brightnessctl = lib.getExe pkgs.brightnessctl;
 in {
   imports = [
+    # FIXME: added to home manager
+    #   https://github.com/nix-community/home-manager/pull/5324https://github.com/nix-community/home-manager/pull/5324
+    #   I dont see in the option search so leaving fow now
     inputs.hypridle.homeManagerModules.default
   ];
 
   services.hypridle = {
-    enable = true;
+    enable = lib.mkDefault true;
     package = pkgs.hypridle;
 
     lockCmd = "pidof ${hyprlock} || ${hyprlock}"; # avoid starting multiple hyprlock instances
     beforeSleepCmd = "${loginctl} lock-session"; # lock before suspend
     afterSleepCmd = "${hyprctl} dispatch dpms on"; # to avoid having to press a key twice to turn on the display
-
     listeners = [
       {
         timeout = 150; # 2.5min.

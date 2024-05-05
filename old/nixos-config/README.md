@@ -378,4 +378,6 @@ nix-locate <file>
 
 # for in a vm
 WLR_RENDERER_ALLOW_SOFTWARE=1 WLR_NO_HARDWARE_CURSORS=1 Hyprland
+
+nix why-depends .#nixosConfigurations.beelink-ser7.config.system.build.toplevel /nix/store/rsih35bw5xvb7s78f8mk42ykv2k3dnqr-source
 ````

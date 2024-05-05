@@ -2,7 +2,7 @@
   # FIXME: https://github.com/NixOS/nixpkgs/pull/307505
   # https://github.com/NixOS/nixpkgs/pull/307476
 
-  poetry = inputs.nixpkgs-master.legacyPackages.${final.system}.poetry;
+  # poetry = inputs.nixpkgs-master.legacyPackages.${final.system}.poetry;
 
   # poetry = prev.poetry.overrideAttrs (attrs: {
   #   poetry = attrs.poetry.override {
