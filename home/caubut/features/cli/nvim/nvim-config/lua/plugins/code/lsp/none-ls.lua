@@ -1,6 +1,15 @@
 return {
-  -- echo 2048 | sudo tee /proc/sys/fs/inotify/max_user_instances
-  -- cat /proc/sys/fs/inotify/max_user_instances
+  -- $ systctl fs.inotify.max_queued_events
+  -- fs.inotify.max_queued_events = 16384
+  -- $ sysctl fs.inotify.max_user_watches
+  -- fs.inotify.max_user_watches = 65536
+  -- Add this:
+  -- $ sudo vi /etc/sysctl.conf
+  -- fs.inotify.max_user_instances = 524288
+  -- fs.inotify.max_user_watches = 524288
+  -- fs.inotify.max_queued_events = 524288
+  -- $ sudo sysctl -p
+
   {
     "ThePrimeagen/refactoring.nvim",
     dependencies = {

@@ -45,6 +45,7 @@
     kernel = {
       sysctl = {
         "fs.inotify.max_queued_events" = "524288";
+        "fs.inotify.max_user_watches" = "524288";
       };
     };
   };
