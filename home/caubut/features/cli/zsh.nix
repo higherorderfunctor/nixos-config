@@ -58,6 +58,7 @@ in {
       setopt long_list_jobs       # show long list format job notifications
       setopt interactivecomments  # recognize comments
       setopt promptsubst          # enable prompt expansion
+      setopt extended_glob        # more glob patterns
     '';
     initExtra = ''
       zstyle ':completion:*:*:*:*:*' menu select
