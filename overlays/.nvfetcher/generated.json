@@ -205,11 +205,11 @@
             "name": null,
             "owner": "JanDeDobbeleer",
             "repo": "oh-my-posh",
-            "rev": "v19.26.1",
-            "sha256": "sha256-H1Tgov+g6/jnaX7b0lAucl+uBOG6GxWEtSIOgaGLK0I=",
+            "rev": "v19.27.0",
+            "sha256": "sha256-gnK4cu44aSVai48z7U4AlgiulCwNQU/LgN5XJKIYDv8=",
             "type": "github"
         },
-        "version": "v19.26.1"
+        "version": "v19.27.0"
     },
     "spectral": {
         "cargoLocks": null,
@@ -240,11 +240,11 @@
         "pinned": false,
         "src": {
             "name": "standardnotes-desktop-x86_64-linux.deb",
-            "sha256": "sha256-nbKLaOigmt9cYdmZcZXxvihm+LrtXsbVtUMBPikh2dY=",
+            "sha256": "sha256-7Oi5XIQBrWHiEBXh8UUuHIoYr7kT/sx5w8+WK/ZmNBo=",
             "type": "url",
-            "url": "https://github.com/standardnotes/app/releases/download/@standardnotes/desktop@3.194.2/standard-notes-3.194.2-linux-amd64.deb"
+            "url": "https://github.com/standardnotes/app/releases/download/@standardnotes/desktop@3.194.3/standard-notes-3.194.3-linux-amd64.deb"
         },
-        "version": "3.194.2"
+        "version": "3.194.3"
     },
     "tree-sitter-cql": {
         "cargoLocks": null,

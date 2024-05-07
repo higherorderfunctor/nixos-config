@@ -18,12 +18,14 @@ in {
   ];
 
   services.hypridle = {
-    enable = lib.mkDefault true;
+    enable = true;
     package = pkgs.hypridle;
-
+    #settings = {
+    # general = {
     lockCmd = "pidof ${hyprlock} || ${hyprlock}"; # avoid starting multiple hyprlock instances
     beforeSleepCmd = "${loginctl} lock-session"; # lock before suspend
     afterSleepCmd = "${hyprctl} dispatch dpms on"; # to avoid having to press a key twice to turn on the display
+    #};
     listeners = [
       {
         timeout = 150; # 2.5min.
@@ -49,5 +51,6 @@ in {
         onTimeout = "${systemctl} suspend"; # suspend pc
       }
     ];
+    #};
   };
 }
