@@ -46,10 +46,12 @@ in {
   };
 
   xdg.dataFile = {
-    "nvim/lazy/nvim-treesitter/parser/cql.so".source = "${tree-sitter-cql}/parser";
-    "nvim/lazy/nvim-treesitter/queries/cql".source = "${tree-sitter-cql}/queries";
-    #  config.lib.file.mkOutOfStoreSymlink
-    #  "${config.xdg.userDirs.documents}/projects/nixos-config/home/${username}/features/cli/nvim/nvim-runtime/nvim-treesitter/queries/cql";
+    "nvim/lazy/nvim-treesitter/parser/cql.so".source = "${pkgs.tree-sitter-grammars.tree-sitter-cql}/parser";
+    #"nvim/lazy/nvim-treesitter/queries/cql" = "${pkgs.tree-sitter-grammars.tree-sitter-cql}/queries";
+    #   # "nvim/lazy/nvim-treesitter/parser/cql.so".source = "${tree-sitter-cql}/parser";
+    #   # "nvim/lazy/nvim-treesitter/queries/cql".source = "${tree-sitter-cql}/queries";
+    #   #  config.lib.file.mkOutOfStoreSymlink
+    #   #  "${config.xdg.userDirs.documents}/projects/nixos-config/home/${username}/features/cli/nvim/nvim-runtime/nvim-treesitter/queries/cql";
   };
 
   # permission fixes
