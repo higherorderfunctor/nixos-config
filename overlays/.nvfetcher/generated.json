@@ -260,11 +260,11 @@
             "name": null,
             "owner": "shotover",
             "repo": "tree-sitter-cql",
-            "rev": "v0.1.1",
-            "sha256": "sha256-DVeXiXyapYLn4CVJ1spEII5Uv/g7dlLxcLNVujM5AyE=",
+            "rev": "v0.1.2",
+            "sha256": "sha256-tSCievfOGAZOkDojUJhFAcE7UPe6fjVkxg4uafXKkpk=",
             "type": "github"
         },
-        "version": "v0.1.1"
+        "version": "v0.1.2"
     },
     "vivid-plasma-themes": {
         "cargoLocks": null,
