@@ -5,13 +5,25 @@ shopt -s inherit_errexit 2>/dev/null || :
 
 cd "$(dirname "$0")"/..
 
-# check sources for updates with nvfetcher
+FAKE_HASH="sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA="
+
+##
+# Cache externally generated hashes for nvfetcher
+oh_my_posh_vendor_hash=$(yq -r '.oh-my-posh.vendorHash // "'"$FAKE_HASH"'"' overlays/.nvfetcher/generated.json)
+
+##
+# Run nvfetcher to get updates
 nvfetcher -k ~/.config/nvfetcher/keyfile.toml -o overlays/.nvfetcher
 
-git add overlays/.nvfetcher
-git commit -am 'chore(bot): updates nvfetcher dependencies'
+##
+# Restore externally generated hashes
+#
+# nvfetcher always writes a file with or without updates so they need
+# to be restored. and then fixed after if there is an actual update
+yq e -iP '.oh-my-posh.vendorHash = "'"$oh_my_posh_vendor_hash"'"' overlays/.nvfetcher/generated.json -o json
 
-# fixup some nvfetcher sources with dependencies
+##
+# Fixup externally generated hashes
 (
 	# get the current flake's store path
 	NIX_PATH="nixpkgs=$(nix flake prefetch nixpkgs --json | jq --raw-output '.storePath')"
@@ -29,13 +41,13 @@ pkgs.oh-my-posh
 EOF
 	)"
 
-	# this command succeeds if its already in the store,
-	# otherwise it tries to build, captures the correct hash, and updates generated.json
-	if output=$(nix-build --expr "$oh_my_posh" 2>&1 | tee >(cat - >&5) || true); then
+	# this command succeeds if its already in the store and the rest is skipped,
+	# otherwise, on failure, it tries to build, captures the correct hash, and updates generated.json
+	if ! output=$(nix-build --expr "$oh_my_posh" 2>&1 | tee >(cat - >&5)); then
 		# if the command fails, it should just be on the vendor hash which is captured
-		vendor_hash=$(echo "$output" | grep -oP 'got:\s+\Ksha256-[a-zA-Z0-9+/=]+')
-		echo -e "\nUpdating vendorHash: $vendor_hash\n"
-		yq e -iP '.oh-my-posh.vendorHash = "'"$vendor_hash"'"' overlays/.nvfetcher/generated.json -o json
+		oh_my_posh_vendor_hash=$(echo "$output" | grep -oP 'got:\s+\Ksha256-[a-zA-Z0-9+/=]+')
+		echo -e "\nUpdating vendorHash: $oh_my_posh_vendor_hash\n"
+		yq e -iP '.oh-my-posh.vendorHash = "'"$oh_my_posh_vendor_hash"'"' overlays/.nvfetcher/generated.json -o json
 	fi
 )
 
