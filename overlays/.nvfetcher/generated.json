@@ -1,289 +1,288 @@
 {
-  "arkenfox": {
-    "cargoLocks": null,
-    "date": null,
-    "extract": null,
-    "name": "arkenfox",
-    "passthru": null,
-    "pinned": false,
-    "src": {
-      "deepClone": false,
-      "fetchSubmodules": false,
-      "leaveDotGit": false,
-      "name": null,
-      "owner": "arkenfox",
-      "repo": "user.js",
-      "rev": "122.0",
-      "sha256": "sha256-624Giuo1TfeXQGzcGK9ETW86esNFhFZ5a46DCjT6K5I=",
-      "type": "github"
+    "arkenfox": {
+        "cargoLocks": null,
+        "date": null,
+        "extract": null,
+        "name": "arkenfox",
+        "passthru": null,
+        "pinned": false,
+        "src": {
+            "deepClone": false,
+            "fetchSubmodules": false,
+            "leaveDotGit": false,
+            "name": null,
+            "owner": "arkenfox",
+            "repo": "user.js",
+            "rev": "122.0",
+            "sha256": "sha256-624Giuo1TfeXQGzcGK9ETW86esNFhFZ5a46DCjT6K5I=",
+            "type": "github"
+        },
+        "version": "122.0"
     },
-    "version": "122.0"
-  },
-  "bruno-deb-x86_64-linux": {
-    "cargoLocks": null,
-    "date": null,
-    "extract": null,
-    "name": "bruno-deb-x86_64-linux",
-    "passthru": null,
-    "pinned": false,
-    "src": {
-      "name": "bruno-x86_64-linux.zip",
-      "sha256": "sha256-PfiJvuK7VzItnoRY3ofKjrCi8l8Lvd0nuR0avvUK2+Y=",
-      "type": "url",
-      "url": "https://github.com/usebruno/bruno/releases/download/v1.17.0/bruno_1.17.0_amd64_linux.deb"
+    "bruno-deb-x86_64-linux": {
+        "cargoLocks": null,
+        "date": null,
+        "extract": null,
+        "name": "bruno-deb-x86_64-linux",
+        "passthru": null,
+        "pinned": false,
+        "src": {
+            "name": "bruno-x86_64-linux.zip",
+            "sha256": "sha256-PfiJvuK7VzItnoRY3ofKjrCi8l8Lvd0nuR0avvUK2+Y=",
+            "type": "url",
+            "url": "https://github.com/usebruno/bruno/releases/download/v1.17.0/bruno_1.17.0_amd64_linux.deb"
+        },
+        "version": "1.17.0"
     },
-    "version": "1.17.0"
-  },
-  "btop": {
-    "cargoLocks": null,
-    "date": null,
-    "extract": null,
-    "name": "btop",
-    "passthru": null,
-    "pinned": false,
-    "src": {
-      "deepClone": false,
-      "fetchSubmodules": false,
-      "leaveDotGit": false,
-      "name": null,
-      "owner": "aristocratos",
-      "repo": "btop",
-      "rev": "v1.3.2",
-      "sha256": "sha256-kjSyIgLTObTOKMG5dk49XmWPXZpCWbLdpkmAsJcFliA=",
-      "type": "github"
+    "btop": {
+        "cargoLocks": null,
+        "date": null,
+        "extract": null,
+        "name": "btop",
+        "passthru": null,
+        "pinned": false,
+        "src": {
+            "deepClone": false,
+            "fetchSubmodules": false,
+            "leaveDotGit": false,
+            "name": null,
+            "owner": "aristocratos",
+            "repo": "btop",
+            "rev": "v1.3.2",
+            "sha256": "sha256-kjSyIgLTObTOKMG5dk49XmWPXZpCWbLdpkmAsJcFliA=",
+            "type": "github"
+        },
+        "version": "v1.3.2"
     },
-    "version": "v1.3.2"
-  },
-  "bun-x86_64-linux": {
-    "cargoLocks": null,
-    "date": null,
-    "extract": null,
-    "name": "bun-x86_64-linux",
-    "passthru": null,
-    "pinned": false,
-    "src": {
-      "name": "bun-x86_64-linux.zip",
-      "sha256": "sha256-JuDT+8FHbamdMVCDeSTGPYOvhPY2EZ9XeD2zjHEj36Y=",
-      "type": "url",
-      "url": "https://github.com/oven-sh/bun/releases/download/bun-v1.1.8/bun-linux-x64.zip"
+    "bun-x86_64-linux": {
+        "cargoLocks": null,
+        "date": null,
+        "extract": null,
+        "name": "bun-x86_64-linux",
+        "passthru": null,
+        "pinned": false,
+        "src": {
+            "name": "bun-x86_64-linux.zip",
+            "sha256": "sha256-JuDT+8FHbamdMVCDeSTGPYOvhPY2EZ9XeD2zjHEj36Y=",
+            "type": "url",
+            "url": "https://github.com/oven-sh/bun/releases/download/bun-v1.1.8/bun-linux-x64.zip"
+        },
+        "version": "1.1.8"
     },
-    "version": "1.1.8"
-  },
-  "catppuccin-btop": {
-    "cargoLocks": null,
-    "date": null,
-    "extract": null,
-    "name": "catppuccin-btop",
-    "passthru": null,
-    "pinned": false,
-    "src": {
-      "deepClone": false,
-      "fetchSubmodules": false,
-      "leaveDotGit": false,
-      "name": null,
-      "owner": "catppuccin",
-      "repo": "btop",
-      "rev": "1.0.0",
-      "sha256": "sha256-J3UezOQMDdxpflGax0rGBF/XMiKqdqZXuX4KMVGTxFk=",
-      "type": "github"
+    "catppuccin-btop": {
+        "cargoLocks": null,
+        "date": null,
+        "extract": null,
+        "name": "catppuccin-btop",
+        "passthru": null,
+        "pinned": false,
+        "src": {
+            "deepClone": false,
+            "fetchSubmodules": false,
+            "leaveDotGit": false,
+            "name": null,
+            "owner": "catppuccin",
+            "repo": "btop",
+            "rev": "1.0.0",
+            "sha256": "sha256-J3UezOQMDdxpflGax0rGBF/XMiKqdqZXuX4KMVGTxFk=",
+            "type": "github"
+        },
+        "version": "1.0.0"
     },
-    "version": "1.0.0"
-  },
-  "catppuccin-gtk": {
-    "cargoLocks": null,
-    "date": "2024-04-30",
-    "extract": null,
-    "name": "catppuccin-gtk",
-    "passthru": null,
-    "pinned": false,
-    "src": {
-      "deepClone": false,
-      "fetchSubmodules": false,
-      "leaveDotGit": false,
-      "name": null,
-      "rev": "0c3e8817da94769887c690b2211e006b287b27b1",
-      "sha256": "sha256-dCLpRitg1S/WKS3YY+kS0qdLn6KRC1FhWpqhw4tuWlM=",
-      "type": "git",
-      "url": "https://github.com/catppuccin/gtk.git"
+    "catppuccin-gtk": {
+        "cargoLocks": null,
+        "date": "2024-04-30",
+        "extract": null,
+        "name": "catppuccin-gtk",
+        "passthru": null,
+        "pinned": false,
+        "src": {
+            "deepClone": false,
+            "fetchSubmodules": false,
+            "leaveDotGit": false,
+            "name": null,
+            "rev": "0c3e8817da94769887c690b2211e006b287b27b1",
+            "sha256": "sha256-dCLpRitg1S/WKS3YY+kS0qdLn6KRC1FhWpqhw4tuWlM=",
+            "type": "git",
+            "url": "https://github.com/catppuccin/gtk.git"
+        },
+        "version": "0c3e8817da94769887c690b2211e006b287b27b1"
     },
-    "version": "0c3e8817da94769887c690b2211e006b287b27b1"
-  },
-  "catppuccin-hyprland": {
-    "cargoLocks": null,
-    "date": "2024-04-03",
-    "extract": null,
-    "name": "catppuccin-hyprland",
-    "passthru": null,
-    "pinned": false,
-    "src": {
-      "deepClone": false,
-      "fetchSubmodules": false,
-      "leaveDotGit": false,
-      "name": null,
-      "rev": "b57375545f5da1f7790341905d1049b1873a8bb3",
-      "sha256": "sha256-XTqpmucOeHUgSpXQ0XzbggBFW+ZloRD/3mFhI+Tq4O8=",
-      "type": "git",
-      "url": "https://github.com/catppuccin/hyprland.git"
+    "catppuccin-hyprland": {
+        "cargoLocks": null,
+        "date": "2024-04-03",
+        "extract": null,
+        "name": "catppuccin-hyprland",
+        "passthru": null,
+        "pinned": false,
+        "src": {
+            "deepClone": false,
+            "fetchSubmodules": false,
+            "leaveDotGit": false,
+            "name": null,
+            "rev": "b57375545f5da1f7790341905d1049b1873a8bb3",
+            "sha256": "sha256-XTqpmucOeHUgSpXQ0XzbggBFW+ZloRD/3mFhI+Tq4O8=",
+            "type": "git",
+            "url": "https://github.com/catppuccin/hyprland.git"
+        },
+        "version": "b57375545f5da1f7790341905d1049b1873a8bb3"
     },
-    "version": "b57375545f5da1f7790341905d1049b1873a8bb3"
-  },
-  "catppuccin-hyprlock": {
-    "cargoLocks": null,
-    "date": "2024-04-01",
-    "extract": null,
-    "name": "catppuccin-hyprlock",
-    "passthru": null,
-    "pinned": false,
-    "src": {
-      "deepClone": false,
-      "fetchSubmodules": false,
-      "leaveDotGit": false,
-      "name": null,
-      "rev": "d5a6767000409334be8413f19bfd1cf5b6bb5cc6",
-      "sha256": "sha256-pjMFPaonq3h3e9fvifCneZ8oxxb1sufFQd7hsFe6/i4=",
-      "type": "git",
-      "url": "https://github.com/catppuccin/hyprlock.git"
+    "catppuccin-hyprlock": {
+        "cargoLocks": null,
+        "date": "2024-04-01",
+        "extract": null,
+        "name": "catppuccin-hyprlock",
+        "passthru": null,
+        "pinned": false,
+        "src": {
+            "deepClone": false,
+            "fetchSubmodules": false,
+            "leaveDotGit": false,
+            "name": null,
+            "rev": "d5a6767000409334be8413f19bfd1cf5b6bb5cc6",
+            "sha256": "sha256-pjMFPaonq3h3e9fvifCneZ8oxxb1sufFQd7hsFe6/i4=",
+            "type": "git",
+            "url": "https://github.com/catppuccin/hyprlock.git"
+        },
+        "version": "d5a6767000409334be8413f19bfd1cf5b6bb5cc6"
     },
-    "version": "d5a6767000409334be8413f19bfd1cf5b6bb5cc6"
-  },
-  "catppuccin-python": {
-    "cargoLocks": null,
-    "date": null,
-    "extract": null,
-    "name": "catppuccin-python",
-    "passthru": null,
-    "pinned": false,
-    "src": {
-      "deepClone": false,
-      "fetchSubmodules": false,
-      "leaveDotGit": false,
-      "name": null,
-      "owner": "catppuccin",
-      "repo": "python",
-      "rev": "v2.2.0",
-      "sha256": "sha256-+V1rln3FlFvs1FEIANIch7k/b2EsI9xBxhg3Bwg99+I=",
-      "type": "github"
+    "catppuccin-python": {
+        "cargoLocks": null,
+        "date": null,
+        "extract": null,
+        "name": "catppuccin-python",
+        "passthru": null,
+        "pinned": false,
+        "src": {
+            "deepClone": false,
+            "fetchSubmodules": false,
+            "leaveDotGit": false,
+            "name": null,
+            "owner": "catppuccin",
+            "repo": "python",
+            "rev": "v2.2.0",
+            "sha256": "sha256-+V1rln3FlFvs1FEIANIch7k/b2EsI9xBxhg3Bwg99+I=",
+            "type": "github"
+        },
+        "version": "v2.2.0"
     },
-    "version": "v2.2.0"
-  },
-  "fblog": {
-    "cargoLocks": {
-      "Cargo.lock": [
-        "./fblog-v4.9.0/Cargo.lock",
-        {}
-      ]
+    "fblog": {
+        "cargoLocks": {
+            "Cargo.lock": [
+                "./fblog-v4.9.0/Cargo.lock",
+                {}
+            ]
+        },
+        "date": null,
+        "extract": null,
+        "name": "fblog",
+        "passthru": null,
+        "pinned": false,
+        "src": {
+            "deepClone": false,
+            "fetchSubmodules": false,
+            "leaveDotGit": false,
+            "name": null,
+            "owner": "brocode",
+            "repo": "fblog",
+            "rev": "v4.9.0",
+            "sha256": "sha256-9v8bn68anWB0vkRIixa6YvNl54z6X8u+MyYs38Zgc5A=",
+            "type": "github"
+        },
+        "version": "v4.9.0"
     },
-    "date": null,
-    "extract": null,
-    "name": "fblog",
-    "passthru": null,
-    "pinned": false,
-    "src": {
-      "deepClone": false,
-      "fetchSubmodules": false,
-      "leaveDotGit": false,
-      "name": null,
-      "owner": "brocode",
-      "repo": "fblog",
-      "rev": "v4.9.0",
-      "sha256": "sha256-9v8bn68anWB0vkRIixa6YvNl54z6X8u+MyYs38Zgc5A=",
-      "type": "github"
+    "oh-my-posh": {
+        "cargoLocks": null,
+        "date": null,
+        "extract": null,
+        "name": "oh-my-posh",
+        "passthru": null,
+        "pinned": false,
+        "src": {
+            "deepClone": false,
+            "fetchSubmodules": false,
+            "leaveDotGit": false,
+            "name": null,
+            "owner": "JanDeDobbeleer",
+            "repo": "oh-my-posh",
+            "rev": "v19.28.0",
+            "sha256": "sha256-/XXFFyJXlQrjs772sXJ8R2yeeK9je+34im11irtf26I=",
+            "type": "github"
+        },
+        "version": "v19.28.0"
     },
-    "version": "v4.9.0"
-  },
-  "oh-my-posh": {
-    "cargoLocks": null,
-    "date": null,
-    "extract": null,
-    "name": "oh-my-posh",
-    "passthru": null,
-    "pinned": false,
-    "src": {
-      "deepClone": false,
-      "fetchSubmodules": false,
-      "leaveDotGit": false,
-      "name": null,
-      "owner": "JanDeDobbeleer",
-      "repo": "oh-my-posh",
-      "rev": "v19.28.0",
-      "sha256": "sha256-/XXFFyJXlQrjs772sXJ8R2yeeK9je+34im11irtf26I=",
-      "type": "github"
+    "spectral": {
+        "cargoLocks": null,
+        "date": null,
+        "extract": null,
+        "name": "spectral",
+        "passthru": null,
+        "pinned": false,
+        "src": {
+            "deepClone": false,
+            "fetchSubmodules": false,
+            "leaveDotGit": false,
+            "name": null,
+            "owner": "stoplightio",
+            "repo": "spectral",
+            "rev": "v6.11.1",
+            "sha256": "sha256-ivuu7kpVJIn2RiFAe/slMffcisVeq7yeG1TwoXMOMeA=",
+            "type": "github"
+        },
+        "version": "v6.11.1"
     },
-    "version": "v19.28.0",
-    "vendorHash": "sha256-mZNhsvEI1AbsAhoK7AuNgrQvYlkGrrpPVuv3R5nssC4="
-  },
-  "spectral": {
-    "cargoLocks": null,
-    "date": null,
-    "extract": null,
-    "name": "spectral",
-    "passthru": null,
-    "pinned": false,
-    "src": {
-      "deepClone": false,
-      "fetchSubmodules": false,
-      "leaveDotGit": false,
-      "name": null,
-      "owner": "stoplightio",
-      "repo": "spectral",
-      "rev": "v6.11.1",
-      "sha256": "sha256-ivuu7kpVJIn2RiFAe/slMffcisVeq7yeG1TwoXMOMeA=",
-      "type": "github"
+    "standardnotes-desktop-deb-x86_64-linux": {
+        "cargoLocks": null,
+        "date": null,
+        "extract": null,
+        "name": "standardnotes-desktop-deb-x86_64-linux",
+        "passthru": null,
+        "pinned": false,
+        "src": {
+            "name": "standardnotes-desktop-x86_64-linux.deb",
+            "sha256": "sha256-D9wNRTbZ+OA4MEsVlkKUWD2i0ReHi83+BlV5uK01VD4=",
+            "type": "url",
+            "url": "https://github.com/standardnotes/app/releases/download/@standardnotes/desktop@3.194.4/standard-notes-3.194.4-linux-amd64.deb"
+        },
+        "version": "3.194.4"
     },
-    "version": "v6.11.1"
-  },
-  "standardnotes-desktop-deb-x86_64-linux": {
-    "cargoLocks": null,
-    "date": null,
-    "extract": null,
-    "name": "standardnotes-desktop-deb-x86_64-linux",
-    "passthru": null,
-    "pinned": false,
-    "src": {
-      "name": "standardnotes-desktop-x86_64-linux.deb",
-      "sha256": "sha256-D9wNRTbZ+OA4MEsVlkKUWD2i0ReHi83+BlV5uK01VD4=",
-      "type": "url",
-      "url": "https://github.com/standardnotes/app/releases/download/@standardnotes/desktop@3.194.4/standard-notes-3.194.4-linux-amd64.deb"
+    "tree-sitter-cql": {
+        "cargoLocks": null,
+        "date": null,
+        "extract": null,
+        "name": "tree-sitter-cql",
+        "passthru": null,
+        "pinned": false,
+        "src": {
+            "deepClone": false,
+            "fetchSubmodules": false,
+            "leaveDotGit": false,
+            "name": null,
+            "owner": "shotover",
+            "repo": "tree-sitter-cql",
+            "rev": "v0.2.0",
+            "sha256": "sha256-1wJeVajNifxEVe00/YbEyWOsw2ffTjhGfGQnd6a/UhE=",
+            "type": "github"
+        },
+        "version": "v0.2.0"
     },
-    "version": "3.194.4"
-  },
-  "tree-sitter-cql": {
-    "cargoLocks": null,
-    "date": null,
-    "extract": null,
-    "name": "tree-sitter-cql",
-    "passthru": null,
-    "pinned": false,
-    "src": {
-      "deepClone": false,
-      "fetchSubmodules": false,
-      "leaveDotGit": false,
-      "name": null,
-      "owner": "shotover",
-      "repo": "tree-sitter-cql",
-      "rev": "v0.2.0",
-      "sha256": "sha256-1wJeVajNifxEVe00/YbEyWOsw2ffTjhGfGQnd6a/UhE=",
-      "type": "github"
-    },
-    "version": "v0.2.0"
-  },
-  "vivid-plasma-themes": {
-    "cargoLocks": null,
-    "date": "2024-05-10",
-    "extract": null,
-    "name": "vivid-plasma-themes",
-    "passthru": null,
-    "pinned": false,
-    "src": {
-      "deepClone": false,
-      "fetchSubmodules": false,
-      "leaveDotGit": false,
-      "name": null,
-      "rev": "8aecbcf9ce16f992c0fcf12402ce9772d9f762b1",
-      "sha256": "sha256-2EyKuS/VEIlo9nPe7FB5GPm0DB31H/ARihIl/hVLQng=",
-      "type": "git",
-      "url": "https://github.com/L4ki/Vivid-Plasma-Themes.git"
-    },
-    "version": "8aecbcf9ce16f992c0fcf12402ce9772d9f762b1"
-  }
+    "vivid-plasma-themes": {
+        "cargoLocks": null,
+        "date": "2024-05-10",
+        "extract": null,
+        "name": "vivid-plasma-themes",
+        "passthru": null,
+        "pinned": false,
+        "src": {
+            "deepClone": false,
+            "fetchSubmodules": false,
+            "leaveDotGit": false,
+            "name": null,
+            "rev": "8aecbcf9ce16f992c0fcf12402ce9772d9f762b1",
+            "sha256": "sha256-2EyKuS/VEIlo9nPe7FB5GPm0DB31H/ARihIl/hVLQng=",
+            "type": "git",
+            "url": "https://github.com/L4ki/Vivid-Plasma-Themes.git"
+        },
+        "version": "8aecbcf9ce16f992c0fcf12402ce9772d9f762b1"
+    }
 }

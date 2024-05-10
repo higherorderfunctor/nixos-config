@@ -8,6 +8,9 @@ cd "$(dirname "$0")"/..
 # check sources for updates with nvfetcher
 nvfetcher -k ~/.config/nvfetcher/keyfile.toml -o overlays/.nvfetcher
 
+git add overlays/.nvfetcher
+git commit -am 'chore(bot): updates nvfetcher dependencies'
+
 # fixup some nvfetcher sources with dependencies
 (
 	# get the current flake's store path
