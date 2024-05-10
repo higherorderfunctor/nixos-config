@@ -67,6 +67,7 @@ in {
     "/persist${config.home.homeDirectory}".directories = [
       (lib.strings.removePrefix "${config.home.homeDirectory}/" "${config.xdg.dataHome}/nvim")
       (lib.strings.removePrefix "${config.home.homeDirectory}/" "${config.xdg.stateHome}/nvim")
+      (lib.strings.removePrefix "${config.home.homeDirectory}/" "${config.xdg.configHome}/github-copilot")
     ];
   };
 }
