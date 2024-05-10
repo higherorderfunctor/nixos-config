@@ -11,7 +11,6 @@
       trusted-users = ["root" "@wheel"];
       auto-optimise-store = lib.mkDefault true;
       experimental-features = ["nix-command" "flakes" "repl-flake"];
-      access-tokens = [];
       trusted-substituters = [
         "https://nix-community.cachix.org"
         "https://cache.nixos.org/"
