@@ -4,7 +4,7 @@
   inputs = {
     nixos.url = "github:nixos/nixpkgs/nixos-unstable";
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
-    nixpkgs-master.url = "github:Nixos/nixpkgs?rev=07f3a13157c65b871e701ecf1eefaa00cb34187a";
+    # nixpkgs-master.url = "github:Nixos/nixpkgs?rev=07f3a13157c65b871e701ecf1eefaa00cb34187a";
     home-manager = {
       url = "github:nix-community/home-manager";
     };
@@ -28,8 +28,8 @@
       url = "github:nixos/nixos-hardware";
     };
     hyprland = {
-      url = "github:hyprwm/Hyprland";
-      # url = "git+https://github.com/hyprwm/Hyprland?submodules=1";
+      #url = "github:hyprwm/Hyprland";
+      url = "git+https://github.com/hyprwm/Hyprland?submodules=1";
     };
     hyprland-plugins = {
       url = "github:hyprwm/hyprland-plugins";
