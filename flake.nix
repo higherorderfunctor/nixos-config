@@ -27,9 +27,11 @@
     hardware = {
       url = "github:nixos/nixos-hardware";
     };
+    # FIXME: https://github.com/hyprwm/hyprland-plugins/issues/164#issuecomment-2104883203
     hyprland = {
-      url = "github:hyprwm/Hyprland";
-      # url = "git+https://github.com/hyprwm/Hyprland?submodules=1";
+      #url = "github:hyprwm/Hyprland";
+      #url = "git+https://github.com/hyprwm/Hyprland?submodules=1";
+      url = "git+https://github.com/andresilva/Hyprland?ref=nix-build-improvements&submodules=1";
     };
     hyprland-plugins = {
       url = "github:hyprwm/hyprland-plugins";
