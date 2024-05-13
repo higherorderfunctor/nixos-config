@@ -18,7 +18,7 @@
     ./slack.nix
     ./standardnotes.nix
     ./sxiv.nix
-    ./transmission.nix
+    # ./transmission.nix only cli and doing over docker
     ./vlc.nix
     ./webex.nix
     ./zoom.nix
