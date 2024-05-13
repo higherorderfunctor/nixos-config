@@ -51,6 +51,13 @@ src.github = "brocode/fblog"
 fetch.github = "brocode/fblog"
 cargo_locks = ["Cargo.lock"]
 
+[gluetun]
+src.container = "qmcgaw/gluetun"
+src.include_regex = "latest"
+fetch.docker = "qmcgaw/gluetun"
+docker.os = "linux"
+docker.arch = "amd64"
+
 [oh-my-posh]
 src.github = "JanDeDobbeleer/oh-my-posh"
 fetch.github = "JanDeDobbeleer/oh-my-posh"

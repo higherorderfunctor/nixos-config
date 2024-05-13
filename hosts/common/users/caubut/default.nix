@@ -32,6 +32,7 @@ in {
       ++ ifGroupExist [
         "docker"
         "network"
+        "media"
       ];
     hashedPasswordFile = config.sops.secrets."${username}-password".path;
     packages = [pkgs.home-manager];

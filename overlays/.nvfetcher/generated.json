@@ -191,6 +191,26 @@
     },
     "version": "v4.9.0"
   },
+  "gluetun": {
+    "cargoLocks": null,
+    "date": null,
+    "extract": null,
+    "name": "gluetun",
+    "passthru": null,
+    "pinned": false,
+    "src": {
+      "arch": "amd64",
+      "finalImageName": null,
+      "finalImageTag": null,
+      "imageDigest": "sha256:fab09c582118ab650e7a8b8371ca95ff604376ce0c8fdc346c5fef382afd85d1",
+      "imageName": "qmcgaw/gluetun",
+      "imageTag": "latest",
+      "os": "linux",
+      "sha256": "sha256-l7L0hIE3aLUGP4295ijnx0ldEq+jxMEhYqzrmvectXc=",
+      "tlsVerify": null
+    },
+    "version": "latest"
+  },
   "oh-my-posh": {
     "cargoLocks": null,
     "date": null,
@@ -241,11 +261,11 @@
     "pinned": false,
     "src": {
       "name": "standardnotes-desktop-x86_64-linux.deb",
-      "sha256": "sha256-D9wNRTbZ+OA4MEsVlkKUWD2i0ReHi83+BlV5uK01VD4=",
+      "sha256": "sha256-XsvQ5E3IGe1XEn7TJuIa5GbBYbA86AnTLW8jRBN5gF8=",
       "type": "url",
-      "url": "https://github.com/standardnotes/app/releases/download/@standardnotes/desktop@3.194.4/standard-notes-3.194.4-linux-amd64.deb"
+      "url": "https://github.com/standardnotes/app/releases/download/@standardnotes/desktop@3.194.5/standard-notes-3.194.5-linux-amd64.deb"
     },
-    "version": "3.194.4"
+    "version": "3.194.5"
   },
   "tree-sitter-cql": {
     "cargoLocks": null,

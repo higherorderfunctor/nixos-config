@@ -19,12 +19,12 @@ creation_rules:
       - age:
           - *caubut
           - *beelink-ser7
-  - path_regex: hosts/beelink-ser7/secrets/secrets.yaml$
+  - path_regex: hosts/beelink-ser7/.*\.(yaml|ini|env)$
     key_groups:
       - age:
           - *caubut
           - *beelink-ser7
-  - path_regex: hosts/vm/secrets/secrets.yaml$
+  - path_regex: hosts/vm/secrets/.*\.yaml$
     key_groups:
       - age:
           - *caubut

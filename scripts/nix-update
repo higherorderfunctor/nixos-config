@@ -7,6 +7,24 @@ cd "$(dirname "$0")"/..
 
 FAKE_HASH="sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA="
 
+FLAKE=1
+
+while [[ $# -gt 0 ]]; do
+	case $1 in
+
+	--noflake)
+		FLAKE=0
+		;;
+
+	*)
+		echo -e "Unknown option: $1\n"
+		exit 1
+		;;
+
+	esac
+	shift
+done
+
 ##
 # Cache externally generated hashes for nvfetcher
 oh_my_posh_vendor_hash=$(yq -r '.oh-my-posh.vendorHash // "'"$FAKE_HASH"'"' overlays/.nvfetcher/generated.json)
@@ -49,7 +67,11 @@ EOF
 		echo -e "\nUpdating vendorHash: $oh_my_posh_vendor_hash\n"
 		yq e -iP '.oh-my-posh.vendorHash = "'"$oh_my_posh_vendor_hash"'"' overlays/.nvfetcher/generated.json -o json
 	fi
+
+	rm -rf result 2>/dev/null
 )
 
 # update flake dependencies
-nix flake update
+if [ "$FLAKE" = "1" ]; then
+	nix flake update
+fi

@@ -59,10 +59,21 @@ ssh-to-age -private-key -i ~/.ssh/personal_ed25519_key > ~/.config/sops/age/keys
 Edit the secrets which can be decrypted per the `.sops.yaml` matrix.
 
 ```sh
-EDITOR=vi sops home/caubut/secrets/secrets.yaml
-EDITOR=vi sops hosts/beelink-ser7/secrets/secrets.yaml
-EDITOR=vi sops hosts/vm/secrets/secrets.yaml
-EDITOR=vi sops hosts/common/secrets/wireless.yaml
+# disable temp files and plugins that might leak
+set shada?
+set undofile?
+set backup?
+set writebackup?
+set viminfo?
+EDITOR="nvim -u NONE -i NONE -n --cmd 'set noundofile noswapfile nobackup nowritebackup viminfo=\"\"'"
+
+sops home/caubut/secrets/secrets.yaml
+sops hosts/beelink-ser7/secrets/secrets.yaml
+sops hosts/vm/secrets/secrets.yaml
+sops hosts/common/secrets/wireless.yaml
+
+sops hosts/beelink-ser7/secrets/gluetun.env
+sops hosts/beelink-ser7/secrets/wireguard.ini
 ```
 
 User password hashes can be generated with the following.
