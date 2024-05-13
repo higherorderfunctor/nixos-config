@@ -307,7 +307,7 @@ nix-store -q --roots /nix/store/...
 nix profile history --profile /nix/var/nix/profiles/system
 
 # purge old generations
-sudo nix profile wipe-history --profile /nix/var/nix/profiles/system
+sudo nix profile wipe-history --older-than 60d --profile /nix/var/nix/profiles/system
 
 # clean the store
 nix store gc

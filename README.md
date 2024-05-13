@@ -44,8 +44,8 @@ cat hosts/vm/secrets/ssh_host_ed25519_key.pub | ssh-to-age
 ```
 
 Secrets are stored in either `home/<USER>/secrets/secrets.yaml`, `hosts/<HOST>/secrets/secrets.yaml`,
-or `hosts/common/secrets/<SCOPE>_secrets.yaml`.  Fill out the matrix in `.sops.yaml` for which
-users and hosts should have access to which secrets.
+or `hosts/common/secrets/<SCOPE>_secrets.yaml`.  Fill out the matrix in `.sops.yaml`
+for which users and hosts should have access to which secrets.
 
 To start making secrets, on the current host, configure age.  This enables
 decryption of any existing secrets.
