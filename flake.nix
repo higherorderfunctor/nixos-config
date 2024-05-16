@@ -101,7 +101,7 @@
       import nixpkgs {
         inherit system;
         config.allowUnfree = true;
-        overlays = import ./overlays {inherit inputs;};
+        overlays = import ./overlays {inherit inputs lib;};
       });
   in {
     # TODO: tuck someplace else to remove the warning

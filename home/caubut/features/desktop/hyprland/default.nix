@@ -54,7 +54,7 @@
       ];
     };
 
-    # plugins = [pkgs.hyprbars];
+    plugins = [pkgs.hyprbars];
 
     settings = {
       source = [
@@ -156,29 +156,29 @@
         force_default_wallpaper = 0; # use the default non-anime wallpaper
       };
 
-      # plugin = {
-      #   hyprbars = {
-      #     bar_color = "$surface0";
-      #     bar_height = 28;
-      #     col_text = "$text";
-      #     bar_text_size = 11;
-      #     bar_text_font = "Ubuntu Nerd Font";
-      #     hyprbars-button = let
-      #       closeAction = "hyprctl dispatch killactive";
+      plugin = {
+        hyprbars = {
+          bar_color = "$surface0";
+          bar_height = 28;
+          col_text = "$text";
+          bar_text_size = 11;
+          bar_text_font = "Ubuntu Nerd Font";
+          hyprbars-button = let
+            closeAction = "hyprctl dispatch killactive";
 
-      #       isOnSpecial = ''hyprctl activewindow -j | jq -re 'select(.workspace.name == "special")' >/dev/null'';
-      #       moveToSpecial = "hyprctl dispatch movetoworkspacesilent special";
-      #       moveToActive = "hyprctl dispatch movetoworkspacesilent name:$(hyprctl -j activeworkspace | jq -re '.name')";
-      #       minimizeAction = "${isOnSpecial} && ${moveToActive} || ${moveToSpecial}";
+            isOnSpecial = ''hyprctl activewindow -j | jq -re 'select(.workspace.name == "special")' >/dev/null'';
+            moveToSpecial = "hyprctl dispatch movetoworkspacesilent special";
+            moveToActive = "hyprctl dispatch movetoworkspacesilent name:$(hyprctl -j activeworkspace | jq -re '.name')";
+            minimizeAction = "${isOnSpecial} && ${moveToActive} || ${moveToSpecial}";
 
-      #       maximizeAction = "hyprctl dispatch togglefloating";
-      #     in [
-      #       "$red,12,,${closeAction}"
-      #       "$green,12,,${maximizeAction}"
-      #       "$yellow,12,,${minimizeAction}"
-      #     ];
-      #   };
-      # };
+            maximizeAction = "hyprctl dispatch togglefloating";
+          in [
+            "$red,12,,${closeAction}"
+            "$green,12,,${maximizeAction}"
+            "$yellow,12,,${minimizeAction}"
+          ];
+        };
+      };
 
       #  binds = {
       #   allow_workspace_cycles = true;

@@ -1,23 +1,27 @@
-{inputs, ...}: [
-  (import ./arkenfox-overlay.nix {inherit inputs;})
-  (import ./astal-overlay.nix {inherit inputs;})
-  (import ./bruno-overlay.nix {inherit inputs;})
-  (import ./btop-overlay.nix {inherit inputs;})
-  (import ./bun-overlay.nix {inherit inputs;})
-  (import ./catppuccin-gtk-overlay.nix {inherit inputs;})
-  (import ./fblog-overlay.nix {inherit inputs;})
-  (import ./firefox-nightly-overlay.nix {inherit inputs;})
-  (import ./hotfixes-overlay.nix {inherit inputs;})
-  (import ./hyprland-overlay.nix {inherit inputs;})
-  (import ./neovim-nightly-overlay.nix {inherit inputs;})
-  (import ./nix-gl-host-overlay.nix {inherit inputs;})
-  (import ./nvfetcher-overlay.nix {inherit inputs;})
-  # (import ./nixd-overlay.nix {inherit inputs;})
-  (import ./oh-my-posh-overlay.nix {inherit inputs;})
-  (import ./spectral-overlay.nix {inherit inputs;})
-  (import ./standardnotes-overlay.nix {inherit inputs;})
-  (import ./rust-overlay.nix {inherit inputs;})
-  (import ./tree-sitter-cql-overlay.nix {inherit inputs;})
-  (import ./vivid-icons-themes-overlay.nix {inherit inputs;})
-]
+args: let
+  import' = path: import path (args // {});
+  overlays = [
+    ./arkenfox-overlay.nix
+    ./astal-overlay.nix
+    ./bruno-overlay.nix
+    ./btop-overlay.nix
+    ./bun-overlay.nix
+    ./catppuccin-gtk-overlay.nix
+    ./fblog-overlay.nix
+    ./firefox-nightly-overlay.nix
+    ./hotfixes-overlay.nix
+    ./hyprland-overlay.nix
+    ./neovim-nightly-overlay.nix
+    ./nix-gl-host-overlay.nix
+    ./nvfetcher-overlay.nix
+    # ./nixd-overlay.nix
+    ./oh-my-posh-overlay.nix
+    ./spectral-overlay.nix
+    ./standardnotes-overlay.nix
+    ./rust-overlay.nix
+    ./tree-sitter-cql-overlay.nix
+    ./vivid-icons-themes-overlay.nix
+  ];
+in
+  map import' overlays
 # TODO: add modules?
