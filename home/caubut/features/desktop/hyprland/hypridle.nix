@@ -1,5 +1,4 @@
 {
-  inputs,
   lib,
   pkgs,
   ...
@@ -10,13 +9,6 @@
   systemctl = "${pkgs.systemd}/bin/systemctl";
   brightnessctl = lib.getExe pkgs.brightnessctl;
 in {
-  imports = [
-    # FIXME: added to home manager
-    #   https://github.com/nix-community/home-manager/pull/5324
-    #   I dont see in the option search so leaving fow now
-    # inputs.hypridle.homeManagerModules.default
-  ];
-
   services.hypridle = {
     enable = true;
     package = pkgs.hypridle;

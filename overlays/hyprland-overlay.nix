@@ -4,11 +4,7 @@
   ...
 }:
 lib.composeManyExtensions (
-  (with inputs.hyprland.overlays; [
-    default
-    xwayland
-    wayland-protocols
-  ])
+  (lib.attrValues inputs.hyprland.overlays)
   ++ [
     inputs.hypridle.overlays.default
     inputs.hyprland-plugins.overlays.default

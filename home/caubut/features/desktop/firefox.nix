@@ -149,7 +149,7 @@ in {
   programs.firefox = {
     enable = true;
     package = pkgs.firefox-nightly;
-    nativeMessagingHosts = [pkgs.gnome-browser-connector];
+    # nativeMessagingHosts = [pkgs.gnome-browser-connector]; # FIXME: pulls in whole gnome shell
 
     policies = {
       DisableTelemetry = true;

@@ -21,7 +21,7 @@
     gnome = {
       evolution-data-server.enable = true; # collection of services for storing addressbooks and calendars
       glib-networking.enable = true; # network extensions for glib
-      gnome-browser-connector.enable = true; # gnome integrations with web browsers
+      # gnome-browser-connector.enable = true; # gnome integrations with web browsers # FIXME: pulls in whole gnome shell
       # Service designed to take care of the user’s security credentials, such as user names and passwords.
       #
       # This configures system components, but not a service for GNOME keyring, the GNOME keyring service is configured
