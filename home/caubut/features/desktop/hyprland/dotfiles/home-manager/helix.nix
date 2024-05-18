@@ -1,14 +1,17 @@
-{ pkgs, ... }:
-{
+{pkgs, ...}: {
   programs.helix = {
     enable = true;
 
-    extraPackages = with pkgs; with nodePackages; [
+    extraPackages = with pkgs;
+    with nodePackages; [
       vscode-langservers-extracted
-      gopls gotools
-      typescript typescript-language-server
+      gopls
+      gotools
+      typescript
+      typescript-language-server
       marksman
-      nil nixpkgs-fmt
+      nil
+      nixpkgs-fmt
       clang-tools
       lua-language-server
       rust-analyzer
@@ -46,7 +49,7 @@
           C-q = ":bclose";
           A-l = "goto_next_buffer";
           A-h = "goto_previous_buffer";
-        };        
+        };
       };
 
       theme = "base16_transparent";

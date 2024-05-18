@@ -9,38 +9,47 @@
   systemctl = "${pkgs.systemd}/bin/systemctl";
   brightnessctl = lib.getExe pkgs.brightnessctl;
 in {
+  home.packages = with pkgs; [
+    ddcutil
+    ddcui
+  ];
   services.hypridle = {
     enable = true;
     package = pkgs.hypridle;
     settings = {
       general = {
-        lockCmd = "pidof ${hyprlock} || ${hyprlock}"; # avoid starting multiple hyprlock instances
-        beforeSleepCmd = "${loginctl} lock-session"; # lock before suspend
-        afterSleepCmd = "${hyprctl} dispatch dpms on"; # to avoid having to press a key twice to turn on the display
+        lock_cmd = "pidof ${hyprlock} || ${hyprlock}"; # avoid starting multiple hyprlock instances
+        before_sleep_cmd = "${loginctl} lock-session"; # lock before suspend
+        after_sleep_cmd = "${hyprctl} dispatch dpms on"; # to avoid having to press a key twice to turn on the display
       };
       listeners = [
+        # screen dimming
         {
           timeout = 150; # 2.5min.
-          onTimeout = "${brightnessctl} -s set 10"; # set monitor backlight to minimum, avoid 0 on OLED monitor.
-          onResume = "${brightnessctl} -r"; # monitor backlight restore.
+          on-timeout = "${brightnessctl} -s set 10"; # set monitor backlight to minimum, avoid 0 on OLED monitor.
+          on-resume = "${brightnessctl} -r"; # monitor backlight restore.
         }
+        # keyboard backlight
         {
           timeout = 150; # 2.5min.
-          onTimeout = "${brightnessctl} -sd rgb:kbd_backlight set 0"; # turn off keyboard backlight.
-          onResume = "${brightnessctl} -rd rgb:kbd_backlight"; # turn on keyboard backlight.
+          on-timeout = "${brightnessctl} -sd rgb:kbd_backlight set 0"; # turn off keyboard backlight.
+          on-resume = "${brightnessctl} -rd rgb:kbd_backlight"; # turn on keyboard backlight.
         }
+        # screen lock
         {
           timeout = 300; # 5min
-          onTimeout = "${loginctl} lock-session"; # lock screen when timeout has passed
+          on-timeout = "${loginctl} lock-session"; # lock screen when timeout has passed
         }
+        # screen off
         {
           timeout = 330; # 5.5min
-          onTimeout = "${hyprctl} dispatch dpms off"; # screen off when timeout has passed
-          onResume = "${hyprctl} dispatch dpms on"; # screen on when activity is detected after timeout has fired.
+          on-timeout = "${hyprctl} dispatch dpms off"; # screen off when timeout has passed
+          on-resume = "${hyprctl} dispatch dpms on"; # screen on when activity is detected after timeout has fired.
         }
+        # suspend
         {
           timeout = 1800; # 30min
-          onTimeout = "${systemctl} suspend"; # suspend pc
+          on-timeout = "${systemctl} suspend"; # suspend pc
         }
       ];
     };

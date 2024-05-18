@@ -4,7 +4,7 @@
   ...
 }: {
   imports = [
-    inputs.hardware.nixosModules.common-pc-ssd
+    inputs.nixos-hardware.nixosModules.common-pc-ssd
     ./disk-config.nix
   ];
 

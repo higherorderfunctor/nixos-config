@@ -19,7 +19,7 @@ args: let
     ./spectral-overlay.nix
     ./standardnotes-overlay.nix
     ./rust-overlay.nix
-    ./tree-sitter-cql-overlay.nix
+    # ./tree-sitter-cql-overlay.nix
     ./vivid-icons-themes-overlay.nix
   ];
 in

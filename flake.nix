@@ -24,9 +24,6 @@
       url = "github:nix-community/flake-firefox-nightly";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    hardware = {
-      url = "github:nixos/nixos-hardware";
-    };
     hyprland = {
       # url = "github:hyprwm/Hyprland";
       url = "git+https://github.com/hyprwm/Hyprland?submodules=1";
@@ -57,9 +54,9 @@
     };
     neovim-nightly-overlay = {
       url = "github:nix-community/neovim-nightly-overlay";
-      inputs = {
-        nixpkgs.follows = "nixpkgs";
-      };
+      # inputs = {
+      #   nixpkgs.follows = "nixpkgs";
+      # };
     };
     nixd = {
       url = "github:nix-community/nixd";
@@ -72,6 +69,9 @@
     nix-gl-host = {
       url = "github:numtide/nix-gl-host";
       inputs.nixpkgs.follows = "nixpkgs";
+    };
+    nixos-hardware = {
+      url = "github:nixos/nixos-hardware";
     };
     nvfetcher = {
       url = "github:berberman/nvfetcher";

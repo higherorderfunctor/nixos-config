@@ -173,7 +173,7 @@ in {
     };
 
     boot.kernel.sysctl = {
-      "vm.swapiness" = 1;
+      "vm.swappiness" = 1;
       "vm.vfs_cache_pressure" = 50;
     };
   };

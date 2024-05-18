@@ -45,6 +45,7 @@
     ./nvfetcher.nix
     ./nvim
     ./oh-my-posh.nix
+    ./onlykey.nix
     ./poetry.nix
     ./prettierd.nix
     ./python_311.nix
