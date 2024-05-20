@@ -16,12 +16,22 @@ _: final: prev: let
     if lib.hasAttr "vendorHash" nv
     then nv.vendorHash
     else lib.fakeHash;
+  buildGoModule = let
+    nv = (import ./nvpkgs.nix).go;
+    go = final.go.overrideAttrs {
+      inherit (nv) version;
+      src = final.fetchurl {
+        inherit (nv.src) url sha256;
+      };
+    };
+  in
+    final.buildGoModule.override {inherit go;};
 in {
   oh-my-posh =
     prev.oh-my-posh.override
     (_: {
       buildGoModule = orig:
-        final.buildGo122Module (orig
+        buildGoModule (orig
           // {
             inherit version src vendorHash;
 

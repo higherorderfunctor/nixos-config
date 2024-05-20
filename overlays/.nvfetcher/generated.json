@@ -91,7 +91,7 @@
   },
   "catppuccin-gtk": {
     "cargoLocks": null,
-    "date": "2024-04-30",
+    "date": "2024-05-20",
     "extract": null,
     "name": "catppuccin-gtk",
     "passthru": null,
@@ -101,12 +101,12 @@
       "fetchSubmodules": false,
       "leaveDotGit": false,
       "name": null,
-      "rev": "0c3e8817da94769887c690b2211e006b287b27b1",
-      "sha256": "sha256-dCLpRitg1S/WKS3YY+kS0qdLn6KRC1FhWpqhw4tuWlM=",
+      "rev": "13f2a344c855c2119b5e7e72e8b06bb98053de0f",
+      "sha256": "sha256-/Hitj1Q3cHxRd7C+3o3KyswX6iPKNY6p7EJNPpwbr4g=",
       "type": "git",
       "url": "https://github.com/catppuccin/gtk.git"
     },
-    "version": "0c3e8817da94769887c690b2211e006b287b27b1"
+    "version": "13f2a344c855c2119b5e7e72e8b06bb98053de0f"
   },
   "catppuccin-hyprland": {
     "cargoLocks": null,
@@ -202,14 +202,29 @@
       "arch": "amd64",
       "finalImageName": null,
       "finalImageTag": null,
-      "imageDigest": "sha256:f3579cd27cbac4cfc7b8d01645aa70383d3dc5aecb883d1fd7fbab9b1580b46d",
+      "imageDigest": "sha256:f501359827a9c8523d78add8ce68791a31634c146c8eef0fd8700a68b8160cfd",
       "imageName": "qmcgaw/gluetun",
       "imageTag": "latest",
       "os": "linux",
-      "sha256": "sha256-QGH7Fry3j6UyJdEW3NdWwWRoUwybFPrRuIKZcaAueb0=",
+      "sha256": "sha256-zbvOWIpT1W+XiKdG3Ln56dkB7QCXowtt8qsyDHTbrNc=",
       "tlsVerify": null
     },
     "version": "latest"
+  },
+  "go": {
+    "cargoLocks": null,
+    "date": null,
+    "extract": null,
+    "name": "go",
+    "passthru": null,
+    "pinned": false,
+    "src": {
+      "name": null,
+      "sha256": "sha256-gGSO80+QMZPXKlnA3/AZ9fmK4MmqE63gsOy/+ZGnb2g=",
+      "type": "url",
+      "url": "https://go.dev/dl/go1.22.3.src.tar.gz"
+    },
+    "version": "1.22.3"
   },
   "oh-my-posh": {
     "cargoLocks": null,
@@ -225,11 +240,11 @@
       "name": null,
       "owner": "JanDeDobbeleer",
       "repo": "oh-my-posh",
-      "rev": "v19.30.0",
-      "sha256": "sha256-SUB6fHmIMMASib5JNZ9pbdpglt7B9S95zdfy6VKnFCc=",
+      "rev": "v20.0.0",
+      "sha256": "sha256-uRTLYlds74737K0Zo9Thnw6ICEP0f9cC2nITAqEMSs0=",
       "type": "github"
     },
-    "version": "v19.30.0",
+    "version": "v20.0.0",
     "vendorHash": "sha256-mZNhsvEI1AbsAhoK7AuNgrQvYlkGrrpPVuv3R5nssC4="
   },
   "spectral": {

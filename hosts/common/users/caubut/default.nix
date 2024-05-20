@@ -33,6 +33,7 @@ in {
         "docker"
         "network"
         "media"
+        "transmission" # TODO: had issues with just media
       ];
     hashedPasswordFile = config.sops.secrets."${username}-password".path;
     packages = [pkgs.home-manager];

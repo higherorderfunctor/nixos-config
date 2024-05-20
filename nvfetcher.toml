@@ -58,6 +58,13 @@ fetch.docker = "qmcgaw/gluetun"
 docker.os = "linux"
 docker.arch = "amd64"
 
+[go]
+src.webpage = "https://go.dev/dl/?mode=json"
+src.regex = "\"version\": \"go([0-9]+\\.[0-9]+\\.[0-9]+)\""
+src.from_pattern = "^([0-9]+\\.[0-9]+\\.[0-9]+)$"
+src.to_pattern = "\\1"
+fetch.url = "https://go.dev/dl/go$ver.src.tar.gz"
+
 [oh-my-posh]
 src.github = "JanDeDobbeleer/oh-my-posh"
 fetch.github = "JanDeDobbeleer/oh-my-posh"
