@@ -6,6 +6,7 @@ in {
       args:
         (prev.catppuccin-gtk.override args).overrideAttrs (attrs: {
           inherit (nv) version;
+
           src = final.fetchFromGitHub {
             inherit (nv.src) rev sha256;
             owner = "catppuccin";
@@ -20,6 +21,7 @@ in {
             ];
 
           dontBuild = false;
+
           buildPhase = ''
             set -e
             python ./build.py ${args.variant} \
@@ -28,6 +30,7 @@ in {
               ${lib.optionalString (args.tweaks != []) "--tweaks " + builtins.toString args.tweaks} \
               --dest releases
           '';
+
           installPhase = ''
             set -e
             runHook preInstall
