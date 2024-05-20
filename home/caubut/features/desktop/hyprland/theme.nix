@@ -33,12 +33,12 @@
     };
     # decorations theme
     theme = {
-      # name = "catppuccin-macchiato-yellow-compact+rimless,black";
-      name = "Catppuccin-Macchiato-Compact-Sky-Dark";
+      name = "catppuccin-macchiato-red-compact+rimless,black";
+      # name = "Catppuccin-Macchiato-Compact-Sky-Dark";
       package =
         pkgs.catppuccin-gtk.override
         {
-          accents = ["sky"];
+          accents = ["red"];
           size = "compact";
           tweaks = ["rimless" "black"];
           variant = "macchiato";
