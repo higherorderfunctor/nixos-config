@@ -16,5 +16,5 @@
   targets.genericLinux.enable = true;
 
   # TODO:
-  home.packages = [pkgs.gnome-network-displays];
+  home.packages = with pkgs; [gnome-network-displays];
 }

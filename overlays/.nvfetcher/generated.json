@@ -101,12 +101,12 @@
       "fetchSubmodules": false,
       "leaveDotGit": false,
       "name": null,
-      "rev": "13f2a344c855c2119b5e7e72e8b06bb98053de0f",
-      "sha256": "sha256-/Hitj1Q3cHxRd7C+3o3KyswX6iPKNY6p7EJNPpwbr4g=",
+      "rev": "6eeda71fb76242b717b7de08a8489d88bc8acd73",
+      "sha256": "sha256-5AV4xJYghW8BW/2XyTjB5F8g6hF3HktqYpCRv1IaOu0=",
       "type": "git",
       "url": "https://github.com/catppuccin/gtk.git"
     },
-    "version": "13f2a344c855c2119b5e7e72e8b06bb98053de0f"
+    "version": "6eeda71fb76242b717b7de08a8489d88bc8acd73"
   },
   "catppuccin-hyprland": {
     "cargoLocks": null,
@@ -240,11 +240,11 @@
       "name": null,
       "owner": "JanDeDobbeleer",
       "repo": "oh-my-posh",
-      "rev": "v20.0.0",
-      "sha256": "sha256-uRTLYlds74737K0Zo9Thnw6ICEP0f9cC2nITAqEMSs0=",
+      "rev": "v20.0.1",
+      "sha256": "sha256-wfJsFFhu0tMWVoTaRxSo2l3zm07GMKZB3HgpZ3Rev+Y=",
       "type": "github"
     },
-    "version": "v20.0.0",
+    "version": "v20.0.1",
     "vendorHash": "sha256-mZNhsvEI1AbsAhoK7AuNgrQvYlkGrrpPVuv3R5nssC4="
   },
   "spectral": {

@@ -42,9 +42,9 @@ src.use_commit = true
 src.branch = "main"
 fetch.git = "https://github.com/catppuccin/hyprlock.git"
 
-[catppuccin-python]
-src.github = "catppuccin/python"
-fetch.github = "catppuccin/python"
+# [catppuccin-python]
+# src.github = "catppuccin/python"
+# fetch.github = "catppuccin/python"
 
 [fblog]
 src.github = "brocode/fblog"
