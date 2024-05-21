@@ -91,7 +91,7 @@
   },
   "catppuccin-gtk": {
     "cargoLocks": null,
-    "date": "2024-05-20",
+    "date": "2024-05-21",
     "extract": null,
     "name": "catppuccin-gtk",
     "passthru": null,
@@ -101,12 +101,12 @@
       "fetchSubmodules": false,
       "leaveDotGit": false,
       "name": null,
-      "rev": "87a5f92f4bfc1a1377ce3db114408c92795d05d3",
-      "sha256": "sha256-7uwcDWUcseUTvfgGdmbzS1Vkv2JI/lHyQaXfOYKl1bs=",
+      "rev": "9e0bfa3f0ee5d3552d19c6c27d7254cf735624eb",
+      "sha256": "sha256-8yH3/ZoQp+VhccZ1b1GIwMYAv8jBlAznjOA8K+03W+w=",
       "type": "git",
       "url": "https://github.com/catppuccin/gtk.git"
     },
-    "version": "87a5f92f4bfc1a1377ce3db114408c92795d05d3"
+    "version": "9e0bfa3f0ee5d3552d19c6c27d7254cf735624eb"
   },
   "catppuccin-hyprland": {
     "cargoLocks": null,

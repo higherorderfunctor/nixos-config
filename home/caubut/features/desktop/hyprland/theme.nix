@@ -37,7 +37,7 @@
     };
     # decorations theme
     theme = {
-      name = "catppuccin-mocha-red-compact+rimless,black";
+      name = "catppuccin-mocha-red-compact+rimless,black,oled";
       # name = "Catppuccin-Macchiato-Compact-Sky-Dark";
       package =
         pkgs.catppuccin-gtk.override
