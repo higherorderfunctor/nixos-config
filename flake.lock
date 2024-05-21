@@ -87,11 +87,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1716225507,
-        "narHash": "sha256-PhITqkGqINVbW1UUFluq7h4dwM8psGlp1QC5RLGm2JU=",
+        "lastModified": 1716253157,
+        "narHash": "sha256-xhpUYqUuBFrse9YQcZDihVPlQZDmufdWg+5PQUEp1nQ=",
         "owner": "nix-community",
         "repo": "flake-firefox-nightly",
-        "rev": "0fb31f4d2c84057cb1bf0e40a0865cfaf59ffa12",
+        "rev": "2aabb77ad50369cede0f83bae69c3e15b89d465a",
         "type": "github"
       },
       "original": {
@@ -523,6 +523,27 @@
         "type": "github"
       }
     },
+    "hyprpicker": {
+      "inputs": {
+        "nixpkgs": [
+          "hyprland",
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1715699592,
+        "narHash": "sha256-BYQF1zM6bJ44ag9FJ0aTSkhOTY9U7uRdp3SmRCs5fJM=",
+        "owner": "hyprwm",
+        "repo": "hyprpicker",
+        "rev": "bff005ac9c308acb3046d277b60879defb1ee303",
+        "type": "github"
+      },
+      "original": {
+        "owner": "hyprwm",
+        "repo": "hyprpicker",
+        "type": "github"
+      }
+    },
     "hyprwayland-scanner": {
       "inputs": {
         "nixpkgs": [
@@ -899,6 +920,7 @@
         "hyprland": "hyprland",
         "hyprland-plugins": "hyprland-plugins",
         "hyprlock": "hyprlock",
+        "hyprpicker": "hyprpicker",
         "impermanence": "impermanence",
         "neovim-nightly-overlay": "neovim-nightly-overlay",
         "nix-gl-host": "nix-gl-host",
@@ -921,11 +943,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1716171463,
-        "narHash": "sha256-lc7wOh5BjYUoxdhcPkeUY8BmuL2qtRaHlW1403RW48E=",
+        "lastModified": 1716257780,
+        "narHash": "sha256-R+NjvJzKEkTVCmdrKRfPE4liX/KMGVqGUwwS5H8ET8A=",
         "owner": "oxalica",
         "repo": "rust-overlay",
-        "rev": "04d61d14803854fd8453ec43c5c53a471e5407a8",
+        "rev": "4e5e3d2c5c9b2721bd266f9e43c14e96811b89d2",
         "type": "github"
       },
       "original": {

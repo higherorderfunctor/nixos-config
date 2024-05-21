@@ -19,6 +19,10 @@
     platformTheme.name = "gtk3"; # follow GTK
   }; # TODO: other options?
 
+  home.packages = with pkgs; [
+    hyprpicker
+  ];
+
   # GTK theme
   gtk = {
     enable = true;
@@ -33,7 +37,7 @@
     };
     # decorations theme
     theme = {
-      name = "catppuccin-macchiato-red-compact+rimless,black";
+      name = "catppuccin-mocha-red-compact+rimless,black";
       # name = "Catppuccin-Macchiato-Compact-Sky-Dark";
       package =
         pkgs.catppuccin-gtk.override
@@ -41,7 +45,7 @@
           accents = ["red"];
           size = "compact";
           tweaks = ["rimless" "black"];
-          variant = "macchiato";
+          variant = "mocha";
         };
     };
   };

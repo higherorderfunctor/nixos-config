@@ -49,6 +49,12 @@
         hyprlang.follows = "hyprland/hyprlang";
       };
     };
+    hyprpicker = {
+      url = "github:hyprwm/hyprpicker";
+      inputs = {
+        nixpkgs.follows = "hyprland/nixpkgs";
+      };
+    };
     impermanence = {
       url = "github:nix-community/impermanence";
     };

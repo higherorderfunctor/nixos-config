@@ -9,6 +9,7 @@ lib.composeManyExtensions (
     inputs.hypridle.overlays.default
     inputs.hyprland-plugins.overlays.default
     inputs.hyprlock.overlays.default
+    inputs.hyprpicker.overlays.default
     (final: _: let
       catppuccin-hyprland-nv = (import ./nvpkgs.nix).catppuccin-hyprland;
       catppuccin-hyprlock-nv = (import ./nvpkgs.nix).catppuccin-hyprlock;
