@@ -63,11 +63,11 @@
     "pinned": false,
     "src": {
       "name": "bun-x86_64-linux.zip",
-      "sha256": "sha256-JuDT+8FHbamdMVCDeSTGPYOvhPY2EZ9XeD2zjHEj36Y=",
+      "sha256": "sha256-yIz/CWKTSKoeOTb/2rxbyYovw0rralSj0r2ZMPu29i8=",
       "type": "url",
-      "url": "https://github.com/oven-sh/bun/releases/download/bun-v1.1.8/bun-linux-x64.zip"
+      "url": "https://github.com/oven-sh/bun/releases/download/bun-v1.1.9/bun-linux-x64.zip"
     },
-    "version": "1.1.8"
+    "version": "1.1.9"
   },
   "catppuccin-btop": {
     "cargoLocks": null,
@@ -149,7 +149,7 @@
   "fblog": {
     "cargoLocks": {
       "Cargo.lock": [
-        "./fblog-v4.9.0/Cargo.lock",
+        "./fblog-v4.10.0/Cargo.lock",
         {}
       ]
     },
@@ -165,11 +165,11 @@
       "name": null,
       "owner": "brocode",
       "repo": "fblog",
-      "rev": "v4.9.0",
-      "sha256": "sha256-9v8bn68anWB0vkRIixa6YvNl54z6X8u+MyYs38Zgc5A=",
+      "rev": "v4.10.0",
+      "sha256": "sha256-4Yg7gWVBG9GI1ailEbbcslM+XR8L7yjjjvf4dQq/87I=",
       "type": "github"
     },
-    "version": "v4.9.0"
+    "version": "v4.10.0"
   },
   "gluetun": {
     "cargoLocks": null,
