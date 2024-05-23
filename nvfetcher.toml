@@ -51,6 +51,10 @@ src.github = "brocode/fblog"
 fetch.github = "brocode/fblog"
 cargo_locks = ["Cargo.lock"]
 
+[gluetun-src]
+src.github = "qdm12/gluetun"
+fetch.github = "qdm12/gluetun"
+
 [gluetun]
 src.container = "qmcgaw/gluetun"
 src.include_regex = "latest"

@@ -9,6 +9,7 @@ args: let
     ./catppuccin-gtk-overlay.nix
     ./fblog-overlay.nix
     ./firefox-nightly-overlay.nix
+    ./gluetun-overlay.nix
     ./hotfixes-overlay.nix
     ./hyprland-overlay.nix
     ./neovim-nightly-overlay.nix

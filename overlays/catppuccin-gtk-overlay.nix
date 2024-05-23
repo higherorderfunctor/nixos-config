@@ -46,29 +46,16 @@ in {
     )
     {};
 }
-# #!/bin/bash
-#
-# base_dir="/path/to/your/folder"
-#
-# rename_and_symlink_directory() {
-#     local dir="$1"
-#     local base_name=$(basename "$dir")
-#
-#     local suffix=$(echo "$base_name" | grep -oE '(-[^-]+)?$')
-#
-#     local name_without_suffix=$(echo "$base_name" | sed -E 's/(\+.*)?(-[^-]+)?\/?$//' | awk -F- '{for(i=1;i<=NF;i++) if($i !~ /[^-]+$/) $i=toupper(substr($i,1,1)) substr($i,2)} 1' OFS=-)
-#
-#     local new_name="${name_without_suffix}${suffix}"
-#
-#     mv "$dir" "$(dirname "$dir")/$new_name"
-#
-#     ln -s "./$new_name" "$(dirname "$dir")/${name_without_suffix}-Dark${suffix}"
-#     ln -s "./$new_name" "$(dirname "$dir")/${name_without_suffix}-Light${suffix}"
-# }
-#
+# mkdir -p $out/share/themes
+# # cp -r releases $out/share/themes
+# cd releases
 # for dir in "$base_dir"/*/; do
-#     # Check if it is a directory
-#     if [ -d "$dir" ]; then
-#         rename_and_symlink_directory "$dir"
-#     fi
+#   if [ -d "$dir" ]; then
+#     IFS=-
+#     tokens=( $input )
+#     read -a tokens <<< "''${tokens[*]^}";
+#     filename="$(echo "''${name[*]%%+*}")"
+#     IFS=$originalIFS
+#     mv "$dir" "$out/share/themes/$filename"
+#   fi
 # done

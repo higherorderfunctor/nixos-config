@@ -5,16 +5,18 @@
   outputs,
   ...
 }: {
-  imports = [
-    inputs.home-manager.nixosModules.home-manager
-    ./impermanence.nix
-    ./mutable-users.nix
-    ./nix.nix
-    ./nvim.nix
-    ./sops.nix
-    ./zsh.nix
-    ../users/caubut
-  ];
+  imports =
+    [
+      inputs.home-manager.nixosModules.home-manager
+      ./impermanence.nix
+      ./mutable-users.nix
+      ./nix.nix
+      ./nvim.nix
+      ./sops.nix
+      ./zsh.nix
+      ../users/caubut
+    ]
+    ++ (builtins.attrValues outputs.nixosModules);
 
   # home manager
   home-manager = {

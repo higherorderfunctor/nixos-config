@@ -28,11 +28,11 @@
     "pinned": false,
     "src": {
       "name": "bruno-x86_64-linux.zip",
-      "sha256": "sha256-PfiJvuK7VzItnoRY3ofKjrCi8l8Lvd0nuR0avvUK2+Y=",
+      "sha256": "sha256-/F6LoDaucOEd6pd2Pv+vwlF8IJy9xpS7kluWtbi6XzM=",
       "type": "url",
-      "url": "https://github.com/usebruno/bruno/releases/download/v1.17.0/bruno_1.17.0_amd64_linux.deb"
+      "url": "https://github.com/usebruno/bruno/releases/download/v1.18.0/bruno_1.18.0_amd64_linux.deb"
     },
-    "version": "1.17.0"
+    "version": "1.18.0"
   },
   "btop": {
     "cargoLocks": null,
@@ -191,6 +191,26 @@
     },
     "version": "latest"
   },
+  "gluetun-src": {
+    "cargoLocks": null,
+    "date": null,
+    "extract": null,
+    "name": "gluetun-src",
+    "passthru": null,
+    "pinned": false,
+    "src": {
+      "deepClone": false,
+      "fetchSubmodules": false,
+      "leaveDotGit": false,
+      "name": null,
+      "owner": "qdm12",
+      "repo": "gluetun",
+      "rev": "v3.38.0",
+      "sha256": "sha256-/UmU41MZUIELdReiUXXheGgk52GA5L/HARgIDRpQ3hY=",
+      "type": "github"
+    },
+    "version": "v3.38.0"
+  },
   "go": {
     "cargoLocks": null,
     "date": null,
@@ -256,11 +276,11 @@
     "pinned": false,
     "src": {
       "name": "standardnotes-desktop-x86_64-linux.deb",
-      "sha256": "sha256-kFU69BIqmHPI3mFfOb+x9NQCZBeau0lExfaNKlRHS00=",
+      "sha256": "sha256-Hsa4BdrkACWhPCMvI8dftTOJRiVzADL3b+FYnko9A3E=",
       "type": "url",
-      "url": "https://github.com/standardnotes/app/releases/download/@standardnotes/desktop@3.194.6/standard-notes-3.194.6-linux-amd64.deb"
+      "url": "https://github.com/standardnotes/app/releases/download/@standardnotes/desktop@3.194.7/standard-notes-3.194.7-linux-amd64.deb"
     },
-    "version": "3.194.6"
+    "version": "3.194.7"
   },
   "tree-sitter-cql": {
     "cargoLocks": null,

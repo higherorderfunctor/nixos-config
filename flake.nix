@@ -110,6 +110,7 @@
         overlays = import ./overlays {inherit inputs lib;};
       });
   in {
+    nixosModules = import ./modules/nixos;
     # TODO: tuck someplace else to remove the warning
     homeManagerModules = import ./modules/home-manager;
 

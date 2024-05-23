@@ -1,0 +1,3 @@
+{
+  servarr = import ./servarr.nix;
+}
