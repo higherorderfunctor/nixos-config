@@ -6,11 +6,14 @@
 }: let
   cfg = config.services.servarr;
 in {
+  # machinectl list
   options.services = {
     servarr = {
       # meta service
       enable = lib.mkEnableOption "servarr";
       # vpn
+      # systemctl status container@gluetun
+      # sudo nixos-container root-login gluetun
       gluetun = {
         enable = lib.mkEnableOption "gluetun" // {default = true;};
         package = lib.mkPackageOption pkgs "gluetun" {};
@@ -33,104 +36,131 @@ in {
     };
   };
 
-  config.containers = lib.mkIf cfg.enable {
-    gluetun = lib.mkIf cfg.gluetun.enable {
-      autoStart = true;
-      privateNetwork = true;
-      hostAddress = "192.168.100.10";
-      localAddress = "192.168.100.11";
-      hostAddress6 = "fc00::1";
-      localAddress6 = "fc00::2";
-      config = {
-        config,
-        pkgs,
-        lib,
-        ...
-      }: {
-        systemd.services.gluetun = {
-          description = "gluetun";
-          after = ["network.target"];
-          wantedBy = ["multi-user.target"];
+  config = lib.mkIf cfg.enable {
+    sops.secrets = lib.mkIf cfg.gluetun.enable (lib.mkDefault {
+      "gluetun.env" = {
+        mode = "400";
+        format = "dotenv";
+        sopsFile = ../secrets/gluetun.env;
+      };
+      "wg0.conf" = {
+        mode = "400";
+        format = "ini";
+        sopsFile = ../secrets/wireguard.ini;
+      };
+    });
 
-          serviceConfig = {
-            ExecStart = "${lib.getExe pkgs.gluetun}";
-            Restart = "on-failure";
-            RestartSec = "10s";
+    containers = let
+      inherit (config.system) stateVersion;
+    in {
+      gluetun = lib.mkIf cfg.gluetun.enable {
+        autoStart = true;
+        enableTun = true;
+        ephemeral = true;
+        privateNetwork = true;
+        hostAddress = "192.168.100.10";
+        localAddress = "192.168.100.11";
+        hostAddress6 = "fc00::1";
+        localAddress6 = "fc00::2";
+        config = {
+          config,
+          pkgs,
+          lib,
+          ...
+        }: {
+          systemd.services.gluetun = {
+            description = "gluetun";
+            after = ["network.target"];
+            wantedBy = ["multi-user.target"];
+
+            path = with pkgs; [
+              iptables
+            ];
+
+            serviceConfig = {
+              ExecStart = "${lib.getExe cfg.gluetun.package}";
+              Restart = "on-failure";
+              RestartSec = "10s";
+            };
+          };
+
+          environment.variable = config.sops.secrets."gluetun.env".path;
+
+          system.stateVersion = stateVersion;
+
+          networking = {
+            firewall = {
+              enable = true;
+              allowedTCPPorts = [80];
+            };
+            # use systemd-resolved inside the container
+            # workaround for bug https://github.com/nixos/nixpkgs/issues/162686
+            useHostResolvConf = lib.mkForce false;
+          };
+
+          services = {
+            resolved.enable = true;
+            timesyncd.enable = true;
           };
         };
-
-        system.stateVersion = config.system.stateVersion;
-
-        networking = {
-          firewall = {
-            enable = true;
-            allowedTCPPorts = [80];
-          };
-          # use systemd-resolved inside the container
-          # workaround for bug https://github.com/nixos/nixpkgs/issues/162686
-          useHostResolvConf = lib.mkForce false;
-        };
-
-        services.resolved.enable = true;
       };
     };
   };
-  #config.systemd.user.services = lib.mkIf cfg.enable {
-  #  nixos-config = {
-  #    Unit = {
-  #      Description = "Clones nixos-config";
-  #      # need networking and bind mounts to be ready
-  #      Wants = [
-  #        "network-online.target"
-  #      ];
-  #      After = [
-  #        "network.target"
-  #        "network-online.target"
-  #        "paths.target"
-  #      ];
-  #    };
-  #    Install = {
-  #      WantedBy = ["default.target"];
-  #    };
-  #    Service = {
-  #      Type = "oneshot";
-  #      StandardOutput = "journal+console";
-  #      StandardError = "journal+console";
-  #      ExecStart = let
-  #        git-cmd = lib.concatMapStrings (s: s + " ") [
-  #          "GIT_SSH_COMMAND=\"ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no\""
-  #          "git"
-  #        ];
-  #      in "${pkgs.writeShellApplication {
-  #        name = "nixos-config";
-  #        runtimeInputs = with pkgs; [
-  #          coreutils-full
-  #          git
-  #          gnugrep
-  #          openssh
-  #        ];
-  #        text = ''
-  #          set -euETo pipefail
-  #          shopt -s inherit_errexit
-
-  #          # check if directory exists
-  #          if [ ! -d "${cfg.path}" ]; then
-  #            # create directory if no
-  #            mkdir -p "${cfg.path}"
-  #          fi
-  #          # enter directory
-  #          cd "${cfg.path}"
-  #          # check if git repo
-  #          if [ ! -d .git ]; then
-  #            # clone repo if no
-  #            ${git-cmd} clone "${cfg.remote}" .
-  #          else
-  #            # fetch if yes
-  #            ${git-cmd} fetch
-  #          fi
-  #        '';
-  #      }}/bin/nixos-config";
-  #    };
-  #  };
-  #};
 }
+#config.systemd.user.services = lib.mkIf cfg.enable {
+#  nixos-config = {
+#    Unit = {
+#      Description = "Clones nixos-config";
+#      # need networking and bind mounts to be ready
+#      Wants = [
+#        "network-online.target"
+#      ];
+#      After = [
+#        "network.target"
+#        "network-online.target"
+#        "paths.target"
+#      ];
+#    };
+#    Install = {
+#      WantedBy = ["default.target"];
+#    };
+#    Service = {
+#      Type = "oneshot";
+#      StandardOutput = "journal+console";
+#      StandardError = "journal+console";
+#      ExecStart = let
+#        git-cmd = lib.concatMapStrings (s: s + " ") [
+#          "GIT_SSH_COMMAND=\"ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no\""
+#          "git"
+#        ];
+#      in "${pkgs.writeShellApplication {
+#        name = "nixos-config";
+#        runtimeInputs = with pkgs; [
+#          coreutils-full
+#          git
+#          gnugrep
+#          openssh
+#        ];
+#        text = ''
+#          set -euETo pipefail
+#          shopt -s inherit_errexit
+#          # check if directory exists
+#          if [ ! -d "${cfg.path}" ]; then
+#            # create directory if no
+#            mkdir -p "${cfg.path}"
+#          fi
+#          # enter directory
+#          cd "${cfg.path}"
+#          # check if git repo
+#          if [ ! -d .git ]; then
+#            # clone repo if no
+#            ${git-cmd} clone "${cfg.remote}" .
+#          else
+#            # fetch if yes
+#            ${git-cmd} fetch
+#          fi
+#        '';
+#      }}/bin/nixos-config";
+#    };
+#  };
+#};

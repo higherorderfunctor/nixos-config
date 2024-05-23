@@ -1,7 +1,8 @@
 _: final: prev: let
   inherit (final) lib;
   nv = (import ./nvpkgs.nix).gluetun-src;
-  # dropFirstChar = s: builtins.substring 1 (builtins.stringLength s) s;
+  dropFirstChar = s: builtins.substring 1 (builtins.stringLength s) s;
+  version = dropFirstChar nv.version;
   # replaceVersion = flag:
   #   if lib.strings.hasInfix "build.Version" flag
   #   then
@@ -10,12 +11,11 @@ _: final: prev: let
   #       version
   #     ]
   #   else flag;
-  # version = dropFirstChar nv.version;
   # src = final.fetchFromGitHub {inherit (nv.src) owner repo rev sha256;};
-  # vendorHash =
-  #   if lib.hasAttr "vendorHash" nv
-  #   then nv.vendorHash
-  #   else lib.fakeHash;
+  vendorHash =
+    if lib.hasAttr "vendorHash" nv
+    then nv.vendorHash
+    else "sha256-Xus59zWfxxdamcTL2Q3vLGIrChmr2Dix9/cRB+enwt0="; #lib.fakeHash;
   buildGoModule = let
     nv = (import ./nvpkgs.nix).go;
     go = final.go.overrideAttrs {
@@ -28,7 +28,27 @@ _: final: prev: let
     final.buildGoModule.override {inherit go;};
 in {
   gluetun = buildGoModule {
-    inherit (nv) version;
-    src = final.fetchFromGitHub {inherit (nv.src) owner repo rev sha256;};
+    pname = "gluetun";
+    inherit version;
+
+    src = final.fetchFromGitHub {
+      inherit (nv.src) owner repo rev sha256;
+    };
+
+    inherit vendorHash;
+
+    postPatch = ''
+      rm internal/tun/tun_test.go
+    '';
+
+    meta = with lib; {
+      description =
+        "VPN client in a thin Docker container for multiple VPN providers, written in Go, and using OpenVPN or "
+        + "Wireguard, DNS over TLS, with a few proxy servers built-in. ";
+      mainProgram = "gluetun";
+      homepage = "https://github.com/qdm12/gluetun";
+      license = licenses.mit;
+      maintainers = with maintainers; [qdm12];
+    };
   };
 }
