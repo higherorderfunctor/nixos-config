@@ -91,7 +91,7 @@
   },
   "catppuccin-gtk": {
     "cargoLocks": null,
-    "date": "2024-05-21",
+    "date": "2024-05-24",
     "extract": null,
     "name": "catppuccin-gtk",
     "passthru": null,
@@ -101,12 +101,12 @@
       "fetchSubmodules": false,
       "leaveDotGit": false,
       "name": null,
-      "rev": "9e0bfa3f0ee5d3552d19c6c27d7254cf735624eb",
-      "sha256": "sha256-8yH3/ZoQp+VhccZ1b1GIwMYAv8jBlAznjOA8K+03W+w=",
+      "rev": "455dd7b403cdbdd7ee5730c09f7845c8761b823d",
+      "sha256": "sha256-30Z8SE1k+1zVFs7mLhQWb/CW4bOkjB7qnH/zhWXfmEY=",
       "type": "git",
       "url": "https://github.com/catppuccin/gtk.git"
     },
-    "version": "9e0bfa3f0ee5d3552d19c6c27d7254cf735624eb"
+    "version": "455dd7b403cdbdd7ee5730c09f7845c8761b823d"
   },
   "catppuccin-hyprland": {
     "cargoLocks": null,
@@ -304,7 +304,7 @@
   },
   "vivid-plasma-themes": {
     "cargoLocks": null,
-    "date": "2024-05-17",
+    "date": "2024-05-24",
     "extract": null,
     "name": "vivid-plasma-themes",
     "passthru": null,
@@ -314,11 +314,11 @@
       "fetchSubmodules": false,
       "leaveDotGit": false,
       "name": null,
-      "rev": "ce8e726f1484f8683af708347c2738950c26f9b5",
-      "sha256": "sha256-qihF90gTpCvKg+NlQpvbPywM9JGtqAKR+KuOdPgZ6Ss=",
+      "rev": "51d949ecef87c1b3376b7f402d487608afeb966d",
+      "sha256": "sha256-XD9IvvLPRS10ug6l3qQomDluqLrnnHMXjNCWZp3LweQ=",
       "type": "git",
       "url": "https://github.com/L4ki/Vivid-Plasma-Themes.git"
     },
-    "version": "ce8e726f1484f8683af708347c2738950c26f9b5"
+    "version": "51d949ecef87c1b3376b7f402d487608afeb966d"
   }
 }

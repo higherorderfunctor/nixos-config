@@ -25,7 +25,7 @@ in {
   home.packages = [pkgs.tree-sitter];
   programs.neovim = {
     enable = true;
-    package = pkgs.neovim-nightly;
+    package = pkgs.neovim;
     defaultEditor = true;
     extraPackages = with pkgs; [
       # TODO:

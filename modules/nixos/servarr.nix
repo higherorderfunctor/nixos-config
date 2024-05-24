@@ -305,6 +305,7 @@ in {
             path =
               (with pkgs; [
                 iptables
+                unbound-full
               ])
               ++ [
                 (pkgs.stdenvNoCC.mkDerivation {
@@ -325,10 +326,10 @@ in {
                 builtins.toFile "environment"
                 (builtins.concatStringsSep "\n"
                   (lib.mapAttrsToList (name: value: "${name}=${value}") env));
-              ExecStartPre = ''
-                ${pkgs.coreutils}/bin/mkdir -p /usr/sbin
-                ln -sfn ${lib.getExe' pkgs.unbound-full "unbound"} /usr/sbin/unbound
-              '';
+              # ExecStartPre = ''
+              #   ${pkgs.coreutils}/bin/mkdir -p /usr/sbin
+              #   ln -sfn ${lib.getExe' pkgs.unbound-full "unbound"} /usr/sbin/unbound
+              # '';
               ExecStart = "${lib.getExe cfg.gluetun.package}";
               Restart = "on-failure";
               RestartSec = "5s";

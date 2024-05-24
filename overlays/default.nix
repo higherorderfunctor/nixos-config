@@ -15,7 +15,7 @@ args: let
     ./neovim-nightly-overlay.nix
     ./nix-gl-host-overlay.nix
     ./nvfetcher-overlay.nix
-    # ./nixd-overlay.nix
+    ./nixd-overlay.nix
     ./oh-my-posh-overlay.nix
     ./spectral-overlay.nix
     ./standardnotes-overlay.nix

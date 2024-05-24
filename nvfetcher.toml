@@ -27,7 +27,7 @@ fetch.github = "catppuccin/btop"
 [catppuccin-gtk]
 src.git = "https://github.com/catppuccin/gtk.git"
 src.use_commit = true
-src.branch = "feat/oled-tweak"
+# src.branch = "feat/oled-tweak"
 fetch.git = "https://github.com/catppuccin/gtk.git"
 
 [catppuccin-hyprland ]

@@ -15,7 +15,7 @@ _: final: prev: let
   vendorHash =
     if lib.hasAttr "vendorHash" nv
     then nv.vendorHash
-    else "sha256-Xus59zWfxxdamcTL2Q3vLGIrChmr2Dix9/cRB+enwt0="; #lib.fakeHash;
+    else "sha256-Xus59zWfxxdamcTL2Q3vLGIrChmr2Dix9/cRB+enwt0="; # FIXME: lib.fakeHash;
   buildGoModule = let
     nv = (import ./nvpkgs.nix).go;
     go = final.go.overrideAttrs {

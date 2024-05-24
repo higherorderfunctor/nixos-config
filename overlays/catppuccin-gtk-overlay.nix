@@ -27,7 +27,7 @@ in {
             python ./build.py ${args.variant} \
               ${lib.optionalString (args.accents != []) "--accent " + builtins.toString args.accents} \
               --size ${args.size} \
-              ${lib.optionalString (args.tweaks != []) "--tweaks " + builtins.toString (args.tweaks ++ ["oled"])} \
+              ${lib.optionalString (args.tweaks != []) "--tweaks " + builtins.toString args.tweaks} \
               --dest releases
           '';
 
