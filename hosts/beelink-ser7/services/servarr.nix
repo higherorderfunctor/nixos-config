@@ -3,13 +3,8 @@
   pkgs,
   ...
 }: {
-  # secrets
   sops.secrets = {
-    "services.gluetun.wg0.config" = {
-      mode = "400";
-      sopsFile = ../secrets/servarr.yaml;
-    };
-    "services.gluetun.wg0" = {
+    "servarr-wireguard-config" = {
       mode = "400";
       sopsFile = ../secrets/servarr.yaml;
     };
@@ -18,18 +13,17 @@
     enable = true;
     gluetun = {
       package = pkgs.gluetun;
-      vpn = {
-        protocol = "wireguard";
-        portForwarding = {
-          enabled = true;
-          provider = "protonvpn";
+      settings = {
+        vpn = {
+          provider = "custom";
+          protocol = "wireguard";
+          portForwarding = {
+            enabled = true;
+            provider = "protonvpn";
+          };
+          endpoint.configFile = config.sops.secrets."servarr-wireguard-config".path;
         };
-        endpoint.configFile = config.sops.secrets."services.gluetun.wg0.config".path;
       };
-      # environmentFile = config.sops.secrets."servarr-gluetun.env".path;
-      # wireguard = {
-      #   config = config.sops.secrets."servarr-wg0.conf".path;
-      # };
     };
   };
 }

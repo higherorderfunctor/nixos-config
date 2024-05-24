@@ -43,6 +43,8 @@ in {
               type = lib.types.str;
               default = "tun0";
             };
+            # VPN_PORT_FORWARDING=
+            # VPN_PORT_FORWARDING_PROVIDER=
             portForwarding = {
               enabled = lib.mkEnableOption "portForwarding";
               provider = lib.mkOption {
@@ -102,7 +104,9 @@ in {
           # FIREWALL_INPUT_PORTS=
           # FIREWALL_OUTBOUND_SUBNETS=
           # FIREWALL_DEBUG=off
-          firewall = {};
+          firewall = {
+            enable = lib.mkEnableOption "firewall" // {default = true;};
+          };
 
           # HEALTH_SERVER_ADDRESS=127.0.0.1:9999
           # HEALTH_TARGET_ADDRESS=cloudflare.com:443
@@ -126,7 +130,7 @@ in {
             };
             duration = {
               initial = lib.mkOption {
-                type = lib.types.str;
+                type = lib.types.int;
                 default = 6;
               };
               addition = lib.mkOption {
@@ -165,33 +169,33 @@ in {
           # PPROF_BLOCK_PROFILE_RATE=0
           # PPROF_MUTEX_PROFILE_RATE=0
           # PPROF_HTTP_SERVER_ADDRESS=":6060"
-          pprof.enabled = lib.mkEnableOption "pprof";
+          pprof = {
+            enabled = lib.mkEnableOption "pprof";
+            blockProfileRate = lib.mkOption {
+              type = lib.types.int;
+              default = 0;
+            };
+            mutexProfileRate = lib.mkOption {
+              type = lib.types.int;
+              default = 0;
+            };
+            http = {
+              listenAddress = lib.mkOption {
+                type = lib.types.str;
+                default = "";
+              };
+              port = lib.mkOption {
+                type = lib.types.int;
+                default = 6060;
+              };
+            };
+          };
 
           # VERSION_INFORMATION=on
           extras = {
             versionInformation = lib.mkEnableOption "versionInformation";
           };
         };
-        # environmentFile = lib.mkOption {
-        #   type = lib.types.nullOr lib.types.path;
-        #   default = null;
-        # };
-        # environment = lib.mkOption rec {
-        #   type = lib.types.attrsOf lib.types.str;
-        #   default = {
-        #     WIREGUARD_CONF_SECRETFILE = "/gluetun/wireguard/wg0.conf";
-        #     HTTP_CONTROL_SERVER_LOG = "on";
-        #     HTTP_CONTROL_SERVER_ADDRESS = ":8000";
-        #     LOG_LEVEL = "debug";
-        #   };
-        #   apply = _: default // _;
-        # };
-        # wireguard = {
-        #   config = lib.mkOption {
-        #     type = lib.types.nullOr lib.types.path;
-        #     default = null;
-        #   };
-        # };
       };
       # movies
       radarr = {
@@ -214,7 +218,61 @@ in {
   config = lib.mkIf cfg.enable {
     containers = let
       inherit (config.system) stateVersion;
-      envPath = "/run/gluetun/environment";
+      env = {
+        LOG_LEVEL = cfg.gluetun.settings.logging.logLevel;
+
+        VPN_SERVICE_PROVIDER = cfg.gluetun.settings.vpn.provider;
+        VPN_TYPE = cfg.gluetun.settings.vpn.protocol;
+        VPN_INTERFACE = cfg.gluetun.settings.vpn.interface;
+        VPN_PORT_FORWARDING =
+          if cfg.gluetun.settings.vpn.portForwarding.enabled
+          then "on"
+          else "off";
+        VPN_PORT_FORWARDING_PROVIDER = cfg.gluetun.settings.vpn.portForwarding.provider;
+
+        HTTP_CONTROL_SERVER_LOG =
+          if cfg.gluetun.settings.controlServer.logging
+          then "on"
+          else "off";
+        HTTP_CONTROL_SERVER_ADDRESS = lib.concatStringsSep ":" [
+          "${cfg.gluetun.settings.controlServer.http.listenAddress}"
+          "${builtins.toString cfg.gluetun.settings.controlServer.http.port}"
+        ];
+
+        FIREWALL =
+          if cfg.gluetun.settings.firewall.enable
+          then "on"
+          else "off";
+
+        HEALTH_SERVER_ADDRESS = lib.concatStringsSep ":" [
+          "${cfg.gluetun.settings.healthCheck.http.listenAddress}"
+          "${builtins.toString cfg.gluetun.settings.healthCheck.http.port}"
+        ];
+        HEALTH_TARGET_ADDRESS = cfg.gluetun.settings.healthCheck.target;
+        HEALTH_SUCCESS_WAIT_DURATION = "${builtins.toString cfg.gluetun.settings.healthCheck.duration.success.wait}s";
+        HEALTH_VPN_DURATION_INITIAL = "${builtins.toString cfg.gluetun.settings.healthCheck.duration.initial}s";
+        HEALTH_VPN_DURATION_ADDITION = "${builtins.toString cfg.gluetun.settings.healthCheck.duration.addition}s";
+
+        PUBLICIP_FILE = "${cfg.gluetun.settings.publicIp.file}";
+        PUBLICIP_PERIOD = "${cfg.gluetun.settings.publicIp.period}";
+        PUBLICIP_API = "${cfg.gluetun.settings.publicIp.api}";
+
+        PPROF_ENABLED =
+          if cfg.gluetun.settings.pprof.enabled
+          then "on"
+          else "off";
+        PPROF_BLOCK_PROFILE_RATE = "${builtins.toString cfg.gluetun.settings.pprof.blockProfileRate}";
+        PPROF_MUTEX_PROFILE_RATE = "${builtins.toString cfg.gluetun.settings.pprof.mutexProfileRate}";
+        PPROF_HTTP_SERVER_ADDRESS = lib.concatStringsSep ":" [
+          "${cfg.gluetun.settings.pprof.http.listenAddress}"
+          "${builtins.toString cfg.gluetun.settings.pprof.http.port}"
+        ];
+
+        VERSION_INFORMATION =
+          if cfg.gluetun.settings.extras.versionInformation
+          then "on"
+          else "off";
+      };
     in {
       gluetun = lib.mkIf cfg.gluetun.enable {
         autoStart = true;
@@ -227,22 +285,14 @@ in {
         hostAddress6 = "fc00::1";
         localAddress6 = "fc00::2";
         bindMounts = lib.mkMerge [
-          (lib.attrsets.optionalAttrs (! builtins.isNull cfg.gluetun.environmentFile) {
-            ${envPath} = {
-              hostPath = cfg.gluetun.environmentFile;
-              isReadOnly = true;
-            };
-          })
-          (lib.attrsets.optionalAttrs (! builtins.isNull cfg.gluetun.wireguard.config) {
-            ${cfg.gluetun.environment.WIREGUARD_CONF_SECRETFILE} = {
-              hostPath = cfg.gluetun.wireguard.config;
+          (lib.attrsets.optionalAttrs (! builtins.isNull cfg.gluetun.settings.vpn.endpoint.configFile) {
+            "/gluetun/wireguard/wg0.conf" = {
+              hostPath = cfg.gluetun.settings.vpn.endpoint.configFile;
               isReadOnly = true;
             };
           })
         ];
-        # WIREGUARD_CONF_SECRETFILE=/run/secrets/wg0.conf
         config = {
-          config,
           pkgs,
           lib,
           ...
@@ -252,30 +302,62 @@ in {
             after = ["network.target"];
             wantedBy = ["multi-user.target"];
 
-            path = with pkgs; [
-              iptables
-            ];
+            path =
+              (with pkgs; [
+                iptables
+              ])
+              ++ [
+                (pkgs.stdenvNoCC.mkDerivation {
+                  inherit (pkgs.openvpn) pname version;
+                  nativeBuildInputs = with pkgs; [makeWrapper];
+                  buildInputs = with pkgs; [openvpn];
+                  phases = ["installPhase"];
+                  installPhase = ''
+                    mkdir -p $out/bin
+                    makeWrapper ${lib.getExe pkgs.openvpn} $out/bin/openvpn2.5
+                    makeWrapper ${lib.getExe pkgs.openvpn} $out/bin/openvpn2.6
+                  '';
+                })
+              ];
 
             serviceConfig = {
-              # Environment = lib.attrsets.mapAttrsToList (key: value: "${key}=${value}") cfg.gluetun.environment;
-              EnvironmentFile = lib.mapNullable (_: "${envPath}") cfg.gluetun.environmentFile;
-              ExecStartPre = [''${lib.getExe pkgs.bash} -c "env"''];
+              EnvironmentFile =
+                builtins.toFile "environment"
+                (builtins.concatStringsSep "\n"
+                  (lib.mapAttrsToList (name: value: "${name}=${value}") env));
+              ExecStartPre = ''
+                ${pkgs.coreutils}/bin/mkdir -p /usr/sbin
+                ln -sfn ${lib.getExe' pkgs.unbound-full "unbound"} /usr/sbin/unbound
+              '';
               ExecStart = "${lib.getExe cfg.gluetun.package}";
               Restart = "on-failure";
               RestartSec = "5s";
             };
           };
 
-          environment.sessionVariables = cfg.gluetun.environment;
-
           system.stateVersion = stateVersion;
+
+          environment = {
+            # systemPackages = [
+            #   (pkgs.unbound-full.overrideAttrs (attrs: {
+            #     nativeBuildInputs = attrs.nativeBuildInputs ++ (with pkgs; [makeWrapper]);
+            #     postFixup = ''
+            #       mkdir -p $out/usr/sbin
+            #       makeWrapper ${lib.getExe' pkgs.unbound-full "unbound"} $out/usr/sbin/unbound
+            #     '';
+            #   }))
+            # ];
+            etc = {
+              alpine-release.source = config.environment.etc.os-release.source;
+            };
+          };
 
           networking = {
             firewall = {
               enable = true;
               interfaces = {
                 eth0 = {
-                  allowedTCPPorts = [8000 8888 8388];
+                  allowedTCPPorts = [8000 8888 8388]; # TODO: dynamic
                   allowedUDPPorts = [8388];
                 };
               };
@@ -294,60 +376,3 @@ in {
     };
   };
 }
-#config.systemd.user.services = lib.mkIf cfg.enable {
-#  nixos-config = {
-#    Unit = {
-#      Description = "Clones nixos-config";
-#      # need networking and bind mounts to be ready
-#      Wants = [
-#        "network-online.target"
-#      ];
-#      After = [
-#        "network.target"
-#        "network-online.target"
-#        "paths.target"
-#      ];
-#    };
-#    Install = {
-#      WantedBy = ["default.target"];
-#    };
-#    Service = {
-#      Type = "oneshot";
-#      StandardOutput = "journal+console";
-#      StandardError = "journal+console";
-#      ExecStart = let
-#        git-cmd = lib.concatMapStrings (s: s + " ") [
-#          "GIT_SSH_COMMAND=\"ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no\""
-#          "git"
-#        ];
-#      in "${pkgs.writeShellApplication {
-#        name = "nixos-config";
-#        runtimeInputs = with pkgs; [
-#          coreutils-full
-#          git
-#          gnugrep
-#          openssh
-#        ];
-#        text = ''
-#          set -euETo pipefail
-#          shopt -s inherit_errexit
-#          # check if directory exists
-#          if [ ! -d "${cfg.path}" ]; then
-#            # create directory if no
-#            mkdir -p "${cfg.path}"
-#          fi
-#          # enter directory
-#          cd "${cfg.path}"
-#          # check if git repo
-#          if [ ! -d .git ]; then
-#            # clone repo if no
-#            ${git-cmd} clone "${cfg.remote}" .
-#          else
-#            # fetch if yes
-#            ${git-cmd} fetch
-#          fi
-#        '';
-#      }}/bin/nixos-config";
-#    };
-#  };
-#};
