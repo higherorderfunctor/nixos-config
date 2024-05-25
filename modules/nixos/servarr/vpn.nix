@@ -28,12 +28,11 @@ in {
 
   config = lib.mkIf cfg.enable {
     networking = {
-      bridges.servarr-vpn-br0.interfaces = [
-        "servarr-vpn"
-        "servarr-test"
-      ];
+      bridges = {
+        servarr-gw0.interfaces = [];
+        servarr-br0.interfaces = [];
+      };
       interfaces = {
-        ################
         servarr-gw0 = {
           virtual = true;
           ipv4.addresses = [
@@ -43,18 +42,19 @@ in {
             }
           ];
         };
-        ################
-        servarr-vpn = {
+        servarr-br0 = {
           virtual = true;
-        };
-        servarr-test = {
-          virtual = true;
+          ipv4.addresses = [
+            {
+              address = "10.100.1.1";
+              prefixLength = 24;
+            }
+          ];
         };
       };
       nat = {
-        enable = lib.mkDefault true;
+        enable = lib.mkForce true;
         internalInterfaces = ["servarr-gw0"];
-        #   externalInterface = "enp1s0";
       };
     };
     containers = {
@@ -65,17 +65,17 @@ in {
           autoStart = true;
           ephemeral = true;
           restartIfChanged = true;
-          interfaces = [
-            "servarr-gw0"
-            "servarr-vpn"
-          ];
-          # privateNetwork = true;
-          # hostAddress = "192.168.200.0";
-          # localAddress = "192.168.200.1";
-          # extraVeths.ve-vpn = {
-          #   hostBridge = "servarr-br0";
-          #   # localAddress = "192.168.100.1";
-          # };
+          privateNetwork = true;
+          extraVeths = {
+            ve-vpn-eth0 = {
+              hostBridge = "servarr-br0";
+              localAddress = "10.100.1.2/24";
+            };
+            ve-vpn-eth1 = {
+              hostBridge = "servarr-gw0";
+              localAddress = "10.100.0.1/31";
+            };
+          };
           bindMounts = lib.mkMerge [
             {
               ${privateKeyFile} = {
@@ -95,22 +95,36 @@ in {
           in {
             system.stateVersion = config.system.stateVersion;
 
+            environment.systemPackages = [pkgs.tcpdump];
+
             networking = {
               firewall = {
-                enable = true;
-                interfaces = {
-                  eth0 = {
-                    allowedUDPPorts = [51820];
-                  };
-                };
+                enable = false; # FIXME: true;
               };
-              # interfaces.eth0.ipv4.routes = [
+              # nat = {
+              #   enable = true;
+              #   externalInterface = "${wg-interface}";
+              #   internalInterfaces = ["ve-vpn-eth0"];
+              # };
+              # interfaces.ve-vpn-eth0.ipv4.routes = [
               #   {
-              #     address = "149.50.216.205";
-              #     prefixLength = 32;
-              #     via = "192.168.100.10";
+              #     address = "10.100.1.0";
+              #     prefixLength = 24;
+              #     via = "10.100.1.1";
               #   }
               # ];
+              interfaces.ve-vpn-eth1.ipv4.routes = [
+                {
+                  address = "10.100.0.0";
+                  prefixLength = 31;
+                  via = "10.100.0.0";
+                }
+                {
+                  address = builtins.elemAt (lib.strings.split ":" cfg.vpn.endpoint) 0;
+                  prefixLength = 32;
+                  via = "10.100.0.0";
+                }
+              ];
               wireguard.interfaces = {
                 "${wg-interface}" = {
                   ips = cfg.vpn.address;
@@ -138,16 +152,15 @@ in {
         };
       servarr-test = lib.mkIf cfg.vpn.enable {
         autoStart = true;
-        enableTun = true;
         ephemeral = true;
         restartIfChanged = true;
-        interfaces = [
-          "servarr-test"
-        ];
-        # privateNetwork = true;
-        # # hostAddress = "192.168.100.1";
-        # hostBridge = "servarr-br0";
-        # localAddress = "192.168.100.2";
+        privateNetwork = true;
+        extraVeths = {
+          ve-test-eth0 = {
+            hostBridge = "servarr-br0";
+            localAddress = "10.100.1.3/24";
+          };
+        };
         config = {
           pkgs,
           lib,
@@ -155,11 +168,14 @@ in {
         }: {
           system.stateVersion = config.system.stateVersion;
 
+          environment.systemPackages = [pkgs.tcpdump];
+
           networking = {
-            defaultGateway = {
-              interface = "ve-servarr-vpn-br0";
-              address = "192.168.100.1";
-            };
+            firewall.enable = false;
+            # defaultGateway = {
+            #   interface = "ve-test-eth0";
+            #   address = "10.100.1.1";
+            # };
 
             # use systemd-resolved inside the container
             # workaround for bug https://github.com/nixos/nixpkgs/issues/162686
