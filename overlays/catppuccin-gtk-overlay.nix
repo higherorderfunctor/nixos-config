@@ -13,35 +13,29 @@ in {
             repo = "gtk";
           };
 
-          patches = null;
+          patches = null; # patches not needed for 1.x
+
           nativeBuildInputs =
             attrs.nativeBuildInputs
             ++ [
               final.git # to apply patches
             ];
 
-          dontBuild = false;
-
-          preInstall = ''
+          installPhase = ''
             set -e
+            runHook preInstall
+
             python ./build.py ${args.variant} \
               ${lib.optionalString (args.accents != []) "--accent " + builtins.toString args.accents} \
               --size ${args.size} \
               ${lib.optionalString (args.tweaks != []) "--tweaks " + builtins.toString args.tweaks} \
               --dest releases
-          '';
-
-          installPhase = ''
-            set -e
-            runHook preInstall
 
             mkdir -p $out/share
             cp -r releases $out/share/themes
 
             runHook postInstall
           '';
-
-          fixupPhase = "true";
         })
     )
     {};

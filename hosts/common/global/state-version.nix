@@ -1,4 +1,4 @@
 {
   # https://nixos.org/manual/nixos/unstable/
-  stateVersion = "24.05";
+  stateVersion = "24.11";
 }

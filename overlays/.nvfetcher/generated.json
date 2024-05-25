@@ -63,11 +63,11 @@
     "pinned": false,
     "src": {
       "name": "bun-x86_64-linux.zip",
-      "sha256": "sha256-yIz/CWKTSKoeOTb/2rxbyYovw0rralSj0r2ZMPu29i8=",
+      "sha256": "sha256-iQM/BtoaDBRlH/jx9qH6WlV2Ox7MbtWMzHc8RxVCHH0=",
       "type": "url",
-      "url": "https://github.com/oven-sh/bun/releases/download/bun-v1.1.9/bun-linux-x64.zip"
+      "url": "https://github.com/oven-sh/bun/releases/download/bun-v1.1.10/bun-linux-x64.zip"
     },
-    "version": "1.1.9"
+    "version": "1.1.10"
   },
   "catppuccin-btop": {
     "cargoLocks": null,
@@ -101,12 +101,12 @@
       "fetchSubmodules": false,
       "leaveDotGit": false,
       "name": null,
-      "rev": "455dd7b403cdbdd7ee5730c09f7845c8761b823d",
-      "sha256": "sha256-30Z8SE1k+1zVFs7mLhQWb/CW4bOkjB7qnH/zhWXfmEY=",
+      "rev": "641f692dd801be5d68d257764721a86825964f03",
+      "sha256": "sha256-AajBXdaqUcXvmf7Pu3pv+PrRuJRK71ixlSHxGOzU+7M=",
       "type": "git",
       "url": "https://github.com/catppuccin/gtk.git"
     },
-    "version": "455dd7b403cdbdd7ee5730c09f7845c8761b823d"
+    "version": "641f692dd801be5d68d257764721a86825964f03"
   },
   "catppuccin-hyprland": {
     "cargoLocks": null,
