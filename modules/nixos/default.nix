@@ -1,3 +1,3 @@
 {
-  servarr = import ./servarr.nix;
+  servarr = import ./servarr;
 }
