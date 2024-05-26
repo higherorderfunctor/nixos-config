@@ -19,6 +19,8 @@ in {
   # sudo journalctl -M servarr-vpn --since "1 day ago"
   # sudo nixos-container root-login servarr-vpn
   #
+  # sudo tcpdump -tttt -n -q -c 100
+  #
   # echo "FILTER"; sudo iptables -L -v -n --line-numbers -t filter     | grep -P "Chain|drop"
   # echo "NAT"; sudo iptables -L -v -n --line-numbers -t nat           | grep -P "Chain|drop"
   # echo "MANGLE"; sudo iptables -L -v -n --line-numbers -t mangle     | grep -P "Chain|drop"
@@ -51,14 +53,22 @@ in {
             type = lib.types.str;
             default = "servarr-gw0";
           };
-          address = lib.mkOption {
+          hostAddress = lib.mkOption {
             type = lib.types.str;
             default = "10.100.0.0";
           };
-          prefixLength = lib.mkOption {
-            type = lib.types.int;
-            default = 31; # FIXME: min 31
+          localAddress = lib.mkOption {
+            type = lib.types.str;
+            default = "10.100.0.1";
           };
+          # address = lib.mkOption {
+          #   type = lib.types.str;
+          #   default = "10.100.0.0";
+          # };
+          # prefixLength = lib.mkOption {
+          #   type = lib.types.int;
+          #   default = 31; # FIXME: min 31
+          # };
         };
         bridge = {
           name = lib.mkOption {
@@ -101,12 +111,11 @@ in {
             virtual = true;
           };
         };
-        # NOTE: currently using NAT as I have other containers running a VPN client
-        # TODO: port forwarding option
-        # nat = {
-        #   enable = lib.mkForce true;
-        #   internalInterfaces = [cfg.vpn.interfaces.gateway.name];
-        # };
+        # forward return traffic from wireguard peer to vpn container's wireguard client
+        nat = {
+          enable = lib.mkForce true;
+          internalInterfaces = ["ve-vpn-eth1"];
+        };
         firewall = {
           # needed for nat
           # enable = lib.mkForce true;
@@ -114,20 +123,30 @@ in {
           # interfaces."${cfg.vpn.interfaces.gateway.name}".allowedUDPPorts = [cfg.vpn.endpoint.port];
           # allows traffic over the VPN bridge without settings an IP on the host side of the bridge
           # extraCommands = ''
-          #   ${iptables} \
-          #     -t mangle \
-          #     -I PREROUTING \
-          #     -i ${cfg.vpn.interfaces.bridge.name} \
-          #     -s ${cfg.vpn.interfaces.bridge.address}/${builtins.toString cfg.vpn.interfaces.bridge.prefixLength} \
-          #     -j ACCEPT
-          #   ${iptables} \
-          #     -t mangle \
-          #     -I PREROUTING \
-          #     -i ${cfg.vpn.interfaces.bridge.name} \
-          #     -d ${cfg.vpn.interfaces.bridge.address}/${builtins.toString cfg.vpn.interfaces.bridge.prefixLength} \
-          #     -j ACCEPT
+          #   ${iptables} -I nixos-fw-log-refuse 2 -m limit --limit 10/min -j LOG --log-prefix "dropped packet: " --log-level 6
           # '';
-          # extraStopCommands = ''
+          #   ${iptables} -I nixos-fw -o ve-vpn-eth1 -j nixos-fw-accept
+          #   ${iptables} -I nixos-fw -i ve-vpn-eth1 -j nixos-fw-accept
+          extraCommands = ''
+            ${iptables} -t mangle -I nixos-fw-rpfilter -i ${cfg.vpn.interfaces.bridge.name} -m rpfilter --validmark --loose -j RETURN
+          '';
+          # ${iptables} \
+          #   -t mangle \
+          #   -I PREROUTING \
+          #   -i ${cfg.vpn.interfaces.bridge.name} \
+          #   -s ${cfg.vpn.interfaces.bridge.address}/${builtins.toString cfg.vpn.interfaces.bridge.prefixLength} \
+          #   -j ACCEPT
+          # ${iptables} \
+          #   -t mangle \
+          #   -I PREROUTING \
+          #   -i ${cfg.vpn.interfaces.bridge.name} \
+          #   -d ${cfg.vpn.interfaces.bridge.address}/${builtins.toString cfg.vpn.interfaces.bridge.prefixLength} \
+          #   -j ACCEPT
+          extraStopCommands = ''
+            ${iptables} -t mangle -D nixos-fw-rpfilter -i ${cfg.vpn.interfaces.bridge.name} -m rpfilter --validmark --loose -j RETURN
+          '';
+          #   ${iptables} -D nixos-fw -o ve-vpn-eth1 -j nixos-fw-accept
+          #   ${iptables} -D nixos-fw -i ve-vpn-eth1 -j nixos-fw-accept
           #   ${iptables} \
           #     -t mangle \
           #     -D PREROUTING \
@@ -140,7 +159,6 @@ in {
           #     -i ${cfg.vpn.interfaces.bridge.name} \
           #     -d ${cfg.vpn.interfaces.bridge.address}/${builtins.toString cfg.vpn.interfaces.bridge.prefixLength} \
           #     -j ACCEPT
-          # '';
         };
       };
       containers = {
@@ -163,17 +181,14 @@ in {
                 ]; # "10.100.1.1/24";
               };
               # internet gateway interface to route wireguard traffic
-              # ve-vpn-eth1 = {
-              #   # hostBridge = cfg.vpn.interfaces.gateway.name;
-              #   hostAddress = lib.concatStringsSep "/" [
-              #     cfg.vpn.interfaces.gateway.address
-              #     (builtins.toString cfg.vpn.interfaces.gateway.prefixLength)
-              #   ];
-              #   localAddress = lib.concatStringsSep "/" [
-              #     (offsetIpv4Address cfg.vpn.interfaces.gateway.address 1)
-              #     (builtins.toString cfg.vpn.interfaces.gateway.prefixLength)
-              #   ]; # "10.100.0.1/31";
-              # };
+              ve-vpn-eth1 = {
+                # hostBridge = cfg.vpn.interfaces.gateway.name;
+                inherit (cfg.vpn.interfaces.gateway) hostAddress localAddress;
+                # localAddress = lib.concatStringsSep "/" [
+                #   (offsetIpv4Address cfg.vpn.interfaces.gateway.address 0)
+                #   (builtins.toString cfg.vpn.interfaces.gateway.prefixLength)
+                # ]; # "10.100.0.1/31";
+              };
             };
             bindMounts = lib.mkMerge [
               # mount the private key file from the host
@@ -222,12 +237,12 @@ in {
                     #   prefixLength = 32;
                     #   via = cfg.vpn.interfaces.gateway.address;
                     # }
-                    # # routes wireguard peer traffic out the gateway
-                    # {
-                    #   inherit (cfg.vpn.endpoint) address;
-                    #   prefixLength = 32;
-                    #   via = cfg.vpn.interfaces.gateway.address;
-                    # }
+                    # routes wireguard peer traffic out the gateway
+                    {
+                      inherit (cfg.vpn.endpoint) address;
+                      prefixLength = 32;
+                      via = cfg.vpn.interfaces.gateway.hostAddress;
+                    }
                   ];
                 };
                 # wireguard configuration
