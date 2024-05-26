@@ -24,7 +24,6 @@ in {
   # echo "MANGLE"; sudo iptables -L -v -n --line-numbers -t mangle     | grep -P "Chain|drop"
   # echo "RAW"; sudo iptables -L -v -n --line-numbers -t raw           | grep -P "Chain|drop"
   # echo "SECURITY"; sudo iptables -L -v -n --line-numbers -t security | grep -P "Chain|drop"
-  # echo "SECURITY"; sudo iptables -L -v -n --line-numbers -t security | grep -P "Chain|drop"
   options = {
     services.servarr.vpn = {
       enable = lib.mkEnableOption "servar-vpn" // {default = true;};
@@ -86,62 +85,62 @@ in {
       # HOST CONFIGURATION
       networking = {
         bridges = {
-          "${cfg.vpn.interfaces.gateway.name}".interfaces = [];
+          # "${cfg.vpn.interfaces.gateway.name}".interfaces = [];
           "${cfg.vpn.interfaces.bridge.name}".interfaces = [];
         };
         interfaces = {
-          "${cfg.vpn.interfaces.gateway.name}" = {
-            virtual = true;
-            ipv4.addresses = [
-              {
-                inherit (cfg.vpn.interfaces.gateway) address prefixLength;
-              }
-            ];
-          };
+          # "${cfg.vpn.interfaces.gateway.name}" = {
+          #   virtual = true;
+          #   ipv4.addresses = [
+          #     {
+          #       inherit (cfg.vpn.interfaces.gateway) address prefixLength;
+          #     }
+          #   ];
+          # };
           "${cfg.vpn.interfaces.bridge.name}" = {
             virtual = true;
           };
         };
         # NOTE: currently using NAT as I have other containers running a VPN client
         # TODO: port forwarding option
-        nat = {
-          enable = lib.mkForce true;
-          internalInterfaces = [cfg.vpn.interfaces.gateway.name];
-        };
+        # nat = {
+        #   enable = lib.mkForce true;
+        #   internalInterfaces = [cfg.vpn.interfaces.gateway.name];
+        # };
         firewall = {
           # needed for nat
           # enable = lib.mkForce true;
           # FIXME: also only allow traffic from wireguard endpoint host not just port
-          interfaces."${cfg.vpn.interfaces.gateway.name}".allowedUDPPorts = [cfg.vpn.endpoint.port];
+          # interfaces."${cfg.vpn.interfaces.gateway.name}".allowedUDPPorts = [cfg.vpn.endpoint.port];
           # allows traffic over the VPN bridge without settings an IP on the host side of the bridge
-          extraCommands = ''
-            ${iptables} \
-              -t mangle \
-              -I PREROUTING \
-              -i ${cfg.vpn.interfaces.bridge.name} \
-              -s ${cfg.vpn.interfaces.bridge.address}/${builtins.toString cfg.vpn.interfaces.bridge.prefixLength} \
-              -j ACCEPT
-            ${iptables} \
-              -t mangle \
-              -I PREROUTING \
-              -i ${cfg.vpn.interfaces.bridge.name} \
-              -d ${cfg.vpn.interfaces.bridge.address}/${builtins.toString cfg.vpn.interfaces.bridge.prefixLength} \
-              -j ACCEPT
-          '';
-          extraStopCommands = ''
-            ${iptables} \
-              -t mangle \
-              -D PREROUTING \
-              -i ${cfg.vpn.interfaces.bridge.name} \
-              -s ${cfg.vpn.interfaces.bridge.address}/${builtins.toString cfg.vpn.interfaces.bridge.prefixLength} \
-              -j ACCEPT
-            ${iptables} \
-              -t mangle \
-              -D PREROUTING \
-              -i ${cfg.vpn.interfaces.bridge.name} \
-              -d ${cfg.vpn.interfaces.bridge.address}/${builtins.toString cfg.vpn.interfaces.bridge.prefixLength} \
-              -j ACCEPT
-          '';
+          # extraCommands = ''
+          #   ${iptables} \
+          #     -t mangle \
+          #     -I PREROUTING \
+          #     -i ${cfg.vpn.interfaces.bridge.name} \
+          #     -s ${cfg.vpn.interfaces.bridge.address}/${builtins.toString cfg.vpn.interfaces.bridge.prefixLength} \
+          #     -j ACCEPT
+          #   ${iptables} \
+          #     -t mangle \
+          #     -I PREROUTING \
+          #     -i ${cfg.vpn.interfaces.bridge.name} \
+          #     -d ${cfg.vpn.interfaces.bridge.address}/${builtins.toString cfg.vpn.interfaces.bridge.prefixLength} \
+          #     -j ACCEPT
+          # '';
+          # extraStopCommands = ''
+          #   ${iptables} \
+          #     -t mangle \
+          #     -D PREROUTING \
+          #     -i ${cfg.vpn.interfaces.bridge.name} \
+          #     -s ${cfg.vpn.interfaces.bridge.address}/${builtins.toString cfg.vpn.interfaces.bridge.prefixLength} \
+          #     -j ACCEPT
+          #   ${iptables} \
+          #     -t mangle \
+          #     -D PREROUTING \
+          #     -i ${cfg.vpn.interfaces.bridge.name} \
+          #     -d ${cfg.vpn.interfaces.bridge.address}/${builtins.toString cfg.vpn.interfaces.bridge.prefixLength} \
+          #     -j ACCEPT
+          # '';
         };
       };
       containers = {
@@ -164,13 +163,17 @@ in {
                 ]; # "10.100.1.1/24";
               };
               # internet gateway interface to route wireguard traffic
-              ve-vpn-eth1 = {
-                hostBridge = cfg.vpn.interfaces.gateway.name;
-                localAddress = lib.concatStringsSep "/" [
-                  (offsetIpv4Address cfg.vpn.interfaces.gateway.address 1)
-                  (builtins.toString cfg.vpn.interfaces.gateway.prefixLength)
-                ]; # "10.100.0.1/31";
-              };
+              # ve-vpn-eth1 = {
+              #   # hostBridge = cfg.vpn.interfaces.gateway.name;
+              #   hostAddress = lib.concatStringsSep "/" [
+              #     cfg.vpn.interfaces.gateway.address
+              #     (builtins.toString cfg.vpn.interfaces.gateway.prefixLength)
+              #   ];
+              #   localAddress = lib.concatStringsSep "/" [
+              #     (offsetIpv4Address cfg.vpn.interfaces.gateway.address 1)
+              #     (builtins.toString cfg.vpn.interfaces.gateway.prefixLength)
+              #   ]; # "10.100.0.1/31";
+              # };
             };
             bindMounts = lib.mkMerge [
               # mount the private key file from the host
@@ -212,19 +215,19 @@ in {
                   #   }
                   # ];
                   ve-vpn-eth1.ipv4.routes = [
-                    # prevents traffic to the host from being broadcast traffic
-                    # which is blocked by default on the nix firewall
-                    {
-                      inherit (cfg.vpn.interfaces.gateway) address;
-                      prefixLength = 32;
-                      via = cfg.vpn.interfaces.gateway.address;
-                    }
-                    # routes wireguard peer traffic out the gateway
-                    {
-                      inherit (cfg.vpn.endpoint) address;
-                      prefixLength = 32;
-                      via = cfg.vpn.interfaces.gateway.address;
-                    }
+                    # # prevents traffic to the host from being broadcast traffic
+                    # # which is blocked by default on the nix firewall
+                    # {
+                    #   inherit (cfg.vpn.interfaces.gateway) address;
+                    #   prefixLength = 32;
+                    #   via = cfg.vpn.interfaces.gateway.address;
+                    # }
+                    # # routes wireguard peer traffic out the gateway
+                    # {
+                    #   inherit (cfg.vpn.endpoint) address;
+                    #   prefixLength = 32;
+                    #   via = cfg.vpn.interfaces.gateway.address;
+                    # }
                   ];
                 };
                 # wireguard configuration
