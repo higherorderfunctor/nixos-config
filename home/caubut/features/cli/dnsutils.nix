@@ -1,3 +1,3 @@
 {pkgs, ...}: {
-  home.packages = (with pkgs.bind; [dnsutils host]) ++ (with pkgs; [bridge-utils tcpdump]);
+  home.packages = (with pkgs.bind; [dnsutils host]) ++ (with pkgs; [knot-dns bridge-utils tcpdump]);
 }
