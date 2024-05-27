@@ -100,7 +100,7 @@
     ...
   } @ inputs: let
     inherit (self) outputs;
-    lib = nixpkgs.lib // home-manager.lib;
+    lib = (nixpkgs.lib // home-manager.lib).extend (import ./lib self);
     systems = ["x86_64-linux" "aarch64-linux"];
     forAllSystems = f: lib.genAttrs systems (system: f pkgsFor.${system});
     pkgsFor = lib.genAttrs systems (system:

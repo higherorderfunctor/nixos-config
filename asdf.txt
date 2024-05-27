@@ -1,5 +1,10 @@
 
 
+outputs.nixosConfigurations.beelink-ser7.config.containers.servarr-vpn.config.systemd.services.redis-unbound-cachedb.serviceConfig.
+
+
+builtins.elemAt ((outputs.nixosConfigurations.beelink-ser7.lib.safetyMerge ["containers"] [{ containers = {a="b";}; }]).containers.contents) 1
+
 
 2024-05-26 08:02:33.840296 lo    In  IP (tos 0x0, ttl 64, id 28199, offset 0, flags [none], proto UDP (17), length 77)
     10.100.1.1.51442 > 10.100.1.1.53: [bad udp cksum 0x1714 -> 0xe311!] UDP, length 49
