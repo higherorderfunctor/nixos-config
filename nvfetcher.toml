@@ -46,6 +46,11 @@ fetch.git = "https://github.com/catppuccin/hyprlock.git"
 # src.github = "catppuccin/python"
 # fetch.github = "catppuccin/python"
 
+[dns-root-hints]
+src.webpage = "https://www.internic.net/domain/named.root"
+src.regex = "version of root zone:\\s+([0-9]{8})"
+fetch.url = "https://www.internic.net/domain/named.root"
+
 [fblog]
 src.github = "brocode/fblog"
 fetch.github = "brocode/fblog"

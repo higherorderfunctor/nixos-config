@@ -7,6 +7,7 @@ args: let
     ./btop-overlay.nix
     ./bun-overlay.nix
     ./catppuccin-gtk-overlay.nix
+    ./dns-root-hints-overlay.nix
     ./fblog-overlay.nix
     ./firefox-nightly-overlay.nix
     ./gluetun-overlay.nix

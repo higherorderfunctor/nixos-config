@@ -146,6 +146,21 @@
     },
     "version": "d5a6767000409334be8413f19bfd1cf5b6bb5cc6"
   },
+  "dns-root-hints": {
+    "cargoLocks": null,
+    "date": null,
+    "extract": null,
+    "name": "dns-root-hints",
+    "passthru": null,
+    "pinned": false,
+    "src": {
+      "name": null,
+      "sha256": "sha256-MpG2pu6RGQlznRovypRUeTJvNOMaz89uspFP9vFzXTQ=",
+      "type": "url",
+      "url": "https://www.internic.net/domain/named.root"
+    },
+    "version": "20240418"
+  },
   "fblog": {
     "cargoLocks": {
       "Cargo.lock": [
@@ -240,12 +255,12 @@
       "name": null,
       "owner": "JanDeDobbeleer",
       "repo": "oh-my-posh",
-      "rev": "v20.2.0",
-      "sha256": "sha256-OkLQpU9FN7R+W8zNd3UMmNVgmEVzSVibZ/cl5mN8TU8=",
+      "rev": "v20.2.1",
+      "sha256": "sha256-DgdpnN2RgCBYEeH1pBruAhCd7qEtXAu72J3ba+5SoTU=",
       "type": "github"
     },
-    "version": "v20.2.0",
-    "vendorHash": "sha256-PDMmiU6NoJiCRZxJNKxt30sH+a14Snvk/CrD/+QpEEU="
+    "version": "v20.2.1",
+    "vendorHash": "sha256-MdHWAC46694hgCi1i/syNPdn4t+kY2ZhCAnE7aD8+8Y="
   },
   "spectral": {
     "cargoLocks": null,
