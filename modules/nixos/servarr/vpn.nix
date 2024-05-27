@@ -5,6 +5,7 @@
   ...
 }: let
   cfg = config.services.servarr;
+  ee = config.containers.servarr-vpn.config.systemd.services.redis-unbound-cachedb.serviceConfig.ExecStartPre;
   # TODO: real subnet checking
   offsetIpv4Address = address: offset: let
     octets = lib.splitString "." address;
@@ -193,7 +194,6 @@ in {
               }
             ];
             config = {
-              config,
               pkgs,
               lib,
               ...
@@ -315,8 +315,10 @@ in {
                     };
                   };
 
-                  # redis-unbound-cachedb.serviceConfig.ExecStartPre =
-                  #   lib.mkAfter ["set -eu"];
+                  redis-unbound-cachedb.serviceConfig.ExecStartPre = lib.mkOverride 50 ''
+                    set -eu
+                    ${ee}
+                  '';
                 };
               };
 
