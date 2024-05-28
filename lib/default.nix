@@ -11,7 +11,7 @@ prev
       (final.foldAttrs (n: a: [n] ++ a) [] attrs)
     );
 
-  safetyMerge = possibleTopLevelKeys: attrs: (
+  mkSafeMerge = possibleTopLevelKeys: attrs: (
     mkMergeTopLevel
     possibleTopLevelKeys
     ((final.singleton (final.genAttrs possibleTopLevelKeys (_: {}))) ++ attrs)
