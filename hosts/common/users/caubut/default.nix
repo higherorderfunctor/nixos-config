@@ -33,6 +33,7 @@ in {
         "docker"
         "network"
         "media"
+        "servarr"
         "transmission" # TODO: had issues with just media
       ];
     hashedPasswordFile = config.sops.secrets."${username}-password".path;
