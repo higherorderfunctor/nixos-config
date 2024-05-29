@@ -101,12 +101,12 @@
       "fetchSubmodules": false,
       "leaveDotGit": false,
       "name": null,
-      "rev": "4173b70b910bbb3a42ef0e329b3e98d53cef3350",
-      "sha256": "sha256-zbd9dfZo50Mgd22QXlzqnG4KziB4q7ugvvr7xIHJMQg=",
+      "rev": "54633c0f72be7ea737784ce85fad9ab6079e9377",
+      "sha256": "sha256-MFzWYGDUKobF8hdUvyArWQAr0TkveIE4TmzuasAEmkU=",
       "type": "git",
       "url": "https://github.com/catppuccin/gtk.git"
     },
-    "version": "4173b70b910bbb3a42ef0e329b3e98d53cef3350"
+    "version": "54633c0f72be7ea737784ce85fad9ab6079e9377"
   },
   "catppuccin-hyprland": {
     "cargoLocks": null,
@@ -155,11 +155,11 @@
     "pinned": false,
     "src": {
       "name": null,
-      "sha256": "sha256-MpG2pu6RGQlznRovypRUeTJvNOMaz89uspFP9vFzXTQ=",
+      "sha256": "sha256-Jfu4b5dfgUrVwzUR2svc/AfLINCje0lv7e+nJC7zGIs=",
       "type": "url",
       "url": "https://www.internic.net/domain/named.root"
     },
-    "version": "20240418"
+    "version": "20240528"
   },
   "fblog": {
     "cargoLocks": {

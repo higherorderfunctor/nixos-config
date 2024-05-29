@@ -4,6 +4,7 @@
   pkgs,
   ...
 }: let
+  cfg' = config;
   cfg = config.services.servarr;
   inherit (config.system) stateVersion;
   # TODO: real subnet checking
@@ -221,26 +222,10 @@ in {
 
                 users = {
                   groups = {
-                    # adds a common group for this service between the host and containers
-                    servarr = {
-                      gid = 4000;
-                    };
+                    inherit (cfg'.users.groups) servarr unbound redis-unbound-cachedb;
                   };
                   users = {
-                    # adds a common user for this service to own files between the host and containers
-                    servarr = {
-                      uid = 4000;
-                      group = "servarr";
-                      isSystemUser = true;
-                    };
-                    # allows access to the persistent unbound cache
-                    redis-unbound-cachedb = {
-                      extraGroups = ["servarr"];
-                    };
-                    # allows access to the redis socket
-                    unbound = {
-                      extraGroups = ["servarr"];
-                    };
+                    inherit (cfg'.users.users) servarr unbound redis-unbound-cachedb;
                   };
                 };
 
