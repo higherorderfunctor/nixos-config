@@ -4,37 +4,7 @@
   ...
 }: let
   cfg = config.services.servarr;
-  mkUsers = start: names: let
-    cfg =
-      lib.foldl' (acc: name: {
-        groups =
-          acc.groups
-          // {
-            "${name}" = {
-              gid = acc.next;
-            };
-          };
-        users =
-          acc.users
-          // {
-            "${name}" = {
-              uid = acc.next;
-              group = name;
-              isSystemUser = true;
-              extraGroups =
-                if name != "servarr"
-                then ["servarr"]
-                else [];
-            };
-          };
-        next = acc.next + 1;
-      }) {
-        groups = {};
-        users = {};
-        next = start;
-      }
-      names;
-  in {inherit (cfg) groups users;};
+  users = import ./users.nix { inherit lib; };
 in {
   imports = [
     ./vpn.nix
@@ -45,11 +15,7 @@ in {
   };
 
   config = lib.mkIf cfg.enable {
-    users = mkUsers 4000 [
-      "servarr"
-      "unbound"
-      "redis-unbound-cachedb"
-    ];
+    inherit users;
 
     environment.persistence."/persist" = {
       hideMounts = true;

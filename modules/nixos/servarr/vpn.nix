@@ -4,8 +4,8 @@
   pkgs,
   ...
 }: let
-  cfg' = config;
   cfg = config.services.servarr;
+  users = import ./users.nix { inherit lib; };
   inherit (config.system) stateVersion;
   # TODO: real subnet checking
   offsetIpv4Address = address: offset: let
@@ -222,10 +222,10 @@ in {
 
                 users = {
                   groups = {
-                    inherit (cfg'.users.groups) servarr unbound redis-unbound-cachedb;
+                    inherit (users.groups) servarr unbound redis-unbound-cachedb;
                   };
                   users = {
-                    inherit (cfg'.users.users) servarr unbound redis-unbound-cachedb;
+                    inherit (users.users) servarr unbound redis-unbound-cachedb;
                   };
                 };
 

@@ -16,4 +16,36 @@ prev
     possibleTopLevelKeys
     ((final.singleton (final.genAttrs possibleTopLevelKeys (_: {}))) ++ attrs)
   );
+
+  mkUsers = start: names: let
+    cfg =
+      final.foldl' (acc: name: {
+        groups =
+          acc.groups
+          // {
+            "${name}" = {
+              gid = acc.next;
+            };
+          };
+        users =
+          acc.users
+          // {
+            "${name}" = {
+              uid = acc.next;
+              group = name;
+              isSystemUser = true;
+              extraGroups =
+                if name != "servarr"
+                then ["servarr"]
+                else [];
+            };
+          };
+        next = acc.next + 1;
+      }) {
+        groups = {};
+        users = {};
+        next = start;
+      }
+      names;
+  in {inherit (cfg) groups users;};
 }
