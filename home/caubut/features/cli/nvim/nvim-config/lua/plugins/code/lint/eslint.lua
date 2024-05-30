@@ -3,10 +3,11 @@ return {
   opts = {
     servers = {
       eslint = {
-        cmd = {
-          "bunx",
-          "vscode-eslint-language-server",
-          "--stdio",
+        settings = {
+          useFlatConfig = true, -- set if using flat config
+          experimental = {
+            useFlatConfig = nil, -- option not in the latest eslint-lsp
+          },
         },
       },
     },
@@ -15,7 +16,7 @@ return {
         require("lazyvim.util").lsp.on_attach(function(client)
           if client.name == "eslint" then
             client.server_capabilities.documentFormattingProvider = true
-          elseif client.name == "tsserver" then
+          elseif client.name == "tsserver" or client.name == "vtsls" then
             client.server_capabilities.documentFormattingProvider = false
           end
         end)
