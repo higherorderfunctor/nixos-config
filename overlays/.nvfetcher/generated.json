@@ -255,11 +255,11 @@
       "name": null,
       "owner": "JanDeDobbeleer",
       "repo": "oh-my-posh",
-      "rev": "v21.0.0",
-      "sha256": "sha256-TbG8XkX04UEHwbJd4uSNYHHvfv79xT1xI2t9yTcfu4s=",
+      "rev": "v21.0.1",
+      "sha256": "sha256-fN1vkDk9u4NWVnaNuFVjcKQ7rEMhOMxBlvTxrp8G1d8=",
       "type": "github"
     },
-    "version": "v21.0.0",
+    "version": "v21.0.1",
     "vendorHash": "sha256-MdHWAC46694hgCi1i/syNPdn4t+kY2ZhCAnE7aD8+8Y="
   },
   "spectral": {
