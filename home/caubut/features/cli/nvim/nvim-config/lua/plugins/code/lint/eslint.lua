@@ -16,7 +16,7 @@ return {
         require("lazyvim.util").lsp.on_attach(function(client)
           if client.name == "eslint" then
             client.server_capabilities.documentFormattingProvider = true
-          elseif client.name == "tsserver" or client.name == "vtsls" then
+          elseif client.name == "tsserver" or client.name == "vtsls" or client.name == "volar" then
             client.server_capabilities.documentFormattingProvider = false
           end
         end)
