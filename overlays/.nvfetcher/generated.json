@@ -63,11 +63,11 @@
     "pinned": false,
     "src": {
       "name": "bun-x86_64-linux.zip",
-      "sha256": "sha256-iQM/BtoaDBRlH/jx9qH6WlV2Ox7MbtWMzHc8RxVCHH0=",
+      "sha256": "sha256-+m+tWL+r3ANFuVGwiQDRXDzl1hTARIfVgOgvzZg+DIk=",
       "type": "url",
-      "url": "https://github.com/oven-sh/bun/releases/download/bun-v1.1.10/bun-linux-x64.zip"
+      "url": "https://github.com/oven-sh/bun/releases/download/bun-v1.1.12/bun-linux-x64.zip"
     },
-    "version": "1.1.10"
+    "version": "1.1.12"
   },
   "catppuccin-btop": {
     "cargoLocks": null,
@@ -91,7 +91,7 @@
   },
   "catppuccin-gtk": {
     "cargoLocks": null,
-    "date": "2024-05-27",
+    "date": "2024-06-01",
     "extract": null,
     "name": "catppuccin-gtk",
     "passthru": null,
@@ -101,12 +101,12 @@
       "fetchSubmodules": false,
       "leaveDotGit": false,
       "name": null,
-      "rev": "54633c0f72be7ea737784ce85fad9ab6079e9377",
-      "sha256": "sha256-MFzWYGDUKobF8hdUvyArWQAr0TkveIE4TmzuasAEmkU=",
+      "rev": "3cb2f3ab4a5eefb85f33a03a0d7130aaf04f05c0",
+      "sha256": "sha256-8KyZtZqVVz5UKuGdLrUsR2djD3nsJDliHMtvFtUVim8=",
       "type": "git",
       "url": "https://github.com/catppuccin/gtk.git"
     },
-    "version": "54633c0f72be7ea737784ce85fad9ab6079e9377"
+    "version": "3cb2f3ab4a5eefb85f33a03a0d7130aaf04f05c0"
   },
   "catppuccin-hyprland": {
     "cargoLocks": null,
@@ -255,12 +255,12 @@
       "name": null,
       "owner": "JanDeDobbeleer",
       "repo": "oh-my-posh",
-      "rev": "v21.0.1",
-      "sha256": "sha256-fN1vkDk9u4NWVnaNuFVjcKQ7rEMhOMxBlvTxrp8G1d8=",
+      "rev": "v21.1.0",
+      "sha256": "sha256-EoAtKCds61vjoJ7yYphbOBJdQJg9A/oDjREL7ou2BXU=",
       "type": "github"
     },
-    "version": "v21.0.1",
-    "vendorHash": "sha256-MdHWAC46694hgCi1i/syNPdn4t+kY2ZhCAnE7aD8+8Y="
+    "version": "v21.1.0",
+    "vendorHash": "sha256-dGzyM7+JzRzX8whPYOsBWBJKsHpkuA5aklm8Q65at/A="
   },
   "spectral": {
     "cargoLocks": null,
