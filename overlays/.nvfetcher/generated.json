@@ -91,7 +91,7 @@
   },
   "catppuccin-gtk": {
     "cargoLocks": null,
-    "date": "2024-06-01",
+    "date": "2024-06-02",
     "extract": null,
     "name": "catppuccin-gtk",
     "passthru": null,
@@ -101,12 +101,12 @@
       "fetchSubmodules": false,
       "leaveDotGit": false,
       "name": null,
-      "rev": "3cb2f3ab4a5eefb85f33a03a0d7130aaf04f05c0",
-      "sha256": "sha256-8KyZtZqVVz5UKuGdLrUsR2djD3nsJDliHMtvFtUVim8=",
+      "rev": "23b52b5b9cde1e11c07315e79a55804d2ac77e3a",
+      "sha256": "sha256-4tBGN+Rra6C2pjkoLWmNqaYUwpzALsYrn4tkYGUtQl4=",
       "type": "git",
       "url": "https://github.com/catppuccin/gtk.git"
     },
-    "version": "3cb2f3ab4a5eefb85f33a03a0d7130aaf04f05c0"
+    "version": "23b52b5b9cde1e11c07315e79a55804d2ac77e3a"
   },
   "catppuccin-hyprland": {
     "cargoLocks": null,
@@ -255,12 +255,12 @@
       "name": null,
       "owner": "JanDeDobbeleer",
       "repo": "oh-my-posh",
-      "rev": "v21.1.0",
-      "sha256": "sha256-EoAtKCds61vjoJ7yYphbOBJdQJg9A/oDjREL7ou2BXU=",
+      "rev": "v21.2.0",
+      "sha256": "sha256-5cEmxgq3Jv6bJ6vwqvsL2deXl7nKHwW1BpZ/s7udQL0=",
       "type": "github"
     },
-    "version": "v21.1.0",
-    "vendorHash": "sha256-dGzyM7+JzRzX8whPYOsBWBJKsHpkuA5aklm8Q65at/A="
+    "version": "v21.2.0",
+    "vendorHash": "sha256-C3LqLDUrKU530mqbA5reWiyCwTFThGcbVZyEW0hBN/c="
   },
   "spectral": {
     "cargoLocks": null,
