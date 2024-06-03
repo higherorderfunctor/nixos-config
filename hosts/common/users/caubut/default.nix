@@ -40,6 +40,23 @@ in {
     packages = [pkgs.home-manager];
   };
 
+  security.pam.loginLimits = [
+    {
+      # ulimit -Sn
+      domain = "*";
+      type = "soft";
+      item = "nofile";
+      value = 1048576;
+    }
+    # {
+    #   # ulimit -Hn # currently really high at 500k
+    #   domain = "*";
+    #   type = "hard";
+    #   item = "nofile";
+    #   value = 8192;
+    # }
+  ];
+
   environment.etc = {
     "ssh/authorized_keys.d/${username}" = {
       text = pkgs.lib.mkDefault (

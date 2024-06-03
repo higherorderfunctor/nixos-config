@@ -1,7 +1,7 @@
 return {
   "stevearc/conform.nvim",
   opts = {
-    format = { lsp_fallback = "always", timeout_ms = 10000 },
+    format = { lsp_fallback = "always", timeout_ms = 60000 }, -- 10000 },
     formatters_by_ft = {
       lua = {}, -- override LazyVim, handled by none-ls
       sh = { "beautysh" }, -- override LazyVim, stylua handled by none-ls
