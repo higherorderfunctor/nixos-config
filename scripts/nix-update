@@ -9,6 +9,11 @@ FAKE_HASH="sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA="
 
 FLAKE=1
 
+# get the current flake's store path
+NIX_PATH="nixpkgs=$(nix flake prefetch nixpkgs --json | jq --raw-output '.storePath')"
+export NIX_PATH
+echo "$NIX_PATH"
+
 while [[ $# -gt 0 ]]; do
 	case $1 in
 
@@ -43,11 +48,6 @@ yq e -iP '.oh-my-posh.vendorHash = "'"$oh_my_posh_vendor_hash"'"' overlays/.nvfe
 ##
 # Fixup externally generated hashes
 (
-	# get the current flake's store path
-	NIX_PATH="nixpkgs=$(nix flake prefetch nixpkgs --json | jq --raw-output '.storePath')"
-	export NIX_PATH
-	echo "$NIX_PATH"
-
 	# used to collect command output while still piping it to stdout
 	exec 5>&1
 
