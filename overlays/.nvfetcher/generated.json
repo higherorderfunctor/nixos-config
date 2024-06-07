@@ -13,11 +13,11 @@
       "name": null,
       "owner": "arkenfox",
       "repo": "user.js",
-      "rev": "122.0",
-      "sha256": "sha256-624Giuo1TfeXQGzcGK9ETW86esNFhFZ5a46DCjT6K5I=",
+      "rev": "126.1",
+      "sha256": "sha256-Ex+eSb7tZ428MMJDIF/nqUOtnzjqEIPNaDXJPm9FvuY=",
       "type": "github"
     },
-    "version": "122.0"
+    "version": "126.1"
   },
   "bruno-deb-x86_64-linux": {
     "cargoLocks": null,
@@ -255,11 +255,11 @@
       "name": null,
       "owner": "JanDeDobbeleer",
       "repo": "oh-my-posh",
-      "rev": "v21.2.2",
-      "sha256": "sha256-xluwsL7AVsSZycXF7Lltv0umu2+dFz2A2aUooC+TD4A=",
+      "rev": "v21.3.0",
+      "sha256": "sha256-6HWAlGT1xUNjt0uxh09DdwOZtyOO8ZlVY8/jr7CsJVM=",
       "type": "github"
     },
-    "version": "v21.2.2",
+    "version": "v21.3.0",
     "vendorHash": "sha256-MEQS2wpRbexSJa324lSWEkaqlTF7CfzlrODXoGdfQ6M="
   },
   "spectral": {
@@ -319,7 +319,7 @@
   },
   "vivid-plasma-themes": {
     "cargoLocks": null,
-    "date": "2024-05-31",
+    "date": "2024-06-07",
     "extract": null,
     "name": "vivid-plasma-themes",
     "passthru": null,
@@ -329,11 +329,11 @@
       "fetchSubmodules": false,
       "leaveDotGit": false,
       "name": null,
-      "rev": "9957523e1b6886577a72e71d62103cf9be519333",
-      "sha256": "sha256-W9eYa2je4hHhLvYsnU0yDi9ZqNrWLSKGS/rZj33297U=",
+      "rev": "1b7f1798a9fc0a083a81896dc36496c3c68edf5c",
+      "sha256": "sha256-D0/O+8N9IwEcNHeREFyrv2mXhxQnBbQ4juoeTF4BhG8=",
       "type": "git",
       "url": "https://github.com/L4ki/Vivid-Plasma-Themes.git"
     },
-    "version": "9957523e1b6886577a72e71d62103cf9be519333"
+    "version": "1b7f1798a9fc0a083a81896dc36496c3c68edf5c"
   }
 }
