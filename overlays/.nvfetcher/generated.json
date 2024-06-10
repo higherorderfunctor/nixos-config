@@ -110,7 +110,7 @@
   },
   "catppuccin-hyprland": {
     "cargoLocks": null,
-    "date": "2024-04-03",
+    "date": "2024-06-10",
     "extract": null,
     "name": "catppuccin-hyprland",
     "passthru": null,
@@ -120,12 +120,12 @@
       "fetchSubmodules": false,
       "leaveDotGit": false,
       "name": null,
-      "rev": "b57375545f5da1f7790341905d1049b1873a8bb3",
-      "sha256": "sha256-XTqpmucOeHUgSpXQ0XzbggBFW+ZloRD/3mFhI+Tq4O8=",
+      "rev": "249e262af51022e6c4acaf2da48fc3c7bdac8d76",
+      "sha256": "sha256-MIkjmXXGzSG+RKSCBfSdFrn2XVGPm+OEZzdGzAdoIaM=",
       "type": "git",
       "url": "https://github.com/catppuccin/hyprland.git"
     },
-    "version": "b57375545f5da1f7790341905d1049b1873a8bb3"
+    "version": "249e262af51022e6c4acaf2da48fc3c7bdac8d76"
   },
   "catppuccin-hyprlock": {
     "cargoLocks": null,
@@ -255,11 +255,11 @@
       "name": null,
       "owner": "JanDeDobbeleer",
       "repo": "oh-my-posh",
-      "rev": "v21.3.0",
-      "sha256": "sha256-6HWAlGT1xUNjt0uxh09DdwOZtyOO8ZlVY8/jr7CsJVM=",
+      "rev": "v21.5.0",
+      "sha256": "sha256-b9UZ2kM4xs5XtaKvfY/vEegTcxtNGdaXsfU2eT/H+Ts=",
       "type": "github"
     },
-    "version": "v21.3.0",
+    "version": "v21.5.0",
     "vendorHash": "sha256-MEQS2wpRbexSJa324lSWEkaqlTF7CfzlrODXoGdfQ6M="
   },
   "spectral": {
