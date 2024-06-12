@@ -6,5 +6,5 @@
   # find $pwd -xdev -inum <inode number>
   #
   # pstree -p
-  home.packages = with pkgs; [inotify-tools inotify-info lsof pstree];
+  home.packages = with pkgs; [inotify-tools inotify-info lsof pstree time];
 }

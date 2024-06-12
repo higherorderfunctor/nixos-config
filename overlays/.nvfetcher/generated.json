@@ -28,11 +28,11 @@
     "pinned": false,
     "src": {
       "name": "bruno-x86_64-linux.zip",
-      "sha256": "sha256-FVqhy4kcoTF0utq4TmzEv38DkFLdmqRw346faiHHFZ8=",
+      "sha256": "sha256-WoTcbPVgkML+x/4ILYHDlTQoiz+PhZbvnBSzlKlxvmM=",
       "type": "url",
-      "url": "https://github.com/usebruno/bruno/releases/download/v1.18.1/bruno_1.18.1_amd64_linux.deb"
+      "url": "https://github.com/usebruno/bruno/releases/download/v1.19.0/bruno_1.19.0_amd64_linux.deb"
     },
-    "version": "1.18.1"
+    "version": "1.19.0"
   },
   "btop": {
     "cargoLocks": null,
@@ -63,11 +63,11 @@
     "pinned": false,
     "src": {
       "name": "bun-x86_64-linux.zip",
-      "sha256": "sha256-+m+tWL+r3ANFuVGwiQDRXDzl1hTARIfVgOgvzZg+DIk=",
+      "sha256": "sha256-QC6dsWjRYiuBIojxPvs8NFMSU6ZbXbZ9Q/+u+45NmPc=",
       "type": "url",
-      "url": "https://github.com/oven-sh/bun/releases/download/bun-v1.1.12/bun-linux-x64.zip"
+      "url": "https://github.com/oven-sh/bun/releases/download/bun-v1.1.13/bun-linux-x64.zip"
     },
-    "version": "1.1.12"
+    "version": "1.1.13"
   },
   "catppuccin-btop": {
     "cargoLocks": null,
@@ -255,11 +255,11 @@
       "name": null,
       "owner": "JanDeDobbeleer",
       "repo": "oh-my-posh",
-      "rev": "v21.5.0",
-      "sha256": "sha256-b9UZ2kM4xs5XtaKvfY/vEegTcxtNGdaXsfU2eT/H+Ts=",
+      "rev": "v21.6.0",
+      "sha256": "sha256-2Xua/Ig6CC5ermk04VzbrHdo/m2MflKkdSgSf2XD9oA=",
       "type": "github"
     },
-    "version": "v21.5.0",
+    "version": "v21.6.0",
     "vendorHash": "sha256-MEQS2wpRbexSJa324lSWEkaqlTF7CfzlrODXoGdfQ6M="
   },
   "spectral": {

@@ -70,16 +70,16 @@
   # caubut@beelink-ser7 ~/..../nixos-config  dotfiles  systemctl --user status xdg-desktop-portal-gtk
 
   services = {
-    # xserver = {
-    #   enable = true;
-    #   excludePackages = [pkgs.xterm];
-    # };
+    xserver = {
+      enable = true;
+      excludePackages = [pkgs.xterm];
+    };
     printing.enable = true;
     flatpak.enable = true;
   };
 
   # TODO: clean up
-  # services.xserver.displayManager.startx.enable = true;
+  services.xserver.displayManager.startx.enable = true;
 
   programs.hyprland = {
     enable = true;

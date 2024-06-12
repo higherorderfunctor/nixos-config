@@ -31,19 +31,19 @@
   };
 
   # TODO: X11
-  # services.xsettingsd = {
-  #   enable = true;
-  #   settings = {
-  #     "Net/ThemeName" = "Catppuccin-Macchiato-Compact-Sky-Dark";
-  #     "Net/IconThemeName" = "Vivid-Glassy-Dark-Icons";
-  #   };
-  # };
+  services.xsettingsd = {
+    enable = true;
+    settings = {
+      "Net/ThemeName" = "Catppuccin-Macchiato-Compact-Sky-Dark";
+      "Net/IconThemeName" = "Vivid-Glassy-Dark-Icons";
+    };
+  };
 
   # TODO: DISPLAY=:0 ags -b hypr
   wayland.windowManager.hyprland = {
     enable = true;
     package = pkgs.hyprland;
-    # xwayland.enable = true;
+    xwayland.enable = true;
 
     systemd = {
       enable = true;
@@ -54,7 +54,7 @@
       ];
     };
 
-    plugins = [pkgs.hyprbars];
+    plugins = with pkgs.hyprlandPlugins; [hyprbars hyprexpo];
 
     settings = {
       source = [
@@ -79,22 +79,23 @@
       bind = let
         ags = "exec, ags -b hypr";
       in [
-        "$mod, T,     exec,   WAYLAND_DEBUG=1 WEZTERM_LOG=debug wezterm"
-        "$mod, Y,     exec,   kitty"
-        "$mod, F,     exec,   firefox-nightly"
-        "$mod, D,     exec,   discord"
-        "$mod, L,     exec,   ${lib.getExe config.programs.hyprlock.package}"
+        "$mod,     T,     exec,           WAYLAND_DEBUG=1 WEZTERM_LOG=debug wezterm"
+        "$mod,     Y,     exec,           kitty"
+        "$mod,     F,     exec,           firefox-nightly"
+        "$mod,     D,     exec,           discord"
+        "$mod,     L,     exec,           ${lib.getExe config.programs.hyprlock.package}"
 
-        "CTRL ALT, Delete,    exit"
+        "CTRL ALT, Delete, exit"
 
         # movement keybinds
-        "$mod, right, workspace, +1"
-        "$mod, left, workspace, -1"
+        "$mod,     right,  workspace,     +1"
+        "$mod,     left,   workspace,     -1"
+        "$mod,     C,      hyprexpo:expo, toggle" # can be: toggle, off/disable or on/enable
 
         # ags # TODO: merge if
-        "$mod, R,             ${ags} quit; ags -b hypr" # reload ags
-        "$mod, SPACE,         ${ags} -t applauncher" # app launcher
-        "$mod, P,             ${ags} -f ${config.xdg.configHome}/ags/iconbrowser.js" # icon browser
+        "$mod,     R,      ${ags} quit; ags -b hypr" # reload ags
+        "$mod,     SPACE,  ${ags} -t applauncher" # app launcher
+        "$mod,     P,      ${ags} -f ${config.xdg.configHome}/ags/iconbrowser.js" # icon browser
       ];
 
       monitor = [
@@ -177,6 +178,16 @@
             "$green,12,,${maximizeAction}"
             "$yellow,12,,${minimizeAction}"
           ];
+        };
+        hyprexpo = {
+          columns = 3;
+          gap_size = 5;
+          bg_col = "$crust";
+          workspace_method = "center current"; # [center/first] [workspace] e.g. first 1 or center m+1
+          # enable_gesture = true # laptop touchpad
+          # gesture_fingers = 3  # 3 or 4
+          # gesture_distance = 300 # how far is the "max"
+          # gesture_positive = true # positive = swipe down. Negative = swipe up.
         };
       };
 
