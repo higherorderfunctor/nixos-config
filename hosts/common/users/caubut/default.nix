@@ -40,6 +40,7 @@ in {
     packages = [pkgs.home-manager];
   };
 
+  # ulimit -a
   security.pam.loginLimits = [
     {
       # ulimit -Sn
@@ -53,6 +54,12 @@ in {
       domain = "*";
       type = "hard";
       item = "nofile";
+      value = 1048576;
+    }
+    {
+      domain = "*";
+      type = "-";
+      item = "memlock";
       value = 1048576;
     }
   ];

@@ -53,6 +53,17 @@
       };
     };
   };
+  # systemd.services = {
+  #   user.serviceConfig.LimitNOFILE = "1048576";
+  #   "user@1000".serviceConfig.LimitNOFILE = "1048576";
+  # };
+  systemd.user = {
+    # systemctl show
+    extraConfig = ''
+      DefaultLimitNOFILE=1048576
+      DefaultLimitNOFILESoft=1048576
+    '';
+  };
 
   # timezone
   time.timeZone = "America/Denver";
