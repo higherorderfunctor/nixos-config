@@ -48,13 +48,13 @@ in {
       item = "nofile";
       value = 1048576;
     }
-    # {
-    #   # ulimit -Hn # currently really high at 500k
-    #   domain = "*";
-    #   type = "hard";
-    #   item = "nofile";
-    #   value = 8192;
-    # }
+    {
+      # ulimit -Hn # currently really high at 500k
+      domain = "*";
+      type = "hard";
+      item = "nofile";
+      value = 1048576;
+    }
   ];
 
   environment.etc = {
