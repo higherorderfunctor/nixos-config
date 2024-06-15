@@ -102,3 +102,10 @@ src.git = "https://github.com/L4ki/Vivid-Plasma-Themes.git"
 src.use_commit = true
 src.branch = "main"
 fetch.git = "https://github.com/L4ki/Vivid-Plasma-Themes.git"
+
+[wezterm]
+src.github = "wez/wezterm"
+src.use_commit = true
+src.branch = "main"
+fetch.github = "wez/wezterm"
+cargo_locks = ["Cargo.lock"]

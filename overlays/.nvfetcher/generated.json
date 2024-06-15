@@ -15,6 +15,7 @@
       "repo": "user.js",
       "rev": "126.1",
       "sha256": "sha256-Ex+eSb7tZ428MMJDIF/nqUOtnzjqEIPNaDXJPm9FvuY=",
+      "sparseCheckout": [],
       "type": "github"
     },
     "version": "126.1"
@@ -50,6 +51,7 @@
       "repo": "btop",
       "rev": "v1.3.2",
       "sha256": "sha256-kjSyIgLTObTOKMG5dk49XmWPXZpCWbLdpkmAsJcFliA=",
+      "sparseCheckout": [],
       "type": "github"
     },
     "version": "v1.3.2"
@@ -85,6 +87,7 @@
       "repo": "btop",
       "rev": "1.0.0",
       "sha256": "sha256-J3UezOQMDdxpflGax0rGBF/XMiKqdqZXuX4KMVGTxFk=",
+      "sparseCheckout": [],
       "type": "github"
     },
     "version": "1.0.0"
@@ -103,6 +106,7 @@
       "name": null,
       "rev": "23b52b5b9cde1e11c07315e79a55804d2ac77e3a",
       "sha256": "sha256-4tBGN+Rra6C2pjkoLWmNqaYUwpzALsYrn4tkYGUtQl4=",
+      "sparseCheckout": [],
       "type": "git",
       "url": "https://github.com/catppuccin/gtk.git"
     },
@@ -122,6 +126,7 @@
       "name": null,
       "rev": "249e262af51022e6c4acaf2da48fc3c7bdac8d76",
       "sha256": "sha256-MIkjmXXGzSG+RKSCBfSdFrn2XVGPm+OEZzdGzAdoIaM=",
+      "sparseCheckout": [],
       "type": "git",
       "url": "https://github.com/catppuccin/hyprland.git"
     },
@@ -141,6 +146,7 @@
       "name": null,
       "rev": "d5a6767000409334be8413f19bfd1cf5b6bb5cc6",
       "sha256": "sha256-pjMFPaonq3h3e9fvifCneZ8oxxb1sufFQd7hsFe6/i4=",
+      "sparseCheckout": [],
       "type": "git",
       "url": "https://github.com/catppuccin/hyprlock.git"
     },
@@ -182,6 +188,7 @@
       "repo": "fblog",
       "rev": "v4.10.0",
       "sha256": "sha256-4Yg7gWVBG9GI1ailEbbcslM+XR8L7yjjjvf4dQq/87I=",
+      "sparseCheckout": [],
       "type": "github"
     },
     "version": "v4.10.0"
@@ -222,6 +229,7 @@
       "repo": "gluetun",
       "rev": "v3.38.0",
       "sha256": "sha256-/UmU41MZUIELdReiUXXheGgk52GA5L/HARgIDRpQ3hY=",
+      "sparseCheckout": [],
       "type": "github"
     },
     "version": "v3.38.0"
@@ -255,12 +263,13 @@
       "name": null,
       "owner": "JanDeDobbeleer",
       "repo": "oh-my-posh",
-      "rev": "v21.7.0",
-      "sha256": "sha256-2ylG74RmSg0kQ9ouxDsAF5LGYTmC1b5G2VAdtPqeukc=",
+      "rev": "v21.10.1",
+      "sha256": "sha256-bw2KyN7sYsFlJIThmeHWUkV7SyO8ZmqZH+359FIgFQg=",
+      "sparseCheckout": [],
       "type": "github"
     },
-    "version": "v21.7.0",
-    "vendorHash": "sha256-MEQS2wpRbexSJa324lSWEkaqlTF7CfzlrODXoGdfQ6M="
+    "version": "v21.10.1",
+    "vendorHash": "sha256-N71kM9T8EHh/i8NUSxfPaIRlWk/WADieCkObhVcSyEU="
   },
   "spectral": {
     "cargoLocks": null,
@@ -278,6 +287,7 @@
       "repo": "spectral",
       "rev": "v6.11.1",
       "sha256": "sha256-ivuu7kpVJIn2RiFAe/slMffcisVeq7yeG1TwoXMOMeA=",
+      "sparseCheckout": [],
       "type": "github"
     },
     "version": "v6.11.1"
@@ -313,13 +323,14 @@
       "repo": "tree-sitter-cql",
       "rev": "v0.2.0",
       "sha256": "sha256-1wJeVajNifxEVe00/YbEyWOsw2ffTjhGfGQnd6a/UhE=",
+      "sparseCheckout": [],
       "type": "github"
     },
     "version": "v0.2.0"
   },
   "vivid-plasma-themes": {
     "cargoLocks": null,
-    "date": "2024-06-07",
+    "date": "2024-06-14",
     "extract": null,
     "name": "vivid-plasma-themes",
     "passthru": null,
@@ -329,11 +340,40 @@
       "fetchSubmodules": false,
       "leaveDotGit": false,
       "name": null,
-      "rev": "1b7f1798a9fc0a083a81896dc36496c3c68edf5c",
-      "sha256": "sha256-D0/O+8N9IwEcNHeREFyrv2mXhxQnBbQ4juoeTF4BhG8=",
+      "rev": "40e8caeeb0591146155225a3a4c385d501658248",
+      "sha256": "sha256-u7hbSenSc7DRsWh2v3P3fixavWfjgvkWT9XCmmo++Qs=",
+      "sparseCheckout": [],
       "type": "git",
       "url": "https://github.com/L4ki/Vivid-Plasma-Themes.git"
     },
-    "version": "1b7f1798a9fc0a083a81896dc36496c3c68edf5c"
+    "version": "40e8caeeb0591146155225a3a4c385d501658248"
+  },
+  "wezterm": {
+    "cargoLocks": {
+      "Cargo.lock": [
+        "./wezterm-20240203-110809-5046fc22/Cargo.lock",
+        {
+          "xcb-imdkit-0.3.0": "sha256-fTpJ6uNhjmCWv7dZqVgYuS2Uic36XNYTbqlaly5QBjI="
+        }
+      ]
+    },
+    "date": null,
+    "extract": null,
+    "name": "wezterm",
+    "passthru": null,
+    "pinned": false,
+    "src": {
+      "deepClone": false,
+      "fetchSubmodules": false,
+      "leaveDotGit": false,
+      "name": null,
+      "owner": "wez",
+      "repo": "wezterm",
+      "rev": "20240203-110809-5046fc22",
+      "sha256": "sha256-hhuzs89wWKc7n6HMKriWvV+pLhfLvO06XRWtmdCQ0rs=",
+      "sparseCheckout": [],
+      "type": "github"
+    },
+    "version": "20240203-110809-5046fc22"
   }
 }

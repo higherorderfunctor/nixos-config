@@ -8,7 +8,7 @@
     inputs.nixos-hardware.nixosModules.common-pc-ssd
     inputs.nixos-hardware.nixosModules.common-cpu-amd-pstate
     inputs.nixos-hardware.nixosModules.common-cpu-amd-raphael-igpu
-    inputs.nixos-hardware.nixosModules.common-gpu-amd
+    # inputs.nixos-hardware.nixosModules.common-gpu-amd
     ./disk-config.nix
     #../common/optional/wireless.nix
   ];
@@ -16,13 +16,24 @@
   nixpkgs.hostPlatform = "x86_64-linux";
 
   hardware = {
-    amdgpu.amdvlk = true;
-    opengl = {
+    # new nixosmodule instead of nixos-hardware
+    amdgpu.amdvlk = {
       enable = true;
-      # driSupport = true; # handled by common-gpu-amd
-      # driSupport32Bit = true;
-      # TODO all
+      supportExperimental.enable = true;
+      settings = {
+        AllowVkPipelineCachingToDisk = 1; # ~/.cache/AMD/VkCache
+        ShaderCacheMode = 1;
+        IFH = 0;
+        EnableVmAlwaysValid = 1;
+        IdleAfterSubmitGpuMask = 1;
+      };
     };
+    # opengl = {
+    #   enable = true;
+    #   driSupport = true; # handled by common-gpu-amd
+    #   # driSupport32Bit = true;
+    #   # TODO all
+    # };
   };
 
   boot = {
@@ -40,6 +51,7 @@
         # FIXME: https://discourse.nixos.org/t/how-to-enable-ddc-brightness-control-i2c-permissions/20800/6
         "i2c-dev"
         # "ddcci_backlight"
+        "amdgpu"
       ];
     };
     kernelModules = [

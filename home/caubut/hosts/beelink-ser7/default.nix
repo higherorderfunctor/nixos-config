@@ -8,7 +8,7 @@
     ../../features/desktop
     ../../features/desktop/hyprland
     ../../features/desktop/ags
-    ../../features/desktop/wezterm.nix
+    ../../features/desktop/wezterm
     ../../features/system/openconnect.nix
   ];
 }

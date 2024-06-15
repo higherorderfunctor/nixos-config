@@ -106,8 +106,13 @@
     pkgsFor = lib.genAttrs systems (system:
       import nixpkgs {
         inherit system;
-        config.allowUnfree = true;
         overlays = import ./overlays {inherit inputs lib;};
+        config = {
+          allowUnfree = true;
+          permittedInsecurePackages = [
+            "electron-27.3.11" # standard notes
+          ];
+        };
       });
   in {
     nixosModules = import ./modules/nixos;
