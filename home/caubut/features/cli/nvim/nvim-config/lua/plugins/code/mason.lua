@@ -29,7 +29,7 @@ local exclude_packages = {
 local mason_settings = require("mason.settings")
 mason_settings._set = mason_settings.set
 ---@diagnostic disable-next-line: duplicate-set-field
-require("mason.settings").set = function(opts)
+mason_settings.set = function(opts)
   set_minus(opts.ensure_installed, exclude_packages)
   mason_settings._set(opts)
 end
@@ -37,7 +37,7 @@ end
 local mason_lspconfig_settings = require("mason-lspconfig.settings")
 mason_lspconfig_settings._set = mason_lspconfig_settings.set
 ---@diagnostic disable-next-line: duplicate-set-field
-require("mason-lspconfig.settings").set = function(opts)
+mason_lspconfig_settings.set = function(opts)
   set_minus(opts.ensure_installed, exclude_packages)
   mason_lspconfig_settings._set(opts)
 end
@@ -49,6 +49,8 @@ return {
     opts = function(_, opts)
       opts.ensure_installed = opts.ensure_installed or {}
       set_minus(opts.ensure_installed, exclude_packages)
+      opts.log_level = vim.log.levels.INFO
+      return opts
     end,
   },
   --  :lua print(vim.inspect(require("mason-lspconfig.settings").current))
@@ -57,6 +59,8 @@ return {
     opts = function(_, opts)
       opts.ensure_installed = opts.ensure_installed or {}
       set_minus(opts.ensure_installed, exclude_packages)
+      opts.log_level = vim.log.levels.INFO
+      return opts
     end,
   },
 }

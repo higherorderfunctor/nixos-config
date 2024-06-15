@@ -3,6 +3,6 @@
     enable = true;
     enableBashIntegration = config.programs.bash.enable;
     enableZshIntegration = config.programs.zsh.enable;
-    programs.wezterm.extraConfig.source = ./wezterm-config/wezterm.lua;
+    extraConfig = builtins.readFile ./wezterm-config/wezterm.lua;
   };
 }
