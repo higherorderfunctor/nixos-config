@@ -15,14 +15,15 @@ args: let
     ./hyprland-overlay.nix
     ./neovim-nightly-overlay.nix
     ./nix-gl-host-overlay.nix
-    ./nvfetcher-overlay.nix
     ./nixd-overlay.nix
+    ./nvfetcher-overlay.nix
     ./oh-my-posh-overlay.nix
+    ./rust-overlay.nix
     ./spectral-overlay.nix
     ./standardnotes-overlay.nix
-    ./rust-overlay.nix
     # ./tree-sitter-cql-overlay.nix
     ./vivid-icons-themes-overlay.nix
+    ./wezterm-overlay.nix
   ];
 in
   map import' overlays

@@ -14,8 +14,11 @@
   networking.hostName = "beelink-ser7";
 
   # TODO: linking with btop
-  environment.systemPackages = [
-    pkgs.rocmPackages.rocm-smi
+  environment.systemPackages = with pkgs; [
+    rocmPackages.rocm-smi
+    radeontop
+    mesa-demos
+    vulkan-tools
   ];
 
   # TODO:

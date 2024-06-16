@@ -263,12 +263,12 @@
       "name": null,
       "owner": "JanDeDobbeleer",
       "repo": "oh-my-posh",
-      "rev": "v21.10.1",
-      "sha256": "sha256-bw2KyN7sYsFlJIThmeHWUkV7SyO8ZmqZH+359FIgFQg=",
+      "rev": "v21.10.2",
+      "sha256": "sha256-bQTISqLNLZSVKZ7CYyHgeECvdjV1OP3MSnX0RUHxR4g=",
       "sparseCheckout": [],
       "type": "github"
     },
-    "version": "v21.10.1",
+    "version": "v21.10.2",
     "vendorHash": "sha256-N71kM9T8EHh/i8NUSxfPaIRlWk/WADieCkObhVcSyEU="
   },
   "spectral": {
@@ -351,29 +351,29 @@
   "wezterm": {
     "cargoLocks": {
       "Cargo.lock": [
-        "./wezterm-20240203-110809-5046fc22/Cargo.lock",
+        "./wezterm-404c1937ef1194a528d57f8096d7215a8faabc5e/Cargo.lock",
         {
-          "xcb-imdkit-0.3.0": "sha256-fTpJ6uNhjmCWv7dZqVgYuS2Uic36XNYTbqlaly5QBjI="
+          "sqlite-cache-0.1.3": "sha256-sBAC8MsQZgH+dcWpoxzq9iw5078vwzCijgyQnMOWIkk=",
+          "xcb-imdkit-0.3.0": "sha256-77KaJO+QJWy3tJ9AF1TXKaQHpoVOfGIRqteyqpQaSWo="
         }
       ]
     },
-    "date": null,
+    "date": "2024-06-16",
     "extract": null,
     "name": "wezterm",
     "passthru": null,
     "pinned": false,
     "src": {
       "deepClone": false,
-      "fetchSubmodules": false,
+      "fetchSubmodules": true,
       "leaveDotGit": false,
       "name": null,
-      "owner": "wez",
-      "repo": "wezterm",
-      "rev": "20240203-110809-5046fc22",
-      "sha256": "sha256-hhuzs89wWKc7n6HMKriWvV+pLhfLvO06XRWtmdCQ0rs=",
+      "rev": "404c1937ef1194a528d57f8096d7215a8faabc5e",
+      "sha256": "sha256-TLMt5dNCuTNszz40iwQgQPdEnOm/XldMbZ1tcp88VdQ=",
       "sparseCheckout": [],
-      "type": "github"
+      "type": "git",
+      "url": "https://github.com/wez/wezterm.git"
     },
-    "version": "20240203-110809-5046fc22"
+    "version": "404c1937ef1194a528d57f8096d7215a8faabc5e"
   }
 }

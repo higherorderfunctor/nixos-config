@@ -1,4 +1,7 @@
 {inputs, ...}: (final: prev: {
+  # FIXME: https://github.com/NixOS/nixpkgs/issues/320247
+  ungoogled-chromium = inputs.nixpkgs-f7e10dc9.legacyPackages.${final.system}.ungoogled-chromium;
+
   # FIXME: https://github.com/NixOS/nixpkgs/pull/307505
   # https://github.com/NixOS/nixpkgs/pull/307476
 

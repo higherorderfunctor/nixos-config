@@ -5,6 +5,7 @@ local act = wezterm.action -- for binding keys to actions
 local gpus = wezterm.gui.enumerate_gpus()
 local mux = wezterm.mux -- multiplexer layer: panes, tabs, windows, and workspaces
 
+
 -- Debug
 -- wezterm.log_level = "debug"
 -- After restarting WezTerm:
@@ -19,6 +20,9 @@ if wezterm.config_builder then
 end
 
 config.term = "wezterm"
+
+config.webgpu_preferred_adapter = gpus[1]
+config.front_end = 'WebGpu'
 
 --
 -- Theme
@@ -134,7 +138,7 @@ config.font_rules = {
    intensity = "Bold",
    italic = true,
    font = wezterm.font({
-     family = "MonaspiceXe Nerd Font Mono",
+     family = "MonaspiceRn Nerd Font Mono",
      style = "Italic",
      weight = "Bold",
    }),

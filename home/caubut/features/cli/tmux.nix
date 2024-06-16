@@ -39,7 +39,7 @@ in {
       historyLimit = 50000;
       keyMode = "vi";
       mouse = true;
-      terminal = "screen-256color";
+      terminal = "tmux-256color";
       extraConfig = ''
         set-option -g focus-events on
 

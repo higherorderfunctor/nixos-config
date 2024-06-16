@@ -15,9 +15,8 @@ in
           rustPlatform.buildRustPackage (args
             // {
               inherit (nv) version;
-              pname = nv.name;
-              src = final.fetchFromGitHub {
-                inherit (nv.src) owner repo rev sha256;
+              src = final.fetchgit {
+                inherit (nv.src) url rev fetchSubmodules deepClone leaveDotGit sparseCheckout sha256;
               };
               cargoLock = {
                 lockFile = ./.nvfetcher/${lib.head nv.cargoLocks."Cargo.lock"};
@@ -26,4 +25,4 @@ in
               cargoHash = null;
             });
       });
-  }
+    }
