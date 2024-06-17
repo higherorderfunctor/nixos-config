@@ -79,7 +79,7 @@
       bind = let
         ags = "exec, ags -b hypr";
       in [
-        "$mod,     T,      exec,           WAYLAND_DEBUG=1 WEZTERM_LOG=debug wezterm"
+        "$mod,     T,      exec,           wezterm"
         "$mod,     Y,      exec,           kitty"
         "$mod,     F,      exec,           firefox-nightly"
         "$mod,     D,      exec,           discord"
