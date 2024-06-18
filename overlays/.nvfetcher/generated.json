@@ -134,7 +134,7 @@
   },
   "catppuccin-hyprlock": {
     "cargoLocks": null,
-    "date": "2024-04-01",
+    "date": "2024-06-17",
     "extract": null,
     "name": "catppuccin-hyprlock",
     "passthru": null,
@@ -144,13 +144,13 @@
       "fetchSubmodules": false,
       "leaveDotGit": false,
       "name": null,
-      "rev": "d5a6767000409334be8413f19bfd1cf5b6bb5cc6",
-      "sha256": "sha256-pjMFPaonq3h3e9fvifCneZ8oxxb1sufFQd7hsFe6/i4=",
+      "rev": "480c46f1f3fa9dd175f8f9611c0d4378324378a7",
+      "sha256": "sha256-Fisxyg5Q5C3dlZdIpgVDEpOUJYrqRMT6HJ+46XUVwI0=",
       "sparseCheckout": [],
       "type": "git",
       "url": "https://github.com/catppuccin/hyprlock.git"
     },
-    "version": "d5a6767000409334be8413f19bfd1cf5b6bb5cc6"
+    "version": "480c46f1f3fa9dd175f8f9611c0d4378324378a7"
   },
   "dns-root-hints": {
     "cargoLocks": null,
@@ -204,11 +204,11 @@
       "arch": "amd64",
       "finalImageName": null,
       "finalImageTag": null,
-      "imageDigest": "sha256:f501359827a9c8523d78add8ce68791a31634c146c8eef0fd8700a68b8160cfd",
+      "imageDigest": "sha256:2de7ce51a853ff6904496f1822a3f2e5aa2b9f760a262752bc3daaf23da9631f",
       "imageName": "qmcgaw/gluetun",
       "imageTag": "latest",
       "os": "linux",
-      "sha256": "sha256-zbvOWIpT1W+XiKdG3Ln56dkB7QCXowtt8qsyDHTbrNc=",
+      "sha256": "sha256-9bgz/icdHpxqvWglR6XQnLxChT+gswOBHmjyG76Gjw8=",
       "tlsVerify": null
     },
     "version": "latest"
@@ -263,13 +263,13 @@
       "name": null,
       "owner": "JanDeDobbeleer",
       "repo": "oh-my-posh",
-      "rev": "v21.10.2",
-      "sha256": "sha256-bQTISqLNLZSVKZ7CYyHgeECvdjV1OP3MSnX0RUHxR4g=",
+      "rev": "v21.12.1",
+      "sha256": "sha256-h8UTd00fQbBxw+Z8wzZYMmoEkNwX1QV4POpWrBTTMRg=",
       "sparseCheckout": [],
       "type": "github"
     },
-    "version": "v21.10.2",
-    "vendorHash": "sha256-N71kM9T8EHh/i8NUSxfPaIRlWk/WADieCkObhVcSyEU="
+    "version": "v21.12.1",
+    "vendorHash": "sha256-IDWeJtmaRVSLJJzoE1dTonPEGH5pUDYYaxqfLWapjkM="
   },
   "spectral": {
     "cargoLocks": null,
@@ -351,14 +351,14 @@
   "wezterm": {
     "cargoLocks": {
       "Cargo.lock": [
-        "./wezterm-404c1937ef1194a528d57f8096d7215a8faabc5e/Cargo.lock",
+        "./wezterm-cb1406860a23896ca6935696169644d140e29208/Cargo.lock",
         {
           "sqlite-cache-0.1.3": "sha256-sBAC8MsQZgH+dcWpoxzq9iw5078vwzCijgyQnMOWIkk=",
           "xcb-imdkit-0.3.0": "sha256-77KaJO+QJWy3tJ9AF1TXKaQHpoVOfGIRqteyqpQaSWo="
         }
       ]
     },
-    "date": "2024-06-16",
+    "date": "2024-06-17",
     "extract": null,
     "name": "wezterm",
     "passthru": null,
@@ -368,12 +368,12 @@
       "fetchSubmodules": true,
       "leaveDotGit": false,
       "name": null,
-      "rev": "404c1937ef1194a528d57f8096d7215a8faabc5e",
-      "sha256": "sha256-TLMt5dNCuTNszz40iwQgQPdEnOm/XldMbZ1tcp88VdQ=",
+      "rev": "cb1406860a23896ca6935696169644d140e29208",
+      "sha256": "sha256-5BsbCoK6JYcDKlnzVEvB+ivNt51rYDySUoYb4L9bYFc=",
       "sparseCheckout": [],
       "type": "git",
       "url": "https://github.com/wez/wezterm.git"
     },
-    "version": "404c1937ef1194a528d57f8096d7215a8faabc5e"
+    "version": "cb1406860a23896ca6935696169644d140e29208"
   }
 }

@@ -71,6 +71,9 @@ EOF
 	rm -rf result 2>/dev/null
 )
 
+# cargo locks and stuff
+git add overlays/.nvfetcher
+
 # update flake dependencies
 if [ "$FLAKE" = "1" ]; then
 	nix flake update
