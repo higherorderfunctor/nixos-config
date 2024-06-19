@@ -31,23 +31,25 @@
   };
 
   # TODO: X11
-  # services.xsettingsd = {
-  #   enable = true;
-  #   settings = {
-  #     "Net/ThemeName" = "Catppuccin-Macchiato-Compact-Sky-Dark";
-  #     "Net/IconThemeName" = "Vivid-Glassy-Dark-Icons";
-  #   };
-  # };
+  services.xsettingsd = {
+    enable = true;
+    settings = {
+      "Net/ThemeName" = "Catppuccin-Macchiato-Compact-Sky-Dark";
+      "Net/IconThemeName" = "Vivid-Glassy-Dark-Icons";
+    };
+  };
 
   # TODO: DISPLAY=:0 ags -b hypr
   wayland.windowManager.hyprland = {
     enable = true;
     package = pkgs.hyprland;
-    # xwayland.enable = true;
+    xwayland.enable = true;
 
     systemd = {
       enable = true;
       # Same as default, but stop graphical-session too
+      # TODO:need this? see xsession
+      # https://github.com/nix-community/home-manager/blob/master/modules/xsession.nix
       extraCommands = lib.mkBefore [
         "systemctl --user stop graphical-session.target"
         "systemctl --user start hyprland-session.target"
@@ -331,15 +333,5 @@
       #     ];
       #   };
     };
-    # systemd = {
-    #   enable = true;
-    #   # Same as default, but stop graphical-session too
-    #   # TODO:need this? see xsession
-    #   # https://github.com/nix-community/home-manager/blob/master/modules/xsession.nix
-    #   extraCommands = lib.mkBefore [
-    #     "systemctl --user stop graphical-session.target"
-    #     "systemctl --user start hyprland-session.target"
-    #   ];
-    # };
   };
 }

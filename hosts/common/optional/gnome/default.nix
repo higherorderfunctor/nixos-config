@@ -70,10 +70,10 @@
   # caubut@beelink-ser7 ~/..../nixos-config  dotfiles  systemctl --user status xdg-desktop-portal-gtk
 
   services = {
-    # xserver = {
-    #   enable = true;
-    #   excludePackages = [pkgs.xterm];
-    # };
+    xserver = {
+      enable = true;
+      excludePackages = [pkgs.xterm];
+    };
     printing.enable = true;
     flatpak.enable = true;
   };
@@ -84,7 +84,7 @@
   programs.hyprland = {
     enable = true;
     package = pkgs.hyprland;
-    #   xwayland.enable = true;
+    xwayland.enable = true;
   };
 
   xdg.portal = {
@@ -106,7 +106,7 @@
       hyprlock.enableGnomeKeyring = lib.mkDefault config.services.gnome.gnome-keyring.enable;
       # allow wayland lockers to unlock the screen
       # hyprlock.text = "auth include login";
-      #hyprland.enableGnomeKeyring = true;
+      hyprland.enableGnomeKeyring = true;
     };
   };
 
