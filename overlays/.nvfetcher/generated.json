@@ -92,26 +92,6 @@
     },
     "version": "1.0.0"
   },
-  "catppuccin-gtk": {
-    "cargoLocks": null,
-    "date": "2024-06-02",
-    "extract": null,
-    "name": "catppuccin-gtk",
-    "passthru": null,
-    "pinned": false,
-    "src": {
-      "deepClone": false,
-      "fetchSubmodules": false,
-      "leaveDotGit": false,
-      "name": null,
-      "rev": "23b52b5b9cde1e11c07315e79a55804d2ac77e3a",
-      "sha256": "sha256-4tBGN+Rra6C2pjkoLWmNqaYUwpzALsYrn4tkYGUtQl4=",
-      "sparseCheckout": [],
-      "type": "git",
-      "url": "https://github.com/catppuccin/gtk.git"
-    },
-    "version": "23b52b5b9cde1e11c07315e79a55804d2ac77e3a"
-  },
   "catppuccin-hyprland": {
     "cargoLocks": null,
     "date": "2024-06-19",
@@ -263,12 +243,12 @@
       "name": null,
       "owner": "JanDeDobbeleer",
       "repo": "oh-my-posh",
-      "rev": "v21.15.1",
-      "sha256": "sha256-TPCIPNUWSfyBBdJ0sWI6/B7dEkiMJyoldC3tel7cWw8=",
+      "rev": "v21.16.0",
+      "sha256": "sha256-4MclYm6eNZvvyRX3iTmGyDgOx27gQCHtH05UfR7yBZY=",
       "sparseCheckout": [],
       "type": "github"
     },
-    "version": "v21.15.1",
+    "version": "v21.16.0",
     "vendorHash": "sha256-IY00OvL/9IqoKjFp6HD6P19uYC3/GeNcoVJEiG8ATFs="
   },
   "spectral": {
@@ -301,11 +281,11 @@
     "pinned": false,
     "src": {
       "name": "standardnotes-desktop-x86_64-linux.deb",
-      "sha256": "sha256-iLbyVpHNc3WS7YDsXnbcobP6TSWXVj++HoEjfqPHnC8=",
+      "sha256": "sha256-amgXToZGBnDoP6JMoTJav8ROtCh2u+rH8XeuZh+x1sY=",
       "type": "url",
-      "url": "https://github.com/standardnotes/app/releases/download/@standardnotes/desktop@3.194.9/standard-notes-3.194.9-linux-amd64.deb"
+      "url": "https://github.com/standardnotes/app/releases/download/@standardnotes/desktop@3.194.10/standard-notes-3.194.10-linux-amd64.deb"
     },
-    "version": "3.194.9"
+    "version": "3.194.10"
   },
   "tree-sitter-cql": {
     "cargoLocks": null,
@@ -330,7 +310,7 @@
   },
   "vivid-plasma-themes": {
     "cargoLocks": null,
-    "date": "2024-06-14",
+    "date": "2024-06-21",
     "extract": null,
     "name": "vivid-plasma-themes",
     "passthru": null,
@@ -340,13 +320,13 @@
       "fetchSubmodules": false,
       "leaveDotGit": false,
       "name": null,
-      "rev": "40e8caeeb0591146155225a3a4c385d501658248",
-      "sha256": "sha256-u7hbSenSc7DRsWh2v3P3fixavWfjgvkWT9XCmmo++Qs=",
+      "rev": "73e49549aea2642838cafd23f6d3cc1149d059a0",
+      "sha256": "sha256-YQ4aZ3ju04FRj97LyDu9uE0doQIQ96ZHl3jrHN4C154=",
       "sparseCheckout": [],
       "type": "git",
       "url": "https://github.com/L4ki/Vivid-Plasma-Themes.git"
     },
-    "version": "40e8caeeb0591146155225a3a4c385d501658248"
+    "version": "73e49549aea2642838cafd23f6d3cc1149d059a0"
   },
   "wezterm": {
     "cargoLocks": {

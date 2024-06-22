@@ -26,10 +26,11 @@
     };
     hyprland = {
       # url = "github:hyprwm/Hyprland";
-      url = "git+https://github.com/hyprwm/Hyprland?submodules=1";
-      # url = "git+https://github.com/andresilva/Hyprland?ref=nix-build-improvements&submodules=1";
+      # url = "git+https://github.com/hyprwm/Hyprland?submodules=1";
+      url = "git+https://github.com/hyprwm/Hyprland?submodules=1&rev=6e5804b53de753f24953d9d647940df66bc68f6d";
     };
     hyprland-plugins = {
+      # url = "git+file:///home/caubut/Documents/projects/hyprland-plugins";
       url = "github:hyprwm/hyprland-plugins";
       inputs.hyprland.follows = "hyprland";
     };
