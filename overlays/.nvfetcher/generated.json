@@ -92,6 +92,26 @@
     },
     "version": "1.0.0"
   },
+  "catppuccin-gtk": {
+    "cargoLocks": null,
+    "date": "2024-06-02",
+    "extract": null,
+    "name": "catppuccin-gtk",
+    "passthru": null,
+    "pinned": false,
+    "src": {
+      "deepClone": false,
+      "fetchSubmodules": false,
+      "leaveDotGit": false,
+      "name": null,
+      "rev": "23b52b5b9cde1e11c07315e79a55804d2ac77e3a",
+      "sha256": "sha256-4tBGN+Rra6C2pjkoLWmNqaYUwpzALsYrn4tkYGUtQl4=",
+      "sparseCheckout": [],
+      "type": "git",
+      "url": "https://github.com/catppuccin/gtk.git"
+    },
+    "version": "23b52b5b9cde1e11c07315e79a55804d2ac77e3a"
+  },
   "catppuccin-hyprland": {
     "cargoLocks": null,
     "date": "2024-06-19",
@@ -281,11 +301,11 @@
     "pinned": false,
     "src": {
       "name": "standardnotes-desktop-x86_64-linux.deb",
-      "sha256": "sha256-amgXToZGBnDoP6JMoTJav8ROtCh2u+rH8XeuZh+x1sY=",
+      "sha256": "sha256-0bT/GxU7azuC40wjSx0quZphqlc/nSaCg6pe4leKMw0=",
       "type": "url",
-      "url": "https://github.com/standardnotes/app/releases/download/@standardnotes/desktop@3.194.10/standard-notes-3.194.10-linux-amd64.deb"
+      "url": "https://github.com/standardnotes/app/releases/download/@standardnotes/desktop@3.194.11/standard-notes-3.194.11-linux-amd64.deb"
     },
-    "version": "3.194.10"
+    "version": "3.194.11"
   },
   "tree-sitter-cql": {
     "cargoLocks": null,

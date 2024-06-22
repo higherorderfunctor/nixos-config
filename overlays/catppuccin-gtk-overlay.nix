@@ -27,6 +27,8 @@ in {
               final.git # to apply patches
             ];
 
+          postUnpack = false; # use the submodule instead
+
           installPhase = ''
             set -e
             runHook preInstall
