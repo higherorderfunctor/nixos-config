@@ -24,7 +24,7 @@ require("lazy").setup({
     { import = "lazyvim.plugins.extras.lang.python" },
     { import = "lazyvim.plugins.extras.lang.typescript" },
     { import = "lazyvim.plugins.extras.lang.yaml" },
-    { import = "lazyvim.plugins.extras.lang.vue" },
+    -- { import = "lazyvim.plugins.extras.lang.vue" },
     { import = "lazyvim.plugins.extras.linting.eslint" },
     { import = "lazyvim.plugins.extras.lsp.none-ls" },
     { import = "lazyvim.plugins.extras.ui.edgy" },
@@ -38,7 +38,7 @@ require("lazy").setup({
     lazy = false,
     version = false,
   },
-  install = { colorscheme = { "catppuccin" } },
+  -- install = { colorscheme = { "catppuccin" } },
   checker = { enabled = true },
   performance = {
     rtp = {

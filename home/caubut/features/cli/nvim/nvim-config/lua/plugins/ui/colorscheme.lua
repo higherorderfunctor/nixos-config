@@ -42,12 +42,22 @@ return {
           }
         end,
       },
-      -- integrations = {
-      -- },
+      integrations = {
+        mini = {
+          enabled = true,
+          indentscope_color = "green",
+        },
+      },
     },
     config = function(_, opts)
       require("catppuccin").setup(opts)
       vim.cmd([[colorscheme catppuccin]])
     end,
+  },
+  {
+    "LazyVim/LazyVim",
+    opts = {
+      colorscheme = "catppuccin",
+    },
   },
 }

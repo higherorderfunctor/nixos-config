@@ -1,6 +1,6 @@
 return {
   "akinsho/bufferline.nvim",
-  dependencies = { "catppuccin/nvim" },
+  dependencies = { "catppuccin" },
   opts = function(_, opts)
     local highlights = require("catppuccin.groups.integrations.bufferline").get()(opts.highlights or {})
     opts.options.always_show_bufferline = true

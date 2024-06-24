@@ -12,17 +12,22 @@ return {
           },
         },
       },
-      -- vtsls = {
-      --   settings = {
-      --     typescript = {
-      --       tsserver = {
-      --         experimental = {
-      --           useVsCodeWatcher = true
-      --         }
-      --       }
-      --     }
-      --   }
-      -- },
+      vtsls = {
+        root_dir = function()
+          local lazyvimRoot = require("lazyvim.util.root")
+          return lazyvimRoot.git()
+        end,
+        -- settings = {
+        --   typescript = {
+        --     -- tsserver = {
+        --     --   log = "verbose",
+        --     --   -- experimental = {
+        --     --   --   useVsCodeWatcher = true
+        --     --   -- }
+        --     -- },
+        --   },
+        -- },
+      },
     },
     setup = {
       -- tsserver = function()
