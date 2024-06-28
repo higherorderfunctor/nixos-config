@@ -31,19 +31,28 @@
   };
 
   # TODO: X11
-  services.xsettingsd = {
-    enable = true;
-    settings = {
-      "Net/ThemeName" = "Catppuccin-Macchiato-Compact-Sky-Dark";
-      "Net/IconThemeName" = "Vivid-Glassy-Dark-Icons";
-    };
+  # services.xsettingsd = {
+  #   enable = true;
+  #   settings = {
+  #     "Net/ThemeName" = "Catppuccin-Macchiato-Compact-Sky-Dark";
+  #     "Net/IconThemeName" = "Vivid-Glassy-Dark-Icons";
+  #   };
+  # };
+
+  # cat $XDG_RUNTIME_DIR/hypr/$(ls -t $XDG_RUNTIME_DIR/hypr/ | head -n 1)/hyprland.log
+
+  # persistence
+  home.persistence = {
+    "/persist${config.home.homeDirectory}".directories = [
+      (lib.strings.removePrefix "${config.home.homeDirectory}/" "${config.xdg.cacheHome}/hyprland")
+    ];
   };
 
   # TODO: DISPLAY=:0 ags -b hypr
   wayland.windowManager.hyprland = {
     enable = true;
     package = pkgs.hyprland;
-    xwayland.enable = true;
+    # xwayland.enable = true;
 
     systemd = {
       enable = true;
@@ -65,6 +74,8 @@
 
       debug = {
         disable_logs = false;
+        enable_stdout_logs = true;
+        colored_stdout_logs = true;
       };
 
       # startup applications

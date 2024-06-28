@@ -5,7 +5,7 @@
     ../common/optional/openssh.nix
     ../common/optional/gnome # system support for Hyprland
     ../common/optional/networking/openconnect.nix
-    ../../modules/nixos/hyprgreet
+    # ../../modules/nixos/hyprgreet
     ./services/servarr.nix
     ./virtualisation
   ];
@@ -24,7 +24,7 @@
   # TODO:
   #https://nixos.wiki/wiki/PipeWire
   # rtkit is optional but recommended
-  security.rtkit.enable = true;
+  security.rtkit.enable = true; # FIXME: causes freeze on git push...?
   services.pipewire = {
     enable = true;
     alsa.enable = true;
