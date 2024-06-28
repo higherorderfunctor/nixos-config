@@ -161,11 +161,11 @@
     "pinned": false,
     "src": {
       "name": null,
-      "sha256": "sha256-Jfu4b5dfgUrVwzUR2svc/AfLINCje0lv7e+nJC7zGIs=",
+      "sha256": "sha256-rWqbuFjqMsfM7Y7KTwZhK7y+uCijXj9zvpWCi850aH8=",
       "type": "url",
       "url": "https://www.internic.net/domain/named.root"
     },
-    "version": "20240528"
+    "version": "20240626"
   },
   "fblog": {
     "cargoLocks": {
@@ -263,13 +263,13 @@
       "name": null,
       "owner": "JanDeDobbeleer",
       "repo": "oh-my-posh",
-      "rev": "v21.16.2",
-      "sha256": "sha256-NFR4hSAqrMbDJiPduJ/hW+1516/GBWw+X7fN5Qj0xYY=",
+      "rev": "v21.17.0",
+      "sha256": "sha256-D0MAlIT9eLKjLP5wNDJlKZ8ceGRdmZGytxe5rQzk7KA=",
       "sparseCheckout": [],
       "type": "github"
     },
-    "version": "v21.16.2",
-    "vendorHash": "sha256-RWX4je9P+fBZ4ESV07FnbcMN25inMx/OJGDkp6EL2vg="
+    "version": "v21.17.0",
+    "vendorHash": "sha256-I3Iuq0yiqkCjsHcQCIFr0znuRdiCUs4bzEW8I94BSv4="
   },
   "spectral": {
     "cargoLocks": null,
@@ -330,7 +330,7 @@
   },
   "vivid-plasma-themes": {
     "cargoLocks": null,
-    "date": "2024-06-21",
+    "date": "2024-06-28",
     "extract": null,
     "name": "vivid-plasma-themes",
     "passthru": null,
@@ -340,13 +340,13 @@
       "fetchSubmodules": false,
       "leaveDotGit": false,
       "name": null,
-      "rev": "73e49549aea2642838cafd23f6d3cc1149d059a0",
-      "sha256": "sha256-YQ4aZ3ju04FRj97LyDu9uE0doQIQ96ZHl3jrHN4C154=",
+      "rev": "91e0e79ec6eee997da7d8a89e9d629efca5bd498",
+      "sha256": "sha256-0nLjxJSxAatnQAIOvff7L8FZSH7yzzpqtWA1LhKNRjE=",
       "sparseCheckout": [],
       "type": "git",
       "url": "https://github.com/L4ki/Vivid-Plasma-Themes.git"
     },
-    "version": "73e49549aea2642838cafd23f6d3cc1149d059a0"
+    "version": "91e0e79ec6eee997da7d8a89e9d629efca5bd498"
   },
   "wezterm": {
     "cargoLocks": {
