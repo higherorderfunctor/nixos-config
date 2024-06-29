@@ -204,11 +204,11 @@
       "arch": "amd64",
       "finalImageName": null,
       "finalImageTag": null,
-      "imageDigest": "sha256:2de7ce51a853ff6904496f1822a3f2e5aa2b9f760a262752bc3daaf23da9631f",
+      "imageDigest": "sha256:3ef4b38852f3308fb4b9801975160168456f517853c3f2e9e9483e6aefb62065",
       "imageName": "qmcgaw/gluetun",
       "imageTag": "latest",
       "os": "linux",
-      "sha256": "sha256-9bgz/icdHpxqvWglR6XQnLxChT+gswOBHmjyG76Gjw8=",
+      "sha256": "sha256-vkBiVsNlch60c1ylBSBycxbOZkXTsJUtxJZf8pDbRr0=",
       "tlsVerify": null
     },
     "version": "latest"
@@ -263,12 +263,12 @@
       "name": null,
       "owner": "JanDeDobbeleer",
       "repo": "oh-my-posh",
-      "rev": "v21.17.0",
-      "sha256": "sha256-D0MAlIT9eLKjLP5wNDJlKZ8ceGRdmZGytxe5rQzk7KA=",
+      "rev": "v21.17.1",
+      "sha256": "sha256-LyxskIFrPsDpx4RuEzeJjuYffJpzMFYyH040/JR6Dpw=",
       "sparseCheckout": [],
       "type": "github"
     },
-    "version": "v21.17.0",
+    "version": "v21.17.1",
     "vendorHash": "sha256-I3Iuq0yiqkCjsHcQCIFr0znuRdiCUs4bzEW8I94BSv4="
   },
   "spectral": {
