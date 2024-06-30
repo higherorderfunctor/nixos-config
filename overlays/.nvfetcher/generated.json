@@ -307,26 +307,6 @@
     },
     "version": "3.194.11"
   },
-  "tmux-which-key": {
-    "cargoLocks": null,
-    "date": "2024-05-08",
-    "extract": null,
-    "name": "tmux-which-key",
-    "passthru": null,
-    "pinned": false,
-    "src": {
-      "deepClone": false,
-      "fetchSubmodules": false,
-      "leaveDotGit": false,
-      "name": null,
-      "rev": "b4cd9d28da4d0a418d2af5f426a0d4b4e544ae10",
-      "sha256": "sha256-ADUgh0sSs1N2AsLC7+LzZ8UPGnmMqvythy97lK4fYgw=",
-      "sparseCheckout": [],
-      "type": "git",
-      "url": "https://github.com/alexwforsythe/tmux-which-key"
-    },
-    "version": "b4cd9d28da4d0a418d2af5f426a0d4b4e544ae10"
-  },
   "tree-sitter-cql": {
     "cargoLocks": null,
     "date": null,

@@ -89,12 +89,6 @@ src.to_pattern = "\\1"
 fetch.url = "https://github.com/standardnotes/app/releases/download/@standardnotes/desktop@$ver/standard-notes-$ver-linux-amd64.deb"
 url.name = "standardnotes-desktop-x86_64-linux.deb"
 
-[tmux-which-key]
-src.git = "https://github.com/alexwforsythe/tmux-which-key"
-src.use_commit = true
-src.branch = "main"
-fetch.git = "https://github.com/alexwforsythe/tmux-which-key"
-
 [tree-sitter-cql]
 src.github_tag = "shotover/tree-sitter-cql"
 fetch.github = "shotover/tree-sitter-cql"

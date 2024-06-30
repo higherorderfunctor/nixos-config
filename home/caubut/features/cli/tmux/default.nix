@@ -1,12 +1,14 @@
 {
   config,
-  lib,
   pkgs,
+  inputs,
   ...
 }: {
-  imports = [
-    ../../../../../modules/home-manager/tmux-which-key.nix
-  ];
+  # imports = [
+  #   ../../../../../modules/home-manager/tmux-which-key.nix
+  # ];
+
+  imports = [inputs.tmux-which-key.homeManagerModules.default];
 
   programs = {
     # TODO: https://github.com/junegunn/fzf#respecting-gitignore
@@ -31,7 +33,7 @@
       extraConfig = ''
         set-option -g focus-events on
 
-        bind-key -T copy-mode-vi 'v' send -X       begin-selection
+        bind-key -T copy-mode-vi 'v' send -X           begin-selection
 
         if-shell -b 'echo $XDG_SESSION_TYPE | grep -q x11' "\
             bind-key -T copy-mode-vi MouseDragEnd1Pane send-keys -X copy-pipe-and-cancel 'xclip -i -f -selection primary | xclip -i -selection clipboard'; \

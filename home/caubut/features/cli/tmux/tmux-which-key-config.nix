@@ -1,455 +1,473 @@
 {
   command_alias_start_index = 200;
-  keybindings = {
-    root_table = "C-Space";
-    prefix_table = "Space";
-  };
-  title = {
-    style = "align=centre,bold";
-    prefix = "tmux";
-    prefix_style = "fg=green,align=centre,bold";
-  };
-  position = {
-    x = "R";
-    y = "P";
-  };
   custom_variables = [
     {
       name = "log_info";
       value = "#[fg=green,italics] [info]#[default]#[italics]";
     }
   ];
+  items = [
+    {
+      command = "command-prompt";
+      key = "space";
+      name = "Run";
+    }
+    {
+      command = "last-window";
+      key = "tab";
+      name = "Last window";
+    }
+    {
+      command = "last-pane";
+      key = "`";
+      name = "Last pane";
+    }
+    {
+      key = "c";
+      menu = [
+        {
+          command = "copy-mode";
+          key = "c";
+          name = "Copy";
+        }
+        {
+          command = "list-buffers";
+          key = "#";
+          name = "List buffers";
+        }
+      ];
+      name = "Copy";
+    }
+    {
+      separator = true;
+    }
+    {
+      key = "w";
+      menu = [
+        {
+          command = "last-window";
+          key = "tab";
+          name = "Last";
+        }
+        {
+          command = "choose-tree -Zw";
+          key = "w";
+          name = "Choose";
+        }
+        {
+          command = "previous-window";
+          key = "p";
+          name = "Previous";
+        }
+        {
+          command = "next-window";
+          key = "n";
+          name = "Next";
+        }
+        {
+          command = "neww -c #{pane_current_path}";
+          key = "c";
+          name = "New";
+        }
+        {
+          separator = true;
+        }
+        {
+          key = "l";
+          menu = [
+            {
+              command = "nextl";
+              key = "l";
+              name = "Next";
+              transient = true;
+            }
+            {
+              command = "selectnl tiled";
+              key = "t";
+              name = "Tiled";
+            }
+            {
+              command = "selectl even-horizontal";
+              key = "h";
+              name = "Horizontal";
+            }
+            {
+              command = "selectl even-vertical";
+              key = "v";
+              name = "Vertical";
+            }
+            {
+              command = "selectl main-horizontal";
+              key = "H";
+              name = "Horizontal main";
+            }
+            {
+              command = "selectl main-vertical";
+              key = "V";
+              name = "Vertical main";
+            }
+          ];
+          name = "+Layout";
+        }
+        {
+          command = "splitw -h -c #{pane_current_path}";
+          key = "/";
+          name = "Split horiztonal";
+        }
+        {
+          command = "splitw -v -c #{pane_current_path}";
+          key = "-";
+          name = "Split vertical";
+        }
+        {
+          command = "rotatew";
+          key = "o";
+          name = "Rotate";
+          transient = true;
+        }
+        {
+          command = "rotatew -D";
+          key = "O";
+          name = "Rotate reverse";
+          transient = true;
+        }
+        {
+          separator = true;
+        }
+        {
+          command = "command-prompt -I \"#W\" \"renamew -- \\\"%%\\\"\"";
+          key = "R";
+          name = "Rename";
+        }
+        {
+          command = "confirm -p \"Kill window #W? (y/n)\" killw";
+          key = "X";
+          name = "Kill";
+        }
+      ];
+      name = "+Windows";
+    }
+    {
+      key = "p";
+      menu = [
+        {
+          command = "lastp";
+          key = "tab";
+          name = "Last";
+        }
+        {
+          command = "displayp -d 0";
+          key = "p";
+          name = "Choose";
+        }
+        {
+          separator = true;
+        }
+        {
+          command = "selectp -L";
+          key = "h";
+          name = "Left";
+        }
+        {
+          command = "selectp -D";
+          key = "j";
+          name = "Down";
+        }
+        {
+          command = "selectp -U";
+          key = "k";
+          name = "Up";
+        }
+        {
+          command = "selectp -R";
+          key = "l";
+          name = "Right";
+        }
+        {
+          separator = true;
+        }
+        {
+          command = "resizep -Z";
+          key = "z";
+          name = "Zoom";
+        }
+        {
+          key = "r";
+          menu = [
+            {
+              command = "resizep -L";
+              key = "h";
+              name = "Left";
+              transient = true;
+            }
+            {
+              command = "resizep -D";
+              key = "j";
+              name = "Down";
+              transient = true;
+            }
+            {
+              command = "resizep -U";
+              key = "k";
+              name = "Up";
+              transient = true;
+            }
+            {
+              command = "resizep -R";
+              key = "l";
+              name = "Right";
+              transient = true;
+            }
+            {
+              command = "resizep -L 10";
+              key = "H";
+              name = "Left more";
+              transient = true;
+            }
+            {
+              command = "resizep -D 10";
+              key = "J";
+              name = "Down more";
+              transient = true;
+            }
+            {
+              command = "resizep -U 10";
+              key = "K";
+              name = "Up more";
+              transient = true;
+            }
+            {
+              command = "resizep -R 10";
+              key = "L";
+              name = "Right more";
+              transient = true;
+            }
+          ];
+          name = "+Resize";
+        }
+        {
+          command = "swapp -t \"{left-of}\"";
+          key = "H";
+          name = "Swap left";
+        }
+        {
+          command = "swapp -t \"{down-of}\"";
+          key = "J";
+          name = "Swap down";
+        }
+        {
+          command = "swapp -t \"{up-of}\"";
+          key = "K";
+          name = "Swap up";
+        }
+        {
+          command = "swapp -t \"{right-of}\"";
+          key = "L";
+          name = "Swap right";
+        }
+        {
+          command = "break-pane";
+          key = "!";
+          name = "Break";
+        }
+        {
+          separator = true;
+        }
+        {
+          command = "selectp -m";
+          key = "m";
+          name = "Mark";
+        }
+        {
+          command = "selectp -M";
+          key = "M";
+          name = "Unmark";
+        }
+        {
+          command = "capture-pane";
+          key = "C";
+          name = "Capture";
+        }
+        {
+          key = "R";
+          macro = "restart-pane";
+          name = "Respawn pane";
+        }
+        {
+          command = "confirm -p \"Kill pane #P? (y/n)\" killp";
+          key = "X";
+          name = "Kill";
+        }
+      ];
+      name = "+Panes";
+    }
+    {
+      key = "b";
+      menu = [
+        {
+          command = "choose-buffer -Z";
+          key = "b";
+          name = "Choose";
+        }
+        {
+          command = "lsb";
+          key = "l";
+          name = "List";
+        }
+        {
+          command = "pasteb";
+          key = "p";
+          name = "Paste";
+        }
+      ];
+      name = "+Buffers";
+    }
+    {
+      key = "s";
+      menu = [
+        {
+          command = "choose-tree -Zs";
+          key = "s";
+          name = "Choose";
+        }
+        {
+          command = "new";
+          key = "N";
+          name = "New";
+        }
+        {
+          command = "rename";
+          key = "r";
+          name = "Rename";
+        }
+      ];
+      name = "+Sessions";
+    }
+    {
+      key = "C";
+      menu = [
+        {
+          command = "choose-client -Z";
+          key = "c";
+          name = "Choose";
+        }
+        {
+          command = "switchc -l";
+          key = "l";
+          name = "Last";
+        }
+        {
+          command = "switchc -p";
+          key = "p";
+          name = "Previous";
+        }
+        {
+          command = "switchc -n";
+          key = "n";
+          name = "Next";
+        }
+        {
+          separator = true;
+        }
+        {
+          command = "refresh";
+          key = "R";
+          name = "Refresh";
+        }
+        {
+          key = "P";
+          menu = [
+            {
+              command = "run-shell $TMUX_PLUGIN_MANAGER_PATH/tpm/bindings/install_plugins";
+              key = "i";
+              name = "Install";
+            }
+            {
+              command = "run-shell $TMUX_PLUGIN_MANAGER_PATH/tpm/bindings/update_plugins";
+              key = "u";
+              name = "Update";
+            }
+            {
+              command = "run-shell $TMUX_PLUGIN_MANAGER_PATH/tpm/bindings/clean_plugins";
+              key = "c";
+              name = "Clean";
+            }
+          ];
+          name = "+Plugins";
+        }
+        {
+          command = "detach";
+          key = "D";
+          name = "Detach";
+        }
+        {
+          command = "suspendc";
+          key = "Z";
+          name = "Suspend";
+        }
+        {
+          separator = true;
+        }
+        {
+          key = "r";
+          macro = "reload-config";
+          name = "Reload config";
+        }
+        {
+          command = "customize-mode -Z";
+          key = ",";
+          name = "Customize";
+        }
+      ];
+      name = "+Client";
+    }
+    {
+      separator = true;
+    }
+    {
+      command = "clock-mode";
+      key = "T";
+      name = "Time";
+    }
+    {
+      command = "show-messages";
+      key = "~";
+      name = "Show messages";
+    }
+    {
+      command = "list-keys -N";
+      key = "?";
+      name = "+Keys";
+    }
+  ];
+  keybindings = {
+    root_table = "C-Space";
+    prefix_table = "Space";
+  };
   macros = [
     {
-      name = "reload-config";
       commands = [
         "display \"#{log_info} Loading config... \""
         "source-file $HOME/.tmux.conf"
         "display -p \"\\n\\n... Press ENTER to continue\""
       ];
+      name = "reload-config";
     }
     {
-      name = "restart-pane";
       commands = [
         "display \"#{log_info} Restarting pane\""
         "respawnp -k -c #{pane_current_path}"
       ];
+      name = "restart-pane";
     }
   ];
-  items = [
-    {
-      name = "Run";
-      key = "space";
-      command = "command-prompt";
-    }
-    {
-      name = "Last window";
-      key = "tab";
-      command = "last-window";
-    }
-    {
-      name = "Last pane";
-      key = "`";
-      command = "last-pane";
-    }
-    {
-      name = "Copy";
-      key = "c";
-      menu = [
-        {
-          name = "Copy";
-          key = "c";
-          command = "copy-mode";
-        }
-        {
-          name = "List buffers";
-          key = "#";
-          command = "list-buffers";
-        }
-      ];
-    }
-    {separator = true;}
-    {
-      name = "+Windows";
-      key = "w";
-      menu = [
-        {
-          name = "Last";
-          key = "tab";
-          command = "last-window";
-        }
-        {
-          name = "Choose";
-          key = "w";
-          command = "choose-tree -Zw";
-        }
-        {
-          name = "Previous";
-          key = "p";
-          command = "previous-window";
-        }
-        {
-          name = "Next";
-          key = "n";
-          command = "next-window";
-        }
-        {
-          name = "New";
-          key = "c";
-          command = "neww -c #{pane_current_path}";
-        }
-        {separator = true;}
-        {
-          name = "+Layout";
-          key = "l";
-          menu = [
-            {
-              name = "Next";
-              key = "l";
-              command = "nextl";
-              transient = true;
-            }
-            {
-              name = "Tiled";
-              key = "t";
-              command = "selectnl tiled";
-            }
-            {
-              name = "Horizontal";
-              key = "h";
-              command = "selectl even-horizontal";
-            }
-            {
-              name = "Vertical";
-              key = "v";
-              command = "selectl even-vertical";
-            }
-            {
-              name = "Horizontal main";
-              key = "H";
-              command = "selectl main-horizontal";
-            }
-            {
-              name = "Vertical main";
-              key = "V";
-              command = "selectl main-vertical";
-            }
-          ];
-        }
-        {
-          name = "Split horiztonal";
-          key = "/";
-          command = "splitw -h -c #{pane_current_path}";
-        }
-        {
-          name = "Split vertical";
-          key = "-";
-          command = "splitw -v -c #{pane_current_path}";
-        }
-        {
-          name = "Rotate";
-          key = "o";
-          command = "rotatew";
-          transient = true;
-        }
-        {
-          name = "Rotate reverse";
-          key = "O";
-          command = "rotatew -D";
-          transient = true;
-        }
-        {separator = true;}
-        {
-          name = "Rename";
-          key = "R";
-          command = "command-prompt -I \"#W\" \"renamew -- \\\"%%\\\"\"";
-        }
-        {
-          name = "Kill";
-          key = "X";
-          command = "confirm -p \"Kill window #W? (y/n)\" killw";
-        }
-      ];
-    }
-    {
-      name = "+Panes";
-      key = "p";
-      menu = [
-        {
-          name = "Last";
-          key = "tab";
-          command = "lastp";
-        }
-        {
-          name = "Choose";
-          key = "p";
-          command = "displayp -d 0";
-        }
-        {separator = true;}
-        {
-          name = "Left";
-          key = "h";
-          command = "selectp -L";
-        }
-        {
-          name = "Down";
-          key = "j";
-          command = "selectp -D";
-        }
-        {
-          name = "Up";
-          key = "k";
-          command = "selectp -U";
-        }
-        {
-          name = "Right";
-          key = "l";
-          command = "selectp -R";
-        }
-        {separator = true;}
-        {
-          name = "Zoom";
-          key = "z";
-          command = "resizep -Z";
-        }
-        {
-          name = "+Resize";
-          key = "r";
-          menu = [
-            {
-              name = "Left";
-              key = "h";
-              command = "resizep -L";
-              transient = true;
-            }
-            {
-              name = "Down";
-              key = "j";
-              command = "resizep -D";
-              transient = true;
-            }
-            {
-              name = "Up";
-              key = "k";
-              command = "resizep -U";
-              transient = true;
-            }
-            {
-              name = "Right";
-              key = "l";
-              command = "resizep -R";
-              transient = true;
-            }
-            {
-              name = "Left more";
-              key = "H";
-              command = "resizep -L 10";
-              transient = true;
-            }
-            {
-              name = "Down more";
-              key = "J";
-              command = "resizep -D 10";
-              transient = true;
-            }
-            {
-              name = "Up more";
-              key = "K";
-              command = "resizep -U 10";
-              transient = true;
-            }
-            {
-              name = "Right more";
-              key = "L";
-              command = "resizep -R 10";
-              transient = true;
-            }
-          ];
-        }
-        {
-          name = "Swap left";
-          key = "H";
-          command = "swapp -t \"{left-of}\"";
-        }
-        {
-          name = "Swap down";
-          key = "J";
-          command = "swapp -t \"{down-of}\"";
-        }
-        {
-          name = "Swap up";
-          key = "K";
-          command = "swapp -t \"{up-of}\"";
-        }
-        {
-          name = "Swap right";
-          key = "L";
-          command = "swapp -t \"{right-of}\"";
-        }
-        {
-          name = "Break";
-          key = "!";
-          command = "break-pane";
-        }
-        {separator = true;}
-        {
-          name = "Mark";
-          key = "m";
-          command = "selectp -m";
-        }
-        {
-          name = "Unmark";
-          key = "M";
-          command = "selectp -M";
-        }
-        {
-          name = "Capture";
-          key = "C";
-          command = "capture-pane";
-        }
-        {
-          name = "Respawn pane";
-          key = "R";
-          macro = "restart-pane";
-        }
-        {
-          name = "Kill";
-          key = "X";
-          command = "confirm -p \"Kill pane #P? (y/n)\" killp";
-        }
-      ];
-    }
-    {
-      name = "+Buffers";
-      key = "b";
-      menu = [
-        {
-          name = "Choose";
-          key = "b";
-          command = "choose-buffer -Z";
-        }
-        {
-          name = "List";
-          key = "l";
-          command = "lsb";
-        }
-        {
-          name = "Paste";
-          key = "p";
-          command = "pasteb";
-        }
-      ];
-    }
-    {
-      name = "+Sessions";
-      key = "s";
-      menu = [
-        {
-          name = "Choose";
-          key = "s";
-          command = "choose-tree -Zs";
-        }
-        {
-          name = "New";
-          key = "N";
-          command = "new";
-        }
-        {
-          name = "Rename";
-          key = "r";
-          command = "rename";
-        }
-      ];
-    }
-    {
-      name = "+Client";
-      key = "C";
-      menu = [
-        {
-          name = "Choose";
-          key = "c";
-          command = "choose-client -Z";
-        }
-        {
-          name = "Last";
-          key = "l";
-          command = "switchc -l";
-        }
-        {
-          name = "Previous";
-          key = "p";
-          command = "switchc -p";
-        }
-        {
-          name = "Next";
-          key = "n";
-          command = "switchc -n";
-        }
-        {separator = true;}
-        {
-          name = "Refresh";
-          key = "R";
-          command = "refresh";
-        }
-        {
-          name = "+Plugins";
-          key = "P";
-          menu = [
-            {
-              name = "Install";
-              key = "i";
-              command = "run-shell $TMUX_PLUGIN_MANAGER_PATH/tpm/bindings/install_plugins";
-            }
-            {
-              name = "Update";
-              key = "u";
-              command = "run-shell $TMUX_PLUGIN_MANAGER_PATH/tpm/bindings/update_plugins";
-            }
-            {
-              name = "Clean";
-              key = "c";
-              command = "run-shell $TMUX_PLUGIN_MANAGER_PATH/tpm/bindings/clean_plugins";
-            }
-          ];
-        }
-        {
-          name = "Detach";
-          key = "D";
-          command = "detach";
-        }
-        {
-          name = "Suspend";
-          key = "Z";
-          command = "suspendc";
-        }
-        {separator = true;}
-        {
-          name = "Reload config";
-          key = "r";
-          macro = "reload-config";
-        }
-        {
-          name = "Customize";
-          key = ",";
-          command = "customize-mode -Z";
-        }
-      ];
-    }
-    {separator = true;}
-    {
-      name = "Time";
-      key = "T";
-      command = "clock-mode";
-    }
-    {
-      name = "Show messages";
-      key = "~";
-      command = "show-messages";
-    }
-    {
-      name = "+Keys";
-      key = "?";
-      command = "list-keys -N";
-    }
-  ];
+  position = {
+    x = "R";
+    y = "P";
+  };
+  title = {
+    prefix = "tmux";
+    prefix_style = "fg=green,align=centre,bold";
+    style = "align=centre,bold";
+  };
 }

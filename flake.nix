@@ -92,6 +92,10 @@
       url = "github:mic92/sops-nix";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    tmux-which-key = {
+      url = "github:higherorderfunctor/tmux-which-key?ref=feat/adds-nix-flake";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs = {
@@ -102,7 +106,7 @@
   } @ inputs: let
     inherit (self) outputs;
     lib = (nixpkgs.lib.extend (import ./lib self)) // home-manager.lib;
-    systems = ["x86_64-linux" "aarch64-linux"];
+    systems = ["x86_64-linux" "aarch64-linux" "x86_64-darwin" "aarch64-darwin"];
     forAllSystems = f: lib.genAttrs systems (system: f pkgsFor.${system});
     pkgsFor = lib.genAttrs systems (system:
       import nixpkgs {
