@@ -3,27 +3,11 @@
   lib,
   pkgs,
   ...
-}: let
-  # TODO: fix me
-  tmux-which-key =
-    pkgs.tmuxPlugins.mkTmuxPlugin
-    {
-      pluginName = "tmux-which-key";
-      version = "2024-01-11-1";
-      src = pkgs.fetchFromGitHub {
-        owner = "alexwforsythe";
-        repo = "tmux-which-key";
-        rev = "a6a460e587ef5006e10ac372ad9dbbcd286b11cc";
-        sha256 = "sha256-EvBehGaxMHJq68qdhsfEnTeUTR4G29vyIw0YJmqbwrc=";
-      };
-      rtpFilePath = "plugin.sh.tmux";
-    };
-  # TODO: python build step
-in {
-  xdg.configFile."tmux/plugins/tmux-which-key/config.yaml".text = lib.generators.toYAML {} {
-    command_alias_start_index = 200;
-    # rest of config here
-  };
+}: {
+  imports = [
+    ../../../../../modules/home-manager/tmux-which-key.nix
+  ];
+
   programs = {
     # TODO: https://github.com/junegunn/fzf#respecting-gitignore
     # TODO: https://github.com/rothgar/awesome-tmux
@@ -35,6 +19,10 @@ in {
     tmux = {
       enable = true;
       package = pkgs.tmux;
+      tmux-which-key = {
+        enable = true;
+        settings = import ./tmux-which-key-config.nix;
+      };
       escapeTime = 10;
       historyLimit = 50000;
       keyMode = "vi";
@@ -75,12 +63,6 @@ in {
             set -g @catppuccin_status_right_separator_inverse "yes"
             set -g @catppuccin_status_fill "all"
             set -g @catppuccin_status_connect_separator "no"
-          '';
-        }
-        {
-          plugin = tmux-which-key;
-          extraConfig = ''
-            set -g @tmux-which-key-xdg-enable 1;
           '';
         }
       ];

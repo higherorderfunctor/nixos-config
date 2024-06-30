@@ -89,6 +89,12 @@ src.to_pattern = "\\1"
 fetch.url = "https://github.com/standardnotes/app/releases/download/@standardnotes/desktop@$ver/standard-notes-$ver-linux-amd64.deb"
 url.name = "standardnotes-desktop-x86_64-linux.deb"
 
+[tmux-which-key]
+src.git = "https://github.com/alexwforsythe/tmux-which-key"
+src.use_commit = true
+src.branch = "main"
+fetch.git = "https://github.com/alexwforsythe/tmux-which-key"
+
 [tree-sitter-cql]
 src.github_tag = "shotover/tree-sitter-cql"
 fetch.github = "shotover/tree-sitter-cql"
@@ -104,9 +110,9 @@ src.branch = "main"
 fetch.git = "https://github.com/L4ki/Vivid-Plasma-Themes.git"
 
 [wezterm]
-git.fetchSubmodules = true
 src.git = "https://github.com/wez/wezterm.git"
 src.use_commit = true
+git.fetchSubmodules = true
 src.branch = "main"
 fetch.git = "https://github.com/wez/wezterm.git"
 cargo_locks = ["Cargo.lock"]

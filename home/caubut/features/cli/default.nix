@@ -63,7 +63,7 @@
     ./starship.nix
     ./statix.nix
     ./stylua.nix
-    ./tmux.nix
+    ./tmux
     ./vim.nix
     ./wget.nix
     ./xclip.nix

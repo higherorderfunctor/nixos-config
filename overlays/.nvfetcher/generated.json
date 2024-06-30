@@ -263,13 +263,13 @@
       "name": null,
       "owner": "JanDeDobbeleer",
       "repo": "oh-my-posh",
-      "rev": "v21.17.1",
-      "sha256": "sha256-LyxskIFrPsDpx4RuEzeJjuYffJpzMFYyH040/JR6Dpw=",
+      "rev": "v21.17.2",
+      "sha256": "sha256-9+gzjDxkDMOy7r3M6MVepNJ44HJszyzYs5LrM8x3m6Q=",
       "sparseCheckout": [],
       "type": "github"
     },
-    "version": "v21.17.1",
-    "vendorHash": "sha256-I3Iuq0yiqkCjsHcQCIFr0znuRdiCUs4bzEW8I94BSv4="
+    "version": "v21.17.2",
+    "vendorHash": "sha256-yArae/1TxiQkNCkElFOHdujWzLCfltSV72I8tQKDyw8="
   },
   "spectral": {
     "cargoLocks": null,
@@ -306,6 +306,26 @@
       "url": "https://github.com/standardnotes/app/releases/download/@standardnotes/desktop@3.194.11/standard-notes-3.194.11-linux-amd64.deb"
     },
     "version": "3.194.11"
+  },
+  "tmux-which-key": {
+    "cargoLocks": null,
+    "date": "2024-05-08",
+    "extract": null,
+    "name": "tmux-which-key",
+    "passthru": null,
+    "pinned": false,
+    "src": {
+      "deepClone": false,
+      "fetchSubmodules": false,
+      "leaveDotGit": false,
+      "name": null,
+      "rev": "b4cd9d28da4d0a418d2af5f426a0d4b4e544ae10",
+      "sha256": "sha256-ADUgh0sSs1N2AsLC7+LzZ8UPGnmMqvythy97lK4fYgw=",
+      "sparseCheckout": [],
+      "type": "git",
+      "url": "https://github.com/alexwforsythe/tmux-which-key"
+    },
+    "version": "b4cd9d28da4d0a418d2af5f426a0d4b4e544ae10"
   },
   "tree-sitter-cql": {
     "cargoLocks": null,
