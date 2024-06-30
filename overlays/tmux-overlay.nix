@@ -6,7 +6,7 @@ in {
     prev.tmuxPlugins
     // {
       tmux-which-key = prev.tmuxPlugins.mkTmuxPlugin {
-        pluginName = "tmux-which-key";
+        pluginName = nv.name;
         inherit (nv) version;
         propagatedBuildInputs = [
           python3
@@ -15,8 +15,6 @@ in {
           inherit (nv.src) url rev;
         };
         preInstall = ''
-          set -x
-          ls
           rm -rf plugin/pyyaml
           cp -r ${python3.pkgs.pyyaml.src} plugin/pyyaml
         '';
