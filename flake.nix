@@ -93,7 +93,8 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
     tmux-which-key = {
-      url = "github:higherorderfunctor/tmux-which-key?ref=feat/adds-nix-flake";
+      # url = "github:higherorderfunctor/tmux-which-key?ref=feat/adds-nix-flake";
+      url = "git+file:///home/caubut/Documents/projects/tmux-which-key";
       inputs.nixpkgs.follows = "nixpkgs";
     };
   };
