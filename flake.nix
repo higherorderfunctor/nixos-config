@@ -92,9 +92,10 @@
       url = "github:mic92/sops-nix";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    # nix flake lock --update-input nixpkgs --update-input tmux-which-key
     tmux-which-key = {
-      # url = "github:higherorderfunctor/tmux-which-key?ref=feat/adds-nix-flake";
-      url = "git+file:///home/caubut/Documents/projects/tmux-which-key";
+      url = "github:higherorderfunctor/tmux-which-key?ref=feat/adds-nix-flake";
+      # url = "git+file:///home/caubut/Documents/projects/tmux-which-key";
       inputs.nixpkgs.follows = "nixpkgs";
     };
   };

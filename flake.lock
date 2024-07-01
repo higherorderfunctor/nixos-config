@@ -1078,15 +1078,16 @@
       "locked": {
         "lastModified": 1719802049,
         "narHash": "sha256-3HOn6Q2KV7s4cS3XT4PpwP+ordYxpfzYHmHZ+BGrueU=",
-        "ref": "refs/heads/feat/adds-nix-flake",
+        "owner": "higherorderfunctor",
+        "repo": "tmux-which-key",
         "rev": "71b119ddf46342fd49699722c50fdfe054722ab0",
-        "revCount": 29,
-        "type": "git",
-        "url": "file:///home/caubut/Documents/projects/tmux-which-key"
+        "type": "github"
       },
       "original": {
-        "type": "git",
-        "url": "file:///home/caubut/Documents/projects/tmux-which-key"
+        "owner": "higherorderfunctor",
+        "ref": "feat/adds-nix-flake",
+        "repo": "tmux-which-key",
+        "type": "github"
       }
     },
     "xdph": {
