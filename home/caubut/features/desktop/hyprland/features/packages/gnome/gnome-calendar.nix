@@ -1,4 +1,4 @@
 {pkgs, ...}: {
   # calendar app
-  home.packages = [pkgs.gnome.gnome-calendar];
+  home.packages = [pkgs.gnome-calendar];
 }

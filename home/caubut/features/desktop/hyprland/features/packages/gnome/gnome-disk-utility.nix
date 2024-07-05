@@ -1,3 +1,3 @@
 {pkgs, ...}: {
-  home.packages = [pkgs.gnome.gnome-disk-utility];
+  home.packages = [pkgs.gnome-disk-utility];
 }

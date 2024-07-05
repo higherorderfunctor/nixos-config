@@ -1,3 +1,3 @@
 {pkgs, ...}: {
-  home.packages = [pkgs.gnome.file-roller];
+  home.packages = [pkgs.file-roller];
 }

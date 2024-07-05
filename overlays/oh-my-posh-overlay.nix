@@ -38,9 +38,9 @@ in {
             ldflags = builtins.map replaceVersion orig.ldflags;
 
             postPatch = ''
-              rm engine/image_test.go \
-                engine/migrate_glyphs_test.go \
-                segments/nba_test.go
+              rm image/image_test.go \
+                 config/migrate_glyphs_test.go \
+                 segments/nba_test.go
             '';
 
             meta.changelog = "https://github.com/JanDeDobbeleer/oh-my-posh/releases/tag/v${nv.version}";

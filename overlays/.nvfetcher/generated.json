@@ -29,11 +29,11 @@
     "pinned": false,
     "src": {
       "name": "bruno-x86_64-linux.zip",
-      "sha256": "sha256-WoTcbPVgkML+x/4ILYHDlTQoiz+PhZbvnBSzlKlxvmM=",
+      "sha256": "sha256-jB+qgvpPfp5F0dVQLAxS8czYttmbWBScFv2KWO2K5cA=",
       "type": "url",
-      "url": "https://github.com/usebruno/bruno/releases/download/v1.19.0/bruno_1.19.0_amd64_linux.deb"
+      "url": "https://github.com/usebruno/bruno/releases/download/v1.20.1/bruno_1.20.1_amd64_linux.deb"
     },
-    "version": "1.19.0"
+    "version": "1.20.1"
   },
   "btop": {
     "cargoLocks": null,
@@ -65,11 +65,11 @@
     "pinned": false,
     "src": {
       "name": "bun-x86_64-linux.zip",
-      "sha256": "sha256-pRggu/l0HgCk73kX7W43qKFVE13/7pP4P9bTiqyK2Yk=",
+      "sha256": "sha256-n/HcFSSNtnmzEa4nBuzn8LuJ/IQ3/QUlTt3OO5T/ACQ=",
       "type": "url",
-      "url": "https://github.com/oven-sh/bun/releases/download/bun-v1.1.17/bun-linux-x64.zip"
+      "url": "https://github.com/oven-sh/bun/releases/download/bun-v1.1.18/bun-linux-x64.zip"
     },
-    "version": "1.1.17"
+    "version": "1.1.18"
   },
   "catppuccin-btop": {
     "cargoLocks": null,
@@ -243,11 +243,11 @@
     "pinned": false,
     "src": {
       "name": null,
-      "sha256": "sha256-/tcgZ45yinyjC6jR3tHKr+J9FgKPqwIyuLqOIgCPt4Q=",
+      "sha256": "sha256-rJxyPyJJaa7mJLw0/TTJ4T8qIS11xxyAfeZEu0bhEvY=",
       "type": "url",
-      "url": "https://go.dev/dl/go1.22.4.src.tar.gz"
+      "url": "https://go.dev/dl/go1.22.5.src.tar.gz"
     },
-    "version": "1.22.4"
+    "version": "1.22.5"
   },
   "oh-my-posh": {
     "cargoLocks": null,
@@ -263,13 +263,13 @@
       "name": null,
       "owner": "JanDeDobbeleer",
       "repo": "oh-my-posh",
-      "rev": "v21.17.2",
-      "sha256": "sha256-9+gzjDxkDMOy7r3M6MVepNJ44HJszyzYs5LrM8x3m6Q=",
+      "rev": "v21.20.2",
+      "sha256": "sha256-InRKHZ2AlnVHnq9MGq5N7YJOKeStdZJbC5fgkT1unbY=",
       "sparseCheckout": [],
       "type": "github"
     },
-    "version": "v21.17.2",
-    "vendorHash": "sha256-yArae/1TxiQkNCkElFOHdujWzLCfltSV72I8tQKDyw8="
+    "version": "v21.20.2",
+    "vendorHash": "sha256-I3Iuq0yiqkCjsHcQCIFr0znuRdiCUs4bzEW8I94BSv4="
   },
   "spectral": {
     "cargoLocks": null,
@@ -301,11 +301,11 @@
     "pinned": false,
     "src": {
       "name": "standardnotes-desktop-x86_64-linux.deb",
-      "sha256": "sha256-0bT/GxU7azuC40wjSx0quZphqlc/nSaCg6pe4leKMw0=",
+      "sha256": "sha256-kioAM/vy1W+qy5gJHPtCLTt+tCEQVHG/7vpCvlqdOik=",
       "type": "url",
-      "url": "https://github.com/standardnotes/app/releases/download/@standardnotes/desktop@3.194.11/standard-notes-3.194.11-linux-amd64.deb"
+      "url": "https://github.com/standardnotes/app/releases/download/@standardnotes/desktop@3.194.13/standard-notes-3.194.13-linux-amd64.deb"
     },
-    "version": "3.194.11"
+    "version": "3.194.13"
   },
   "tree-sitter-cql": {
     "cargoLocks": null,
@@ -330,7 +330,7 @@
   },
   "vivid-plasma-themes": {
     "cargoLocks": null,
-    "date": "2024-06-28",
+    "date": "2024-07-05",
     "extract": null,
     "name": "vivid-plasma-themes",
     "passthru": null,
@@ -340,25 +340,25 @@
       "fetchSubmodules": false,
       "leaveDotGit": false,
       "name": null,
-      "rev": "91e0e79ec6eee997da7d8a89e9d629efca5bd498",
-      "sha256": "sha256-0nLjxJSxAatnQAIOvff7L8FZSH7yzzpqtWA1LhKNRjE=",
+      "rev": "797ced51aaae4506504e64a67360fe369a9b14c7",
+      "sha256": "sha256-UgjJ5UYGfEiFfhduDLmHsG99Xbcgye+vvEcCchyaPvo=",
       "sparseCheckout": [],
       "type": "git",
       "url": "https://github.com/L4ki/Vivid-Plasma-Themes.git"
     },
-    "version": "91e0e79ec6eee997da7d8a89e9d629efca5bd498"
+    "version": "797ced51aaae4506504e64a67360fe369a9b14c7"
   },
   "wezterm": {
     "cargoLocks": {
       "Cargo.lock": [
-        "./wezterm-552bb1d66b6d0102961974c0da22dc7c69b0cd30/Cargo.lock",
+        "./wezterm-69686f4564ea460111936dee3179ecf8c80e9930/Cargo.lock",
         {
           "sqlite-cache-0.1.3": "sha256-sBAC8MsQZgH+dcWpoxzq9iw5078vwzCijgyQnMOWIkk=",
           "xcb-imdkit-0.3.0": "sha256-77KaJO+QJWy3tJ9AF1TXKaQHpoVOfGIRqteyqpQaSWo="
         }
       ]
     },
-    "date": "2024-06-24",
+    "date": "2024-07-01",
     "extract": null,
     "name": "wezterm",
     "passthru": null,
@@ -368,12 +368,12 @@
       "fetchSubmodules": true,
       "leaveDotGit": false,
       "name": null,
-      "rev": "552bb1d66b6d0102961974c0da22dc7c69b0cd30",
-      "sha256": "sha256-dr/f/zEqgzJ26s2KkiX6/68IU986jAYpeerRMSqejjM=",
+      "rev": "69686f4564ea460111936dee3179ecf8c80e9930",
+      "sha256": "sha256-9sYfXoAvNHvelI4NEU7L+DV7hfBoOnJnLiRcmxNvjE4=",
       "sparseCheckout": [],
       "type": "git",
       "url": "https://github.com/wez/wezterm.git"
     },
-    "version": "552bb1d66b6d0102961974c0da22dc7c69b0cd30"
+    "version": "69686f4564ea460111936dee3179ecf8c80e9930"
   }
 }

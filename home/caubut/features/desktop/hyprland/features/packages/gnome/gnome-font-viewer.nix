@@ -1,4 +1,4 @@
 {pkgs, ...}: {
   # font viewer # FIXME: floating window
-  home.packages = [pkgs.gnome.gnome-font-viewer];
+  home.packages = [pkgs.gnome-font-viewer];
 }
