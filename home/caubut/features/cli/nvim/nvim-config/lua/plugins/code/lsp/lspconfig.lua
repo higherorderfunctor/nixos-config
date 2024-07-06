@@ -9,11 +9,17 @@ return {
         cmd = { "vscode-json-languageserver", "--stdio" },
         mason = false,
       },
-      lua_ls = { mason = false },
+      lua_ls = {
+        cmd = { "/etc/profiles/per-user/caubut/bin/lua-language-server", "--stdio" },
+        mason = false,
+      },
       marksman = { mason = false },
       nil_ls = { mason = false },
       nixd = { mason = false },
-      yamlls = { mason = false },
+      yamlls = {
+        cmd = { "/etc/profiles/per-user/caubut/bin/yaml-language-server", "--stdio" },
+        mason = false,
+      },
       -- tsserver = {
       --   cmd = {
       --     "bunx",

@@ -41,7 +41,10 @@ return {
         none_ls.builtins.formatting.markdownlint, -- markdown
         none_ls.builtins.formatting.shellharden, -- sh
         none_ls.builtins.formatting.shfmt, -- sh
-        none_ls.builtins.formatting.stylua, -- lua
+        -- none_ls.builtins.formatting.stylua, -- lua
+        none_ls.builtins.formatting.stylua.with({
+          command = "/etc/profiles/per-user/caubut/bin/stylua",
+        }),
         none_ls.builtins.formatting.prettierd.with({
           filetypes = {
             -- "javascript",
