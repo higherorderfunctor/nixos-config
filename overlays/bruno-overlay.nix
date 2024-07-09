@@ -73,6 +73,10 @@ in {
       asarBundle="$TMPDIR/app"
       asar e "$out/share/Bruno/resources/app.asar" "$asarBundle"
       mv "$asarBundle/web/static/diff2Html.min.css" "$asarBundle/web/static/diff2html.min.css"
+      # content policy fix
+      sed -i \
+        's|<head>|<head><meta http-equiv="Content-Security-Policy" content="font-src 'self' data:;">|' \
+        "$asarBundle/web/index.html"
       asar p "$asarBundle" "$out/share/Bruno/resources/app.asar"
       rm -rf "$asarBundle"
 

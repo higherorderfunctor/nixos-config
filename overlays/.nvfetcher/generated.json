@@ -29,11 +29,11 @@
     "pinned": false,
     "src": {
       "name": "bruno-x86_64-linux.zip",
-      "sha256": "sha256-jB+qgvpPfp5F0dVQLAxS8czYttmbWBScFv2KWO2K5cA=",
+      "sha256": "sha256-L2QNWdH/1XSP5g2picM3OFlqlFOaIGssZKOQCXED1hs=",
       "type": "url",
-      "url": "https://github.com/usebruno/bruno/releases/download/v1.20.1/bruno_1.20.1_amd64_linux.deb"
+      "url": "https://github.com/usebruno/bruno/releases/download/v1.20.2/bruno_1.20.2_amd64_linux.deb"
     },
-    "version": "1.20.1"
+    "version": "1.20.2"
   },
   "btop": {
     "cargoLocks": null,
@@ -263,13 +263,13 @@
       "name": null,
       "owner": "JanDeDobbeleer",
       "repo": "oh-my-posh",
-      "rev": "v21.20.2",
-      "sha256": "sha256-InRKHZ2AlnVHnq9MGq5N7YJOKeStdZJbC5fgkT1unbY=",
+      "rev": "v21.21.1",
+      "sha256": "sha256-ZE7H0/HvYdub7Ur/R7ddB1pvNWGMei6sZdLp+p0aKuE=",
       "sparseCheckout": [],
       "type": "github"
     },
-    "version": "v21.20.2",
-    "vendorHash": "sha256-I3Iuq0yiqkCjsHcQCIFr0znuRdiCUs4bzEW8I94BSv4="
+    "version": "v21.21.1",
+    "vendorHash": "sha256-KIRqolUxYV0iDBu+SMUndpv2GxDSjSArSPQeSBX+3Ac="
   },
   "spectral": {
     "cargoLocks": null,
