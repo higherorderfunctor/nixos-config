@@ -27,6 +27,13 @@ return {
         },
         opts = { skip = true },
       },
+      {
+        filter = {
+          event = "notify",
+          find = "Debug Failure. False expression.",
+        },
+        opts = { skip = true },
+      },
     },
   },
 }
