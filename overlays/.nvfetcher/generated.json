@@ -65,11 +65,11 @@
     "pinned": false,
     "src": {
       "name": "bun-x86_64-linux.zip",
-      "sha256": "sha256-n/HcFSSNtnmzEa4nBuzn8LuJ/IQ3/QUlTt3OO5T/ACQ=",
+      "sha256": "sha256-bLcK0DSaLOzJSrIRPNHQeld5qud8ccqxzyDIgawMB3U=",
       "type": "url",
-      "url": "https://github.com/oven-sh/bun/releases/download/bun-v1.1.18/bun-linux-x64.zip"
+      "url": "https://github.com/oven-sh/bun/releases/download/bun-v1.1.20/bun-linux-x64.zip"
     },
-    "version": "1.1.18"
+    "version": "1.1.20"
   },
   "catppuccin-btop": {
     "cargoLocks": null,
@@ -204,11 +204,11 @@
       "arch": "amd64",
       "finalImageName": null,
       "finalImageTag": null,
-      "imageDigest": "sha256:58e8264a44f698287178891dc3c389af8b797a09fc88014e5e448e21c19cc4ac",
+      "imageDigest": "sha256:c62be536a5ccbe3576862beb00ec8f9f37032ff1cbd9ddbaa972dc052fe522aa",
       "imageName": "qmcgaw/gluetun",
       "imageTag": "latest",
       "os": "linux",
-      "sha256": "sha256-HfgJKiiPDrvDEaikiGslmuz58VXgPVr45XvDtsT+aTs=",
+      "sha256": "sha256-609+xHAiNfDR0EXaDCMh0rlaOaKO2s5CPYWTBuO/Qt8=",
       "tlsVerify": null
     },
     "version": "latest"
@@ -330,7 +330,7 @@
   },
   "vivid-plasma-themes": {
     "cargoLocks": null,
-    "date": "2024-07-05",
+    "date": "2024-07-13",
     "extract": null,
     "name": "vivid-plasma-themes",
     "passthru": null,
@@ -340,25 +340,25 @@
       "fetchSubmodules": false,
       "leaveDotGit": false,
       "name": null,
-      "rev": "797ced51aaae4506504e64a67360fe369a9b14c7",
-      "sha256": "sha256-UgjJ5UYGfEiFfhduDLmHsG99Xbcgye+vvEcCchyaPvo=",
+      "rev": "938a87d649fdc6b6797aa03a76865498ba002533",
+      "sha256": "sha256-Jlr631ZeQ9fbLMMWUbHBFl8fCSJTS5s1pEMHoNUzWhc=",
       "sparseCheckout": [],
       "type": "git",
       "url": "https://github.com/L4ki/Vivid-Plasma-Themes.git"
     },
-    "version": "797ced51aaae4506504e64a67360fe369a9b14c7"
+    "version": "938a87d649fdc6b6797aa03a76865498ba002533"
   },
   "wezterm": {
     "cargoLocks": {
       "Cargo.lock": [
-        "./wezterm-69686f4564ea460111936dee3179ecf8c80e9930/Cargo.lock",
+        "./wezterm-749ddc9ffebc1372177fddf1463e944d2ac610a9/Cargo.lock",
         {
           "sqlite-cache-0.1.3": "sha256-sBAC8MsQZgH+dcWpoxzq9iw5078vwzCijgyQnMOWIkk=",
           "xcb-imdkit-0.3.0": "sha256-77KaJO+QJWy3tJ9AF1TXKaQHpoVOfGIRqteyqpQaSWo="
         }
       ]
     },
-    "date": "2024-07-01",
+    "date": "2024-07-13",
     "extract": null,
     "name": "wezterm",
     "passthru": null,
@@ -368,12 +368,12 @@
       "fetchSubmodules": true,
       "leaveDotGit": false,
       "name": null,
-      "rev": "69686f4564ea460111936dee3179ecf8c80e9930",
-      "sha256": "sha256-9sYfXoAvNHvelI4NEU7L+DV7hfBoOnJnLiRcmxNvjE4=",
+      "rev": "749ddc9ffebc1372177fddf1463e944d2ac610a9",
+      "sha256": "sha256-2wpbxAlnl2bQkYvF56MNP027G0jc2WuyyMYHSx9l/mc=",
       "sparseCheckout": [],
       "type": "git",
       "url": "https://github.com/wez/wezterm.git"
     },
-    "version": "69686f4564ea460111936dee3179ecf8c80e9930"
+    "version": "749ddc9ffebc1372177fddf1463e944d2ac610a9"
   }
 }
