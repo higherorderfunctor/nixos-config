@@ -19,7 +19,7 @@
     ./standardnotes.nix
     ./sxiv.nix
     # ./transmission.nix only cli and doing over docker
-    ./virtualbox.nix
+    # ./virtualbox.nix
     ./vlc.nix
     ./webex.nix
     ./zoom.nix

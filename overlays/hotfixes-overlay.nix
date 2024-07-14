@@ -1,6 +1,16 @@
 {inputs, ...}: (final: prev: {
-  # FIXME: https://github.com/NixOS/nixpkgs/issues/320247
-  # ungoogled-chromium = inputs.nixpkgs-f7e10dc9.legacyPackages.${final.system}.ungoogled-chromium;
+  # FIXME: https://hydra.nixos.org/build/265233452
+  inherit
+    (inputs.nixpkgs-91594d11.legacyPackages.${final.system})
+    ungoogled-chromium
+    webkitgtk_6_0
+    webkitgtk_4_1
+    evolution-data-server
+    evolution
+    networkmanager-openconnect
+    gnome-calendar
+    gnome-calculator
+    ;
 
   # FIXME: https://github.com/NixOS/nixpkgs/pull/307505
   # https://github.com/NixOS/nixpkgs/pull/307476

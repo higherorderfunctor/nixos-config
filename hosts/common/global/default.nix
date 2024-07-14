@@ -52,6 +52,7 @@
         "fs.inotify.max_user_watches" = "1048576";
       };
     };
+    kernelPackages = pkgs.linuxPackagesFor pkgs.linux_latest;
   };
   # systemd.services = {
   #   user.serviceConfig.LimitNOFILE = "1048576";
