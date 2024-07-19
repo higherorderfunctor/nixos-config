@@ -4,19 +4,14 @@
   inherit
     (inputs.nixpkgs-91594d11.legacyPackages.${final.system})
     ungoogled-chromium
-    webkitgtk_6_0
-    webkitgtk_4_1
-    #   evolution-data-server
-    
-    #   evolution
-    
-    #   networkmanager-openconnect
-    
-    #   gnome-calendar
-    
-    #   gnome-calculator
-    
     ;
+  # webkitgtk_6_0
+  # webkitgtk_4_1
+  # evolution-data-server
+  # evolution
+  # networkmanager-openconnect
+  # gnome-calendar
+  # gnome-calculator
 
   # FIXME: https://github.com/NixOS/nixpkgs/pull/307505
   # https://github.com/NixOS/nixpkgs/pull/307476
