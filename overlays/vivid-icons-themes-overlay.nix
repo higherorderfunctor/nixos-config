@@ -23,14 +23,15 @@ in
       installPhase = ''
         runHook preInstall
 
+        set -x
         mkdir -p $out/share/icons
         ls -la
         mv 'Vivid Icons Themes/Vivid-Dark-Icons/' $out/share/icons/Vivid-Dark-Icons
         mv 'Vivid Icons Themes/Vivid-Glassy-Dark-Icons/' $out/share/icons/Vivid-Glassy-Dark-Icons
 
-        for theme in $out/share/icons/*; do
-          gtk-update-icon-cache --force $theme
-        done
+        # for theme in $out/share/icons/*; do
+        #   gtk-update-icon-cache --force $theme
+        # done
 
         runHook postInstall
       '';

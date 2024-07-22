@@ -4,9 +4,9 @@
   inherit
     (inputs.nixpkgs-91594d11.legacyPackages.${final.system})
     ungoogled-chromium
+    webkitgtk_6_0
+    webkitgtk_4_1
     ;
-  # webkitgtk_6_0
-  # webkitgtk_4_1
   # evolution-data-server
   # evolution
   # networkmanager-openconnect

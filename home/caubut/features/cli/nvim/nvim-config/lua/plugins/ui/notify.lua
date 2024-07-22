@@ -34,6 +34,13 @@ return {
         },
         opts = { skip = true },
       },
+      {
+        filter = {
+          event = "notify",
+          find = "Cannot find package.",
+        },
+        opts = { skip = true },
+      },
     },
   },
 }

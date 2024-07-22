@@ -40,7 +40,8 @@ in {
             postPatch = ''
               rm image/image_test.go \
                  config/migrate_glyphs_test.go \
-                 segments/nba_test.go
+                 segments/nba_test.go \
+                 upgrade/notice_test.go
             '';
 
             meta.changelog = "https://github.com/JanDeDobbeleer/oh-my-posh/releases/tag/v${nv.version}";
