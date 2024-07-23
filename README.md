@@ -326,4 +326,7 @@ dbus-send --print-reply --dest=org.freedesktop.DBus  /org/freedesktop/DBus org.f
 cat $XDG_RUNTIME_DIR/hypr/$(ls -t $XDG_RUNTIME_DIR/hypr/ | head -n 1)/hyprland.log
 cat $XDG_RUNTIME_DIR/hypr/$(ls -t $XDG_RUNTIME_DIR/hypr/ | head -n 2 | tail -n 1)/hyprland.log
 journalctl -b -p3
+
+# reset cache causing rebuilds?
+rm $HOME/.cache/nix/binary-cache-v*.sqlite*
 ```
