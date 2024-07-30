@@ -70,7 +70,7 @@ in {
 
   home = {
     # TODO: temp?
-    packages = with pkgs; [cinnamon.nemo dive];
+    packages = with pkgs; [nemo dive];
     # pin state version
     inherit (import ../../../hosts/common/global/state-version.nix) stateVersion;
     inherit username;

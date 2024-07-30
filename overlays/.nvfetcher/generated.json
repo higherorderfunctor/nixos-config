@@ -29,11 +29,11 @@
     "pinned": false,
     "src": {
       "name": "bruno-x86_64-linux.zip",
-      "sha256": "sha256-HFxbtotRKLF7rO0E9GBzsqJr+ljTP2KI3PXNclY34eU=",
+      "sha256": "sha256-MCN5gk0glVBLPSvu20gZsZ5Vqhjx2dzNkW5Y3s1vUOs=",
       "type": "url",
-      "url": "https://github.com/usebruno/bruno/releases/download/v1.21.0/bruno_1.21.0_amd64_linux.deb"
+      "url": "https://github.com/usebruno/bruno/releases/download/v1.22.0/bruno_1.22.0_amd64_linux.deb"
     },
-    "version": "1.21.0"
+    "version": "1.22.0"
   },
   "btop": {
     "cargoLocks": null,
@@ -65,11 +65,11 @@
     "pinned": false,
     "src": {
       "name": "bun-x86_64-linux.zip",
-      "sha256": "sha256-bLcK0DSaLOzJSrIRPNHQeld5qud8ccqxzyDIgawMB3U=",
+      "sha256": "sha256-KPq1T0jxN6ghFIoKRe3rQqUtI6qMuRdMzIFVSj+JMco=",
       "type": "url",
-      "url": "https://github.com/oven-sh/bun/releases/download/bun-v1.1.20/bun-linux-x64.zip"
+      "url": "https://github.com/oven-sh/bun/releases/download/bun-v1.1.21/bun-linux-x64.zip"
     },
-    "version": "1.1.20"
+    "version": "1.1.21"
   },
   "catppuccin-btop": {
     "cargoLocks": null,
@@ -161,11 +161,11 @@
     "pinned": false,
     "src": {
       "name": null,
-      "sha256": "sha256-rWqbuFjqMsfM7Y7KTwZhK7y+uCijXj9zvpWCi850aH8=",
+      "sha256": "sha256-sVLZj+xhCIlSITKL7Hxv8+3rlRO6r+6JIHp+Cg57I+E=",
       "type": "url",
       "url": "https://www.internic.net/domain/named.root"
     },
-    "version": "20240626"
+    "version": "20240729"
   },
   "fblog": {
     "cargoLocks": {
@@ -204,11 +204,11 @@
       "arch": "amd64",
       "finalImageName": null,
       "finalImageTag": null,
-      "imageDigest": "sha256:c62be536a5ccbe3576862beb00ec8f9f37032ff1cbd9ddbaa972dc052fe522aa",
+      "imageDigest": "sha256:504d6c9d68c04cea7cba45ab73898c1f16a3936877cfbc6c5131d52f9ce251c8",
       "imageName": "qmcgaw/gluetun",
       "imageTag": "latest",
       "os": "linux",
-      "sha256": "sha256-609+xHAiNfDR0EXaDCMh0rlaOaKO2s5CPYWTBuO/Qt8=",
+      "sha256": "sha256-reiF0JqAZLiCUNi0MPrv/CLuKzmJgucFBHesWFXHjbI=",
       "tlsVerify": null
     },
     "version": "latest"
@@ -263,12 +263,12 @@
       "name": null,
       "owner": "JanDeDobbeleer",
       "repo": "oh-my-posh",
-      "rev": "v22.0.2",
-      "sha256": "sha256-fP3GxdvbD0fVpM6fgyd40/c+YpjD9qKuQThPpt/n3WA=",
+      "rev": "v23.3.1",
+      "sha256": "sha256-3BLsBI2eb8BaC3KbtL/2nwi62tPegDfDPzi5VXUBT4I=",
       "sparseCheckout": [],
       "type": "github"
     },
-    "version": "v22.0.2",
+    "version": "v23.3.1",
     "vendorHash": "sha256-ra0jec3ta8LcBpc6vXz8SEzweOLCTA+BPIFQEhUUHjI="
   },
   "spectral": {
@@ -330,7 +330,7 @@
   },
   "vivid-plasma-themes": {
     "cargoLocks": null,
-    "date": "2024-07-20",
+    "date": "2024-07-27",
     "extract": null,
     "name": "vivid-plasma-themes",
     "passthru": null,
@@ -340,13 +340,13 @@
       "fetchSubmodules": false,
       "leaveDotGit": false,
       "name": null,
-      "rev": "605d2b15eb499f44cc9d394750c79bec68a9564e",
-      "sha256": "sha256-BPY9KhJ+l9YBkSnWB2ETwG7mSYRC3t/XJE6rLP8CqtE=",
+      "rev": "e96683ba8896d1cc2f46ce9aeb1407a4d5847f42",
+      "sha256": "sha256-KVZoK/9p2n+4YsDp/6ZDRNZn6Kmh+Q0KXfGGqL+0V6w=",
       "sparseCheckout": [],
       "type": "git",
       "url": "https://github.com/L4ki/Vivid-Plasma-Themes.git"
     },
-    "version": "605d2b15eb499f44cc9d394750c79bec68a9564e"
+    "version": "e96683ba8896d1cc2f46ce9aeb1407a4d5847f42"
   },
   "wezterm": {
     "cargoLocks": {

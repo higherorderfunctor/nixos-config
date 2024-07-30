@@ -59,6 +59,7 @@
       url = "github:hyprwm/hyprpicker";
       inputs = {
         nixpkgs.follows = "hyprland/nixpkgs";
+        hyprutils.follows = "hyprland/hyprutils";
       };
     };
     impermanence = {

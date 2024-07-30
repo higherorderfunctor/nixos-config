@@ -1,12 +1,12 @@
 {inputs, ...}: (final: prev: {
   # FIXME: https://hydra.nixos.org/build/265233452
   # nix run nixpkgs#hydra-check webkitgtk_6_0
-  inherit
-    (inputs.nixpkgs-91594d11.legacyPackages.${final.system})
-    ungoogled-chromium
-    webkitgtk_6_0
-    webkitgtk_4_1
-    ;
+  # inherit
+  #   (inputs.nixpkgs-91594d11.legacyPackages.${final.system})
+  #   ungoogled-chromium
+  #   webkitgtk_6_0
+  #   webkitgtk_4_1
+  #   ;
   # evolution-data-server
   # evolution
   # networkmanager-openconnect
