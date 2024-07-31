@@ -17,15 +17,18 @@
 
   hardware = {
     # new nixosmodule instead of nixos-hardware
-    amdgpu.amdvlk = {
-      enable = true;
-      supportExperimental.enable = true;
-      settings = {
-        AllowVkPipelineCachingToDisk = 1; # ~/.cache/AMD/VkCache
-        ShaderCacheMode = 1;
-        IFH = 0;
-        EnableVmAlwaysValid = 1;
-        IdleAfterSubmitGpuMask = 1;
+    amdgpu = {
+      initrd.enable = true;
+      amdvlk = {
+        enable = true;
+        supportExperimental.enable = true;
+        settings = {
+          AllowVkPipelineCachingToDisk = 1; # ~/.cache/AMD/VkCache
+          ShaderCacheMode = 1;
+          IFH = 0;
+          EnableVmAlwaysValid = 1;
+          IdleAfterSubmitGpuMask = 1;
+        };
       };
     };
     # opengl = {
@@ -51,7 +54,6 @@
         # FIXME: https://discourse.nixos.org/t/how-to-enable-ddc-brightness-control-i2c-permissions/20800/6
         "i2c-dev"
         # "ddcci_backlight"
-        "amdgpu"
       ];
     };
     kernelModules = [

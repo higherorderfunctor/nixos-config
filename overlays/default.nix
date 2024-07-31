@@ -1,6 +1,7 @@
 args: let
   import' = path: import path (args // {});
   overlays = [
+    # ./amdvlk-overlay.nix
     ./arkenfox-overlay.nix
     ./astal-overlay.nix
     ./bruno-overlay.nix

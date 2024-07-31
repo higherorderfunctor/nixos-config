@@ -1,4 +1,24 @@
 {
+  "amdvlk": {
+    "cargoLocks": null,
+    "date": "2024-06-26",
+    "extract": null,
+    "name": "amdvlk",
+    "passthru": null,
+    "pinned": false,
+    "src": {
+      "deepClone": false,
+      "fetchSubmodules": false,
+      "leaveDotGit": false,
+      "name": null,
+      "rev": "10c37d49e955c4b8a1fa026a674542045e2d68c9",
+      "sha256": "sha256-Ikr9+9xQTRpA4onvMhNUKoSEfeQJwiEbmtlmWckt1ck=",
+      "sparseCheckout": [],
+      "type": "git",
+      "url": "https://github.com/GPUOpen-Drivers/AMDVLK.git"
+    },
+    "version": "10c37d49e955c4b8a1fa026a674542045e2d68c9"
+  },
   "arkenfox": {
     "cargoLocks": null,
     "date": null,
@@ -29,11 +49,11 @@
     "pinned": false,
     "src": {
       "name": "bruno-x86_64-linux.zip",
-      "sha256": "sha256-MCN5gk0glVBLPSvu20gZsZ5Vqhjx2dzNkW5Y3s1vUOs=",
+      "sha256": "sha256-a6i9ymA5Rnc8rSOXxPlbbwad58oZpeYmJmOJ2W6tZo8=",
       "type": "url",
-      "url": "https://github.com/usebruno/bruno/releases/download/v1.22.0/bruno_1.22.0_amd64_linux.deb"
+      "url": "https://github.com/usebruno/bruno/releases/download/v1.23.0/bruno_1.23.0_amd64_linux.deb"
     },
-    "version": "1.22.0"
+    "version": "1.23.0"
   },
   "btop": {
     "cargoLocks": null,
@@ -204,11 +224,11 @@
       "arch": "amd64",
       "finalImageName": null,
       "finalImageTag": null,
-      "imageDigest": "sha256:504d6c9d68c04cea7cba45ab73898c1f16a3936877cfbc6c5131d52f9ce251c8",
+      "imageDigest": "sha256:b79bd7f1fe72abeefbab94292ffc2a243648e922bf56b550f8c15c4a5e941989",
       "imageName": "qmcgaw/gluetun",
       "imageTag": "latest",
       "os": "linux",
-      "sha256": "sha256-reiF0JqAZLiCUNi0MPrv/CLuKzmJgucFBHesWFXHjbI=",
+      "sha256": "sha256-7Tpt/PnZH1za9KEwsCoV7ShST3m2n2/a+Y1QmQmf7yA=",
       "tlsVerify": null
     },
     "version": "latest"
@@ -263,12 +283,12 @@
       "name": null,
       "owner": "JanDeDobbeleer",
       "repo": "oh-my-posh",
-      "rev": "v23.3.1",
-      "sha256": "sha256-3BLsBI2eb8BaC3KbtL/2nwi62tPegDfDPzi5VXUBT4I=",
+      "rev": "v23.3.3",
+      "sha256": "sha256-jJ5LIpS/WtVK3dF96DJSTlDdPH9JtWK6U4DLWuNfxd4=",
       "sparseCheckout": [],
       "type": "github"
     },
-    "version": "v23.3.1",
+    "version": "v23.3.3",
     "vendorHash": "sha256-ra0jec3ta8LcBpc6vXz8SEzweOLCTA+BPIFQEhUUHjI="
   },
   "spectral": {
@@ -351,14 +371,14 @@
   "wezterm": {
     "cargoLocks": {
       "Cargo.lock": [
-        "./wezterm-7e8fdc118d2d7ceb51c720a966090f6cb65089b7/Cargo.lock",
+        "./wezterm-56a27e93a9ee50aab50ff4d78308f9b3154b5122/Cargo.lock",
         {
           "sqlite-cache-0.1.3": "sha256-sBAC8MsQZgH+dcWpoxzq9iw5078vwzCijgyQnMOWIkk=",
           "xcb-imdkit-0.3.0": "sha256-77KaJO+QJWy3tJ9AF1TXKaQHpoVOfGIRqteyqpQaSWo="
         }
       ]
     },
-    "date": "2024-07-22",
+    "date": "2024-07-30",
     "extract": null,
     "name": "wezterm",
     "passthru": null,
@@ -368,12 +388,12 @@
       "fetchSubmodules": true,
       "leaveDotGit": false,
       "name": null,
-      "rev": "7e8fdc118d2d7ceb51c720a966090f6cb65089b7",
-      "sha256": "sha256-8j7044lN0w/uVQOvqq/GlDGATmI3zAk/GTndJEyb3Ws=",
+      "rev": "56a27e93a9ee50aab50ff4d78308f9b3154b5122",
+      "sha256": "sha256-zl0Me24ncrpXUCvkQHlbgUucf0zrkhFFI242wsSQKLw=",
       "sparseCheckout": [],
       "type": "git",
       "url": "https://github.com/wez/wezterm.git"
     },
-    "version": "7e8fdc118d2d7ceb51c720a966090f6cb65089b7"
+    "version": "56a27e93a9ee50aab50ff4d78308f9b3154b5122"
   }
 }

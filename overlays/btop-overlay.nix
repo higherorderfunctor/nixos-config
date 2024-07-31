@@ -8,7 +8,6 @@ _: final: prev: let
     dontConfigure = true;
     dontBuild = true;
     installPhase = ''
-      ls
       mv themes "$out"
     '';
   };

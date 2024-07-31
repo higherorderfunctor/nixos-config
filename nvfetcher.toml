@@ -1,3 +1,9 @@
+[amdvlk]
+src.git = "https://github.com/GPUOpen-Drivers/AMDVLK.git"
+src.use_commit = true
+src.branch = "master"
+fetch.git = "https://github.com/GPUOpen-Drivers/AMDVLK.git"
+
 [arkenfox]
 src.github = "arkenfox/user.js"
 fetch.github = "arkenfox/user.js"

@@ -7,15 +7,8 @@ in {
         (prev.catppuccin-gtk.override args).overrideAttrs (attrs: {
           inherit (nv) version;
 
-          # src = final.fetchFromGitHub {
-          #   inherit (nv.src) rev sha256;
-          #   owner = "catppuccin";
-          #   repo = "gtk";
-          # };
-
           src = builtins.fetchGit {
             inherit (nv.src) url rev;
-            #hash = nv.src.sha256;
             submodules = true;
           };
 
