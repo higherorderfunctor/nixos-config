@@ -4,6 +4,7 @@ _: (final: prev: let
 in {
   bun = prev.bun.overrideAttrs {
     inherit version;
+    postPhases = []; # FIXME: causing segfaults on completions
     src = final.fetchurl {
       inherit (nv.src) url sha256;
     };
