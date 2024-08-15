@@ -1,7 +1,7 @@
 {
   "amdvlk": {
     "cargoLocks": null,
-    "date": "2024-06-26",
+    "date": "2024-08-13",
     "extract": null,
     "name": "amdvlk",
     "passthru": null,
@@ -11,13 +11,13 @@
       "fetchSubmodules": false,
       "leaveDotGit": false,
       "name": null,
-      "rev": "10c37d49e955c4b8a1fa026a674542045e2d68c9",
-      "sha256": "sha256-Ikr9+9xQTRpA4onvMhNUKoSEfeQJwiEbmtlmWckt1ck=",
+      "rev": "b6b48ef02da28ab03226232d9bc61db2b241abeb",
+      "sha256": "sha256-u0l3tXD8d6rqwy8VWqgwF8UWtGR6MJCSjejzazsQDN4=",
       "sparseCheckout": [],
       "type": "git",
       "url": "https://github.com/GPUOpen-Drivers/AMDVLK.git"
     },
-    "version": "10c37d49e955c4b8a1fa026a674542045e2d68c9"
+    "version": "b6b48ef02da28ab03226232d9bc61db2b241abeb"
   },
   "arkenfox": {
     "cargoLocks": null,
@@ -263,11 +263,11 @@
     "pinned": false,
     "src": {
       "name": null,
-      "sha256": "sha256-nkjZnVGYgleZF9gYnBfpjDc84lq667mHcuKScIiZKlE=",
+      "sha256": "sha256-Qreo6A2AXaoDAi7T/eQyHUw78smQoUQWXQHu7Nb2mcY=",
       "type": "url",
-      "url": "https://go.dev/dl/go1.22.6.src.tar.gz"
+      "url": "https://go.dev/dl/go1.23.0.src.tar.gz"
     },
-    "version": "1.22.6"
+    "version": "1.23.0"
   },
   "oh-my-posh": {
     "cargoLocks": null,
@@ -283,13 +283,13 @@
       "name": null,
       "owner": "JanDeDobbeleer",
       "repo": "oh-my-posh",
-      "rev": "v23.6.2",
-      "sha256": "sha256-WSS/askD3cwFhhlexO2XnsEU2M8Yoy9kpN9r3uxWhc0=",
+      "rev": "v23.6.3",
+      "sha256": "sha256-P9CoGepK0D6Qr34GMaxww04qqF8sM1fiLsXnWXDXjLw=",
       "sparseCheckout": [],
       "type": "github"
     },
-    "version": "v23.6.2",
-    "vendorHash": "sha256-/7VpSF55pB6UBS2smHw2l/lsod4LodVDWc9RGw4cWPE="
+    "version": "v23.6.3",
+    "vendorHash": "sha256-reJ5p/QAG6Uju5g8MoTvrU4Mdg/sHH0pGzFHyygtTPw="
   },
   "spectral": {
     "cargoLocks": null,
@@ -371,14 +371,14 @@
   "wezterm": {
     "cargoLocks": {
       "Cargo.lock": [
-        "./wezterm-56a27e93a9ee50aab50ff4d78308f9b3154b5122/Cargo.lock",
+        "./wezterm-30345b36d8a00fed347e4df5dadd83915a7693fb/Cargo.lock",
         {
           "sqlite-cache-0.1.3": "sha256-sBAC8MsQZgH+dcWpoxzq9iw5078vwzCijgyQnMOWIkk=",
           "xcb-imdkit-0.3.0": "sha256-77KaJO+QJWy3tJ9AF1TXKaQHpoVOfGIRqteyqpQaSWo="
         }
       ]
     },
-    "date": "2024-07-30",
+    "date": "2024-08-12",
     "extract": null,
     "name": "wezterm",
     "passthru": null,
@@ -388,12 +388,12 @@
       "fetchSubmodules": true,
       "leaveDotGit": false,
       "name": null,
-      "rev": "56a27e93a9ee50aab50ff4d78308f9b3154b5122",
-      "sha256": "sha256-zl0Me24ncrpXUCvkQHlbgUucf0zrkhFFI242wsSQKLw=",
+      "rev": "30345b36d8a00fed347e4df5dadd83915a7693fb",
+      "sha256": "sha256-By7g1yImmuVba/MTcB6ajNSHeWDRn4gO+p0UOWcCEgE=",
       "sparseCheckout": [],
       "type": "git",
       "url": "https://github.com/wez/wezterm.git"
     },
-    "version": "56a27e93a9ee50aab50ff4d78308f9b3154b5122"
+    "version": "30345b36d8a00fed347e4df5dadd83915a7693fb"
   }
 }
