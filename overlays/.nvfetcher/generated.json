@@ -49,11 +49,11 @@
     "pinned": false,
     "src": {
       "name": "bruno-x86_64-linux.zip",
-      "sha256": "sha256-3d7EaBkIORG7s6YFZwMZbxH3VXdJttJRg0kPFLP2C6w=",
+      "sha256": "sha256-Mr7pym/XQXSTFE6JuLxN/jiIVp7jfqTkvSaQC9ETsiM=",
       "type": "url",
-      "url": "https://github.com/usebruno/bruno/releases/download/v1.24.0/bruno_1.24.0_amd64_linux.deb"
+      "url": "https://github.com/usebruno/bruno/releases/download/v1.25.0/bruno_1.25.0_amd64_linux.deb"
     },
-    "version": "1.24.0"
+    "version": "1.25.0"
   },
   "btop": {
     "cargoLocks": null,
@@ -85,11 +85,11 @@
     "pinned": false,
     "src": {
       "name": "bun-x86_64-linux.zip",
-      "sha256": "sha256-sKhv4Bz4r17sShUaaV1X6uxQWMoyxKWEO8R4RBrqiUg=",
+      "sha256": "sha256-9HiIBnjPKC/dpGzJ1Y4goN3h+tjJz+4Sjq1DmWRT4cg=",
       "type": "url",
-      "url": "https://github.com/oven-sh/bun/releases/download/bun-v1.1.22/bun-linux-x64.zip"
+      "url": "https://github.com/oven-sh/bun/releases/download/bun-v1.1.24/bun-linux-x64.zip"
     },
-    "version": "1.1.22"
+    "version": "1.1.24"
   },
   "catppuccin-btop": {
     "cargoLocks": null,
@@ -181,11 +181,11 @@
     "pinned": false,
     "src": {
       "name": null,
-      "sha256": "sha256-sVLZj+xhCIlSITKL7Hxv8+3rlRO6r+6JIHp+Cg57I+E=",
+      "sha256": "sha256-ybmUSpcX1rXxUZ9O94ajvJda8XpNDB0maI0qzKKZd9I=",
       "type": "url",
       "url": "https://www.internic.net/domain/named.root"
     },
-    "version": "20240729"
+    "version": "20240814"
   },
   "fblog": {
     "cargoLocks": {
