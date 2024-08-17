@@ -224,11 +224,11 @@
       "arch": "amd64",
       "finalImageName": null,
       "finalImageTag": null,
-      "imageDigest": "sha256:7bcbd85223cbde536289fbbe2cd93f88a35abd9173e2c6f35bf4e82791279505",
+      "imageDigest": "sha256:76eae37c8eca4aa4c0fe725c05c5262f7fbdee9597e47965564229946a32c072",
       "imageName": "qmcgaw/gluetun",
       "imageTag": "latest",
       "os": "linux",
-      "sha256": "sha256-rgdiPKX+TJeWRiaQJG6wSqpN+w1J4O42hbrei+2aOTM=",
+      "sha256": "sha256-46jP/0woQ8E2czuyV2zhBopR6uJ1EO+7OBt6g4dsF7U=",
       "tlsVerify": null
     },
     "version": "latest"
