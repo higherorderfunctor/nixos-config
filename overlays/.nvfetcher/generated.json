@@ -224,11 +224,11 @@
       "arch": "amd64",
       "finalImageName": null,
       "finalImageTag": null,
-      "imageDigest": "sha256:76eae37c8eca4aa4c0fe725c05c5262f7fbdee9597e47965564229946a32c072",
+      "imageDigest": "sha256:77f80b43662f24af47d4ad2b4a36a9202c3481ecc1afe0095072fdb621e94290",
       "imageName": "qmcgaw/gluetun",
       "imageTag": "latest",
       "os": "linux",
-      "sha256": "sha256-46jP/0woQ8E2czuyV2zhBopR6uJ1EO+7OBt6g4dsF7U=",
+      "sha256": "sha256-Eek0lwQlNai69wxGbT+NpAPqOOEXD+tWOrFiWcbcpM8=",
       "tlsVerify": null
     },
     "version": "latest"
@@ -350,7 +350,7 @@
   },
   "vivid-plasma-themes": {
     "cargoLocks": null,
-    "date": "2024-08-10",
+    "date": "2024-08-17",
     "extract": null,
     "name": "vivid-plasma-themes",
     "passthru": null,
@@ -360,13 +360,13 @@
       "fetchSubmodules": false,
       "leaveDotGit": false,
       "name": null,
-      "rev": "f0526dc1ee4e4ed37eb08e41e513341dfbc769e6",
-      "sha256": "sha256-44kCyTfDMzn8s9Pqre8iRkLt5Oqb1P6rehbdRk/8/sQ=",
+      "rev": "9f372cc409ab1296661632f6a88a6b4cedccc63a",
+      "sha256": "sha256-FYqFT4vNVoe3A1umE89AgRsjeTUhzXf5Vin/mwKr1v8=",
       "sparseCheckout": [],
       "type": "git",
       "url": "https://github.com/L4ki/Vivid-Plasma-Themes.git"
     },
-    "version": "f0526dc1ee4e4ed37eb08e41e513341dfbc769e6"
+    "version": "9f372cc409ab1296661632f6a88a6b4cedccc63a"
   },
   "wezterm": {
     "cargoLocks": {
