@@ -1,4 +1,5 @@
 _: final: prev: let
+  inherit (final) lib;
   rustPlatform = final.makeRustPlatform {
     cargo = final.rust-bin.stable.latest.default;
     rustc = final.rust-bin.stable.latest.default;
@@ -16,6 +17,15 @@ in {
         // {
           inherit (nv) pname version src date;
           cargoLock = nv.cargoLock."Cargo.lock";
+          # {
+          #   inherit (nv.cargoLock."Cargo.lock") lockFile outputHashes;
+          #   allowBuiltinFetchGit = true;
+          # };
+          postPatch =
+            builtins.concatStringsSep
+            "\n"
+            (["cp ${nv.cargoLock."Cargo.lock".lockFile} Cargo.lock"]
+              ++ (builtins.tail (lib.splitString "\n" args.postPatch)));
           cargoHash = null;
         }));
     });
