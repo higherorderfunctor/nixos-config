@@ -124,6 +124,7 @@
           allowUnfree = true;
           permittedInsecurePackages = [
             "electron-27.3.11" # standard notes
+            "olm-3.2.16" # ???
           ];
         };
       });
