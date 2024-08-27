@@ -17,22 +17,22 @@
   };
   arkenfox = {
     pname = "arkenfox";
-    version = "126.1";
+    version = "128.0";
     src = fetchFromGitHub {
       owner = "arkenfox";
       repo = "user.js";
-      rev = "126.1";
+      rev = "128.0";
       fetchSubmodules = false;
-      sha256 = "sha256-Ex+eSb7tZ428MMJDIF/nqUOtnzjqEIPNaDXJPm9FvuY=";
+      sha256 = "sha256-XLswsa2u2qsUPsLYRYn6lwis7VwSjAW6BRNdI4brbSM=";
     };
   };
   bruno-deb-x86_64-linux = {
     pname = "bruno-deb-x86_64-linux";
-    version = "1.26.1";
+    version = "1.26.2";
     src = fetchurl {
-      url = "https://github.com/usebruno/bruno/releases/download/v1.26.1/bruno_1.26.1_amd64_linux.deb";
+      url = "https://github.com/usebruno/bruno/releases/download/v1.26.2/bruno_1.26.2_amd64_linux.deb";
       name = "bruno-x86_64-linux.zip";
-      sha256 = "sha256-KdpXxNZXFbn706X/57IP0z8isj8Dp/NIZfVfkyYp46A=";
+      sha256 = "sha256-pop309rXe2smxxde4BnApMuysytcdZdbb/kPq1pZIT8=";
     };
   };
   btop = {
@@ -138,8 +138,8 @@
     version = "latest";
     src = dockerTools.pullImage {
       imageName = "qmcgaw/gluetun";
-      imageDigest = "sha256:17cd51e43401ed6a949052f291cfa452005e022c27dcbc689206486fd4d3e0a8";
-      sha256 = "sha256-NBs1+0aamZoEfIrlPSRJ9QsNe7HPzYrzH4iSMvbsmQc=";
+      imageDigest = "sha256:3968a849725534cba47b0a3b9edc16949e5b93bec8cea8cd16b629378d759ad0";
+      sha256 = "sha256-AM6RC2wunKQ68iI3ishMJeafGS+PjHgyXd8olCG3oEE=";
       finalImageTag = "latest";
       os = "linux";
       arch = "amd64";
@@ -166,13 +166,13 @@
   };
   oh-my-posh = {
     pname = "oh-my-posh";
-    version = "v23.7.2";
+    version = "v23.8.0";
     src = fetchFromGitHub {
       owner = "JanDeDobbeleer";
       repo = "oh-my-posh";
-      rev = "v23.7.2";
+      rev = "v23.8.0";
       fetchSubmodules = false;
-      sha256 = "sha256-xnVU+NtrK3V5KAfhsVpfG3GDC2s3CBJqoKVs0uEoSWs=";
+      sha256 = "sha256-WhGvE2maTgY7pBirOyYynTpGfBqBAmqBfFv1ChmMW88=";
     };
   };
   spectral = {

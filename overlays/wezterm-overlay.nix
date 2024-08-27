@@ -17,10 +17,6 @@ in {
         // {
           inherit (nv) pname version src date;
           cargoLock = nv.cargoLock."Cargo.lock";
-          # {
-          #   inherit (nv.cargoLock."Cargo.lock") lockFile outputHashes;
-          #   allowBuiltinFetchGit = true;
-          # };
           postPatch =
             builtins.concatStringsSep
             "\n"
