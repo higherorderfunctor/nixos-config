@@ -3,17 +3,17 @@
 {
   amdvlk = {
     pname = "amdvlk";
-    version = "b6b48ef02da28ab03226232d9bc61db2b241abeb";
+    version = "1f3670a49fc05e5e57424ac3f1faa8c8472240f7";
     src = fetchgit {
       url = "https://github.com/GPUOpen-Drivers/AMDVLK.git";
-      rev = "b6b48ef02da28ab03226232d9bc61db2b241abeb";
+      rev = "1f3670a49fc05e5e57424ac3f1faa8c8472240f7";
       fetchSubmodules = false;
       deepClone = false;
       leaveDotGit = false;
       sparseCheckout = [ ];
-      sha256 = "sha256-u0l3tXD8d6rqwy8VWqgwF8UWtGR6MJCSjejzazsQDN4=";
+      sha256 = "sha256-Fd2DwQfbYXOlanYfEWYe64cSIiPkrLxz4CWIzAqQug0=";
     };
-    date = "2024-08-13";
+    date = "2024-08-29";
   };
   arkenfox = {
     pname = "arkenfox";
@@ -28,11 +28,11 @@
   };
   bruno-deb-x86_64-linux = {
     pname = "bruno-deb-x86_64-linux";
-    version = "1.26.2";
+    version = "1.27.0";
     src = fetchurl {
-      url = "https://github.com/usebruno/bruno/releases/download/v1.26.2/bruno_1.26.2_amd64_linux.deb";
+      url = "https://github.com/usebruno/bruno/releases/download/v1.27.0/bruno_1.27.0_amd64_linux.deb";
       name = "bruno-x86_64-linux.zip";
-      sha256 = "sha256-pop309rXe2smxxde4BnApMuysytcdZdbb/kPq1pZIT8=";
+      sha256 = "sha256-UuVMYbOMMtXSXwvr/1W+MPwAHZSc1kkCRDHJ8mCNgFU=";
     };
   };
   btop = {
@@ -166,13 +166,13 @@
   };
   oh-my-posh = {
     pname = "oh-my-posh";
-    version = "v23.8.0";
+    version = "v23.9.1";
     src = fetchFromGitHub {
       owner = "JanDeDobbeleer";
       repo = "oh-my-posh";
-      rev = "v23.8.0";
+      rev = "v23.9.1";
       fetchSubmodules = false;
-      sha256 = "sha256-WhGvE2maTgY7pBirOyYynTpGfBqBAmqBfFv1ChmMW88=";
+      sha256 = "sha256-O5LqeH7cLwbKBcxaZP7B6iYnUewRBOWM7J9hVCeRJmQ=";
     };
   };
   spectral = {
