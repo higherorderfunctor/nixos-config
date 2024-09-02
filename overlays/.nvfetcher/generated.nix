@@ -208,17 +208,17 @@
   };
   vivid-plasma-themes = {
     pname = "vivid-plasma-themes";
-    version = "8170469d27822b30c7f6db920f2e01e18cccd7cf";
+    version = "e9026da2ed882cd5991a94966e3501f693fb2b55";
     src = fetchgit {
       url = "https://github.com/L4ki/Vivid-Plasma-Themes.git";
-      rev = "8170469d27822b30c7f6db920f2e01e18cccd7cf";
+      rev = "e9026da2ed882cd5991a94966e3501f693fb2b55";
       fetchSubmodules = false;
       deepClone = false;
       leaveDotGit = false;
       sparseCheckout = [ ];
-      sha256 = "sha256-5KmXcitFLgKHP9CjJIs69rOqysJxfoYYQw9oTqQusAA=";
+      sha256 = "sha256-HWaafSKG3bURHrrrXMiX5yNFcQJ9BV0Vn0pRtGvmlJI=";
     };
-    date = "2024-08-24";
+    date = "2024-08-30";
   };
   wezterm = {
     pname = "wezterm";

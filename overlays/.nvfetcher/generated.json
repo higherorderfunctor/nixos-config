@@ -350,7 +350,7 @@
   },
   "vivid-plasma-themes": {
     "cargoLocks": null,
-    "date": "2024-08-24",
+    "date": "2024-08-30",
     "extract": null,
     "name": "vivid-plasma-themes",
     "passthru": null,
@@ -360,13 +360,13 @@
       "fetchSubmodules": false,
       "leaveDotGit": false,
       "name": null,
-      "rev": "8170469d27822b30c7f6db920f2e01e18cccd7cf",
-      "sha256": "sha256-5KmXcitFLgKHP9CjJIs69rOqysJxfoYYQw9oTqQusAA=",
+      "rev": "e9026da2ed882cd5991a94966e3501f693fb2b55",
+      "sha256": "sha256-HWaafSKG3bURHrrrXMiX5yNFcQJ9BV0Vn0pRtGvmlJI=",
       "sparseCheckout": [],
       "type": "git",
       "url": "https://github.com/L4ki/Vivid-Plasma-Themes.git"
     },
-    "version": "8170469d27822b30c7f6db920f2e01e18cccd7cf"
+    "version": "e9026da2ed882cd5991a94966e3501f693fb2b55"
   },
   "wezterm": {
     "cargoLocks": {
