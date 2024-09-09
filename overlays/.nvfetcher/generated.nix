@@ -28,11 +28,11 @@
   };
   bruno-deb-x86_64-linux = {
     pname = "bruno-deb-x86_64-linux";
-    version = "1.27.0";
+    version = "1.28.0";
     src = fetchurl {
-      url = "https://github.com/usebruno/bruno/releases/download/v1.27.0/bruno_1.27.0_amd64_linux.deb";
+      url = "https://github.com/usebruno/bruno/releases/download/v1.28.0/bruno_1.28.0_amd64_linux.deb";
       name = "bruno-x86_64-linux.zip";
-      sha256 = "sha256-UuVMYbOMMtXSXwvr/1W+MPwAHZSc1kkCRDHJ8mCNgFU=";
+      sha256 = "sha256-6VY59pF6LJ1FHM0C1DKmPC9pPTVCJJ6nunj5J99gd/A=";
     };
   };
   btop = {
@@ -48,11 +48,11 @@
   };
   bun-x86_64-linux = {
     pname = "bun-x86_64-linux";
-    version = "1.1.26";
+    version = "1.1.27";
     src = fetchurl {
-      url = "https://github.com/oven-sh/bun/releases/download/bun-v1.1.26/bun-linux-x64.zip";
+      url = "https://github.com/oven-sh/bun/releases/download/bun-v1.1.27/bun-linux-x64.zip";
       name = "bun-x86_64-linux.zip";
-      sha256 = "sha256-qHBNhvZRTjBEmDOsMJRIz4TgiLbtuWjgVHfP+aBaqio=";
+      sha256 = "sha256-Ir0EQH+bnHPwOTakrO/ZQ6pyeOWvhu5bK5j+YLN8Myc=";
     };
   };
   catppuccin-btop = {
@@ -158,21 +158,21 @@
   };
   go = {
     pname = "go";
-    version = "1.23.0";
+    version = "1.23.1";
     src = fetchurl {
-      url = "https://go.dev/dl/go1.23.0.src.tar.gz";
-      sha256 = "sha256-Qreo6A2AXaoDAi7T/eQyHUw78smQoUQWXQHu7Nb2mcY=";
+      url = "https://go.dev/dl/go1.23.1.src.tar.gz";
+      sha256 = "sha256-buROKYN50Ual5aprHFtdX10KM2XqvdcHQebiE0DsOw0=";
     };
   };
   oh-my-posh = {
     pname = "oh-my-posh";
-    version = "v23.10.1";
+    version = "v23.11.1";
     src = fetchFromGitHub {
       owner = "JanDeDobbeleer";
       repo = "oh-my-posh";
-      rev = "v23.10.1";
+      rev = "v23.11.1";
       fetchSubmodules = false;
-      sha256 = "sha256-ap3FzWWzQiCU5S7WLw/hl56R1f6cL/54ING2+jGl70w=";
+      sha256 = "sha256-xfYGdTdY2RDavOwc7vrlh8U4UM0GCmxOupXUcqPK9NM=";
     };
   };
   spectral = {
@@ -208,17 +208,17 @@
   };
   vivid-plasma-themes = {
     pname = "vivid-plasma-themes";
-    version = "e9026da2ed882cd5991a94966e3501f693fb2b55";
+    version = "cdcbad3bafca0c7a39fd8e4ccdbe493779e398ec";
     src = fetchgit {
       url = "https://github.com/L4ki/Vivid-Plasma-Themes.git";
-      rev = "e9026da2ed882cd5991a94966e3501f693fb2b55";
+      rev = "cdcbad3bafca0c7a39fd8e4ccdbe493779e398ec";
       fetchSubmodules = false;
       deepClone = false;
       leaveDotGit = false;
       sparseCheckout = [ ];
-      sha256 = "sha256-HWaafSKG3bURHrrrXMiX5yNFcQJ9BV0Vn0pRtGvmlJI=";
+      sha256 = "sha256-MqXjrJz+c+NoqHDxBb5P4SnNPVGtzkrIsieoT45L+ew=";
     };
-    date = "2024-08-30";
+    date = "2024-09-07";
   };
   wezterm = {
     pname = "wezterm";
