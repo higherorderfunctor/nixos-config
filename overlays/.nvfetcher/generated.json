@@ -283,13 +283,13 @@
       "name": null,
       "owner": "JanDeDobbeleer",
       "repo": "oh-my-posh",
-      "rev": "v23.11.1",
-      "sha256": "sha256-xfYGdTdY2RDavOwc7vrlh8U4UM0GCmxOupXUcqPK9NM=",
+      "rev": "v23.13.1",
+      "sha256": "sha256-yGL7WX9b8ogB5CsfrkEJqmB6JxYQdpQ19wGptSAteXM=",
       "sparseCheckout": [],
       "type": "github"
     },
-    "version": "v23.11.1",
-    "vendorHash": "sha256-vHS1iue7pdAuFLQGqJuaH1W/NZaF7SbDuFjt4V+vh7o="
+    "version": "v23.13.1",
+    "vendorHash": "sha256-EBLfbdTV15wSTOThzBY0d2KrSJzRaB8vNH53Uwc+XfM="
   },
   "spectral": {
     "cargoLocks": null,
@@ -321,11 +321,11 @@
     "pinned": false,
     "src": {
       "name": "standardnotes-desktop-x86_64-linux.deb",
-      "sha256": "sha256-ATZropkwJ8ZHtM99nPsAtzyc2wLb2/Kv99gAhhZg0i0=",
+      "sha256": "sha256-8CH2GywiTx2E5s440UwxcFV1sho1SJLwYKIkjhB3DvU=",
       "type": "url",
-      "url": "https://github.com/standardnotes/app/releases/download/@standardnotes/desktop@3.195.1/standard-notes-3.195.1-linux-amd64.deb"
+      "url": "https://github.com/standardnotes/app/releases/download/@standardnotes/desktop@3.195.2/standard-notes-3.195.2-linux-amd64.deb"
     },
-    "version": "3.195.1"
+    "version": "3.195.2"
   },
   "tree-sitter-cql": {
     "cargoLocks": null,

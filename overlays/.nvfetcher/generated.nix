@@ -166,13 +166,13 @@
   };
   oh-my-posh = {
     pname = "oh-my-posh";
-    version = "v23.11.1";
+    version = "v23.13.1";
     src = fetchFromGitHub {
       owner = "JanDeDobbeleer";
       repo = "oh-my-posh";
-      rev = "v23.11.1";
+      rev = "v23.13.1";
       fetchSubmodules = false;
-      sha256 = "sha256-xfYGdTdY2RDavOwc7vrlh8U4UM0GCmxOupXUcqPK9NM=";
+      sha256 = "sha256-yGL7WX9b8ogB5CsfrkEJqmB6JxYQdpQ19wGptSAteXM=";
     };
   };
   spectral = {
@@ -188,11 +188,11 @@
   };
   standardnotes-desktop-deb-x86_64-linux = {
     pname = "standardnotes-desktop-deb-x86_64-linux";
-    version = "3.195.1";
+    version = "3.195.2";
     src = fetchurl {
-      url = "https://github.com/standardnotes/app/releases/download/@standardnotes/desktop@3.195.1/standard-notes-3.195.1-linux-amd64.deb";
+      url = "https://github.com/standardnotes/app/releases/download/@standardnotes/desktop@3.195.2/standard-notes-3.195.2-linux-amd64.deb";
       name = "standardnotes-desktop-x86_64-linux.deb";
-      sha256 = "sha256-ATZropkwJ8ZHtM99nPsAtzyc2wLb2/Kv99gAhhZg0i0=";
+      sha256 = "sha256-8CH2GywiTx2E5s440UwxcFV1sho1SJLwYKIkjhB3DvU=";
     };
   };
   tree-sitter-cql = {
