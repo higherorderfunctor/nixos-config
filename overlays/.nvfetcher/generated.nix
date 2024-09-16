@@ -188,11 +188,11 @@
   };
   standardnotes-desktop-deb-x86_64-linux = {
     pname = "standardnotes-desktop-deb-x86_64-linux";
-    version = "3.195.2";
+    version = "3.195.3";
     src = fetchurl {
-      url = "https://github.com/standardnotes/app/releases/download/@standardnotes/desktop@3.195.2/standard-notes-3.195.2-linux-amd64.deb";
+      url = "https://github.com/standardnotes/app/releases/download/@standardnotes/desktop@3.195.3/standard-notes-3.195.3-linux-amd64.deb";
       name = "standardnotes-desktop-x86_64-linux.deb";
-      sha256 = "sha256-8CH2GywiTx2E5s440UwxcFV1sho1SJLwYKIkjhB3DvU=";
+      sha256 = "sha256-VsG0tI0YMqFJOftRaAw50PfFAKXjV8oGDMDMOdCyy54=";
     };
   };
   tree-sitter-cql = {
@@ -208,37 +208,37 @@
   };
   vivid-plasma-themes = {
     pname = "vivid-plasma-themes";
-    version = "cdcbad3bafca0c7a39fd8e4ccdbe493779e398ec";
+    version = "2cf75e2c18df0a95d07d44a697bc973d6cd33e24";
     src = fetchgit {
       url = "https://github.com/L4ki/Vivid-Plasma-Themes.git";
-      rev = "cdcbad3bafca0c7a39fd8e4ccdbe493779e398ec";
+      rev = "2cf75e2c18df0a95d07d44a697bc973d6cd33e24";
       fetchSubmodules = false;
       deepClone = false;
       leaveDotGit = false;
       sparseCheckout = [ ];
-      sha256 = "sha256-MqXjrJz+c+NoqHDxBb5P4SnNPVGtzkrIsieoT45L+ew=";
+      sha256 = "sha256-sXCDq5pUUXUfkjPwrmynDjA/qfDbN9W/iZIDwm1y5fY=";
     };
-    date = "2024-09-07";
+    date = "2024-09-14";
   };
   wezterm = {
     pname = "wezterm";
-    version = "30345b36d8a00fed347e4df5dadd83915a7693fb";
+    version = "2d0c5cddc91a9c59aef9a7667d90924e7cedd0ac";
     src = fetchgit {
       url = "https://github.com/wez/wezterm.git";
-      rev = "30345b36d8a00fed347e4df5dadd83915a7693fb";
+      rev = "2d0c5cddc91a9c59aef9a7667d90924e7cedd0ac";
       fetchSubmodules = true;
       deepClone = false;
       leaveDotGit = false;
       sparseCheckout = [ ];
-      sha256 = "sha256-By7g1yImmuVba/MTcB6ajNSHeWDRn4gO+p0UOWcCEgE=";
+      sha256 = "sha256-d8QwlO7gcC1NocujfKYjscfjLZ7pIiDH/O+Q3PI9M14=";
     };
     cargoLock."Cargo.lock" = {
-      lockFile = ./wezterm-30345b36d8a00fed347e4df5dadd83915a7693fb/Cargo.lock;
+      lockFile = ./wezterm-2d0c5cddc91a9c59aef9a7667d90924e7cedd0ac/Cargo.lock;
       outputHashes = {
         "xcb-imdkit-0.3.0" = "sha256-77KaJO+QJWy3tJ9AF1TXKaQHpoVOfGIRqteyqpQaSWo=";
         "sqlite-cache-0.1.3" = "sha256-sBAC8MsQZgH+dcWpoxzq9iw5078vwzCijgyQnMOWIkk=";
       };
     };
-    date = "2024-08-12";
+    date = "2024-09-15";
   };
 }

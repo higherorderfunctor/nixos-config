@@ -6,6 +6,7 @@
     ./aspell.nix
     ./bash-language-server.nix
     ./bash.nix
+    ./bc.nix
     ./beautysh.nix
     ./bitwarden.nix
     ./btop.nix
