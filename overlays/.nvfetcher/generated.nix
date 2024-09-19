@@ -28,11 +28,11 @@
   };
   bruno-deb-x86_64-linux = {
     pname = "bruno-deb-x86_64-linux";
-    version = "1.28.0";
+    version = "1.29.0";
     src = fetchurl {
-      url = "https://github.com/usebruno/bruno/releases/download/v1.28.0/bruno_1.28.0_amd64_linux.deb";
+      url = "https://github.com/usebruno/bruno/releases/download/v1.29.0/bruno_1.29.0_amd64_linux.deb";
       name = "bruno-x86_64-linux.zip";
-      sha256 = "sha256-6VY59pF6LJ1FHM0C1DKmPC9pPTVCJJ6nunj5J99gd/A=";
+      sha256 = "sha256-id7HIUAd3zxdl8XSrazgq/9joEJR3V940fJazwEmPWg=";
     };
   };
   btop = {
