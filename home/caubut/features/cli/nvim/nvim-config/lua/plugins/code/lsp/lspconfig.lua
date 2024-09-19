@@ -11,7 +11,7 @@ return {
       },
       -- eslint = { cmd = { "bunx", "--bun", "vscode-eslint-language-server", "--stdio" } },
       eslint = {
-        cmd = { "bun", "--bun", "vscode-eslint-language-server", "--stdio" },
+        -- cmd = { "bun", "--bun", "vscode-eslint-language-server", "--stdio" },
         settings = {
           cache = true,
           --debug = "*",
