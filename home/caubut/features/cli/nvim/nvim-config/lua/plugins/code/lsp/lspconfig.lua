@@ -9,6 +9,19 @@ return {
         cmd = { "vscode-json-languageserver", "--stdio" },
         mason = false,
       },
+      -- eslint = { cmd = { "bunx", "--bun", "vscode-eslint-language-server", "--stdio" } },
+      eslint = {
+        cmd = { "bun", "--bun", "vscode-eslint-language-server", "--stdio" },
+        settings = {
+          cache = true,
+          --debug = "*",
+          useFlatConfig = true, -- set if using flat config
+          --overrideConfigFile = vim.fn.getcwd() .. "/eslint.config.ts",
+          experimental = {
+            useFlatConfig = nil, -- option not in the latest eslint-lsp
+          },
+        },
+      },
       lua_ls = {
         cmd = { "/etc/profiles/per-user/caubut/bin/lua-language-server", "--stdio" },
         mason = false,

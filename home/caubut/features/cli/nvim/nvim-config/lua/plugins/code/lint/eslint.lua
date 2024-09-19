@@ -4,14 +4,16 @@ return {
   "neovim/nvim-lspconfig",
   opts = {
     servers = {
-      eslint = {
-        settings = {
-          useFlatConfig = true, -- set if using flat config
-          experimental = {
-            useFlatConfig = nil, -- option not in the latest eslint-lsp
-          },
-        },
-      },
+      -- eslint = {
+      -- settings = {
+      --   cache = true,
+      --   useFlatConfig = true, -- set if using flat config
+      --   overrideConfigFile = vim.fn.getcwd() .. "/eslint.config.ts",
+      --   experimental = {
+      --     useFlatConfig = nil, -- option not in the latest eslint-lsp
+      --   },
+      -- },
+      -- },
       vtsls = {
         root_dir = function()
           local lazyvimRoot = require("lazyvim.util.root")
