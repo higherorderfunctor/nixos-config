@@ -48,11 +48,11 @@
   };
   bun-x86_64-linux = {
     pname = "bun-x86_64-linux";
-    version = "1.1.29";
+    version = "1.1.30";
     src = fetchurl {
-      url = "https://github.com/oven-sh/bun/releases/download/bun-v1.1.29/bun-linux-x64.zip";
+      url = "https://github.com/oven-sh/bun/releases/download/bun-v1.1.30/bun-linux-x64.zip";
       name = "bun-x86_64-linux.zip";
-      sha256 = "sha256-RnKczYB/IkUYVBnRktCFhHsmvObQovVMfCilqJq3q1g=";
+      sha256 = "sha256-UGDyM+7L7YGXaGs3sOstqP9SKC9XvR3Y45T1Ov3shA4=";
     };
   };
   catppuccin-btop = {
@@ -138,8 +138,8 @@
     version = "latest";
     src = dockerTools.pullImage {
       imageName = "qmcgaw/gluetun";
-      imageDigest = "sha256:1549c2f16645585ac107c906673ef22c1f491c36829a92f34f134083b83ff147";
-      sha256 = "sha256-Qnh7++SGaevRQgn/6wgRE2CA3lVprUH6yWY6J9irpfg=";
+      imageDigest = "sha256:6b3a0ebcd6cae7f6f7780bf94ecf63823a98f8d16786cb4964544de514ee8f05";
+      sha256 = "sha256-GxQUaPxOu1HBE0kDdithzt5Q3ul9ll1+tTxMGdoFGHQ=";
       finalImageTag = "latest";
       os = "linux";
       arch = "amd64";
@@ -166,13 +166,13 @@
   };
   oh-my-posh = {
     pname = "oh-my-posh";
-    version = "v23.15.3";
+    version = "v23.17.0";
     src = fetchFromGitHub {
       owner = "JanDeDobbeleer";
       repo = "oh-my-posh";
-      rev = "v23.15.3";
+      rev = "v23.17.0";
       fetchSubmodules = false;
-      sha256 = "sha256-lII/7HBRBJXS7NM/rz9R5Hos4yzlh2F5mp4rGz4sHB4=";
+      sha256 = "sha256-CqFSd7Q0WkZBJztAiN4bu+RDyLgu6to0Zlcny/L6pE8=";
     };
   };
   spectral = {
@@ -222,23 +222,23 @@
   };
   wezterm = {
     pname = "wezterm";
-    version = "a2f2c07a29f5c98f6736cde0c86b24887f9fd48a";
+    version = "ed430415ee69279ea692358525196ad7d4c965b8";
     src = fetchgit {
       url = "https://github.com/wez/wezterm.git";
-      rev = "a2f2c07a29f5c98f6736cde0c86b24887f9fd48a";
+      rev = "ed430415ee69279ea692358525196ad7d4c965b8";
       fetchSubmodules = true;
       deepClone = false;
       leaveDotGit = false;
       sparseCheckout = [ ];
-      sha256 = "sha256-KY/9DpHPLKv68a57CFvtRhnhxsXtJ1UmYMfeo3QH9qs=";
+      sha256 = "sha256-eaTM6cm/g/hGIFkWeRuicMR1scmmLQt6ix0TkmibnD0=";
     };
     cargoLock."Cargo.lock" = {
-      lockFile = ./wezterm-a2f2c07a29f5c98f6736cde0c86b24887f9fd48a/Cargo.lock;
+      lockFile = ./wezterm-ed430415ee69279ea692358525196ad7d4c965b8/Cargo.lock;
       outputHashes = {
         "xcb-imdkit-0.3.0" = "sha256-77KaJO+QJWy3tJ9AF1TXKaQHpoVOfGIRqteyqpQaSWo=";
         "sqlite-cache-0.1.3" = "sha256-sBAC8MsQZgH+dcWpoxzq9iw5078vwzCijgyQnMOWIkk=";
       };
     };
-    date = "2024-09-28";
+    date = "2024-10-07";
   };
 }
