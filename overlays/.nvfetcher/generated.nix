@@ -28,11 +28,11 @@
   };
   bruno-deb-x86_64-linux = {
     pname = "bruno-deb-x86_64-linux";
-    version = "1.32.1";
+    version = "1.33.0";
     src = fetchurl {
-      url = "https://github.com/usebruno/bruno/releases/download/v1.32.1/bruno_1.32.1_amd64_linux.deb";
+      url = "https://github.com/usebruno/bruno/releases/download/v1.33.0/bruno_1.33.0_amd64_linux.deb";
       name = "bruno-x86_64-linux.zip";
-      sha256 = "sha256-mUefo1Koc3gGydpsGTpH/Utj5DxT+NkCsvV0RR+kXD4=";
+      sha256 = "sha256-KdreJhljEi/IKRWtPjPyAxRMaVowRaGIZJLKVEWdzso=";
     };
   };
   btop = {
@@ -110,10 +110,10 @@
   };
   dns-root-hints = {
     pname = "dns-root-hints";
-    version = "20240919";
+    version = "20241010";
     src = fetchurl {
       url = "https://www.internic.net/domain/named.root";
-      sha256 = "sha256-I8RXSid7HOE6q7IVcA6qQTOO/7QZQ2/mh7oHVLA/U6g=";
+      sha256 = "sha256-diWDtaJXFYLizpLiwndAHCC74uNX93OBdB0Z/YsgXkQ=";
     };
   };
   fblog = {
@@ -138,8 +138,8 @@
     version = "latest";
     src = dockerTools.pullImage {
       imageName = "qmcgaw/gluetun";
-      imageDigest = "sha256:6b3a0ebcd6cae7f6f7780bf94ecf63823a98f8d16786cb4964544de514ee8f05";
-      sha256 = "sha256-GxQUaPxOu1HBE0kDdithzt5Q3ul9ll1+tTxMGdoFGHQ=";
+      imageDigest = "sha256:d2db2b0846ad542bdec08831bf80fc847f089a8fca02d244b7700eac8c220898";
+      sha256 = "sha256-oAdjOt/0B0scF5GHKSRp2KB5MC0drBubTSUiCqdx4G8=";
       finalImageTag = "latest";
       os = "linux";
       arch = "amd64";
@@ -166,13 +166,13 @@
   };
   oh-my-posh = {
     pname = "oh-my-posh";
-    version = "v23.17.0";
+    version = "v23.19.0";
     src = fetchFromGitHub {
       owner = "JanDeDobbeleer";
       repo = "oh-my-posh";
-      rev = "v23.17.0";
+      rev = "v23.19.0";
       fetchSubmodules = false;
-      sha256 = "sha256-CqFSd7Q0WkZBJztAiN4bu+RDyLgu6to0Zlcny/L6pE8=";
+      sha256 = "sha256-IgAvenyenKfZjxdbec/g5KiPmyo6LDXpjpGmsGFV4gw=";
     };
   };
   spectral = {
@@ -188,11 +188,11 @@
   };
   standardnotes-desktop-deb-x86_64-linux = {
     pname = "standardnotes-desktop-deb-x86_64-linux";
-    version = "3.195.8";
+    version = "3.195.11";
     src = fetchurl {
-      url = "https://github.com/standardnotes/app/releases/download/@standardnotes/desktop@3.195.8/standard-notes-3.195.8-linux-amd64.deb";
+      url = "https://github.com/standardnotes/app/releases/download/@standardnotes/desktop@3.195.11/standard-notes-3.195.11-linux-amd64.deb";
       name = "standardnotes-desktop-x86_64-linux.deb";
-      sha256 = "sha256-XVUFsnML3CzIEoVdCXOT+vPR/Ix+sn5MilkSpqsilSM=";
+      sha256 = "sha256-p7D5LHwW+kbzM7JKMulJm0Y/fuUI5c/NWl85GHY/imI=";
     };
   };
   tree-sitter-cql = {
@@ -208,17 +208,17 @@
   };
   vivid-plasma-themes = {
     pname = "vivid-plasma-themes";
-    version = "8fdb8257aa9628239806da67f33aaec1d1ce434a";
+    version = "3d6ce631ae7ca87668bdd93ed41106fbe1eea30f";
     src = fetchgit {
       url = "https://github.com/L4ki/Vivid-Plasma-Themes.git";
-      rev = "8fdb8257aa9628239806da67f33aaec1d1ce434a";
+      rev = "3d6ce631ae7ca87668bdd93ed41106fbe1eea30f";
       fetchSubmodules = false;
       deepClone = false;
       leaveDotGit = false;
       sparseCheckout = [ ];
-      sha256 = "sha256-jGNWYZmQQJQq0Hk5KC1SpHFFulMuOGBzRYtIiUZQp+o=";
+      sha256 = "sha256-EfGaJDrkYEZT3hT82/lmz/OlqLll0GF1SQqC+i3GtAc=";
     };
-    date = "2024-10-05";
+    date = "2024-10-12";
   };
   wezterm = {
     pname = "wezterm";

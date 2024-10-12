@@ -49,11 +49,11 @@
     "pinned": false,
     "src": {
       "name": "bruno-x86_64-linux.zip",
-      "sha256": "sha256-mUefo1Koc3gGydpsGTpH/Utj5DxT+NkCsvV0RR+kXD4=",
+      "sha256": "sha256-KdreJhljEi/IKRWtPjPyAxRMaVowRaGIZJLKVEWdzso=",
       "type": "url",
-      "url": "https://github.com/usebruno/bruno/releases/download/v1.32.1/bruno_1.32.1_amd64_linux.deb"
+      "url": "https://github.com/usebruno/bruno/releases/download/v1.33.0/bruno_1.33.0_amd64_linux.deb"
     },
-    "version": "1.32.1"
+    "version": "1.33.0"
   },
   "btop": {
     "cargoLocks": null,
@@ -181,11 +181,11 @@
     "pinned": false,
     "src": {
       "name": null,
-      "sha256": "sha256-I8RXSid7HOE6q7IVcA6qQTOO/7QZQ2/mh7oHVLA/U6g=",
+      "sha256": "sha256-diWDtaJXFYLizpLiwndAHCC74uNX93OBdB0Z/YsgXkQ=",
       "type": "url",
       "url": "https://www.internic.net/domain/named.root"
     },
-    "version": "20240919"
+    "version": "20241010"
   },
   "fblog": {
     "cargoLocks": {
@@ -224,11 +224,11 @@
       "arch": "amd64",
       "finalImageName": null,
       "finalImageTag": null,
-      "imageDigest": "sha256:6b3a0ebcd6cae7f6f7780bf94ecf63823a98f8d16786cb4964544de514ee8f05",
+      "imageDigest": "sha256:d2db2b0846ad542bdec08831bf80fc847f089a8fca02d244b7700eac8c220898",
       "imageName": "qmcgaw/gluetun",
       "imageTag": "latest",
       "os": "linux",
-      "sha256": "sha256-GxQUaPxOu1HBE0kDdithzt5Q3ul9ll1+tTxMGdoFGHQ=",
+      "sha256": "sha256-oAdjOt/0B0scF5GHKSRp2KB5MC0drBubTSUiCqdx4G8=",
       "tlsVerify": null
     },
     "version": "latest"
@@ -283,12 +283,12 @@
       "name": null,
       "owner": "JanDeDobbeleer",
       "repo": "oh-my-posh",
-      "rev": "v23.17.0",
-      "sha256": "sha256-CqFSd7Q0WkZBJztAiN4bu+RDyLgu6to0Zlcny/L6pE8=",
+      "rev": "v23.19.0",
+      "sha256": "sha256-IgAvenyenKfZjxdbec/g5KiPmyo6LDXpjpGmsGFV4gw=",
       "sparseCheckout": [],
       "type": "github"
     },
-    "version": "v23.17.0",
+    "version": "v23.19.0",
     "vendorHash": "sha256-ftD+IF6Ra5crtK6kHPnVlaSD76yUNZ4eWK0uOklNHEE="
   },
   "spectral": {
@@ -321,11 +321,11 @@
     "pinned": false,
     "src": {
       "name": "standardnotes-desktop-x86_64-linux.deb",
-      "sha256": "sha256-XVUFsnML3CzIEoVdCXOT+vPR/Ix+sn5MilkSpqsilSM=",
+      "sha256": "sha256-p7D5LHwW+kbzM7JKMulJm0Y/fuUI5c/NWl85GHY/imI=",
       "type": "url",
-      "url": "https://github.com/standardnotes/app/releases/download/@standardnotes/desktop@3.195.8/standard-notes-3.195.8-linux-amd64.deb"
+      "url": "https://github.com/standardnotes/app/releases/download/@standardnotes/desktop@3.195.11/standard-notes-3.195.11-linux-amd64.deb"
     },
-    "version": "3.195.8"
+    "version": "3.195.11"
   },
   "tree-sitter-cql": {
     "cargoLocks": null,
@@ -350,7 +350,7 @@
   },
   "vivid-plasma-themes": {
     "cargoLocks": null,
-    "date": "2024-10-05",
+    "date": "2024-10-12",
     "extract": null,
     "name": "vivid-plasma-themes",
     "passthru": null,
@@ -360,13 +360,13 @@
       "fetchSubmodules": false,
       "leaveDotGit": false,
       "name": null,
-      "rev": "8fdb8257aa9628239806da67f33aaec1d1ce434a",
-      "sha256": "sha256-jGNWYZmQQJQq0Hk5KC1SpHFFulMuOGBzRYtIiUZQp+o=",
+      "rev": "3d6ce631ae7ca87668bdd93ed41106fbe1eea30f",
+      "sha256": "sha256-EfGaJDrkYEZT3hT82/lmz/OlqLll0GF1SQqC+i3GtAc=",
       "sparseCheckout": [],
       "type": "git",
       "url": "https://github.com/L4ki/Vivid-Plasma-Themes.git"
     },
-    "version": "8fdb8257aa9628239806da67f33aaec1d1ce434a"
+    "version": "3d6ce631ae7ca87668bdd93ed41106fbe1eea30f"
   },
   "wezterm": {
     "cargoLocks": {
