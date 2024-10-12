@@ -16,7 +16,7 @@ in {
       merge.tool = "nvim";
       mergetool = {
         prompt = false;
-        nvim.cmd = "nvim -f -c \"Gvdiffsplit!\" \"$MERGED\"";
+        nvim.cmd = "nvim -c DiffviewOpen";
       };
       pull.ff = "only";
       push.autoSetupRemote = true;
