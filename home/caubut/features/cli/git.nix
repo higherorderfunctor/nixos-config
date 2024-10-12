@@ -13,10 +13,10 @@ in {
     userEmail = "christopher@aubut.me";
     extraConfig = {
       init.defaultBranch = "main";
-      merge.tool = "nvim";
+      merge.tool = "diffview";
       mergetool = {
         prompt = false;
-        nvim.cmd = "nvim -c DiffviewOpen";
+        diffview.cmd = ''nvim -n -c "DiffviewOpen" "$MERGE"'';
       };
       pull.ff = "only";
       push.autoSetupRemote = true;
