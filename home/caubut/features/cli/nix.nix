@@ -10,7 +10,7 @@
     settings = {
       trusted-users = ["root" "@wheel"];
       auto-optimise-store = lib.mkDefault true;
-      experimental-features = ["nix-command" "flakes" "repl-flake"];
+      experimental-features = ["nix-command" "flakes"];
       trusted-substituters = [
         "https://nix-community.cachix.org"
         "https://cache.nixos.org/"

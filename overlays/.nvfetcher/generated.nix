@@ -28,11 +28,11 @@
   };
   bruno-deb-x86_64-linux = {
     pname = "bruno-deb-x86_64-linux";
-    version = "1.33.0";
+    version = "1.33.1";
     src = fetchurl {
-      url = "https://github.com/usebruno/bruno/releases/download/v1.33.0/bruno_1.33.0_amd64_linux.deb";
+      url = "https://github.com/usebruno/bruno/releases/download/v1.33.1/bruno_1.33.1_amd64_linux.deb";
       name = "bruno-x86_64-linux.zip";
-      sha256 = "sha256-KdreJhljEi/IKRWtPjPyAxRMaVowRaGIZJLKVEWdzso=";
+      sha256 = "sha256-tj18qHallY4OHkyOT21DGTIqkCpLu0nXje6LEJrC/yc=";
     };
   };
   btop = {
@@ -48,11 +48,11 @@
   };
   bun-x86_64-linux = {
     pname = "bun-x86_64-linux";
-    version = "1.1.30";
+    version = "1.1.31";
     src = fetchurl {
-      url = "https://github.com/oven-sh/bun/releases/download/bun-v1.1.30/bun-linux-x64.zip";
+      url = "https://github.com/oven-sh/bun/releases/download/bun-v1.1.31/bun-linux-x64.zip";
       name = "bun-x86_64-linux.zip";
-      sha256 = "sha256-UGDyM+7L7YGXaGs3sOstqP9SKC9XvR3Y45T1Ov3shA4=";
+      sha256 = "sha256-zHitG4Ktt+iCKk9GrC3C4MRSWhUxh89kW9bUeHzqNJs=";
     };
   };
   catppuccin-btop = {
@@ -110,24 +110,24 @@
   };
   dns-root-hints = {
     pname = "dns-root-hints";
-    version = "20241010";
+    version = "20241014";
     src = fetchurl {
       url = "https://www.internic.net/domain/named.root";
-      sha256 = "sha256-diWDtaJXFYLizpLiwndAHCC74uNX93OBdB0Z/YsgXkQ=";
+      sha256 = "sha256-UM/28JSpfRV7xY+n90/sU9QcPrqk/X629tEWobJZeiI=";
     };
   };
   fblog = {
     pname = "fblog";
-    version = "v4.13.0";
+    version = "v4.13.1";
     src = fetchFromGitHub {
       owner = "brocode";
       repo = "fblog";
-      rev = "v4.13.0";
+      rev = "v4.13.1";
       fetchSubmodules = false;
-      sha256 = "sha256-MfE1IwJ8n9wFrs3l33h3aeG8t8SVxRG4VZGpgVrjTW8=";
+      sha256 = "sha256-YOHLw8YCgOGB1Nn2tD+EnicKd/tiMk07OWv+49btbpw=";
     };
     cargoLock."Cargo.lock" = {
-      lockFile = ./fblog-v4.13.0/Cargo.lock;
+      lockFile = ./fblog-v4.13.1/Cargo.lock;
       outputHashes = {
         
       };
@@ -138,8 +138,8 @@
     version = "latest";
     src = dockerTools.pullImage {
       imageName = "qmcgaw/gluetun";
-      imageDigest = "sha256:d2db2b0846ad542bdec08831bf80fc847f089a8fca02d244b7700eac8c220898";
-      sha256 = "sha256-oAdjOt/0B0scF5GHKSRp2KB5MC0drBubTSUiCqdx4G8=";
+      imageDigest = "sha256:8f9e26ce8879464ac074d03bed0037779f2ddee5399f8728f885f7254e915652";
+      sha256 = "sha256-jAtjpu/tMywDVWZ1cQen9/Qb/istUH1B/1iueaMqge4=";
       finalImageTag = "latest";
       os = "linux";
       arch = "amd64";
@@ -166,13 +166,13 @@
   };
   oh-my-posh = {
     pname = "oh-my-posh";
-    version = "v23.19.0";
+    version = "v23.20.2";
     src = fetchFromGitHub {
       owner = "JanDeDobbeleer";
       repo = "oh-my-posh";
-      rev = "v23.19.0";
+      rev = "v23.20.2";
       fetchSubmodules = false;
-      sha256 = "sha256-IgAvenyenKfZjxdbec/g5KiPmyo6LDXpjpGmsGFV4gw=";
+      sha256 = "sha256-vtT5JrtMt/JR8NTzGAeYiY7rFHNbSyiNHFT5gAyuMKQ=";
     };
   };
   spectral = {
@@ -188,11 +188,11 @@
   };
   standardnotes-desktop-deb-x86_64-linux = {
     pname = "standardnotes-desktop-deb-x86_64-linux";
-    version = "3.195.11";
+    version = "3.195.12";
     src = fetchurl {
-      url = "https://github.com/standardnotes/app/releases/download/@standardnotes/desktop@3.195.11/standard-notes-3.195.11-linux-amd64.deb";
+      url = "https://github.com/standardnotes/app/releases/download/@standardnotes/desktop@3.195.12/standard-notes-3.195.12-linux-amd64.deb";
       name = "standardnotes-desktop-x86_64-linux.deb";
-      sha256 = "sha256-p7D5LHwW+kbzM7JKMulJm0Y/fuUI5c/NWl85GHY/imI=";
+      sha256 = "sha256-+OGlo6YK/hArgx8uxBQKZJUOO/Aykf/nL/KZcxifRm4=";
     };
   };
   tree-sitter-cql = {
@@ -208,37 +208,37 @@
   };
   vivid-plasma-themes = {
     pname = "vivid-plasma-themes";
-    version = "3d6ce631ae7ca87668bdd93ed41106fbe1eea30f";
+    version = "d14c0adc97c73399742bf656eace46a008f1c400";
     src = fetchgit {
       url = "https://github.com/L4ki/Vivid-Plasma-Themes.git";
-      rev = "3d6ce631ae7ca87668bdd93ed41106fbe1eea30f";
+      rev = "d14c0adc97c73399742bf656eace46a008f1c400";
       fetchSubmodules = false;
       deepClone = false;
       leaveDotGit = false;
       sparseCheckout = [ ];
-      sha256 = "sha256-EfGaJDrkYEZT3hT82/lmz/OlqLll0GF1SQqC+i3GtAc=";
+      sha256 = "sha256-2qUmPU75bFkI7zaenvDJpnunx+RKGD82Yg9gF4edmts=";
     };
-    date = "2024-10-12";
+    date = "2024-10-19";
   };
   wezterm = {
     pname = "wezterm";
-    version = "ed430415ee69279ea692358525196ad7d4c965b8";
+    version = "9ddca7bde92090792dbcdc65c1e9897c362196d7";
     src = fetchgit {
       url = "https://github.com/wez/wezterm.git";
-      rev = "ed430415ee69279ea692358525196ad7d4c965b8";
+      rev = "9ddca7bde92090792dbcdc65c1e9897c362196d7";
       fetchSubmodules = true;
       deepClone = false;
       leaveDotGit = false;
       sparseCheckout = [ ];
-      sha256 = "sha256-eaTM6cm/g/hGIFkWeRuicMR1scmmLQt6ix0TkmibnD0=";
+      sha256 = "sha256-BC+qJ54hF+iFtq15/ygQNHjLUkncWmM2ueIMDwjGmiE=";
     };
     cargoLock."Cargo.lock" = {
-      lockFile = ./wezterm-ed430415ee69279ea692358525196ad7d4c965b8/Cargo.lock;
+      lockFile = ./wezterm-9ddca7bde92090792dbcdc65c1e9897c362196d7/Cargo.lock;
       outputHashes = {
         "xcb-imdkit-0.3.0" = "sha256-77KaJO+QJWy3tJ9AF1TXKaQHpoVOfGIRqteyqpQaSWo=";
         "sqlite-cache-0.1.3" = "sha256-sBAC8MsQZgH+dcWpoxzq9iw5078vwzCijgyQnMOWIkk=";
       };
     };
-    date = "2024-10-07";
+    date = "2024-10-15";
   };
 }
