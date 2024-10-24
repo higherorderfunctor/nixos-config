@@ -85,11 +85,11 @@
     "pinned": false,
     "src": {
       "name": "bun-x86_64-linux.zip",
-      "sha256": "sha256-zHitG4Ktt+iCKk9GrC3C4MRSWhUxh89kW9bUeHzqNJs=",
+      "sha256": "sha256-4hcKlpIcyMFrirMSZ44VeEZoa4nO57wVe4lc92M56MU=",
       "type": "url",
-      "url": "https://github.com/oven-sh/bun/releases/download/bun-v1.1.31/bun-linux-x64.zip"
+      "url": "https://github.com/oven-sh/bun/releases/download/bun-v1.1.32/bun-linux-x64.zip"
     },
-    "version": "1.1.31"
+    "version": "1.1.32"
   },
   "catppuccin-btop": {
     "cargoLocks": null,
@@ -283,13 +283,13 @@
       "name": null,
       "owner": "JanDeDobbeleer",
       "repo": "oh-my-posh",
-      "rev": "v23.20.2",
-      "sha256": "sha256-vtT5JrtMt/JR8NTzGAeYiY7rFHNbSyiNHFT5gAyuMKQ=",
+      "rev": "v23.20.3",
+      "sha256": "sha256-quncE2OfSQUnLOEKsqKGBeONCI67CNRB/egqyf7o+4U=",
       "sparseCheckout": [],
       "type": "github"
     },
-    "version": "v23.20.2",
-    "vendorHash": "sha256-ftD+IF6Ra5crtK6kHPnVlaSD76yUNZ4eWK0uOklNHEE="
+    "version": "v23.20.3",
+    "vendorHash": "sha256-VgSQMY2JyGZ50T4PCdKQNnwnP6hknnxP2AJ15A9aHig="
   },
   "spectral": {
     "cargoLocks": null,

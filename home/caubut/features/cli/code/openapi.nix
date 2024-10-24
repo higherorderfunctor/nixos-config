@@ -1,6 +1,6 @@
 {pkgs, ...}: {
   home.packages = with pkgs; [
-    spectral
+    # spectral
     # TODO: spectral-cli
     # vacuum
   ];

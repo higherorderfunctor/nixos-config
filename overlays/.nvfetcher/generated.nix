@@ -48,11 +48,11 @@
   };
   bun-x86_64-linux = {
     pname = "bun-x86_64-linux";
-    version = "1.1.31";
+    version = "1.1.32";
     src = fetchurl {
-      url = "https://github.com/oven-sh/bun/releases/download/bun-v1.1.31/bun-linux-x64.zip";
+      url = "https://github.com/oven-sh/bun/releases/download/bun-v1.1.32/bun-linux-x64.zip";
       name = "bun-x86_64-linux.zip";
-      sha256 = "sha256-zHitG4Ktt+iCKk9GrC3C4MRSWhUxh89kW9bUeHzqNJs=";
+      sha256 = "sha256-4hcKlpIcyMFrirMSZ44VeEZoa4nO57wVe4lc92M56MU=";
     };
   };
   catppuccin-btop = {
@@ -166,13 +166,13 @@
   };
   oh-my-posh = {
     pname = "oh-my-posh";
-    version = "v23.20.2";
+    version = "v23.20.3";
     src = fetchFromGitHub {
       owner = "JanDeDobbeleer";
       repo = "oh-my-posh";
-      rev = "v23.20.2";
+      rev = "v23.20.3";
       fetchSubmodules = false;
-      sha256 = "sha256-vtT5JrtMt/JR8NTzGAeYiY7rFHNbSyiNHFT5gAyuMKQ=";
+      sha256 = "sha256-quncE2OfSQUnLOEKsqKGBeONCI67CNRB/egqyf7o+4U=";
     };
   };
   spectral = {
