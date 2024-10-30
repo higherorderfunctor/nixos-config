@@ -10,7 +10,7 @@
   # systemctl --user status gnome-keyring.services
   #
   services = {
-    udev.packages = with pkgs; [gnome.gnome-settings-daemon];
+    udev.packages = with pkgs; [gnome-settings-daemon];
     accounts-daemon.enable = true; # dbus service for accessing the list of user accounts and information attached to those accounts
     devmon.enable = true; # automatic device mounting daemon
     geoclue2.enable = true; # dbus service that provides location information for accessing - used by gnome-calendar
@@ -84,15 +84,16 @@
   programs.hyprland = {
     enable = true;
     package = pkgs.hyprland;
+    portalPackage = inputs.hyprland.packages.${pkgs.stdenv.hostPlatform.system}.xdg-desktop-portal-hyprland;
     # xwayland.enable = true;
   };
 
   xdg.portal = {
     enable = true; # required for flatpak even though enabled by home manager
     config.common.default = "gtk";
-    extraPortals = with pkgs; [
-      xdg-desktop-portal-gtk # required to enable the portal
-    ];
+    # extraPortals = with pkgs; [
+    #   xdg-desktop-portal-gtk # required to enable the portal
+    # ];
   };
   # TODO: GDK_BACKEND=x11
 

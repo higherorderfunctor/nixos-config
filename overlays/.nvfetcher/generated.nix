@@ -28,11 +28,11 @@
   };
   bruno-deb-x86_64-linux = {
     pname = "bruno-deb-x86_64-linux";
-    version = "1.33.1";
+    version = "1.34.0";
     src = fetchurl {
-      url = "https://github.com/usebruno/bruno/releases/download/v1.33.1/bruno_1.33.1_amd64_linux.deb";
+      url = "https://github.com/usebruno/bruno/releases/download/v1.34.0/bruno_1.34.0_amd64_linux.deb";
       name = "bruno-x86_64-linux.zip";
-      sha256 = "sha256-tj18qHallY4OHkyOT21DGTIqkCpLu0nXje6LEJrC/yc=";
+      sha256 = "sha256-y7GbtDSDZp3R21Zyy0h12BCRd2NEkGOazVaJWJcZbHo=";
     };
   };
   btop = {
@@ -48,11 +48,11 @@
   };
   bun-x86_64-linux = {
     pname = "bun-x86_64-linux";
-    version = "1.1.32";
+    version = "1.1.33";
     src = fetchurl {
-      url = "https://github.com/oven-sh/bun/releases/download/bun-v1.1.32/bun-linux-x64.zip";
+      url = "https://github.com/oven-sh/bun/releases/download/bun-v1.1.33/bun-linux-x64.zip";
       name = "bun-x86_64-linux.zip";
-      sha256 = "sha256-4hcKlpIcyMFrirMSZ44VeEZoa4nO57wVe4lc92M56MU=";
+      sha256 = "sha256-oAIFp9WnScRx+VJXwknnUMBQT7S9nugyD+45qJu6qFg=";
     };
   };
   catppuccin-btop = {
@@ -138,8 +138,8 @@
     version = "latest";
     src = dockerTools.pullImage {
       imageName = "qmcgaw/gluetun";
-      imageDigest = "sha256:8f9e26ce8879464ac074d03bed0037779f2ddee5399f8728f885f7254e915652";
-      sha256 = "sha256-jAtjpu/tMywDVWZ1cQen9/Qb/istUH1B/1iueaMqge4=";
+      imageDigest = "sha256:118db7482de6520548ed10beb1536bb14393b6b902321c907e1ac623699f8d57";
+      sha256 = "sha256-+HQA66uWgYLt9tQ1cvDNiLktDUFlVrKXn4hSk/SvezU=";
       finalImageTag = "latest";
       os = "linux";
       arch = "amd64";
@@ -208,17 +208,17 @@
   };
   vivid-plasma-themes = {
     pname = "vivid-plasma-themes";
-    version = "d14c0adc97c73399742bf656eace46a008f1c400";
+    version = "b16f14ce43066abfcbe8e55dea9718d5070e0f66";
     src = fetchgit {
       url = "https://github.com/L4ki/Vivid-Plasma-Themes.git";
-      rev = "d14c0adc97c73399742bf656eace46a008f1c400";
+      rev = "b16f14ce43066abfcbe8e55dea9718d5070e0f66";
       fetchSubmodules = false;
       deepClone = false;
       leaveDotGit = false;
       sparseCheckout = [ ];
-      sha256 = "sha256-2qUmPU75bFkI7zaenvDJpnunx+RKGD82Yg9gF4edmts=";
+      sha256 = "sha256-iprm6WJIv4heSq6O6EVNPvsC0G13GetiAuXEuTxZHxw=";
     };
-    date = "2024-10-19";
+    date = "2024-10-26";
   };
   wezterm = {
     pname = "wezterm";

@@ -1,6 +1,6 @@
 {pkgs, ...}: {
   # settings app
-  home.packages = [pkgs.gnome.gnome-control-center];
+  home.packages = [pkgs.gnome-control-center];
   xdg.desktopEntries."org.gnome.Settings" = {
     name = "Settings";
     comment = "Gnome Control Center";

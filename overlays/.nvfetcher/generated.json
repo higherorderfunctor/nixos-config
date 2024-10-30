@@ -49,11 +49,11 @@
     "pinned": false,
     "src": {
       "name": "bruno-x86_64-linux.zip",
-      "sha256": "sha256-tj18qHallY4OHkyOT21DGTIqkCpLu0nXje6LEJrC/yc=",
+      "sha256": "sha256-y7GbtDSDZp3R21Zyy0h12BCRd2NEkGOazVaJWJcZbHo=",
       "type": "url",
-      "url": "https://github.com/usebruno/bruno/releases/download/v1.33.1/bruno_1.33.1_amd64_linux.deb"
+      "url": "https://github.com/usebruno/bruno/releases/download/v1.34.0/bruno_1.34.0_amd64_linux.deb"
     },
-    "version": "1.33.1"
+    "version": "1.34.0"
   },
   "btop": {
     "cargoLocks": null,
@@ -85,11 +85,11 @@
     "pinned": false,
     "src": {
       "name": "bun-x86_64-linux.zip",
-      "sha256": "sha256-4hcKlpIcyMFrirMSZ44VeEZoa4nO57wVe4lc92M56MU=",
+      "sha256": "sha256-oAIFp9WnScRx+VJXwknnUMBQT7S9nugyD+45qJu6qFg=",
       "type": "url",
-      "url": "https://github.com/oven-sh/bun/releases/download/bun-v1.1.32/bun-linux-x64.zip"
+      "url": "https://github.com/oven-sh/bun/releases/download/bun-v1.1.33/bun-linux-x64.zip"
     },
-    "version": "1.1.32"
+    "version": "1.1.33"
   },
   "catppuccin-btop": {
     "cargoLocks": null,
@@ -224,11 +224,11 @@
       "arch": "amd64",
       "finalImageName": null,
       "finalImageTag": null,
-      "imageDigest": "sha256:8f9e26ce8879464ac074d03bed0037779f2ddee5399f8728f885f7254e915652",
+      "imageDigest": "sha256:118db7482de6520548ed10beb1536bb14393b6b902321c907e1ac623699f8d57",
       "imageName": "qmcgaw/gluetun",
       "imageTag": "latest",
       "os": "linux",
-      "sha256": "sha256-jAtjpu/tMywDVWZ1cQen9/Qb/istUH1B/1iueaMqge4=",
+      "sha256": "sha256-+HQA66uWgYLt9tQ1cvDNiLktDUFlVrKXn4hSk/SvezU=",
       "tlsVerify": null
     },
     "version": "latest"
@@ -350,7 +350,7 @@
   },
   "vivid-plasma-themes": {
     "cargoLocks": null,
-    "date": "2024-10-19",
+    "date": "2024-10-26",
     "extract": null,
     "name": "vivid-plasma-themes",
     "passthru": null,
@@ -360,13 +360,13 @@
       "fetchSubmodules": false,
       "leaveDotGit": false,
       "name": null,
-      "rev": "d14c0adc97c73399742bf656eace46a008f1c400",
-      "sha256": "sha256-2qUmPU75bFkI7zaenvDJpnunx+RKGD82Yg9gF4edmts=",
+      "rev": "b16f14ce43066abfcbe8e55dea9718d5070e0f66",
+      "sha256": "sha256-iprm6WJIv4heSq6O6EVNPvsC0G13GetiAuXEuTxZHxw=",
       "sparseCheckout": [],
       "type": "git",
       "url": "https://github.com/L4ki/Vivid-Plasma-Themes.git"
     },
-    "version": "d14c0adc97c73399742bf656eace46a008f1c400"
+    "version": "b16f14ce43066abfcbe8e55dea9718d5070e0f66"
   },
   "wezterm": {
     "cargoLocks": {
