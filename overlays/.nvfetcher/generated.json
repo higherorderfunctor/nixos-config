@@ -181,11 +181,11 @@
     "pinned": false,
     "src": {
       "name": null,
-      "sha256": "sha256-UM/28JSpfRV7xY+n90/sU9QcPrqk/X629tEWobJZeiI=",
+      "sha256": "sha256-5xhG39IFud9D9gvBEDuVVhnWVNeBX7WzZP0KODs/g5o=",
       "type": "url",
       "url": "https://www.internic.net/domain/named.root"
     },
-    "version": "20241014"
+    "version": "20241107"
   },
   "fblog": {
     "cargoLocks": {
@@ -224,11 +224,11 @@
       "arch": "amd64",
       "finalImageName": null,
       "finalImageTag": null,
-      "imageDigest": "sha256:de5d5c9ad01fa0e6f40e0db75251fa44b7df2921c129e8cc53d409f56a720f26",
+      "imageDigest": "sha256:1a2f1bacaaeeb1ba2c6b825187732f2de032ab8f0cde7ba8fd15daec91e4451c",
       "imageName": "qmcgaw/gluetun",
       "imageTag": "latest",
       "os": "linux",
-      "sha256": "sha256-rSkj0X2jSZ7aHSrJInEtepcLlQQ9hKhqEBne8meFYbE=",
+      "sha256": "sha256-HHGMG9grMRhsLciqhoyYwrTCEcP5o22wT8agtzlcJ78=",
       "tlsVerify": null
     },
     "version": "latest"
@@ -283,13 +283,13 @@
       "name": null,
       "owner": "JanDeDobbeleer",
       "repo": "oh-my-posh",
-      "rev": "v24.0.9",
-      "sha256": "sha256-UGz42NBSzaSiyU0jKmtHaloNWi9hPH2XdrOKIf9dfRk=",
+      "rev": "v24.1.0",
+      "sha256": "sha256-FnC3NMZechKHzpOWij7dnvD3dhIZ9OI3QuIK/mC2bd0=",
       "sparseCheckout": [],
       "type": "github"
     },
-    "version": "v24.0.9",
-    "vendorHash": "sha256-u+nOagGB1uMdb+TO0rdkdqm4zAoI3v9V7ZixMKsLOSc="
+    "version": "v24.1.0",
+    "vendorHash": "sha256-veE2yZ0CMzEcPUu2mOa3cn6I+3SPIClNhdRm5hqM3Qw="
   },
   "spectral": {
     "cargoLocks": null,

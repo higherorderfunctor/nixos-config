@@ -110,10 +110,10 @@
   };
   dns-root-hints = {
     pname = "dns-root-hints";
-    version = "20241014";
+    version = "20241107";
     src = fetchurl {
       url = "https://www.internic.net/domain/named.root";
-      sha256 = "sha256-UM/28JSpfRV7xY+n90/sU9QcPrqk/X629tEWobJZeiI=";
+      sha256 = "sha256-5xhG39IFud9D9gvBEDuVVhnWVNeBX7WzZP0KODs/g5o=";
     };
   };
   fblog = {
@@ -138,8 +138,8 @@
     version = "latest";
     src = dockerTools.pullImage {
       imageName = "qmcgaw/gluetun";
-      imageDigest = "sha256:de5d5c9ad01fa0e6f40e0db75251fa44b7df2921c129e8cc53d409f56a720f26";
-      sha256 = "sha256-rSkj0X2jSZ7aHSrJInEtepcLlQQ9hKhqEBne8meFYbE=";
+      imageDigest = "sha256:1a2f1bacaaeeb1ba2c6b825187732f2de032ab8f0cde7ba8fd15daec91e4451c";
+      sha256 = "sha256-HHGMG9grMRhsLciqhoyYwrTCEcP5o22wT8agtzlcJ78=";
       finalImageTag = "latest";
       os = "linux";
       arch = "amd64";
@@ -166,13 +166,13 @@
   };
   oh-my-posh = {
     pname = "oh-my-posh";
-    version = "v24.0.9";
+    version = "v24.1.0";
     src = fetchFromGitHub {
       owner = "JanDeDobbeleer";
       repo = "oh-my-posh";
-      rev = "v24.0.9";
+      rev = "v24.1.0";
       fetchSubmodules = false;
-      sha256 = "sha256-UGz42NBSzaSiyU0jKmtHaloNWi9hPH2XdrOKIf9dfRk=";
+      sha256 = "sha256-FnC3NMZechKHzpOWij7dnvD3dhIZ9OI3QuIK/mC2bd0=";
     };
   };
   spectral = {
