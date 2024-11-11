@@ -51,7 +51,7 @@ return {
             -- "javascriptreact",
             -- "typescript",
             -- "typescriptreact",
-            -- "vue",
+            "vue",
             "css",
             "scss",
             -- "less",

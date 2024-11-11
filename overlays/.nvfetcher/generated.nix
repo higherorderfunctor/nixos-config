@@ -138,8 +138,8 @@
     version = "latest";
     src = dockerTools.pullImage {
       imageName = "qmcgaw/gluetun";
-      imageDigest = "sha256:1a2f1bacaaeeb1ba2c6b825187732f2de032ab8f0cde7ba8fd15daec91e4451c";
-      sha256 = "sha256-HHGMG9grMRhsLciqhoyYwrTCEcP5o22wT8agtzlcJ78=";
+      imageDigest = "sha256:cdecaa125ff7c10a78b3491353f5a8d6d3dea03dfa328b6332197724b400af9a";
+      sha256 = "sha256-jESfmNQBAuVWPzprKJy+78oKzlDo4bfURfvAyCgzwtQ=";
       finalImageTag = "latest";
       os = "linux";
       arch = "amd64";
@@ -166,13 +166,13 @@
   };
   oh-my-posh = {
     pname = "oh-my-posh";
-    version = "v24.1.0";
+    version = "v24.2.2";
     src = fetchFromGitHub {
       owner = "JanDeDobbeleer";
       repo = "oh-my-posh";
-      rev = "v24.1.0";
+      rev = "v24.2.2";
       fetchSubmodules = false;
-      sha256 = "sha256-FnC3NMZechKHzpOWij7dnvD3dhIZ9OI3QuIK/mC2bd0=";
+      sha256 = "sha256-4u3DHy7pYkoOcKPYhtMhQ+4Z1Jx8aSeahMtjD/jkMq8=";
     };
   };
   spectral = {
@@ -188,11 +188,11 @@
   };
   standardnotes-desktop-deb-x86_64-linux = {
     pname = "standardnotes-desktop-deb-x86_64-linux";
-    version = "3.195.12";
+    version = "3.195.13";
     src = fetchurl {
-      url = "https://github.com/standardnotes/app/releases/download/@standardnotes/desktop@3.195.12/standard-notes-3.195.12-linux-amd64.deb";
+      url = "https://github.com/standardnotes/app/releases/download/@standardnotes/desktop@3.195.13/standard-notes-3.195.13-linux-amd64.deb";
       name = "standardnotes-desktop-x86_64-linux.deb";
-      sha256 = "sha256-+OGlo6YK/hArgx8uxBQKZJUOO/Aykf/nL/KZcxifRm4=";
+      sha256 = "sha256-ygszUp6aWHjEChRUCoYz4x+xj4zxZtfeDCoipYL7AO8=";
     };
   };
   tree-sitter-cql = {
@@ -208,17 +208,17 @@
   };
   vivid-plasma-themes = {
     pname = "vivid-plasma-themes";
-    version = "0e229cea781a73178427db6376a3e8b0e894dab7";
+    version = "7a583128ce2af16cbc0385e5579824befdcc0a08";
     src = fetchgit {
       url = "https://github.com/L4ki/Vivid-Plasma-Themes.git";
-      rev = "0e229cea781a73178427db6376a3e8b0e894dab7";
+      rev = "7a583128ce2af16cbc0385e5579824befdcc0a08";
       fetchSubmodules = false;
       deepClone = false;
       leaveDotGit = false;
       sparseCheckout = [ ];
-      sha256 = "sha256-6wdbr63yGBEJnkpQZrgs+4xUo4gsbqN33ihe/MxewDM=";
+      sha256 = "sha256-9zNDXfyw29Bli/uTcBGvTwk5i7Yt2tpgazdlPDyB2Mc=";
     };
-    date = "2024-11-02";
+    date = "2024-11-09";
   };
   wezterm = {
     pname = "wezterm";
