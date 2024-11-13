@@ -138,8 +138,8 @@
     version = "latest";
     src = dockerTools.pullImage {
       imageName = "qmcgaw/gluetun";
-      imageDigest = "sha256:cdecaa125ff7c10a78b3491353f5a8d6d3dea03dfa328b6332197724b400af9a";
-      sha256 = "sha256-jESfmNQBAuVWPzprKJy+78oKzlDo4bfURfvAyCgzwtQ=";
+      imageDigest = "sha256:571147fa7f8eb01470885df57ee52db0601df34392cdddc4fcff423404b4f2cc";
+      sha256 = "sha256-QNZPy/IDbhRvYWn9gSo89340gVO6pmp8d4TvGm9smGw=";
       finalImageTag = "latest";
       os = "linux";
       arch = "amd64";
@@ -166,24 +166,24 @@
   };
   oh-my-posh = {
     pname = "oh-my-posh";
-    version = "v24.2.2";
+    version = "v24.3.0";
     src = fetchFromGitHub {
       owner = "JanDeDobbeleer";
       repo = "oh-my-posh";
-      rev = "v24.2.2";
+      rev = "v24.3.0";
       fetchSubmodules = false;
-      sha256 = "sha256-4u3DHy7pYkoOcKPYhtMhQ+4Z1Jx8aSeahMtjD/jkMq8=";
+      sha256 = "sha256-MZItqxmI+ma9L0WlrnS4kay4C6xrySlAaDnLBwg6fhY=";
     };
   };
   spectral = {
     pname = "spectral";
-    version = "v6.13.1";
+    version = "v6.14.0";
     src = fetchFromGitHub {
       owner = "stoplightio";
       repo = "spectral";
-      rev = "v6.13.1";
+      rev = "v6.14.0";
       fetchSubmodules = false;
-      sha256 = "sha256-T9lu1ro7oPOH8CZjTbnBphWHivTLRfCA5x4GFvW27lY=";
+      sha256 = "sha256-VfXh+BhJj2ehoTghEzonYjcmO84P+esvpD79krISioQ=";
     };
   };
   standardnotes-desktop-deb-x86_64-linux = {
