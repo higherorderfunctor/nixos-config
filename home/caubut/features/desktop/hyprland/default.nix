@@ -89,7 +89,9 @@
 
       # keybinds
       "$mod" = "SUPER";
-      bind = [
+      bind = let
+        ags = "exec, ags";
+      in [
         "$mod,     T,      exec,           wezterm"
         "$mod,     Y,      exec,           kitty"
         "$mod,     F,      exec,           firefox-nightly"
@@ -104,8 +106,8 @@
         "$mod,     C,       hyprexpo:expo, toggle" # can be: toggle, off/disable or on/enable
 
         # ags # TODO: merge if
-        "$mod,     R,       ags quit || true; ags run || true" # reload ags
-        "$mod,     SPACE,   ags toggle launcher || true" # app launcher
+        "$mod,     R,       ${ags} quit; ags run" # reload ags
+        "$mod,     SPACE,   ${ags} toggle launcher" # app launcher
         # "$mod,     P,       ${ags} -f ${config.xdg.configHome}/ags/iconbrowser.js" # icon browser
       ];
 
