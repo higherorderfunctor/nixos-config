@@ -138,8 +138,8 @@
     version = "latest";
     src = dockerTools.pullImage {
       imageName = "qmcgaw/gluetun";
-      imageDigest = "sha256:571147fa7f8eb01470885df57ee52db0601df34392cdddc4fcff423404b4f2cc";
-      sha256 = "sha256-QNZPy/IDbhRvYWn9gSo89340gVO6pmp8d4TvGm9smGw=";
+      imageDigest = "sha256:637a3a9daf56975942a1479ca44f574f96812a90e2150334704e2bbd7aa9321d";
+      sha256 = "sha256-5yLpZaoBw4E5m4n9Mu7dm/gem3h5hmJW4FhicLrLQMc=";
       finalImageTag = "latest";
       os = "linux";
       arch = "amd64";
@@ -166,24 +166,24 @@
   };
   oh-my-posh = {
     pname = "oh-my-posh";
-    version = "v24.3.0";
+    version = "v24.5.1";
     src = fetchFromGitHub {
       owner = "JanDeDobbeleer";
       repo = "oh-my-posh";
-      rev = "v24.3.0";
+      rev = "v24.5.1";
       fetchSubmodules = false;
-      sha256 = "sha256-MZItqxmI+ma9L0WlrnS4kay4C6xrySlAaDnLBwg6fhY=";
+      sha256 = "sha256-3ohkrGjQ9tG0ds0m8scvE7Wl+pkN9B4YkGzQ+kpjE+k=";
     };
   };
   spectral = {
     pname = "spectral";
-    version = "v6.14.0";
+    version = "v6.14.1";
     src = fetchFromGitHub {
       owner = "stoplightio";
       repo = "spectral";
-      rev = "v6.14.0";
+      rev = "v6.14.1";
       fetchSubmodules = false;
-      sha256 = "sha256-VfXh+BhJj2ehoTghEzonYjcmO84P+esvpD79krISioQ=";
+      sha256 = "sha256-JbM+d4KfQzr0YBp63LEKNihtp6J6fA+9NVV5z4c/wCg=";
     };
   };
   standardnotes-desktop-deb-x86_64-linux = {
@@ -208,37 +208,37 @@
   };
   vivid-plasma-themes = {
     pname = "vivid-plasma-themes";
-    version = "7a583128ce2af16cbc0385e5579824befdcc0a08";
+    version = "e7f9b941b12fdc0da62dd1d9ddfc13ef185bbdf3";
     src = fetchgit {
       url = "https://github.com/L4ki/Vivid-Plasma-Themes.git";
-      rev = "7a583128ce2af16cbc0385e5579824befdcc0a08";
+      rev = "e7f9b941b12fdc0da62dd1d9ddfc13ef185bbdf3";
       fetchSubmodules = false;
       deepClone = false;
       leaveDotGit = false;
       sparseCheckout = [ ];
-      sha256 = "sha256-9zNDXfyw29Bli/uTcBGvTwk5i7Yt2tpgazdlPDyB2Mc=";
+      sha256 = "sha256-/JFsfIhCETDopZYg3lcoPjNP4two/bvwcuZfffdcvfI=";
     };
-    date = "2024-11-09";
+    date = "2024-11-15";
   };
   wezterm = {
     pname = "wezterm";
-    version = "51c794ac500a2033b9dc570c71810518bfa667a9";
+    version = "979df7826965348345a3305ed889a4b9aef838e1";
     src = fetchgit {
       url = "https://github.com/wez/wezterm.git";
-      rev = "51c794ac500a2033b9dc570c71810518bfa667a9";
+      rev = "979df7826965348345a3305ed889a4b9aef838e1";
       fetchSubmodules = true;
       deepClone = false;
       leaveDotGit = false;
       sparseCheckout = [ ];
-      sha256 = "sha256-AQPpxRj4q5bNx/yTYOJ0OuDYcNVj5DJ4lWIU7iUU3Hk=";
+      sha256 = "sha256-DJhA2T94KtG+Fj7DACTsM5XyZAl58GfN4q1btUjKw9E=";
     };
     cargoLock."Cargo.lock" = {
-      lockFile = ./wezterm-51c794ac500a2033b9dc570c71810518bfa667a9/Cargo.lock;
+      lockFile = ./wezterm-979df7826965348345a3305ed889a4b9aef838e1/Cargo.lock;
       outputHashes = {
         "xcb-imdkit-0.3.0" = "sha256-77KaJO+QJWy3tJ9AF1TXKaQHpoVOfGIRqteyqpQaSWo=";
         "sqlite-cache-0.1.3" = "sha256-sBAC8MsQZgH+dcWpoxzq9iw5078vwzCijgyQnMOWIkk=";
       };
     };
-    date = "2024-11-04";
+    date = "2024-11-14";
   };
 }

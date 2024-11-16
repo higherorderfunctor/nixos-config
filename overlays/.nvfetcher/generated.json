@@ -224,11 +224,11 @@
       "arch": "amd64",
       "finalImageName": null,
       "finalImageTag": null,
-      "imageDigest": "sha256:571147fa7f8eb01470885df57ee52db0601df34392cdddc4fcff423404b4f2cc",
+      "imageDigest": "sha256:637a3a9daf56975942a1479ca44f574f96812a90e2150334704e2bbd7aa9321d",
       "imageName": "qmcgaw/gluetun",
       "imageTag": "latest",
       "os": "linux",
-      "sha256": "sha256-QNZPy/IDbhRvYWn9gSo89340gVO6pmp8d4TvGm9smGw=",
+      "sha256": "sha256-5yLpZaoBw4E5m4n9Mu7dm/gem3h5hmJW4FhicLrLQMc=",
       "tlsVerify": null
     },
     "version": "latest"
@@ -283,13 +283,13 @@
       "name": null,
       "owner": "JanDeDobbeleer",
       "repo": "oh-my-posh",
-      "rev": "v24.3.0",
-      "sha256": "sha256-MZItqxmI+ma9L0WlrnS4kay4C6xrySlAaDnLBwg6fhY=",
+      "rev": "v24.5.1",
+      "sha256": "sha256-3ohkrGjQ9tG0ds0m8scvE7Wl+pkN9B4YkGzQ+kpjE+k=",
       "sparseCheckout": [],
       "type": "github"
     },
-    "version": "v24.3.0",
-    "vendorHash": "sha256-qfBc3mnvn6C6xsYcEohcwucyBoIVEo5iUuVhjciBNSU="
+    "version": "v24.5.1",
+    "vendorHash": "sha256-70QgAjt/diSliTM2rvWtk+juHtu6SsjCzMF7eo7aDrU="
   },
   "spectral": {
     "cargoLocks": null,
@@ -305,12 +305,12 @@
       "name": null,
       "owner": "stoplightio",
       "repo": "spectral",
-      "rev": "v6.14.0",
-      "sha256": "sha256-VfXh+BhJj2ehoTghEzonYjcmO84P+esvpD79krISioQ=",
+      "rev": "v6.14.1",
+      "sha256": "sha256-JbM+d4KfQzr0YBp63LEKNihtp6J6fA+9NVV5z4c/wCg=",
       "sparseCheckout": [],
       "type": "github"
     },
-    "version": "v6.14.0"
+    "version": "v6.14.1"
   },
   "standardnotes-desktop-deb-x86_64-linux": {
     "cargoLocks": null,
@@ -350,7 +350,7 @@
   },
   "vivid-plasma-themes": {
     "cargoLocks": null,
-    "date": "2024-11-09",
+    "date": "2024-11-15",
     "extract": null,
     "name": "vivid-plasma-themes",
     "passthru": null,
@@ -360,25 +360,25 @@
       "fetchSubmodules": false,
       "leaveDotGit": false,
       "name": null,
-      "rev": "7a583128ce2af16cbc0385e5579824befdcc0a08",
-      "sha256": "sha256-9zNDXfyw29Bli/uTcBGvTwk5i7Yt2tpgazdlPDyB2Mc=",
+      "rev": "e7f9b941b12fdc0da62dd1d9ddfc13ef185bbdf3",
+      "sha256": "sha256-/JFsfIhCETDopZYg3lcoPjNP4two/bvwcuZfffdcvfI=",
       "sparseCheckout": [],
       "type": "git",
       "url": "https://github.com/L4ki/Vivid-Plasma-Themes.git"
     },
-    "version": "7a583128ce2af16cbc0385e5579824befdcc0a08"
+    "version": "e7f9b941b12fdc0da62dd1d9ddfc13ef185bbdf3"
   },
   "wezterm": {
     "cargoLocks": {
       "Cargo.lock": [
-        "./wezterm-51c794ac500a2033b9dc570c71810518bfa667a9/Cargo.lock",
+        "./wezterm-979df7826965348345a3305ed889a4b9aef838e1/Cargo.lock",
         {
           "sqlite-cache-0.1.3": "sha256-sBAC8MsQZgH+dcWpoxzq9iw5078vwzCijgyQnMOWIkk=",
           "xcb-imdkit-0.3.0": "sha256-77KaJO+QJWy3tJ9AF1TXKaQHpoVOfGIRqteyqpQaSWo="
         }
       ]
     },
-    "date": "2024-11-04",
+    "date": "2024-11-14",
     "extract": null,
     "name": "wezterm",
     "passthru": null,
@@ -388,12 +388,12 @@
       "fetchSubmodules": true,
       "leaveDotGit": false,
       "name": null,
-      "rev": "51c794ac500a2033b9dc570c71810518bfa667a9",
-      "sha256": "sha256-AQPpxRj4q5bNx/yTYOJ0OuDYcNVj5DJ4lWIU7iUU3Hk=",
+      "rev": "979df7826965348345a3305ed889a4b9aef838e1",
+      "sha256": "sha256-DJhA2T94KtG+Fj7DACTsM5XyZAl58GfN4q1btUjKw9E=",
       "sparseCheckout": [],
       "type": "git",
       "url": "https://github.com/wez/wezterm.git"
     },
-    "version": "51c794ac500a2033b9dc570c71810518bfa667a9"
+    "version": "979df7826965348345a3305ed889a4b9aef838e1"
   }
 }

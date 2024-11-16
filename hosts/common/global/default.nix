@@ -62,9 +62,9 @@
     # systemctl show
     extraConfig = ''
       DefaultLimitNOFILE=1048576
-      DefaultLimitNOFILESoft=1048576
     '';
   };
+  #DefaultLimitNOFILESoft=1048576
 
   # timezone
   time.timeZone = "America/Denver";
