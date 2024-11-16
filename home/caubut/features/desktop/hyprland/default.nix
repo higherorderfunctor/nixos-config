@@ -84,14 +84,12 @@
         # https://wiki.hyprland.org/Useful-Utilities/Hyprland-desktop-portal/
         # https://github.com/NixOS/nixpkgs/issues/174099
         "${pkgs.dbus}/bin/dbus-update-activation-environment --systemd --all"
-        "ags -b hypr"
+        "ags run"
       ];
 
       # keybinds
       "$mod" = "SUPER";
-      bind = let
-        ags = "exec, ags -b hypr";
-      in [
+      bind = [
         "$mod,     T,      exec,           wezterm"
         "$mod,     Y,      exec,           kitty"
         "$mod,     F,      exec,           firefox-nightly"
@@ -106,9 +104,9 @@
         "$mod,     C,       hyprexpo:expo, toggle" # can be: toggle, off/disable or on/enable
 
         # ags # TODO: merge if
-        "$mod,     R,       ${ags} quit; ags -b hypr" # reload ags
-        "$mod,     SPACE,   ${ags} -t applauncher" # app launcher
-        "$mod,     P,       ${ags} -f ${config.xdg.configHome}/ags/iconbrowser.js" # icon browser
+        "$mod,     R,       ags quit || true; ags run || true" # reload ags
+        "$mod,     SPACE,   ags toggle launcher || true" # app launcher
+        # "$mod,     P,       ${ags} -f ${config.xdg.configHome}/ags/iconbrowser.js" # icon browser
       ];
 
       monitor = [

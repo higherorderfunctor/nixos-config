@@ -44,16 +44,24 @@ export default function Applauncher() {
     }
 
     return <window
-        name="launcher"
-        anchor={Astal.WindowAnchor.TOP | Astal.WindowAnchor.BOTTOM}
-        exclusivity={Astal.Exclusivity.IGNORE}
-        keymode={Astal.Keymode.ON_DEMAND}
-        application={App}
-        onShow={() => text.set("")}
-        onKeyPressEvent={function (self, event: Gdk.Event) {
-            if (event.get_keyval()[1] === Gdk.KEY_Escape)
-                self.hide()
-        }}>
+          setup={(self) => {
+            self.hide()
+          }}
+          name="launcher"
+          anchor={Astal.WindowAnchor.TOP | Astal.WindowAnchor.BOTTOM}
+          exclusivity={Astal.Exclusivity.IGNORE}
+          keymode={Astal.Keymode.ON_DEMAND}
+          application={App}
+          onShow={() => text.set("")}
+          onKeyPressEvent={function (self, event: Gdk.Event) {
+              if (event.get_keyval()[1] === Gdk.KEY_Escape)
+                  self.hide()
+          }}
+          onDeleteEvent={(self) => {
+              self.hide()
+              return true
+          }}
+        >
         <box>
             <eventbox widthRequest={4000} expand onClick={hide} />
             <box hexpand={false} vertical>

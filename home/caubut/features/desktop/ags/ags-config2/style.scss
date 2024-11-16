@@ -1,4 +1,7 @@
-@use "./widget/Applauncher.scss" $bg: #212223;
+@use "sass:color";
+@use "./widget/Applauncher.scss";
+
+$bg: #212223;
 $fg: #f1f1f1;
 $accent: #378df7;
 $radius: 7px;
@@ -16,12 +19,12 @@ window.Bar {
     background-color: transparent;
 
     &:hover label {
-      background-color: color.adjust($fg, -0.84);
-      border-color: color.adjust($accent, -0.8);
+      background-color: color.scale($fg, $alpha: -84%);
+      border-color: color.scale($accent, $alpha: -80%);
     }
 
     &:active label {
-      background-color: color.adjust($fg, -0.8);
+      background-color: color.scale($fg, $alpha: -80%);
     }
   }
 
@@ -58,20 +61,22 @@ window.Bar {
   .AudioSlider {
     * {
       all: unset;
+      margin: 0 1em;
     }
 
     icon {
+      margin: 0 1em;
       margin-right: 0.6em;
     }
 
-    margin: 0 1em;
-
     trough {
-      background-color: color.adjust($fg, -0.8);
+      margin: 0 1em;
+      background-color: color.scale($fg, $alpha: -80%);
       border-radius: $radius;
     }
 
     highlight {
+      margin: 0 1em;
       background-color: $accent;
       min-height: 0.8em;
       border-radius: $radius;
