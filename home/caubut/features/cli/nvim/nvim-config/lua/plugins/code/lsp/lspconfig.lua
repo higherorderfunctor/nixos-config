@@ -12,10 +12,16 @@ return {
       -- eslint = { cmd = { "bunx", "--bun", "vscode-eslint-language-server", "--stdio" } },
       eslint = {
         -- cmd = { "bun", "--bun", "vscode-eslint-language-server", "--stdio" },
+        flags = {
+          unstable_ts_config = true,
+        },
         settings = {
           cache = true,
           --debug = "*",
           useFlatConfig = true, -- set if using flat config
+          options = {
+            flags = { "unstable_ts_config" },
+          },
           --overrideConfigFile = vim.fn.getcwd() .. "/eslint.config.ts",
           experimental = {
             useFlatConfig = nil, -- option not in the latest eslint-lsp
