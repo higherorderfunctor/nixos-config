@@ -58,6 +58,7 @@ return {
             "html",
             "json",
             "jsonc",
+            "json5",
             -- "yaml",
             -- "markdown",
             -- "markdown.mdx",
