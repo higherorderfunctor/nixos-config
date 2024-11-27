@@ -166,13 +166,13 @@
   };
   oh-my-posh = {
     pname = "oh-my-posh";
-    version = "v24.9.1";
+    version = "v24.10.1";
     src = fetchFromGitHub {
       owner = "JanDeDobbeleer";
       repo = "oh-my-posh";
-      rev = "v24.9.1";
+      rev = "v24.10.1";
       fetchSubmodules = false;
-      sha256 = "sha256-bdZ775vUqK1GOb8n1hVVaUWrJMyD9Yz2fpw6bql7dx8=";
+      sha256 = "sha256-nBEQ9H1ekssrIGYFGJzOwXgAAnsWrSribbCNUMkigwY=";
     };
   };
   spectral = {
