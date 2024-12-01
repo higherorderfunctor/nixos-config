@@ -17,8 +17,12 @@ in {
         inherit (nv.src) url sha256;
       };
 
-      unpackPhase = ''
-        ${attrs.unpackPhase}
+      # unpackPhase = ''
+      #   ${attrs.unpackPhase}
+      #   mv opt/Standard\ Notes opt/standardnotes
+      # '';
+
+      preInstall = ''
         mv opt/Standard\ Notes opt/standardnotes
       '';
 

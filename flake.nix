@@ -115,9 +115,8 @@
   } @ inputs: let
     inherit (self) outputs;
     lib = (nixpkgs.lib.extend (import ./lib self)) // home-manager.lib;
-    systems = ["x86_64-linux" "aarch64-linux" "x86_64-darwin" "aarch64-darwin"];
-    forAllSystems = f: lib.genAttrs systems (system: f pkgsFor.${system});
-    pkgsFor = lib.genAttrs systems (system:
+    forAllSystems = f: nixpkgs.lib.genAttrs nixpkgs.lib.systems.flakeExposed (system: f (pkgsFor system));
+    pkgsFor = system:
       import nixpkgs {
         inherit system;
         overlays = import ./overlays {inherit inputs lib;};
@@ -128,7 +127,7 @@
             "olm-3.2.16" # ???
           ];
         };
-      });
+      };
   in {
     nixosModules = import ./modules/nixos;
     # TODO: tuck someplace else to remove the warning
@@ -140,22 +139,22 @@
       live-cd-minimal-x86_64-linux = lib.nixosSystem {
         modules = [./hosts/live-cd-minimal];
         specialArgs = {inherit inputs outputs;};
-        pkgs = pkgsFor.x86_64-linux;
+        pkgs = pkgsFor "x86_64-linux";
       };
       live-cd-graphical-x86_64-linux = lib.nixosSystem {
         modules = [./hosts/live-cd-graphical];
         specialArgs = {inherit inputs outputs;};
-        pkgs = pkgsFor.x86_64-linux;
+        pkgs = pkgsFor "x86_64-linux";
       };
       beelink-ser7 = lib.nixosSystem {
         modules = [./hosts/beelink-ser7];
         specialArgs = {inherit inputs outputs;};
-        pkgs = pkgsFor.x86_64-linux;
+        pkgs = pkgsFor "x86_64-linux";
       };
       vm = lib.nixosSystem {
         modules = [./hosts/vm];
         specialArgs = {inherit inputs outputs;};
-        pkgs = pkgsFor.x86_64-linux;
+        pkgs = pkgsFor "x86_64-linux";
       };
     };
 
@@ -163,12 +162,12 @@
       "caubut@z690-ud-ddr4" = lib.homeManagerConfiguration {
         modules = [./home/caubut/hosts/z690-ud-ddr4];
         extraSpecialArgs = {inherit inputs outputs;};
-        pkgs = pkgsFor.x86_64-linux;
+        pkgs = pkgsFor "x86_64-linux";
       };
       "caubut@precision-7760" = lib.homeManagerConfiguration {
         modules = [./home/caubut/hosts/precision-7760];
         extraSpecialArgs = {inherit inputs outputs;};
-        pkgs = pkgsFor.x86_64-linux;
+        pkgs = pkgsFor "x86_64-linux";
       };
     };
   };

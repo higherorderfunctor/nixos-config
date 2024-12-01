@@ -48,11 +48,11 @@
   };
   bun-x86_64-linux = {
     pname = "bun-x86_64-linux";
-    version = "1.1.37";
+    version = "1.1.38";
     src = fetchurl {
-      url = "https://github.com/oven-sh/bun/releases/download/bun-v1.1.37/bun-linux-x64.zip";
+      url = "https://github.com/oven-sh/bun/releases/download/bun-v1.1.38/bun-linux-x64.zip";
       name = "bun-x86_64-linux.zip";
-      sha256 = "sha256-zHpTkX7cm2V3i6zfyiHprPvR8vaXQtYWmAN3p4Yg6XQ=";
+      sha256 = "sha256-ph2lNX4o1Jd/zNSFH+1i/02j6jOFMAXH3ZPayAvFOTI=";
     };
   };
   catppuccin-btop = {
@@ -166,13 +166,13 @@
   };
   oh-my-posh = {
     pname = "oh-my-posh";
-    version = "v24.10.1";
+    version = "v24.11.2";
     src = fetchFromGitHub {
       owner = "JanDeDobbeleer";
       repo = "oh-my-posh";
-      rev = "v24.10.1";
+      rev = "v24.11.2";
       fetchSubmodules = false;
-      sha256 = "sha256-nBEQ9H1ekssrIGYFGJzOwXgAAnsWrSribbCNUMkigwY=";
+      sha256 = "sha256-REbjw15oIBEREcyS+Flw+i/IMfEqY5MefpqqzOq9u00=";
     };
   };
   spectral = {
@@ -208,37 +208,37 @@
   };
   vivid-plasma-themes = {
     pname = "vivid-plasma-themes";
-    version = "23d5d1e61d714ea3b23d25dee1cb3bf02c126899";
+    version = "a67d1c73210b9de41bc6abbaf167121cdfbd9b54";
     src = fetchgit {
       url = "https://github.com/L4ki/Vivid-Plasma-Themes.git";
-      rev = "23d5d1e61d714ea3b23d25dee1cb3bf02c126899";
+      rev = "a67d1c73210b9de41bc6abbaf167121cdfbd9b54";
       fetchSubmodules = false;
       deepClone = false;
       leaveDotGit = false;
       sparseCheckout = [ ];
-      sha256 = "sha256-BAGsOV7N0r1Vwudmgw3hK1rQ4zzCEhLkhA5Kr4LLTtI=";
+      sha256 = "sha256-Yt3MTDJrSrfLSF9SeYDPPMSYq6jNaq+2NQ90ubp22rQ=";
     };
-    date = "2024-11-23";
+    date = "2024-11-30";
   };
   wezterm = {
     pname = "wezterm";
-    version = "4050072da21cc3106d0985281d75978c07e22abc";
+    version = "4906789a6d61da58f73b95f89b59c41af60e0f3b";
     src = fetchgit {
       url = "https://github.com/wez/wezterm.git";
-      rev = "4050072da21cc3106d0985281d75978c07e22abc";
+      rev = "4906789a6d61da58f73b95f89b59c41af60e0f3b";
       fetchSubmodules = true;
       deepClone = false;
       leaveDotGit = false;
       sparseCheckout = [ ];
-      sha256 = "sha256-ezvkufwWU/hV9YdSc7lHwhV41YdbEDasixEnmsRkLhY=";
+      sha256 = "sha256-mMCZpwqkykvc30ucM0tEjWymo2BH+B881rxjoWb2prQ=";
     };
     cargoLock."Cargo.lock" = {
-      lockFile = ./wezterm-4050072da21cc3106d0985281d75978c07e22abc/Cargo.lock;
+      lockFile = ./wezterm-4906789a6d61da58f73b95f89b59c41af60e0f3b/Cargo.lock;
       outputHashes = {
         "xcb-imdkit-0.3.0" = "sha256-77KaJO+QJWy3tJ9AF1TXKaQHpoVOfGIRqteyqpQaSWo=";
         "sqlite-cache-0.1.3" = "sha256-sBAC8MsQZgH+dcWpoxzq9iw5078vwzCijgyQnMOWIkk=";
       };
     };
-    date = "2024-11-19";
+    date = "2024-11-29";
   };
 }

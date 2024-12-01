@@ -1,4 +1,4 @@
 {pkgs, ...}: {
   # patched fonts with icons # FIXME: not checked
-  home.packages = [pkgs.nerdfonts];
+  home.packages = with pkgs; with nerd-fonts; [ubuntu monaspace];
 }
