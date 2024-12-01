@@ -283,12 +283,12 @@
       "name": null,
       "owner": "JanDeDobbeleer",
       "repo": "oh-my-posh",
-      "rev": "v24.11.2",
-      "sha256": "sha256-REbjw15oIBEREcyS+Flw+i/IMfEqY5MefpqqzOq9u00=",
+      "rev": "v24.11.4",
+      "sha256": "sha256-hb5XgwBg9llX/PDX8A8hL5fJbG03nTjrvEd252k2Il0=",
       "sparseCheckout": [],
       "type": "github"
     },
-    "version": "v24.11.2",
+    "version": "v24.11.4",
     "vendorHash": "sha256-bOjIwBPxu/BfRaAcZTXf4xCGvVXnumb2++JZTx7ZG1s="
   },
   "spectral": {
