@@ -80,6 +80,9 @@
 
       # startup applications
       exec-once = [
+        # fixes issues with plugin disaptchers
+        # https://github.com/hyprwm/hyprland-plugins/issues/204
+        "hyprpm reload -n"
         # gnome-keyring + other fixes
         # https://wiki.hyprland.org/Useful-Utilities/Hyprland-desktop-portal/
         # https://github.com/NixOS/nixpkgs/issues/174099
