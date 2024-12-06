@@ -26,9 +26,20 @@
     };
     hyprland = {
       url = "github:hyprwm/Hyprland";
-      # url = "git+https://github.com/hyprwm/Hyprland?submodules=1";
-      # url = "git+https://github.com/hyprwm/Hyprland?submodules=1&rev=6e5804b53de753f24953d9d647940df66bc68f6d";
     };
+    # hyprgraphics.follows = "hyprgraphics";
+    # url = "git+https://github.com/hyprwm/Hyprland?submodules=1";
+    # url = "git+https://github.com/hyprwm/Hyprland?submodules=1&rev=6e5804b53de753f24953d9d647940df66bc68f6d";
+    # hyprgraphics = {
+    #   # url = "git+file:///home/caubut/Documents/projects/hyprland-plugins";
+    #   url = "github:hyprwm/hyprgraphics";
+    #   inputs = {
+    #     # hyprland.follows = "hyprland";
+    #     nixpkgs.follows = "hyprland/nixpkgs";
+    #     systems.follows = "hyprland/systems";
+    #     hyprutils.follows = "hyprland/hyprutils";
+    #   };
+    # };
     hyprland-plugins = {
       # url = "git+file:///home/caubut/Documents/projects/hyprland-plugins";
       url = "github:hyprwm/hyprland-plugins";
@@ -45,6 +56,7 @@
         systems.follows = "hyprland/systems";
         hyprlang.follows = "hyprland/hyprlang";
         hyprutils.follows = "hyprland/hyprutils";
+        hyprgraphics.follows = "hyprland/hyprgraphics";
       };
     };
     hypridle = {
@@ -61,6 +73,7 @@
       inputs = {
         nixpkgs.follows = "hyprland/nixpkgs";
         hyprutils.follows = "hyprland/hyprutils";
+        hyprwayland-scanner.follows = "hyprland/hyprwayland-scanner";
       };
     };
     impermanence = {

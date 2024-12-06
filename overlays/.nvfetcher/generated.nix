@@ -3,17 +3,17 @@
 {
   amdvlk = {
     pname = "amdvlk";
-    version = "8591585576634011fe9b5a049548e290ae24bc27";
+    version = "e03007d96a4ff5a508b11e0c6bd7ee09a6728eca";
     src = fetchgit {
       url = "https://github.com/GPUOpen-Drivers/AMDVLK.git";
-      rev = "8591585576634011fe9b5a049548e290ae24bc27";
+      rev = "e03007d96a4ff5a508b11e0c6bd7ee09a6728eca";
       fetchSubmodules = false;
       deepClone = false;
       leaveDotGit = false;
       sparseCheckout = [ ];
-      sha256 = "sha256-J+DquyUYIWWk8dqduiL5S2dzAsavUVu2m/Nl40MYCg0=";
+      sha256 = "sha256-k7zcNkySSoTgq9IDZ4ABGMXwlG4FgVvLGJjd7fkFQ/o=";
     };
-    date = "2024-10-31";
+    date = "2024-12-05";
   };
   arkenfox = {
     pname = "arkenfox";
@@ -28,11 +28,11 @@
   };
   bruno-deb-x86_64-linux = {
     pname = "bruno-deb-x86_64-linux";
-    version = "1.35.0";
+    version = "1.36.1";
     src = fetchurl {
-      url = "https://github.com/usebruno/bruno/releases/download/v1.35.0/bruno_1.35.0_amd64_linux.deb";
+      url = "https://github.com/usebruno/bruno/releases/download/v1.36.1/bruno_1.36.1_amd64_linux.deb";
       name = "bruno-x86_64-linux.zip";
-      sha256 = "sha256-35ZLEJB8S+yc2Yo6F7x78LFmDk2b18fX49o5dvbmq6c=";
+      sha256 = "sha256-tVT6+8bAUDH2tjkSWDwkcA2pap9Wjf9jW+NVU4VJ4M0=";
     };
   };
   btop = {
@@ -158,10 +158,10 @@
   };
   go = {
     pname = "go";
-    version = "1.23.3";
+    version = "1.23.4";
     src = fetchurl {
-      url = "https://go.dev/dl/go1.23.3.src.tar.gz";
-      sha256 = "sha256-jWp3MySHVXxq+iQhExtQ+D20rjxXnDvHLmcO4faWhZk=";
+      url = "https://go.dev/dl/go1.23.4.src.tar.gz";
+      sha256 = "sha256-rTRaxCHpCBQpOpaZzKGd1SOCUcP2h5gLvK4oSVsmNTE=";
     };
   };
   oh-my-posh = {
@@ -222,23 +222,23 @@
   };
   wezterm = {
     pname = "wezterm";
-    version = "4906789a6d61da58f73b95f89b59c41af60e0f3b";
+    version = "6f375e29a2c4d70b8b51956edd494693196c6692";
     src = fetchgit {
       url = "https://github.com/wez/wezterm.git";
-      rev = "4906789a6d61da58f73b95f89b59c41af60e0f3b";
+      rev = "6f375e29a2c4d70b8b51956edd494693196c6692";
       fetchSubmodules = true;
       deepClone = false;
       leaveDotGit = false;
       sparseCheckout = [ ];
-      sha256 = "sha256-mMCZpwqkykvc30ucM0tEjWymo2BH+B881rxjoWb2prQ=";
+      sha256 = "sha256-YbomxkYXeX4XoCAKZn5mIV6jLWLRetFMOmYFclSQmyM=";
     };
     cargoLock."Cargo.lock" = {
-      lockFile = ./wezterm-4906789a6d61da58f73b95f89b59c41af60e0f3b/Cargo.lock;
+      lockFile = ./wezterm-6f375e29a2c4d70b8b51956edd494693196c6692/Cargo.lock;
       outputHashes = {
         "xcb-imdkit-0.3.0" = "sha256-77KaJO+QJWy3tJ9AF1TXKaQHpoVOfGIRqteyqpQaSWo=";
         "sqlite-cache-0.1.3" = "sha256-sBAC8MsQZgH+dcWpoxzq9iw5078vwzCijgyQnMOWIkk=";
       };
     };
-    date = "2024-11-29";
+    date = "2024-12-05";
   };
 }

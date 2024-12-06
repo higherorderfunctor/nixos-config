@@ -13,8 +13,8 @@
     hash = "sha256-1HJwy2DicWZIIrNXlzzTi/nDPs4Q08NTx3Bs5kV60nE=";
   };
   contents = pkgs.appimageTools.extractType2 {
-    name = "${pname}-${version}";
-    inherit src;
+    #name = "${pname}-${version}";
+    inherit pname version src;
   };
   pulse-sms = pkgs.stdenv.mkDerivation {
     inherit pname version src contents;

@@ -4,8 +4,10 @@
   ...
 }:
 lib.composeManyExtensions (
-  (lib.attrValues inputs.hyprland.overlays)
-  ++ [
+  # (lib.attrValues inputs.hyprland.overlays)
+  ##++ [
+  [
+    inputs.hyprland.overlays.default
     inputs.hypridle.overlays.default
     inputs.hyprland-plugins.overlays.default
     inputs.hyprlock.overlays.default
