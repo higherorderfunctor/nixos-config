@@ -166,13 +166,13 @@
   };
   oh-my-posh = {
     pname = "oh-my-posh";
-    version = "v24.11.4";
+    version = "v24.12.0";
     src = fetchFromGitHub {
       owner = "JanDeDobbeleer";
       repo = "oh-my-posh";
-      rev = "v24.11.4";
+      rev = "v24.12.0";
       fetchSubmodules = false;
-      sha256 = "sha256-hb5XgwBg9llX/PDX8A8hL5fJbG03nTjrvEd252k2Il0=";
+      sha256 = "sha256-0u71eiyJEyvLSXLTcx4Mlk58n6soCUofiyLCVstgoGM=";
     };
   };
   spectral = {
@@ -208,17 +208,17 @@
   };
   vivid-plasma-themes = {
     pname = "vivid-plasma-themes";
-    version = "a67d1c73210b9de41bc6abbaf167121cdfbd9b54";
+    version = "740a1fe762f0658e6cc05b3c23da704c33773d83";
     src = fetchgit {
       url = "https://github.com/L4ki/Vivid-Plasma-Themes.git";
-      rev = "a67d1c73210b9de41bc6abbaf167121cdfbd9b54";
+      rev = "740a1fe762f0658e6cc05b3c23da704c33773d83";
       fetchSubmodules = false;
       deepClone = false;
       leaveDotGit = false;
       sparseCheckout = [ ];
-      sha256 = "sha256-Yt3MTDJrSrfLSF9SeYDPPMSYq6jNaq+2NQ90ubp22rQ=";
+      sha256 = "sha256-ul98o4AV9WeODB577yvxTm2Y0BFa13vyl8De9i6j0h4=";
     };
-    date = "2024-11-30";
+    date = "2024-12-07";
   };
   wezterm = {
     pname = "wezterm";

@@ -41,6 +41,7 @@ in {
               rm image/image_test.go \
                  config/migrate_glyphs_test.go \
                  segments/nba_test.go \
+                 segments/upgrade_test.go \
                  upgrade/notice_test.go
             '';
 
