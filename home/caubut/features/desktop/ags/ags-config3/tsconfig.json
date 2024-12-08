@@ -3,5 +3,6 @@
   "include": [],
   "references": [
     { "path": "./packages/app-launcher" },
+    { "path": "./packages/top-bar" },
   ]
 }

@@ -1,7 +1,7 @@
 {
-  "name": "@astal/app-launcher",
+  "name": "@astal/top-bar",
   "version": "0.0.0",
-  "description": "Astal App Launcher",
+  "description": "Astal Top Bar",
   "private": true,
   "type": "module",
   "scripts": {
