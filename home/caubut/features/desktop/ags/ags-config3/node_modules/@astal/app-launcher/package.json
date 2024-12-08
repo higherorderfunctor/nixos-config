@@ -1,0 +1,13 @@
+{
+  "name": "@astal/app-launcher",
+  "version": "0.0.0",
+  "description": "Astal App Launcher",
+  "private": true,
+  "type": "module",
+  "scripts": {
+  },
+  "dependencies": {
+  },
+  "devDependencies": {
+  }
+}

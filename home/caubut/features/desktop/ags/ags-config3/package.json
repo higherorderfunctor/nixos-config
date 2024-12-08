@@ -1,0 +1,34 @@
+{
+  "name": "astal-config",
+  "version": "0.0.0",
+  "description": "Astal Config",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "packageManager": "pnpm@9.0.0",
+  "scripts": {},
+  "devDependencies": {
+    "prettier": "^3.4.2"
+  },
+  "prettier": {
+    "semi": true,
+    "trailingComma": "all",
+    "singleQuote": true,
+    "printWidth": 120,
+    "tabWidth": 2
+  },
+  "madge": {
+    "tsConfig": {
+      "compilerOptions": {
+        "baseUrl": "."
+      }
+    },
+    "detectiveOptions": {
+      "ts": {
+        "skipTypeImports": true
+      }
+    }
+  }
+}
