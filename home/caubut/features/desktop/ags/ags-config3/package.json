@@ -4,10 +4,14 @@
   "description": "Astal Config",
   "private": true,
   "type": "module",
+  "license": "UNLICENSED",
   "workspaces": [
     "packages/*"
   ],
-  "packageManager": "pnpm@9.0.0",
+  "packageManager": "pnpm@9.15.0",
+  "engines": {
+    "pnpm": "9.15.0"
+  },
   "pnpm": {
     "overrides": {
       "effect": "$effect",
@@ -19,6 +23,7 @@
     "effect": "3.11.1"
   },
   "devDependencies": {
+    "eslint": "^9.16.0",
     "prettier": "3.4.2",
     "typescript": "5.7.2"
   },

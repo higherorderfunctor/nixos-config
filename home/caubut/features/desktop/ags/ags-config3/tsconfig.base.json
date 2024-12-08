@@ -36,7 +36,7 @@
     "stripInternal": true,
     "target": "ESNext",
     "typeRoots": ["./@girs"],
-    "types": [],
+    "types": [gi://*],
     "plugins": [
       {
         "name": "@effect/language-service"
