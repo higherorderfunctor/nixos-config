@@ -3,7 +3,9 @@
 Update or regenerate types.
 
 ```sh
-ags types --tsconfig
+// ags types --tsconfig
+
+ags types 'Astal*' -d vendor/types
 ```
 
 Random commands from history last time I played with Astal.

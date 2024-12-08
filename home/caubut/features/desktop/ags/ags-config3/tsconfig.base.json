@@ -35,7 +35,12 @@
     "strictNullChecks": true,
     "stripInternal": true,
     "target": "ESNext",
-    "typeRoots": ["./@girs"],
+    "typeRoots": [
+      "./node_modules/@types",
+      "./node_modules/@girs"
+      //
+    ],
+    "types": [],
     "plugins": [
       {
         "name": "@effect/language-service"
