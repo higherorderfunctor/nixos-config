@@ -6,7 +6,7 @@
   "type": "module",
   "scripts": {},
   "dependencies": {
+    "@girs/gjs": "4.0.0-beta.19",
     "effect": "*"
-  },
-  "devDependencies": {}
+  }
 }
