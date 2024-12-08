@@ -1,9 +1,8 @@
 {
   "$schema": "https://json.schemastore.org/tsconfig",
   "extends": "../../tsconfig.base.json",
-  "include": ["/home/caubut/.local/share/ags"],
   "compilerOptions": {
-    "baseUrl": "/home/caubut/.local/share/ags",
+    "baseUrl": "../../node_modules/astal",
     "rootDir": "/home/caubut/.local/share/ags",
     "jsx": "react-jsx",
     "jsxImportSource": "gtk3"
