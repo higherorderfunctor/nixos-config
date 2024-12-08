@@ -1,13 +1,12 @@
 {
-  "name": "@astal/top-bar",
+  "name": "@astal-config/top-bar",
   "version": "0.0.0",
   "description": "Astal Top Bar",
   "private": true,
   "type": "module",
-  "scripts": {
-  },
+  "scripts": {},
   "dependencies": {
+    "effect": "*"
   },
-  "devDependencies": {
-  }
+  "devDependencies": {}
 }

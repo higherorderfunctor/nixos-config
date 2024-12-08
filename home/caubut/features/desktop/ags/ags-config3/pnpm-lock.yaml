@@ -4,23 +4,59 @@ settings:
   autoInstallPeers: true
   excludeLinksFromLockfile: false
 
+overrides:
+  effect: 3.11.1
+  typescript: 5.7.2
+
 importers:
 
   .:
+    dependencies:
+      effect:
+        specifier: 3.11.1
+        version: 3.11.1
     devDependencies:
       prettier:
-        specifier: ^3.4.2
+        specifier: 3.4.2
         version: 3.4.2
-
-  packages/app-launcher: {}
+      typescript:
+        specifier: 5.7.2
+        version: 5.7.2
 
 packages:
+
+  effect@3.11.1:
+    resolution: {integrity: sha512-sYxdX2sYnjtACtZk+p0nlcy5rZWjFHFB5RBON03N+qxF9PSehmv/0ga+t2YjUJE+zKZrzmLYsfYIjPaL5LezQg==}
+
+  fast-check@3.23.1:
+    resolution: {integrity: sha512-u/MudsoQEgBUZgR5N1v87vEgybeVYus9VnDVaIkxkkGP2jt54naghQ3PCQHJiogS8U/GavZCUPFfx3Xkp+NaHw==}
+    engines: {node: '>=8.0.0'}
 
   prettier@3.4.2:
     resolution: {integrity: sha512-e9MewbtFo+Fevyuxn/4rrcDAaq0IYxPGLvObpQjiZBMAzB9IGmzlnG9RZy3FFas+eBMu2vA0CszMeduow5dIuQ==}
     engines: {node: '>=14'}
     hasBin: true
 
+  pure-rand@6.1.0:
+    resolution: {integrity: sha512-bVWawvoZoBYpp6yIoQtQXHZjmz35RSVHnUOTefl8Vcjr8snTPY1wnpSPMWekcFwbxI6gtmT7rSYPFvz71ldiOA==}
+
+  typescript@5.7.2:
+    resolution: {integrity: sha512-i5t66RHxDvVN40HfDd1PsEThGNnlMCMT3jMUuoh9/0TaqWevNontacunWyN02LA9/fIbEWlcHZcgTKb9QoaLfg==}
+    engines: {node: '>=14.17'}
+    hasBin: true
+
 snapshots:
 
+  effect@3.11.1:
+    dependencies:
+      fast-check: 3.23.1
+
+  fast-check@3.23.1:
+    dependencies:
+      pure-rand: 6.1.0
+
   prettier@3.4.2: {}
+
+  pure-rand@6.1.0: {}
+
+  typescript@5.7.2: {}

@@ -1,7 +1,4 @@
-
 {
-  "extends": "../../etc/tsconfigs/templates/tsconfig.src.base.json",
-  "references": [
-
-  ]
+  "extends": "../../configs/tsconfigs/templates/tsconfig.src.base.json",
+  "references": []
 }

@@ -1,13 +1,12 @@
 {
-  "name": "@astal/app-launcher",
+  "name": "@astal-config/app-launcher",
   "version": "0.0.0",
   "description": "Astal App Launcher",
   "private": true,
   "type": "module",
-  "scripts": {
-  },
+  "scripts": {},
   "dependencies": {
+    "effect": "*"
   },
-  "devDependencies": {
-  }
+  "devDependencies": {}
 }

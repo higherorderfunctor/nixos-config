@@ -1,8 +1,8 @@
 {
-    "$schema": "https://json.schemastore.org/tsconfig",
+  "$schema": "https://json.schemastore.org/tsconfig",
   "compilerOptions": {
-        "jsx": "react-jsx",
-        "jsxImportSource": "/home/caubut/.local/share/ags/gtk3",
+    "jsx": "react-jsx",
+    "jsxImportSource": "/home/caubut/.local/share/ags/gtk3",
     "allowSyntheticDefaultImports": true,
     "baseUrl": ".",
     "composite": true,
@@ -35,22 +35,16 @@
     "strictNullChecks": true,
     "stripInternal": true,
     "target": "ESNext",
-        "typeRoots": [
-            "./@girs"
-        ],
+    "typeRoots": ["./@girs"],
     "types": [],
     "plugins": [
       {
         "name": "@effect/language-service"
       }
     ],
-        "paths": {
-            "astal": [
-                "/home/caubut/.local/share/ags"
-            ],
-            "astal/*": [
-                "/home/caubut/.local/share/ags/*"
-            ]
-        },
+    "paths": {
+      "astal": ["/home/caubut/.local/share/ags"],
+      "astal/*": ["/home/caubut/.local/share/ags/*"]
+    }
   }
 }

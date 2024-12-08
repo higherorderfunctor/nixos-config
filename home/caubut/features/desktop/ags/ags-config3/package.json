@@ -4,13 +4,23 @@
   "description": "Astal Config",
   "private": true,
   "type": "module",
-  "exports": {
-    ".": "./src/index.ts"
-  },
+  "workspaces": [
+    "packages/*"
+  ],
   "packageManager": "pnpm@9.0.0",
+  "pnpm": {
+    "overrides": {
+      "effect": "$effect",
+      "typescript": "$typescript"
+    }
+  },
   "scripts": {},
+  "dependencies": {
+    "effect": "3.11.1"
+  },
   "devDependencies": {
-    "prettier": "^3.4.2"
+    "prettier": "3.4.2",
+    "typescript": "5.7.2"
   },
   "prettier": {
     "semi": true,
