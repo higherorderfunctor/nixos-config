@@ -19,7 +19,8 @@
     }
   },
   "scripts": {
-    "clean": "rimraf -g packages/*/dist packages/core/*/dist .eslintcache **/.tsbuildinfo **/.rollup.cache"
+    "clean": "rimraf -g **/dist .eslintcache **/.tsbuildinfo **/.rollup.cache",
+    "postinstall": "ags types 'Astal*' -d vendor/types"
   },
   "dependencies": {
     "effect": "3.11.4"

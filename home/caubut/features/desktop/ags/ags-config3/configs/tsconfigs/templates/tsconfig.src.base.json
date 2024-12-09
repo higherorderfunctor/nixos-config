@@ -1,25 +1,22 @@
 {
-  "$schema": "https://json.schemastore.org/tsconfig",
-  "extends": ["../../../tsconfig.base.json"],
-  "include": ["${configDir}/src/env.d.ts", "${configDir}/src"],
+  "extends": "../../../tsconfig.base.json",
+  "include": ["${configDir}/src"],
   "compilerOptions": {
-    "typeRoots": [
-      "../../../vendor/types",
-      //"/home/caubut/.local/share/ags",
-      "${configDir}/node_modules/@types",
-      "../../../node_modules/@types"
-      //
-    ],
-    //"astal/gtk3/jsx-runtime": ["./node_modules/astal/src/gtk3/jsx-runtime.ts"],
-    "paths": {
-      "astal": ["${configDir}/node_modules/astal"],
-      "astal/*": ["${configDir}/node_modules/astal/*"]
-    },
+    "tsBuildInfoFile": "${configDir}/.tsbuildinfo/src.tsbuildinfo",
+    "rootDir": "${configDir}/src",
+    "outDir": "${configDir}/dist/src",
+    "typeRoots": ["../../../vendor/types", "${configDir}/node_modules/@types", "../../../node_modules/@types"],
     "types": ["@astal/astal"],
+
     "jsx": "react-jsx",
     "jsxImportSource": "astal/gtk3",
-    "outDir": "${configDir}/dist/src",
-    "rootDir": "${configDir}/src",
-    "tsBuildInfoFile": "${configDir}/.tsbuildinfo/src.tsbuildinfo"
+    "paths": {
+      // NOTE: relative from baseBath
+      "astal": ["./vendor/astal/src/index.ts"],
+      "astal/gtk3": ["./vendor/astal/src/gtk3/index.ts"],
+      "astal/gtk3/*": ["./vendor/astal/src/gtk3/*.ts"],
+      "astal/gtk4": ["./vendor/astal/src/gtk4/index.ts"],
+      "astal/gtk4/*": ["./vendor/astal/src/gtk4/*.ts"]
+    }
   }
 }

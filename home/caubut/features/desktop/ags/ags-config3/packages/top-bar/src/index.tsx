@@ -1,5 +1,5 @@
 
- import Hyprland from "gi://AstalIO"
+ import Hyprland from "gi://AstalHyprland"
  import style from "./style.scss"
  import { Variable, GLib, bind } from "astal"
  import { App, Astal, Gtk, Gdk } from "astal/gtk3"
@@ -162,8 +162,14 @@
      </window>
  }
 
- App.start({
-     instanceName: "launcher",
-     css: style,
-     main: AppLauncher,
- })
+App.start({
+    css: style,
+    instanceName: "astal",
+    requestHandler(request, res) {
+        print(request)
+        res("ok")
+    },
+    main: () => {
+      App.get_monitors().map(Bar);
+    }
+})

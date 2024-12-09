@@ -1,54 +1,38 @@
 {
   "$schema": "https://json.schemastore.org/tsconfig",
-  "extends": "./templates/tsconfig.gjs.base.json",
-  //"extends": "../../tsconfig.base.json",
+  // "extends": "./templates/tsconfig.gjs.base.json",
+  "extends": ["${configDir}/../../node_modules/astal"],
   "include": [
     //  "../../vendor/types/@girs/astalio-0.1.d.ts",
     //  "../../vendor/types/@girs/astal*.d.ts",
     //
-    "/home/caubut/.local/share/ags"
+    // "/home/caubut/.local/share/ags"
+    "${configDir}/../../node_modules/astal/index.ts",
+    "${configDir}/../../node_modules/astal/src/**/*.ts"
   ],
   //"exclude": ["../../vendor/types/@girs/astal-4.0.d.ts"],
   "compilerOptions": {
-    "outDir": "../../dist/astal",
-    //"noEmit": true,
+    "experimentalDecorators": true,
+    "module": "ES2022",
+    "target": "ES2023",
+    "strict": true,
+    "moduleResolution": "Bundler",
+    "skipLibCheck": true,
+    "baseUrl": ".",
+    "outDir": "dist/src",
+    "noEmit": true,
     "noEmitOnError": false,
     //"lib": ["ES2022"],
-    "target": "ES2022",
-    "module": "ES2022",
-    "moduleResolution": "Bundler",
-    "rootDir": "/home/caubut/.local/share/ags",
+    "rootDir": "${configDir}",
     "composite": true,
-    "tsBuildInfoFile": "../../.tsbuildinfo/src.tsbuildinfo",
+    "tsBuildInfoFile": "${configDir}/.tsbuildinfo/astal.tsbuildinfo",
     "typeRoots": [
       "${configDir}/node_modules/@types",
-      "../../node_modules/@types",
+      "../../../../node_modules/@types",
       "../../vendor/types"
       //
     ],
-    "types": [
-      "@astal/astal"
-      // "@girs/astalio-0.1",
-      // "@girs/astal-3.0",
-      // // "@girs/astal-4.0",
-      // // "@girs/astalapps-0.1",
-      // // "@girs/astalauth-0.1",
-      // // "@girs/astalbattery-0.1",
-      // // "@girs/astalbluetooth-0.1",
-      // // "@girs/astalcava-0.1",
-      // // "@girs/astalgreet-0.1",
-      // // "@girs/astalhyprland-0.1",
-      // // "@girs/astalmpris-0.1",
-      // // "@girs/astalnetwork-0.1",
-      // // "@girs/astalnotifd-0.1",
-      // // "@girs/astalpowerprofiles-0.1",
-      // // "@girs/astalriver-0.1",
-      // // "@girs/astaltray-0.1",
-      // // "@girs/astalwp-0.1",
-      // "@girs/console",
-      // "@girs/dom",
-      // "@girs/gjs"
-    ],
+    "types": ["@astal/astal"],
     "paths": {
       //"astal/gtk3/jsx-runtime": ["./node_modules/astal/src/gtk3/jsx-runtime.ts"],
       "astal": ["/home/caubut/.local/share/ags"],
