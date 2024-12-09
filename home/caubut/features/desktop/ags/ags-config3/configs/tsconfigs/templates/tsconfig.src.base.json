@@ -1,8 +1,23 @@
 {
   "$schema": "https://json.schemastore.org/tsconfig",
-  "extends": ["./tsconfig.gjs.base.json", "../../../tsconfig.base.json"],
+  "extends": ["../../../tsconfig.base.json"],
   "include": ["${configDir}/src/env.d.ts", "${configDir}/src"],
   "compilerOptions": {
+    "typeRoots": [
+      "../../../vendor/types",
+      //"/home/caubut/.local/share/ags",
+      "${configDir}/node_modules/@types",
+      "../../../node_modules/@types"
+      //
+    ],
+    //"astal/gtk3/jsx-runtime": ["./node_modules/astal/src/gtk3/jsx-runtime.ts"],
+    "paths": {
+      "astal": ["${configDir}/node_modules/astal"],
+      "astal/*": ["${configDir}/node_modules/astal/*"]
+    },
+    "types": ["@astal/astal"],
+    "jsx": "react-jsx",
+    "jsxImportSource": "astal/gtk3",
     "outDir": "${configDir}/dist/src",
     "rootDir": "${configDir}/src",
     "tsBuildInfoFile": "${configDir}/.tsbuildinfo/src.tsbuildinfo"

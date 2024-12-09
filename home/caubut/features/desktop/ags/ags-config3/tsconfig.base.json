@@ -38,11 +38,6 @@
       {
         "name": "@effect/language-service"
       }
-    ],
-    "paths": {
-      "astal/gtk3/jsx-runtime": ["./node_modules/astal/src/gtk3/jsx-runtime.ts"],
-      "astal": ["/home/caubut/.local/share/ags"],
-      "astal/*": ["/home/caubut/.local/share/ags/*"]
-    }
+    ]
   }
 }

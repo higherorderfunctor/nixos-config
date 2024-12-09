@@ -6,6 +6,7 @@
   "type": "module",
   "scripts": {},
   "dependencies": {
+    "astal": "link:/home/caubut/.local/share/ags",
     "effect": "*"
   }
 }

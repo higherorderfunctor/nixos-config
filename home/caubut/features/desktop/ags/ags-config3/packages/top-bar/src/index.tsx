@@ -1,10 +1,8 @@
 
  import Hyprland from "gi://AstalIO"
-import { App } from "astal/gtk3/index.js"
  import style from "./style.scss"
  import { Variable, GLib, bind } from "astal"
- import { Astal, Gtk, Gdk } from "astal/gtk3"
- import Hyprland from "gi://AstalHyprland"
+ import { App, Astal, Gtk, Gdk } from "astal/gtk3"
  import Mpris from "gi://AstalMpris"
  import Battery from "gi://AstalBattery"
  import Wp from "gi://AstalWp"

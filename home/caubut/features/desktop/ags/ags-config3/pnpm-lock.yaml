@@ -37,6 +37,9 @@ importers:
 
   packages/top-bar:
     dependencies:
+      astal:
+        specifier: link:/home/caubut/.local/share/ags
+        version: link:../../../../../../../../../../../.local/share/ags
       effect:
         specifier: 3.11.4
         version: 3.11.4
