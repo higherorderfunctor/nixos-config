@@ -1,4 +1,6 @@
-import { App } from "astal/gtk3"
+
+ import Hyprland from "gi://AstalIO"
+import { App } from "astal/gtk3/index.js"
  import style from "./style.scss"
  import { Variable, GLib, bind } from "astal"
  import { Astal, Gtk, Gdk } from "astal/gtk3"

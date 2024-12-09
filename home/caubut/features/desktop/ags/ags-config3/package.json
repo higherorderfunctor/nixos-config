@@ -22,8 +22,7 @@
     "clean": "rimraf -g packages/*/dist packages/core/*/dist .eslintcache **/.tsbuildinfo **/.rollup.cache"
   },
   "dependencies": {
-    "astal": "github:Aylur/astal#path:/lang/gjs",
-    "effect": "3.11.1"
+    "effect": "3.11.4"
   },
   "devDependencies": {
     "eslint": "^9.16.0",

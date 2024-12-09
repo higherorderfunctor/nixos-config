@@ -1,11 +1,10 @@
 {
   "$schema": "https://json.schemastore.org/tsconfig",
-  "extends": "../../../tsconfig.base.json",
+  "extends": ["./tsconfig.gjs.base.json", "../../../tsconfig.base.json"],
   "include": ["${configDir}/src/env.d.ts", "${configDir}/src"],
   "compilerOptions": {
     "outDir": "${configDir}/dist/src",
     "rootDir": "${configDir}/src",
-    "tsBuildInfoFile": "${configDir}/.tsbuildinfo/src.tsbuildinfo",
-    "types": ["@girs/gjs"]
+    "tsBuildInfoFile": "${configDir}/.tsbuildinfo/src.tsbuildinfo"
   }
 }

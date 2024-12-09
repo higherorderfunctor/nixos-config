@@ -1,0 +1,27 @@
+{
+  "$schema": "https://json.schemastore.org/tsconfig",
+  "extends": "./templates/tsconfig.gjs.base.json",
+  //"extends": "../../tsconfig.base.json",
+  "include": [
+    "../../vendor/types/@girs/astalio-0.1.d.ts",
+    "../../vendor/types/@girs/astal*.d.ts",
+    //
+    "/home/caubut/.local/share/ags"
+  ],
+  //"exclude": ["../../vendor/types/@girs/astal-4.0.d.ts"],
+  "compilerOptions": {
+    "outDir": "../../dist/astal",
+    //"lib": ["ES2022"],
+    "target": "ES2022",
+    "module": "ES2022",
+    "moduleResolution": "Bundler",
+    "rootDir": "/home/caubut/.local/share/ags",
+    "composite": true,
+    "tsBuildInfoFile": "../../.tsbuildinfo/src.tsbuildinfo",
+    "paths": {
+      "astal/gtk3/jsx-runtime": ["./node_modules/astal/src/gtk3/jsx-runtime.ts"],
+      "astal": ["/home/caubut/.local/share/ags"],
+      "astal/*": ["/home/caubut/.local/share/ags/*"]
+    }
+  }
+}

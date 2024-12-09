@@ -1,0 +1,15 @@
+{
+  "$schema": "https://json.schemastore.org/tsconfig",
+  "compilerOptions": {
+    "jsx": "react-jsx",
+    "jsxImportSource": "astal/gtk3",
+    "typeRoots": [
+      "${configDir}/node_modules/@types",
+      "../../../node_modules/@types",
+      "../../../vendor/types"
+      //
+    ],
+    "types": ["@girs/gjs", "@girs/dom", "@girs/console"],
+    "lib": ["ESNext"]
+  }
+}

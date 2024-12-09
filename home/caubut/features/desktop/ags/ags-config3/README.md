@@ -8,6 +8,8 @@ Update or regenerate types.
 ags types 'Astal*' -d vendor/types
 ```
 
+    //"astal": "github:Aylur/astal#path:/lang/gjs",
+
 Random commands from history last time I played with Astal.
 
 ```sh

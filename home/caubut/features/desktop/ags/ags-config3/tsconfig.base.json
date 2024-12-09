@@ -1,10 +1,9 @@
 {
   "$schema": "https://json.schemastore.org/tsconfig",
   "compilerOptions": {
-    "jsx": "react-jsx",
-    "jsxImportSource": "astal/gtk3",
     "allowSyntheticDefaultImports": true,
     "baseUrl": ".",
+    "lib": ["ESNext"],
     "composite": true,
     "declaration": true,
     "declarationMap": true,
@@ -17,7 +16,6 @@
     "incremental": true,
     "isolatedDeclarations": false,
     "isolatedModules": true,
-    "lib": ["ESNext"],
     "module": "nodenext",
     "moduleDetection": "force",
     "moduleResolution": "nodenext",
@@ -35,11 +33,6 @@
     "strictNullChecks": true,
     "stripInternal": true,
     "target": "ESNext",
-    "typeRoots": [
-      "./node_modules/@types",
-      "./node_modules/@girs"
-      //
-    ],
     "types": [],
     "plugins": [
       {
@@ -47,7 +40,9 @@
       }
     ],
     "paths": {
-      "astal/gtk3/jsx-runtime": ["./node_modules/astal/src/gtk3/jsx-runtime.ts"]
+      "astal/gtk3/jsx-runtime": ["./node_modules/astal/src/gtk3/jsx-runtime.ts"],
+      "astal": ["/home/caubut/.local/share/ags"],
+      "astal/*": ["/home/caubut/.local/share/ags/*"]
     }
   }
 }
