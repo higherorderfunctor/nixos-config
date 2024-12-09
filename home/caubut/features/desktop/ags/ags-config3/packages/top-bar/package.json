@@ -4,7 +4,9 @@
   "description": "Astal Top Bar",
   "private": true,
   "type": "module",
-  "scripts": {},
+  "scripts": {
+    "build": "rollup-build --tsconfig ./tsconfig.src.json --bundle topbar"
+  },
   "dependencies": {
     "astal": "link:/home/caubut/.local/share/ags",
     "effect": "*"

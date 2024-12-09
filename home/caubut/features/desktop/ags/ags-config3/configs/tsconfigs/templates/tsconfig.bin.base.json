@@ -1,0 +1,11 @@
+{
+  "extends": "../../../tsconfig.base.json",
+  "include": ["${configDir}/bin"],
+  "compilerOptions": {
+    "lib": ["ESNext"],
+    "noEmit": true,
+    "rootDir": "${configDir}/bin",
+    "tsBuildInfoFile": "${configDir}/.tsbuildinfo/bin.tsbuildinfo",
+    "types": ["bun"]
+  }
+}
