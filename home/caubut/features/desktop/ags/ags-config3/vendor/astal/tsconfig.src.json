@@ -19,7 +19,7 @@
       "node_modules/@types",
       "../../node_modules/@types"
       //
-    ],
-    "types": ["@astal/astal"]
+    ]
+    // "types": ["@astal/astal"]
   }
 }
