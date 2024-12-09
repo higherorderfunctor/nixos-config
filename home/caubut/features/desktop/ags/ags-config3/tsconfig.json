@@ -3,7 +3,6 @@
   "include": [],
   "references": [
     // { "path": "./packages/app-launcher" },
-    { "path": "./packages/top-bar" },
-    { "path": "./configs/tsconfigs/tsconfig.astal.json" }
+    { "path": "./packages/top-bar" }
   ]
 }

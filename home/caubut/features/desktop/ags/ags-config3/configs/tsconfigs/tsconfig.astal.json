@@ -3,14 +3,16 @@
   "extends": "./templates/tsconfig.gjs.base.json",
   //"extends": "../../tsconfig.base.json",
   "include": [
-    "../../vendor/types/@girs/astalio-0.1.d.ts",
-    "../../vendor/types/@girs/astal*.d.ts",
+    //  "../../vendor/types/@girs/astalio-0.1.d.ts",
+    //  "../../vendor/types/@girs/astal*.d.ts",
     //
     "/home/caubut/.local/share/ags"
   ],
   //"exclude": ["../../vendor/types/@girs/astal-4.0.d.ts"],
   "compilerOptions": {
     "outDir": "../../dist/astal",
+    //"noEmit": true,
+    "noEmitOnError": false,
     //"lib": ["ES2022"],
     "target": "ES2022",
     "module": "ES2022",
@@ -18,8 +20,31 @@
     "rootDir": "/home/caubut/.local/share/ags",
     "composite": true,
     "tsBuildInfoFile": "../../.tsbuildinfo/src.tsbuildinfo",
+
+    "types": [
+      "@girs/astal-3.0",
+      "@girs/astal-4.0",
+      "@girs/astalapps-0.1",
+      "@girs/astalauth-0.1",
+      "@girs/astalbattery-0.1",
+      "@girs/astalbluetooth-0.1",
+      "@girs/astalcava-0.1",
+      "@girs/astalgreet-0.1",
+      "@girs/astalhyprland-0.1",
+      "@girs/astalio-0.1",
+      "@girs/astalmpris-0.1",
+      "@girs/astalnetwork-0.1",
+      "@girs/astalnotifd-0.1",
+      "@girs/astalpowerprofiles-0.1",
+      "@girs/astalriver-0.1",
+      "@girs/astaltray-0.1",
+      "@girs/astalwp-0.1",
+      "@girs/console",
+      "@girs/dom",
+      "@girs/gjs"
+    ],
     "paths": {
-      "astal/gtk3/jsx-runtime": ["./node_modules/astal/src/gtk3/jsx-runtime.ts"],
+      //"astal/gtk3/jsx-runtime": ["./node_modules/astal/src/gtk3/jsx-runtime.ts"],
       "astal": ["/home/caubut/.local/share/ags"],
       "astal/*": ["/home/caubut/.local/share/ags/*"]
     }
