@@ -38,7 +38,7 @@
     }
   },
   "scripts": {
-    "build": "tsc -b tsconfig.json && pnpm -r --reporter=append-only --reporter-hide-prefix build",
+    "build": "tsc -b configs/tsconfigs/tsconfig.build.json && pnpm -r --reporter=append-only --reporter-hide-prefix build",
     "clean": "rimraf -g **/dist .eslintcache **/.tsbuildinfo **/.rollup.cache",
     "postinstall": "ags types 'Astal*' -d vendor/types"
   },

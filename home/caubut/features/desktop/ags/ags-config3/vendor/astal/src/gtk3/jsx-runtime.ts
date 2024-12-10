@@ -1,5 +1,6 @@
 import Gtk from "gi://Gtk?version=3.0"
-import { mergeBindings, type BindableChild } from "./astalify.js"
+import { mergeBindings } from "./astalify.js"
+import type { BindableChild } from "./astalify.js"
 import * as Widget from "./widget.js"
 
 function isArrowFunction(func: any): func is (args: any) => any {

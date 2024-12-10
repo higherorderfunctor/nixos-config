@@ -307,7 +307,7 @@ tsConfigPath : tsconfig,
       sourcemap: true,
     }) as const;
 
-  const BASE_CONFIG = {
+  const BASE_CONFIG: RollupOptions = {
     // specifies the global object which is `globalThis` for bun
     context: 'globalThis',
     // mark gjs dependencies as external
@@ -319,10 +319,10 @@ tsConfigPath : tsconfig,
       // remove as much dead code as possible
       preset: 'smallest',
     },
-  } as const;
+  };
 
   const pluginsConfig = (tsconfig: string, options: Tsconfig.CompilerOptions) => [
-    tsconfigPathsPlugin(tsconfig),
+    // tsconfigPathsPlugin(tsconfig),
     typescriptPlugin(tsconfig, options),
     jsonPlugin(),
     commonjsPlugin(),

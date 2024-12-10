@@ -1,0 +1,8 @@
+{
+  "extends": ["./tsconfig.src.json", "../../configs/tsconfigs/templates/tsconfig.build.base.json"],
+  "references": [
+    {
+      "path": "../../vendor/astal/tsconfig.build.json"
+    }
+  ]
+}

@@ -15,15 +15,36 @@
     "url": "https://ko-fi.com/aylur"
   },
   "exports": {
-    ".": "./src/index.ts",
-    "./gtk3": "./src/gtk3/index.ts",
-    "./gtk4": "./src/gtk4/index.ts",
-    "./binding": "./src/binding.ts",
-    "./file": "./src/file.ts",
-    "./gobject": "./src/gobject.ts",
-    "./process": "./src/process.ts",
-    "./time": "./src/time.ts",
-    "./variable": "./src/variable.ts"
+    ".": {
+      "types": "./dist/dts/index.d.ts",
+      "import": "./dist/esm/index.js",
+      "default": "./dist/esm/index.js"
+    },
+    "./gtk3": {
+      "types": "./dist/dts/gtk3/index.d.ts",
+      "import": "./dist/esm/gtk3/index.js",
+      "default": "./dist/esm/gtk3/index.js"
+    },
+    "./gtk3/*": {
+      "types": "./dist/dts/gtk3/*.d.ts",
+      "import": "./dist/esm/gtk3/*.js",
+      "default": "./dist/esm/gtk3/*.js"
+    },
+    "./gtk4": {
+      "types": "./dist/dts/gtk4/index.d.ts",
+      "import": "./dist/esm/gtk4/index.js",
+      "default": "./dist/esm/gtk4/index.js"
+    },
+    "./gtk4/*": {
+      "types": "./dist/dts/gtk4/*.d.ts",
+      "import": "./dist/esm/gtk4/*.js",
+      "default": "./dist/esm/gtk4/*.js"
+    },
+    "./*": {
+      "types": "./dist/dts/*.d.ts",
+      "import": "./dist/esm/*.js",
+      "default": "./dist/esm/*.js"
+    }
   },
   "engines": {
     "gjs": ">=1.79.0"

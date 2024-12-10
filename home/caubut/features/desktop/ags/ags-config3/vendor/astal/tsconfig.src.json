@@ -11,7 +11,7 @@
     "baseUrl": ".",
     "outDir": "dist/src",
     "lib": ["ES2022"],
-    "rootDir": ".",
+    "rootDir": "src",
     "composite": true,
     "tsBuildInfoFile": ".tsbuildinfo/src.tsbuildinfo",
     "typeRoots": [
