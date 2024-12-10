@@ -1,8 +1,16 @@
 {
-  "extends": "../../../etc/tsconfigs/templates/tsconfig.lib.base.json",
-  "include": ["${configDir}/lib", "../../../vendor/types"],
+  "extends": "../../configs/tsconfigs/templates/tsconfig.lib.base.json",
+  "include": ["${configDir}/lib"],
   "compilerOptions": {
     "outDir": null,
-    "rootDir": "../../.."
+    "rootDir": "../..",
+    "types": [
+      "bun",
+      "eslint-plugin-import",
+      "eslint-plugin-markdown",
+      "eslint-plugin-prefer-arrow-functions",
+      "eslint-plugin-security",
+      "eslint-plugin-sort-destructure-keys"
+    ]
   }
 }

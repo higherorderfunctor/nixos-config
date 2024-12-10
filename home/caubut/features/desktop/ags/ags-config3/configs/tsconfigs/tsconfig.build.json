@@ -3,6 +3,7 @@
   "include": [],
   "references": [
     { "path": "../../packages/top-bar/tsconfig.build.json" },
-    { "path": "../../vendor/astal/tsconfig.build.json" }
+    { "path": "../../vendor/astal/tsconfig.build.json" },
+    { "path": "../../packages/eslint-plugin/tsconfig.build.json" }
   ]
 }

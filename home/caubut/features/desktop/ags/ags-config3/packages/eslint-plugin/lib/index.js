@@ -1,25 +1,17 @@
-"use strict";
-var __assign = (this && this.__assign) || function () {
-    __assign = Object.assign || function(t) {
-        for (var s, i = 1, n = arguments.length; i < n; i++) {
-            s = arguments[i];
-            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
-                t[p] = s[p];
-        }
-        return t;
-    };
-    return __assign.apply(this, arguments);
+import jsonRecommended from './configs/json/recommended.js';
+import markdownRecommended from './configs/markdown/recommended.js';
+import recommended from './configs/recommended.js';
+import strict from './configs/strict.js';
+import { overrideWith } from './overrideHelpers.js';
+export default {
+    configs: {
+        recommended,
+        strict,
+        ...{
+            'json/recommended': jsonRecommended,
+            'markdown/recommended': markdownRecommended,
+        },
+    },
+    overrideWith,
 };
-Object.defineProperty(exports, "__esModule", { value: true });
-var recommended_js_1 = require("./configs/json/recommended.js");
-var recommended_js_2 = require("./configs/markdown/recommended.js");
-var recommended_js_3 = require("./configs/recommended.js");
-var strict_js_1 = require("./configs/strict.js");
-var overrideHelpers_js_1 = require("./overrideHelpers.js");
-exports.default = {
-    configs: __assign({ recommended: recommended_js_3.default, strict: strict_js_1.default }, {
-        'json/recommended': recommended_js_1.default,
-        'markdown/recommended': recommended_js_2.default,
-    }),
-    overrideWith: overrideHelpers_js_1.overrideWith,
-};
+//# sourceMappingURL=index.js.map

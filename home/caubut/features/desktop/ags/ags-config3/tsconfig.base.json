@@ -33,6 +33,7 @@
     "strictNullChecks": true,
     "stripInternal": true,
     "target": "ESNext",
+    "typeRoots": ["./vendor/types", "${configDir}/node_modules/@types", "./node_modules/@types"],
     "types": [],
     "plugins": [
       {
