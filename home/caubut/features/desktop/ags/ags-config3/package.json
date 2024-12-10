@@ -13,6 +13,9 @@
     "pnpm": "9.15.0"
   },
   "pnpm": {
+    "patchedDependencies": {
+      "eslint-config-airbnb-base@15.0.0": "./patches/eslint-config-airbnb-base@15.0.0.patch"
+    },
     "overrides": {
       "@effect/cli": "$@effect/cli",
       "@effect/opentelemetry": "$@effect/opentelemetry",
@@ -33,6 +36,7 @@
       "@typescript-eslint/visitor-keys": "$typescript-eslint",
       "effect": "$effect",
       "eslint": "$eslint",
+      "jiti": "$jiti",
       "typescript": "$typescript",
       "typescript-eslint": "$typescript-eslint"
     }
@@ -40,6 +44,7 @@
   "scripts": {
     "build": "tsc -b configs/tsconfigs/tsconfig.build.json && pnpm -r --reporter=append-only --reporter-hide-prefix build",
     "clean": "rimraf -g **/dist .eslintcache **/.tsbuildinfo **/.rollup.cache",
+    "eslint": "pnpm exec eslint --flag unstable_ts_config",
     "lint": "pnpm run lint:tsc;pnpm run lint:eslint;pnpm run lint:audit",
     "lint:audit": "pnpm audit",
     "lint:eslint": "pnpm --filter @astal-config/eslint-plugin build && TIMING=1 GITLAB_CI=1 pnpm eslint --cache .",
@@ -48,7 +53,7 @@
     "lint:spellcheck": "FORCE_COLOR=1 cspell --color",
     "lint:tsc": "tsc -b",
     "outdated": "pnpm -r outdated",
-    "postinstall": "ags types 'Astal*' -d vendor/types"
+    "gen-types": "ags types 'Astal*' -d vendor/types"
   },
   "dependencies": {
     "@effect/cli": "0.49.6",
@@ -66,7 +71,9 @@
     "@astal-config/eslint-plugin": "workspace:*",
     "@effect/language-service": "0.2.0",
     "@types/bun": "1.1.14",
+    "@types/node": "^22.10.1",
     "eslint": "9.16.0",
+    "jiti": "2.4.1",
     "prettier": "3.4.2",
     "rimraf": "6.0.1",
     "typescript": "5.7.2",

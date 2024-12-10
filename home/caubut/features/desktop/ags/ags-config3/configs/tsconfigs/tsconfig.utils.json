@@ -1,12 +1,6 @@
 {
-  "extends": "../../etc/tsconfigs/templates/tsconfig.utils.base.json",
-  "include": [
-    "../../buntest.config.ts",
-    "../../commitlint.config.ts",
-    "../../eslint.config.ts",
-    "../../vendor/types/*",
-    "../../vitest.config.ts"
-  ],
+  "extends": "./templates/tsconfig.utils.base.json",
+  "include": ["../../eslint.config.ts", "../../vendor/types/*"],
   "references": [
     {
       "path": "../../packages/eslint-plugin"
@@ -15,6 +9,7 @@
   "compilerOptions": {
     "allowJs": true,
     "checkJs": true,
-    "rootDir": "../.."
+    "rootDir": "../..",
+    "tsBuildInfoFile": "../../.tsbuildinfo/utils.tsbuildinfo"
   }
 }

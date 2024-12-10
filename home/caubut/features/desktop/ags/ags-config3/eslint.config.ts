@@ -1,32 +1,15 @@
 import type { TSESLint } from '@typescript-eslint/utils';
 import * as tseslint from 'typescript-eslint';
-import vueParser from 'vue-eslint-parser';
 
 import astalPlugin from '@astal-config/eslint-plugin';
 
 const ignores = [
-  '**/.mypy_cache/**/*', // python type checking cache
-  '**/.nvfetcher/**/*', // nix generated configs
   '**/.rollup-cache/**/*', // rollup cache
-  '**/.venv/**/*', // python virtual environment
-  '**/.vscode/**/*', // vscode settings
-  '**/.vuepress/**/*', // vuepress generated files
   '**/node_modules/**/*', // node dependencies
-  '.changeset/**/*', // changeset files
-  '.direnv/**/*', // direnv virtual environment dependencies
-  '.tmp/**/*', // in repo temp files
-  'build/**/*', // build artifacts
-  'docs/c4/**/*', // c4 generated files
-  'etc/bruno/**/*', // bruno generated configs
-  'etc/postman/**/*', // postman generated configs
   'packages/*/dist/**/*', // build artifacts
-  'packages/client-portal/*/dist/**/*', // build artifacts
-  'packages/core/*/dist/**/*', // build artifacts
-  'packages/core/eslint-plugin/lib/**/*.{js,js.map,d.ts,d.ts.map}', // generated files
-  'results/**/*', // nix build artifacts
 ];
 
-const extraFileExtensions = ['.vue'];
+const extraFileExtensions: string[] = [];
 
 /**
  * Base CSpell ESLint configuration.
@@ -69,15 +52,9 @@ const tsConfigOverrides: TSESLint.FlatConfig.Config = {
             'error',
             {
               devDependencies: [
-                'commitlint.config.ts',
-                'renovate.cjs',
                 'eslint.*.[tj]s',
-                'packages/*/*/esbuild.*.ts',
-                'packages/*/esbuild.*.ts',
                 'packages/*/tests/**/*.[tj]s',
                 'packages/*/tests/*.[tj]s',
-                'packages/core/*/tests/**/*.[tj]s',
-                'packages/core/*/tests/*.[tj]s',
                 'rollup.config.ts',
                 'vendor/**/*.d.ts',
               ],
@@ -127,44 +104,6 @@ const tsConfig = astalPlugin.overrideWith([...astalPlugin.configs.recommended, t
 });
 
 /**
- * Vue ESLint configuration.
- */
-const vueConfig = astalPlugin.overrideWith(
-  [
-    // recommended configs
-    ...astalPlugin.configs['vue/recommended'],
-    {
-      rules: {
-        // spellchecking
-        ...cspellRules,
-      },
-    },
-  ],
-  {
-    files: [
-      'packages/client-portal/backend/esbuild.config.ts',
-      'packages/client-portal/backend/{src,tests}/**/*.ts',
-      'packages/client-portal/frontend/env.d.ts',
-      'packages/client-portal/frontend/vite.config.ts',
-      'packages/client-portal/frontend/{src,tests}/**/*.ts',
-      'packages/client-portal/frontend/{src,tests}/**/*.vue',
-    ],
-    languageOptions: {
-      parser: vueParser,
-      parserOptions: {
-        ...tsParserOptions,
-        extraFileExtensions,
-        parser: {
-          '<template>': tseslint.parser,
-          js: tseslint.parser,
-          ts: tseslint.parser,
-        },
-      },
-    },
-  },
-);
-
-/**
  * JSON ESLint configuration.
  */
 const jsonConfig = astalPlugin.overrideWith(astalPlugin.configs['json/recommended'], {
@@ -194,7 +133,6 @@ const eslintConfig = [
   // specific configs
   ...tsConfig,
   ...strictTsConfig,
-  ...vueConfig,
   ...jsonConfig,
   // ...markdownConfig,
 ];
