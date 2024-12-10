@@ -1,0 +1,1 @@
+{"root":["./lib/constants.ts","./lib/index.ts","./lib/overrideHelpers.ts","./lib/configs/recommended.ts","./lib/configs/strict.ts","./lib/configs/json/recommended.ts","./lib/configs/markdown/recommended.ts","./lib/plugin/index.ts"],"errors":true,"version":"5.7.2"}
