@@ -20,7 +20,6 @@
   },
   "devDependencies": {
     "rollup-plugin-scss": "^4.0.0",
-    "rollup-plugin-tsconfig-paths": "^1.5.2",
-    "tslib": "2.8.1"
+    "rollup-plugin-tsconfig-paths": "^1.5.2"
   }
 }
