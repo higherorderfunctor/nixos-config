@@ -2,6 +2,8 @@
   "extends": "../../configs/tsconfigs/templates/tsconfig.lib.base.json",
   "include": ["${configDir}/lib"],
   "compilerOptions": {
+    "outDir": null,
+    "rootDir": "../..",
     "types": [
       "node",
     ]

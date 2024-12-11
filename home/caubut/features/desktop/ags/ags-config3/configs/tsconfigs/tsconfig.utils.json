@@ -9,6 +9,8 @@
   "compilerOptions": {
     "outDir": "../../dist/utils",
     "rootDir": "../..",
-    "tsBuildInfoFile": "../../.tsbuildinfo/utils.tsbuildinfo"
+    "tsBuildInfoFile": "../../.tsbuildinfo/utils.tsbuildinfo",
+    "allowJs": true,
+    "checkJs": true,
   }
 }
