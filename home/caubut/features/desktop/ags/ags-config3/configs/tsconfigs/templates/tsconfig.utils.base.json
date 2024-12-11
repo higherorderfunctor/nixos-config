@@ -3,7 +3,6 @@
   "compilerOptions": {
     "types": ["node"],
     "tsBuildInfoFile": "${configDir}/.tsbuildinfo/utils.tsbuildinfo",
-    "rootDir": "../../..",
     "noEmit": true
   }
 }

@@ -37,11 +37,11 @@ return {
       },
       commands = {
         -- move deleted files to the trash
-        delete = function(state)
-          local path = state.tree:get_node().path
-          vim.fn.system({ "gio", "trash", vim.fn.fnameescape(path) })
-          require("neo-tree.sources.manager").refresh(state.name)
-        end,
+        -- delete = function(state)
+        --   local path = state.tree:get_node().path
+        --   vim.fn.system({ "gio", "trash", vim.fn.fnameescape(path) })
+        --   require("neo-tree.sources.manager").refresh(state.name)
+        -- end,
         system_open = function(state)
           local node = state.tree:get_node()
           local path = node:get_id()

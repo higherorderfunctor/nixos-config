@@ -1,14 +1,13 @@
 {
   "extends": "./templates/tsconfig.utils.base.json",
-  "include": ["../../eslint.config.ts", "../../vendor/types/*"],
+  "include": ["./eslint.config.ts"],
   "references": [
     {
       "path": "../../packages/eslint-plugin"
     }
   ],
   "compilerOptions": {
-    "allowJs": true,
-    "checkJs": true,
+    "outDir": "../../dist/utils",
     "rootDir": "../..",
     "tsBuildInfoFile": "../../.tsbuildinfo/utils.tsbuildinfo"
   }

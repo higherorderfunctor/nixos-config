@@ -1,0 +1,45 @@
+diff --git a/whitespace-async.js b/whitespace-async.js
+index ee7e8b4034ba2c269e50072025559928653430f5..9e14e05aa9b0c6eca2f7b267f9641ae5d823f19b 100755
+--- a/whitespace-async.js
++++ b/whitespace-async.js
+@@ -3,9 +3,14 @@
+ const assign = require('object.assign');
+ const entries = require('object.entries');
+ const { ESLint } = require('eslint');
++const { FlatCompat } = require('@eslint/eslintrc');
+
+ const baseConfig = require('.');
+
++const compat = new FlatCompat({
++  baseDirectory: __dirname,
++});
++
+ const severities = ['off', 'warn', 'error'];
+
+ function getSeverity(ruleConfig) {
+@@ -21,8 +26,9 @@ function getSeverity(ruleConfig) {
+ async function onlyErrorOnRules(rulesToError, config) {
+   const errorsOnly = assign({}, config);
+   const cli = new ESLint({
+-    useEslintrc: false,
+-    baseConfig: config
++    overrideConfigFile: true,
++    baseConfig: compat.config(config),
++    cwd: __dirname,
+   });
+   const baseRules = (await cli.calculateConfigForFile(require.resolve('./'))).rules;
+
+diff --git a/whitespace.js b/whitespace.js
+index e60f7a79186c86265ff6e0beb3e372d3bd9d7f59..c373c1e363cf0888c42ac00de937414ef2ca881b 100644
+--- a/whitespace.js
++++ b/whitespace.js
+@@ -98,5 +98,8 @@ if (CLIEngine) {
+   const path = require('path');
+   const { execSync } = require('child_process');
+
+-  module.exports = JSON.parse(String(execSync(path.join(__dirname, 'whitespace-async.js'))));
++  module.exports = JSON.parse(
++    // NOTE: splitting and taking first elem to make it work with TIMING=1
++    String(execSync(path.join(__dirname, 'whitespace-async.js'))).split('\n')[0]
++  );
+ }

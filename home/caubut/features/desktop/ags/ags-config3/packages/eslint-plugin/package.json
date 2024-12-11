@@ -50,6 +50,7 @@
   "devDependencies": {
     "@types/eslint": "9.6.1",
     "@types/eslint__eslintrc": "2.1.2",
-    "@types/eslint__js": "8.42.3"
+    "@types/eslint__js": "8.42.3",
+    "@types/eslint-plugin-promise": "file:../../vendor/types/eslint-plugin-promise"
   }
 }
