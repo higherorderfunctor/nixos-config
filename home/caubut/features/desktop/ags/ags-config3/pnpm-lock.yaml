@@ -198,9 +198,24 @@ importers:
       '@types/eslint':
         specifier: 9.6.1
         version: 9.6.1
+      '@types/eslint-plugin-import':
+        specifier: file:../../vendor/types/eslint-plugin-import
+        version: eslint-plugin-import@file:vendor/types/eslint-plugin-import(@typescript-eslint/parser@8.18.0(eslint@9.16.0(jiti@2.4.1))(typescript@5.7.2))
+      '@types/eslint-plugin-markdown':
+        specifier: file:../../vendor/types/eslint-plugin-markdown
+        version: eslint-plugin-markdown@file:vendor/types/eslint-plugin-markdown
+      '@types/eslint-plugin-prefer-arrow-functions':
+        specifier: file:../../vendor/types/eslint-plugin-prefer-arrow-functions
+        version: eslint-plugin-prefer-arrow-functions@file:vendor/types/eslint-plugin-prefer-arrow-functions
       '@types/eslint-plugin-promise':
         specifier: file:../../vendor/types/eslint-plugin-promise
         version: file:vendor/types/eslint-plugin-promise
+      '@types/eslint-plugin-security':
+        specifier: file:../../vendor/types/eslint-plugin-security
+        version: eslint-plugin-security@file:vendor/types/eslint-plugin-security
+      '@types/eslint-plugin-sort-destructure-keys':
+        specifier: file:../../vendor/types/eslint-plugin-sort-destructure-keys
+        version: eslint-plugin-sort-destructure-keys@file:vendor/types/eslint-plugin-sort-destructure-keys
       '@types/eslint__eslintrc':
         specifier: 2.1.2
         version: 2.1.2
@@ -1600,6 +1615,14 @@ packages:
       '@typescript-eslint/parser':
         optional: true
 
+  eslint-plugin-import@file:vendor/types/eslint-plugin-import:
+    resolution: {directory: vendor/types/eslint-plugin-import, type: directory}
+    peerDependencies:
+      '@typescript-eslint/parser': '*'
+    peerDependenciesMeta:
+      '@typescript-eslint/parser':
+        optional: true
+
   eslint-plugin-jsonc@2.18.2:
     resolution: {integrity: sha512-SDhJiSsWt3nItl/UuIv+ti4g3m4gpGkmnUJS9UWR3TrpyNsIcnJoBRD7Kof6cM4Rk3L0wrmY5Tm3z7ZPjR2uGg==}
     engines: {node: ^12.22.0 || ^14.17.0 || >=16.0.0}
@@ -1618,6 +1641,9 @@ packages:
     peerDependencies:
       eslint: 9.16.0
 
+  eslint-plugin-markdown@file:vendor/types/eslint-plugin-markdown:
+    resolution: {directory: vendor/types/eslint-plugin-markdown, type: directory}
+
   eslint-plugin-perfectionist@4.2.0:
     resolution: {integrity: sha512-hEMFx5xfSc/0OLZXJhSaLUKkFxATuRf4yL2iVfxEcxkkb17DfoLZY9eH960dPSw5uB7o+4avqP3rtkNp1Vwo7w==}
     engines: {node: ^18.0.0 || >=20.0.0}
@@ -1629,6 +1655,9 @@ packages:
     engines: {node: '>=18.0.0'}
     peerDependencies:
       eslint: 9.16.0
+
+  eslint-plugin-prefer-arrow-functions@file:vendor/types/eslint-plugin-prefer-arrow-functions:
+    resolution: {directory: vendor/types/eslint-plugin-prefer-arrow-functions, type: directory}
 
   eslint-plugin-prettier@5.2.1:
     resolution: {integrity: sha512-gH3iR3g4JfF+yYPaJYkN7jEl9QbweL/YfkoRlNnuIEHEz1vHVlCmWOS+eGGiRuzHQXdJFCOTxRgvju9b8VUmrw==}
@@ -1654,6 +1683,9 @@ packages:
     resolution: {integrity: sha512-XjVGBhtDZJfyuhIxnQ/WMm385RbX3DBu7H1J7HNNhmB2tnGxMeqVSnYv79oAj992ayvIBZghsymwkYFS6cGH4Q==}
     engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
 
+  eslint-plugin-security@file:vendor/types/eslint-plugin-security:
+    resolution: {directory: vendor/types/eslint-plugin-security, type: directory}
+
   eslint-plugin-simple-import-sort@12.1.1:
     resolution: {integrity: sha512-6nuzu4xwQtE3332Uz0to+TxDQYRLTKRESSc2hefVT48Zc8JthmN23Gx9lnYhu0FtkRSL1oxny3kJ2aveVhmOVA==}
     peerDependencies:
@@ -1664,6 +1696,9 @@ packages:
     engines: {node: '>=12'}
     peerDependencies:
       eslint: 9.16.0
+
+  eslint-plugin-sort-destructure-keys@file:vendor/types/eslint-plugin-sort-destructure-keys:
+    resolution: {directory: vendor/types/eslint-plugin-sort-destructure-keys, type: directory}
 
   eslint-plugin-tsdoc@0.4.0:
     resolution: {integrity: sha512-MT/8b4aKLdDClnS8mP3R/JNjg29i0Oyqd/0ym6NnQf+gfKbJJ4ZcSh2Bs1H0YiUMTBwww5JwXGTWot/RwyJ7aQ==}
@@ -4292,6 +4327,10 @@ snapshots:
       - eslint-import-resolver-webpack
       - supports-color
 
+  eslint-plugin-import@file:vendor/types/eslint-plugin-import(@typescript-eslint/parser@8.18.0(eslint@9.16.0(jiti@2.4.1))(typescript@5.7.2)):
+    optionalDependencies:
+      '@typescript-eslint/parser': 8.18.0(eslint@9.16.0(jiti@2.4.1))(typescript@5.7.2)
+
   eslint-plugin-jsonc@2.18.2(eslint@9.16.0(jiti@2.4.1)):
     dependencies:
       '@eslint-community/eslint-utils': 4.4.1(eslint@9.16.0(jiti@2.4.1))
@@ -4320,6 +4359,8 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
+  eslint-plugin-markdown@file:vendor/types/eslint-plugin-markdown: {}
+
   eslint-plugin-perfectionist@4.2.0(eslint@9.16.0(jiti@2.4.1))(typescript@5.7.2):
     dependencies:
       '@typescript-eslint/types': 8.18.0
@@ -4333,6 +4374,8 @@ snapshots:
   eslint-plugin-prefer-arrow-functions@3.4.1(eslint@9.16.0(jiti@2.4.1)):
     dependencies:
       eslint: 9.16.0(jiti@2.4.1)
+
+  eslint-plugin-prefer-arrow-functions@file:vendor/types/eslint-plugin-prefer-arrow-functions: {}
 
   eslint-plugin-prettier@5.2.1(@types/eslint@9.6.1)(eslint-config-prettier@9.1.0(eslint@9.16.0(jiti@2.4.1)))(eslint@9.16.0(jiti@2.4.1))(prettier@3.4.2):
     dependencies:
@@ -4353,6 +4396,8 @@ snapshots:
     dependencies:
       safe-regex: 2.1.1
 
+  eslint-plugin-security@file:vendor/types/eslint-plugin-security: {}
+
   eslint-plugin-simple-import-sort@12.1.1(eslint@9.16.0(jiti@2.4.1)):
     dependencies:
       eslint: 9.16.0(jiti@2.4.1)
@@ -4361,6 +4406,8 @@ snapshots:
     dependencies:
       eslint: 9.16.0(jiti@2.4.1)
       natural-compare-lite: 1.4.0
+
+  eslint-plugin-sort-destructure-keys@file:vendor/types/eslint-plugin-sort-destructure-keys: {}
 
   eslint-plugin-tsdoc@0.4.0:
     dependencies:
