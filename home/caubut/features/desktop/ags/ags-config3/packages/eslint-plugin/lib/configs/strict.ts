@@ -1,13 +1,12 @@
-// FIXME:
-// import functionalPlugin from 'eslint-plugin-functional/flat';
 import cspellRecommended from '@cspell/eslint-plugin/recommended';
 import { fixupConfigRules, fixupPluginRules } from '@eslint/compat';
 import { FlatCompat } from '@eslint/eslintrc';
 import eslint from '@eslint/js';
 import * as stylisticPlugin from '@stylistic/eslint-plugin';
 import type { TSESLint } from '@typescript-eslint/utils';
-import { Array, pipe, Record } from 'effect';
+import { Array, Inspectable, pipe, Record } from 'effect';
 import codegenPlugin from 'eslint-plugin-codegen';
+import functionalPlugin from 'eslint-plugin-functional';
 import importPlugin from 'eslint-plugin-import';
 import perfectionistPlugin from 'eslint-plugin-perfectionist';
 import preferArrowFunctionsPlugin from 'eslint-plugin-prefer-arrow-functions';
@@ -17,23 +16,26 @@ import promisePlugin from 'eslint-plugin-promise';
 import securityPlugin from 'eslint-plugin-security';
 import simpleImportSortPlugin from 'eslint-plugin-simple-import-sort';
 import tsdocPlugin from 'eslint-plugin-tsdoc';
+import path from 'node:path';
 import * as tseslint from 'typescript-eslint';
 
 import { globals } from '../constants.js';
+import { airbnbConfig } from './airbnb.js';
 import { declareGlobals, overrideWith } from '../overrideHelpers.js';
 
 const compat = new FlatCompat({
-  baseDirectory: process.cwd(),
+  baseDirectory: path.resolve(import.meta.dirname, '../../../../'),
 });
 
 const plugins = {
   '@typescript-eslint': tseslint.plugin,
-  codegen: codegenPlugin,
-  import: fixupPluginRules(importPlugin),
   'prefer-arrow-functions': fixupPluginRules(preferArrowFunctionsPlugin),
+  'simple-import-sort': simpleImportSortPlugin,
+  codegen: codegenPlugin,
+  functional: functionalPlugin,
+  import: fixupPluginRules(importPlugin),
   prettier: prettierPlugin,
   promise: promisePlugin,
-  'simple-import-sort': simpleImportSortPlugin,
   tsdoc: tsdocPlugin,
 };
 
@@ -77,7 +79,7 @@ export const overrides: Partial<Partial<TSESLint.FlatConfig.Config>> = {
         extensionAlias: {
           '.js': ['.ts'],
         },
-        project: ['tsconfig.utils.json', 'packages/*/tsconfig.{src,lib,tests}.json'],
+        project: [path.resolve(import.meta.dirname, '../../../../tsconfig.json')],
       },
     },
   },
@@ -90,9 +92,10 @@ export const eslintConfig: TSESLint.FlatConfig.ConfigArray = pipe(
     // stylistic
     stylisticPlugin.default.configs['recommended-flat'],
     // airbnb
-    ...compat.extends('eslint-config-airbnb-base'),
-    ...fixupConfigRules(compat.extends('eslint-config-airbnb-base/whitespace')),
-    ...compat.extends('eslint-config-airbnb-typescript/base'),
+    airbnbConfig,
+    // ...compat.extends('eslint-config-airbnb-base'),
+    // ...fixupConfigRules(compat.extends('eslint-config-airbnb-base/whitespace')),
+    // ...compat.extends('eslint-config-airbnb-typescript/base'),
     // typescript-eslint
     ...tseslint.configs.strictTypeChecked,
     ...tseslint.configs.stylisticTypeChecked,
@@ -104,10 +107,12 @@ export const eslintConfig: TSESLint.FlatConfig.ConfigArray = pipe(
     { rules: importPlugin.configs.typescript.rules ?? {} },
     // promise
     { rules: promisePlugin.configs.recommended.rules ?? {} },
-    // FIXME: functional
-    // functionalPlugin.configs.strict,
-    // functionalPlugin.configs.stylistic,
+    // security
     securityPlugin.configs.recommended,
+    // functional
+    // functionalPlugin.configs.strict,
+    functionalPlugin.configs.stylistic,
+    functionalPlugin.configs.externalTypeScriptRecommended,
     // spellchecking
     cspellRecommended as TSESLint.FlatConfig.Config,
     {
@@ -120,8 +125,18 @@ export const eslintConfig: TSESLint.FlatConfig.ConfigArray = pipe(
           '@typescript-eslint/no-empty-interface': 'off',
           '@typescript-eslint/no-empty-object-type': 'off',
           '@typescript-eslint/no-unnecessary-type-parameters': 'off',
-          // naming conventions
         },
+        // don't allow void in places it doesn't make sense
+        '@typescript-eslint/no-invalid-void-type': [
+          'error',
+          {
+            // prevent needing to bind functions that have an unused this
+            allowAsThisParameter: true,
+            // allow as a generic type parameter
+            allowInGenericTypeArguments: true,
+          },
+        ],
+        // naming conventions
         '@typescript-eslint/naming-convention': [
           'error',
           // declared globals
@@ -143,16 +158,6 @@ export const eslintConfig: TSESLint.FlatConfig.ConfigArray = pipe(
             format: ['camelCase'],
             selector: 'property',
           },
-          // work around for declared globals
-          // {
-          //   filter: {
-          //     match: true,
-          //     regex: `^(${globals.join('|')})$`,
-          //   },
-          //   format: [],
-          //   modifiers: ['const'], // global doesn't work in a `declare global` block
-          //   selector: 'variable',
-          // },
           // adds PascalCase for nested types
           {
             format: ['camelCase', 'PascalCase'],
@@ -190,13 +195,8 @@ export const eslintConfig: TSESLint.FlatConfig.ConfigArray = pipe(
           },
         ],
         // immutability rules
-        // NOTE: https://github.com/eslint-functional/eslint-plugin-functional/?tab=readme-ov-file#external-recommended-rules
         ...{
-          '@typescript-eslint/prefer-readonly': 'error',
-          '@typescript-eslint/switch-exhaustiveness-check': 'error',
-          'no-param-reassign': 'error',
-          'no-var': 'error',
-          'prefer-const': 'error',
+          // NOTE: has own ruleset now
         },
         // misc
         ...{
@@ -231,6 +231,7 @@ export const eslintConfig: TSESLint.FlatConfig.ConfigArray = pipe(
           'no-underscore-dangle': 'off',
           // handled by prettier
           ...{
+            '@stylistic/brace-style': 'off',
             '@stylistic/indent': 'off',
             '@stylistic/indent-binary-ops': 'off',
             '@stylistic/operator-linebreak': 'off',
@@ -285,8 +286,8 @@ export const eslintConfig: TSESLint.FlatConfig.ConfigArray = pipe(
         /**
          * Custom comment rules
          */
-        // default is off; also adjusted location
         ...{
+          // default is off; also adjusted location
           'no-warning-comments': [
             'warn',
             {
@@ -313,11 +314,14 @@ export const eslintConfig: TSESLint.FlatConfig.ConfigArray = pipe(
           'import/no-duplicates': 'error',
           // disable as TypeScript will catch with TS2307
           'import/no-unresolved': 'off',
+          // // bun hacks
+          // 'import/no-unresolved': ['error', { ignore: ['bun:test'] }],
           // disable as it conflicts with simple-import-sort
           ...{
             'import/order': 'off',
             'perfectionist/sort-imports': 'off',
             'perfectionist/sort-named-imports': 'off',
+            'sort-imports': 'off',
           },
           // doesn't mix well with @effect
           'import/prefer-default-export': 'off',
@@ -327,11 +331,9 @@ export const eslintConfig: TSESLint.FlatConfig.ConfigArray = pipe(
           'simple-import-sort/imports': [
             'error',
             {
-              groups: [['^\\u0000'], ['^node:'], ['^@?\\w'], ['^@(astal-plugin)'], ['^#'], ['^\\.']],
+              groups: [['^\\u0000'], ['^(bun|node):'], ['^@?\\w'], ['^@(astal-plugin)\/'], ['^@'], ['^\\.']],
             },
           ],
-          // disable as it conflicts with simple-import-sort
-          'sort-imports': 'off',
         },
         /**
          * Custom promise rules
@@ -348,7 +350,9 @@ export const eslintConfig: TSESLint.FlatConfig.ConfigArray = pipe(
         /**
          * Doc comment rules
          */
-        'tsdoc/syntax': 'warn',
+        ...{
+          'tsdoc/syntax': 'warn',
+        },
         /**
          * Complexity rules.
          */

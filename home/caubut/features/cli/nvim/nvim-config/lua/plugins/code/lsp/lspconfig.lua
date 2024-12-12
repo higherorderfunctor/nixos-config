@@ -1,3 +1,12 @@
+local util = require("lspconfig.util")
+
+local function custom_root_dir(fname)
+  local root = util.root_pattern("tsconfig.json", "package.json", "jsconfig.json", ".git")(fname)
+  require("lazyvim.util").info("Detected root directory: " .. (root or "none"))
+  return root
+end
+require("lazyvim.util").info("test")
+
 return {
   "neovim/nvim-lspconfig",
   opts = {
@@ -9,9 +18,14 @@ return {
         cmd = { "vscode-json-languageserver", "--stdio" },
         mason = false,
       },
-      -- eslint = { cmd = { "bunx", "--bun", "vscode-eslint-language-server", "--stdio" } },
+      -- vtsls = {
+      --   cmd = { "bunx", "--bun", "vtsls", "--stdio" },
+      --   -- cmd = { vim.fn.getcwd() .. "/bin/vtsls.sh", "--stdio" },
+      --   root_dir = custom_root_dir,
+      -- },
       eslint = {
-        -- cmd = { "bun", "--bun", "vscode-eslint-language-server", "--stdio" },
+        -- cmd = { "bunx", "--bun", "vscode-eslint-language-server", "--stdio" },
+        cmd = { vim.fn.getcwd() .. "/bin/vscode-eslint-language-server", "--stdio" },
         flags = {
           unstable_ts_config = true,
         },

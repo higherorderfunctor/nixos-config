@@ -1,21 +1,26 @@
+import astalPlugin from '@astal-config/eslint-plugin';
 import type { TSESLint } from '@typescript-eslint/utils';
 import * as tseslint from 'typescript-eslint';
+import { Inspectable } from 'effect';
 
-import astalPlugin from '@astal-config/eslint-plugin';
+type ImmutableShallow<T extends {}> = {
+  readonly [P in keyof {} & T]: T[P];
+};
 
-const ignores = [
+const ignores: ImmutableShallow<readonly string[]> = [
   '**/.rollup-cache/**/*', // rollup cache
   '**/node_modules/**/*', // node dependencies
+  './vendor/types/@gjs/**/*', // GJS generated types
   'packages/*/dist/**/*', // build artifacts
 ];
 
-const extraFileExtensions: string[] = [];
+const extraFileExtensions: ImmutableShallow<readonly string[]> = [];
 
 /**
  * Base CSpell ESLint configuration.
  */
-const cspellRules: TSESLint.FlatConfig.Rules = {
-  '@cspell/spellchecker': ['warn', { configFile: './cspell.config.json' }],
+const cspellRules: Readonly<TSESLint.FlatConfig.Rules> = {
+  '@cspell/spellchecker': ['warn', { configFile: './configs/cspell/cspell.config.json' }],
 };
 
 /**
@@ -24,7 +29,7 @@ const cspellRules: TSESLint.FlatConfig.Rules = {
 const tsParserOptions: TSESLint.FlatConfig.ParserOptions = {
   ecmaVersion: 'latest',
   // optimization only for ProjectService to prevent project refresh
-  extraFileExtensions,
+  extraFileExtensions: extraFileExtensions as string[],
   projectService: true,
   sourceType: 'module',
   tsconfigRootDir: import.meta.dirname,
@@ -75,31 +80,16 @@ const tsConfigLanguageOptions: TSESLint.FlatConfig.LanguageOptions = {
 };
 
 /**
- * Strict TypeScript configuration.
+ * TypeScript ESLint configuration.
  */
-const strictTsConfigFiles = ['eslint.config.ts', 'packages/core/rollup-build/bin/*.ts'];
-
-const strictTsConfig = astalPlugin.overrideWith([...astalPlugin.configs.strict, tsConfigOverrides], {
-  files: strictTsConfigFiles,
-  languageOptions: tsConfigLanguageOptions,
-});
-
-/**
- * Recommended TypeScript ESLint configuration.
- */
-const tsConfig = astalPlugin.overrideWith([...astalPlugin.configs.recommended, tsConfigOverrides], {
+const tsConfig = astalPlugin.overrideWith([...astalPlugin.configs.strict, tsConfigOverrides], {
   files: [
-    '*.[cm]js',
     '*.[cm]ts',
-    '*.js',
     '*.ts',
-    'packages/*/*/esbuild.*.ts',
-    'packages/*/esbuild.*.ts',
-    'packages/*/{lib,tests}/**/*.ts',
+    'packages/*/{bin,lib,tests}/**/*.ts',
     'packages/core/*/{lib,tests}/**/*.ts',
     'vendor/types/**/*.d.ts',
   ],
-  ignores: strictTsConfigFiles,
   languageOptions: tsConfigLanguageOptions,
 });
 
@@ -132,7 +122,6 @@ const eslintConfig = [
   },
   // specific configs
   ...tsConfig,
-  ...strictTsConfig,
   ...jsonConfig,
   // ...markdownConfig,
 ];

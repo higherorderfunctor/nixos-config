@@ -3,9 +3,9 @@
   "include": [],
   "references": [
     // { "path": "./packages/app-launcher" },
-    { "path": "./packages/top-bar" },
-    { "path": "./packages/eslint-plugin" },
-    { "path": "./configs/tsconfigs/tsconfig.utils.json" },
-    { "path": "./vendor/astal/tsconfig.json" }
+    // { "path": "./packages/top-bar" },
+    { "path": "./packages/eslint-plugin" }
+    // { "path": "./configs/tsconfigs/tsconfig.utils.json" },
+    // { "path": "./vendor/astal/tsconfig.json" }
   ]
 }

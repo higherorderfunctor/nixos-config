@@ -1,3 +1,5 @@
+import path from 'node:path';
+
 import cspellRecommended from '@cspell/eslint-plugin/recommended';
 import { fixupConfigRules, fixupPluginRules } from '@eslint/compat';
 import { FlatCompat } from '@eslint/eslintrc';
@@ -7,10 +9,6 @@ import type { TSESLint } from '@typescript-eslint/utils';
 import { Array, pipe, Record } from 'effect';
 import codegenPlugin from 'eslint-plugin-codegen';
 import importPlugin from 'eslint-plugin-import';
-// FIXME:
-// import functionalPlugin from 'eslint-plugin-functional/flat';
-// import securityPlugin from 'eslint-plugin-security';
-// import perfectionistPlugin from 'eslint-plugin-perfectionist';
 import preferArrowFunctionsPlugin from 'eslint-plugin-prefer-arrow-functions';
 import prettierPlugin from 'eslint-plugin-prettier';
 import prettierRecommended from 'eslint-plugin-prettier/recommended';
@@ -22,19 +20,20 @@ import * as tseslint from 'typescript-eslint';
 
 import { globals } from '../constants.js';
 import { declareGlobals, overrideWith } from '../overrideHelpers.js';
+import { airbnbConfig } from './airbnb.js';
 
 const compat = new FlatCompat({
-  baseDirectory: process.cwd(),
+  baseDirectory: path.resolve(import.meta.dirname, '../../../../'),
 });
 
 const plugins = {
   '@typescript-eslint': tseslint.plugin,
-  prettier: prettierPlugin,
-  import: fixupPluginRules(importPlugin),
   'prefer-arrow-functions': fixupPluginRules(preferArrowFunctionsPlugin),
   'simple-import-sort': simpleImportSortPlugin,
   'sort-destructure-keys': sortDestructureKeysPlugin,
   codegen: codegenPlugin,
+  import: fixupPluginRules(importPlugin),
+  prettier: prettierPlugin,
   promise: promisePlugin,
   tsdoc: tsdocPlugin,
 };
@@ -47,7 +46,7 @@ const hotfixes = Array.map<TSESLint.FlatConfig.ConfigArray, TSESLint.FlatConfig.
     // enough until all dependencies have caught up to eslint 9.
     plugins: { ...config.plugins, ...plugins },
     rules: Record.fromEntries(
-      Record.toEntries(config.rules ?? {}).map(([key, value]) => {
+      Record.toEntries(config.rules ?? {}).map(([key, value]) =>   {
         switch (key) {
           // airbnb rules that have been renamed in newer plugin versions
           case '@typescript-eslint/lines-between-class-members':
@@ -65,21 +64,22 @@ const hotfixes = Array.map<TSESLint.FlatConfig.ConfigArray, TSESLint.FlatConfig.
 export const overrides: Partial<Partial<TSESLint.FlatConfig.Config>> = {
   plugins,
   settings: {
+    'import/cache': {
+      lifetime: Infinity, // speeds up LSP but requires manual cache clearing
+    },
+    'import/internal-regex': /^@(astal-plugin)?\//,
     'import/parsers': {
       '@typescript-eslint/parser': ['.ts', '.cts', '.mts', '.tsx', '.js', '.cjs', '.mjs', '.jsx'],
     },
     'import/resolver': {
+      node: true,
       typescript: {
         alwaysTryTypes: true,
-        project: ['tsconfig.utils.json', 'packages/*/tsconfig.{src,lib,tests}.json'],
         extensionAlias: {
           '.js': ['.ts'],
         },
+        project: ['tsconfig.json'],
       },
-      node: true,
-    },
-    'import/cache': {
-      lifetime: Infinity, // speeds up LSP but requires manual cache clearing
     },
   },
 };
@@ -91,13 +91,13 @@ export const eslintConfig: TSESLint.FlatConfig.ConfigArray = pipe(
     // stylistic
     stylisticPlugin.default.configs['recommended-flat'],
     // airbnb
-    ...compat.extends('eslint-config-airbnb-base'),
-    ...fixupConfigRules(compat.extends('eslint-config-airbnb-base/whitespace')),
-    ...compat.extends('eslint-config-airbnb-typescript/base'),
+    airbnbConfig,
+    // ...compat.extends('eslint-config-airbnb-base'),
+    // ...fixupConfigRules(compat.extends('eslint-config-airbnb-base/whitespace')),
+    // ...compat.extends('eslint-config-airbnb-typescript/base'),
     // typescript-eslint
     ...tseslint.configs.strictTypeChecked,
     ...tseslint.configs.stylisticTypeChecked,
-    // FIXME: perfectionistPlugin.configs['recommended-alphabetical'],
     // prettier
     prettierRecommended,
     // import
@@ -105,19 +105,10 @@ export const eslintConfig: TSESLint.FlatConfig.ConfigArray = pipe(
     { rules: importPlugin.configs.typescript.rules ?? {} },
     // promise
     { rules: promisePlugin.configs.recommended.rules ?? {} },
-    // FIXME: functional
-    // functionalPlugin.configs.strict,
-    // functionalPlugin.configs.stylistic,
-    // FIXME: security
-    // securityPlugin.configs.recommended,
     // spellchecking
     cspellRecommended as TSESLint.FlatConfig.Config,
     {
       rules: {
-        /**
-         * Custom deprecation rules
-         */
-        '@typescript-eslint/no-deprecated': 'warn',
         /**
          * Custom general style rules
          */
@@ -127,9 +118,11 @@ export const eslintConfig: TSESLint.FlatConfig.ConfigArray = pipe(
         // sort union and other stuff
         // types
         // FIXME: '@typescript-eslint/ban-types': ['error', { types: { '{}': false }, extendDefaults: true }],
-        '@typescript-eslint/no-empty-interface': 'off',
-        '@typescript-eslint/no-empty-object-type': 'off',
-        '@typescript-eslint/no-unnecessary-type-parameters': 'off',
+        ...{
+          '@typescript-eslint/no-empty-interface': 'off',
+          '@typescript-eslint/no-empty-object-type': 'off',
+          '@typescript-eslint/no-unnecessary-type-parameters': 'off',
+        },
         // don't allow void in places it doesn't make sense
         '@typescript-eslint/no-invalid-void-type': [
           'error',
@@ -147,195 +140,218 @@ export const eslintConfig: TSESLint.FlatConfig.ConfigArray = pipe(
           ...declareGlobals(globals),
           // preferred defaults
           {
-            selector: 'default',
-            leadingUnderscore: 'forbid',
-            trailingUnderscore: 'forbid',
             format: [],
+            leadingUnderscore: 'forbid',
+            selector: 'default',
+            trailingUnderscore: 'forbid',
           },
           {
-            selector: 'variableLike',
             format: ['camelCase', 'PascalCase', 'UPPER_CASE'],
+            selector: 'variableLike',
           },
-          { selector: 'function', format: ['camelCase'] },
-          { selector: 'typeLike', format: ['PascalCase'] },
+          { format: ['camelCase'], selector: 'function' },
+          { format: ['PascalCase'], selector: 'typeLike' },
           {
-            selector: 'property',
             format: ['camelCase'],
+            selector: 'property',
           },
           // adds PascalCase for nested types
           {
-            selector: 'typeProperty',
             format: ['camelCase', 'PascalCase'],
+            selector: 'typeProperty',
           },
           // adds UPPER_CASE for static constants
           {
-            selector: 'classProperty',
-            modifiers: ['static', 'readonly', 'public'],
             format: ['UPPER_CASE'],
+            modifiers: ['static', 'readonly', 'public'],
+            selector: 'classProperty',
           },
           // remove restrictions when working with JSON objects
           {
-            selector: 'objectLiteralProperty',
             format: [],
+            selector: 'objectLiteralProperty',
           },
           // useful for error reporting types with one ignored property
           // e.g., type MyErrorType = { _: never }
           {
-            selector: 'typeProperty',
+            filter: { match: true, regex: '^_$' },
             format: [],
-            filter: { regex: '^_$', match: true },
+            selector: 'typeProperty',
           },
           // useful for ignored parameters
           {
-            selector: 'parameter',
-            leadingUnderscore: 'allow',
             format: ['camelCase', 'PascalCase'],
+            leadingUnderscore: 'allow',
+            selector: 'parameter',
           },
           // Effect exception(s) to underscore rules
           {
-            selector: ['typeProperty', 'memberLike'],
+            filter: { match: true, regex: '^(_tag)$' },
             format: [],
-            filter: { regex: '^(_tag)$', match: true },
+            selector: ['typeProperty', 'memberLike'],
           },
         ],
         // immutability rules
         // NOTE: https://github.com/eslint-functional/eslint-plugin-functional/?tab=readme-ov-file#external-recommended-rules
-        '@typescript-eslint/prefer-readonly': 'error',
-        '@typescript-eslint/switch-exhaustiveness-check': 'error',
-        'no-var': 'error',
-        'no-param-reassign': 'error',
-        'prefer-const': 'error',
-        // default is warn, covered by above
-        'no-underscore-dangle': 'off',
-        // there are some situations where one is better than the other
-        // // default convention is interface, changed to type
-        // // FIXME: set to interface when ready to do conversions
-        // '@typescript-eslint/consistent-type-definitions': ['error', 'type'], #44
-        '@typescript-eslint/consistent-type-definitions': 'off',
-        // default is on, conflicts with Effect conventions
-        // e.g., const A = ...; type A = MappedType<typeof A>
-        '@typescript-eslint/no-redeclare': 'off',
-        // match effects style conventions
-        '@stylistic/yield-star-spacing': ['error', 'after'],
-        // han:dled by prettier
-        '@stylistic/operator-linebreak': 'off',
-        '@stylistic/brace-style': 'off',
-        '@stylistic/indent': 'off',
-        '@stylistic/indent-binary-ops': 'off',
-        '@stylistic/semi': 'off',
-        '@stylistic/quotes': 'off',
-        // emulate TS with exceptions for names that start with _
-        '@typescript-eslint/no-unused-vars': [
-          'error',
-          {
-            args: 'all',
-            argsIgnorePattern: '^_',
-            caughtErrors: 'all',
-            caughtErrorsIgnorePattern: '^_',
-            destructuredArrayIgnorePattern: '^_',
-            varsIgnorePattern: '^_',
-            ignoreRestSiblings: true,
-          },
-        ],
-        // allow redclares in different scopes
-        '@typescript-eslint/no-shadow': 'off',
-        // only require quotes when needed
-        '@stylistic/quote-props': ['error', 'as-needed'],
-        // semis preferred for types
-        '@stylistic/member-delimiter-style': [
-          'error',
-          {
-            multiline: {
-              delimiter: 'semi',
-              requireLast: true,
+        ...{
+          '@typescript-eslint/prefer-readonly': 'error',
+          '@typescript-eslint/switch-exhaustiveness-check': 'error',
+          'no-param-reassign': 'error',
+          'no-var': 'error',
+          'prefer-const': 'error',
+        },
+        ...{
+          // semis preferred for types
+          '@stylistic/member-delimiter-style': [
+            'error',
+            {
+              multiline: {
+                delimiter: 'semi',
+                requireLast: true,
+              },
+              multilineDetection: 'brackets',
+              singleline: {
+                delimiter: 'semi',
+                requireLast: false,
+              },
             },
-            singleline: {
-              delimiter: 'semi',
-              requireLast: false,
-            },
-            multilineDetection: 'brackets',
+          ],
+          // only require quotes when needed
+          '@stylistic/quote-props': ['error', 'as-needed'],
+          // match effects style conventions
+          '@stylistic/yield-star-spacing': ['error', 'after'],
+          // there are some situations where one is better than the other
+          // // default convention is interface, changed to type
+          // // FIXME: set to interface when ready to do conversions
+          // '@typescript-eslint/consistent-type-definitions': ['error', 'type'], #44
+          '@typescript-eslint/consistent-type-definitions': 'off',
+          // default is on, conflicts with Effect conventions
+          // e.g., const A = ...; type A = MappedType<typeof A>
+          '@typescript-eslint/no-redeclare': 'off',
+          // default is warn, covered by above
+          'no-underscore-dangle': 'off',
+          // handled by prettier
+          ...{
+            '@stylistic/brace-style': 'off',
+            '@stylistic/indent': 'off',
+            '@stylistic/indent-binary-ops': 'off',
+            '@stylistic/operator-linebreak': 'off',
+            '@stylistic/quotes': 'off',
+            '@stylistic/semi': 'off',
           },
-        ],
+          // allow redeclares in different scopes
+          '@typescript-eslint/no-shadow': 'off',
+          // emulate TS with exceptions for names that start with _
+          '@typescript-eslint/no-unused-vars': [
+            'error',
+            {
+              args: 'all',
+              argsIgnorePattern: '^_',
+              caughtErrors: 'all',
+              caughtErrorsIgnorePattern: '^_',
+              destructuredArrayIgnorePattern: '^_',
+              ignoreRestSiblings: true,
+              varsIgnorePattern: '^_',
+            },
+          ],
+        },
         /**
          * Custom arrow function style enforcement rules
          */
-        // default is off
-        'arrow-body-style': ['error', 'as-needed'],
-        // default is off
-        '@stylistic/arrow-parens': ['error', 'always'],
-        // default is off
-        'prefer-arrow-callback': 'error',
-        // default is warn; adds exceptions for generators used by this project
-        'func-names': [
-          'warn',
-          'always',
-          {
-            generators: 'never',
-          },
-        ],
-        // default is off
-        'func-style': 'error',
-        // default is off
-        'prefer-arrow-functions/prefer-arrow-functions': [
-          'error',
-          {
-            disallowPrototype: true,
-            returnStyle: 'implicit',
-          },
-        ],
+        ...{
+          // default is off
+          '@stylistic/arrow-parens': ['error', 'always'],
+          // default is off
+          'arrow-body-style': ['error', 'as-needed'],
+          // default is warn; adds exceptions for generators used by this project
+          'func-names': [
+            'warn',
+            'always',
+            {
+              generators: 'never',
+            },
+          ],
+          // default is off
+          'func-style': 'error',
+          // default is off
+          'prefer-arrow-callback': 'error',
+          // default is off
+          'prefer-arrow-functions/prefer-arrow-functions': [
+            'error',
+            {
+              disallowPrototype: true,
+              returnStyle: 'implicit',
+            },
+          ],
+        },
         /**
          * Custom comment rules
          */
-        // default is off; also adjusted location
-        'no-warning-comments': [
-          'warn',
-          {
-            location: 'anywhere',
-          },
-        ],
+        ...{
+          // default is off; also adjusted location
+          'no-warning-comments': [
+            'warn',
+            {
+              location: 'anywhere',
+            },
+          ],
+        },
         /**
          * Custom import/export rules
          */
-        // namespaces rules
-        '@typescript-eslint/no-namespace': 'off',
-        'import/namespace': ['error', { allowComputed: true }],
-        // disable as TypeScript will catch with TS2307
-        'import/no-unresolved': 'off',
-        // // bun hacks
-        // 'import/no-unresolved': ['error', { ignore: ['bun:test'] }],
-        // disable as it conflicts with simple-import-sort
-        'sort-imports': 'off',
-        // disable as it conflicts with simple-import-sort
-        'import/order': 'off',
-        // default is warn
-        'import/no-duplicates': 'error',
-        // disable as TypeScript will catch with TS2835
-        'import/extensions': 'off',
-        // doesn't mix well with @effect
-        'import/prefer-default-export': 'off',
-        // default is off; set custom sort order
-        'simple-import-sort/imports': [
-          'error',
-          {
-            groups: [['^\\u0000'], ['^node:'], ['^@?\\w'], ['^@(astal-config)/'], ['^@/'], ['^\\.']],
+        ...{
+          // namespaces rules
+          ...{
+            '@typescript-eslint/no-namespace': 'off',
+            'import/namespace': ['error', { allowComputed: true }],
           },
-        ],
-        // default is off
-        'simple-import-sort/exports': ['error'],
-        // type imports
-        '@typescript-eslint/consistent-type-imports': 'error',
+          // type imports
+          '@typescript-eslint/consistent-type-imports': 'error',
+          // deprecated rules
+          '@typescript-eslint/no-deprecated': 'warn',
+          // disable as TypeScript will catch with TS2835
+          'import/extensions': 'off',
+          // default is warn
+          'import/no-duplicates': 'error',
+          // disable as TypeScript will catch with TS2307
+          'import/no-unresolved': 'off',
+          // // bun hacks
+          // 'import/no-unresolved': ['error', { ignore: ['bun:test'] }],
+          // disable as it conflicts with simple-import-sort
+          ...{
+            'import/order': 'off',
+            'sort-imports': 'off',
+          },
+          // doesn't mix well with @effect
+          'import/prefer-default-export': 'off',
+          // default is off
+          'simple-import-sort/exports': ['error'],
+          // default is off; set custom sort order
+          'simple-import-sort/imports': [
+            'error',
+            {
+              groups: [['^\\u0000'], ['^(bun|node):'], ['^@?\\w'], ['^@(astal-plugin)\/'], ['^@'], ['^\\.']],
+            },
+          ],
+        },
         /**
          * Custom promise rules
          */
-        'promise/always-return': ['error', { ignoreLastCallback: true }],
+        ...{
+          'promise/always-return': ['error', { ignoreLastCallback: true }],
+        },
         /**
          * Code generator rules
          */
-        'codegen/codegen': 'error',
+        ...{
+          'codegen/codegen': 'error',
+        },
         /**
          * Doc comment rules
          */
-        'tsdoc/syntax': 'warn',
+        ...{
+          'tsdoc/syntax': 'warn',
+        },
       },
     },
   ),

@@ -1,0 +1,26 @@
+{
+  "language": "en-US",
+  "files": [
+    "**/*.cjs",
+    "**/*.cts",
+    "**/*.js",
+    "**/*.json",
+    "**/*.jsx",
+    "**/*.md",
+    "**/*.mjs",
+    "**/*.mts",
+    "**/*.nix",
+    "**/*.ts",
+    "**/*.tsx",
+    "**/scripts/**/*"
+  ],
+  "ignorePaths": ["**/node_modules/**", "**/dist/**"],
+  "dictionaries": ["en_US", "node", "softwareTerms", "typescript", "custom-words"],
+  "dictionaryDefinitions": [
+    {
+      "name": "custom-words",
+      "path": "./custom-words.txt",
+      "addWords": true
+    }
+  ]
+}

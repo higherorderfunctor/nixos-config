@@ -18,14 +18,6 @@
       "@girs/astalwp-0.1"
     ],
     "jsx": "react-jsx",
-    "jsxImportSource": "astal/gtk3",
-    "paths": {
-      // NOTE: relative from baseBath
-      "astal": ["./vendor/astal/src/index.ts"],
-      "astal/gtk3": ["./vendor/astal/src/gtk3/index.ts"],
-      "astal/gtk3/*": ["./vendor/astal/src/gtk3/*.ts"],
-      "astal/gtk4": ["./vendor/astal/src/gtk4/index.ts"],
-      "astal/gtk4/*": ["./vendor/astal/src/gtk4/*.ts"]
-    }
+    "jsxImportSource": "astal/gtk3"
   }
 }

@@ -32,7 +32,6 @@
     "eslint-config-prettier": "9.1.0",
     "eslint-import-resolver-typescript": "3.6.3",
     "eslint-plugin-codegen": "0.29.0",
-    "eslint-plugin-functional": "7.1.0",
     "eslint-plugin-import": "2.31.0",
     "eslint-plugin-jsonc": "2.18.2",
     "eslint-plugin-markdown": "5.1.0",
@@ -55,6 +54,7 @@
     "@types/eslint-plugin-security": "file:../../vendor/types/eslint-plugin-security",
     "@types/eslint-plugin-sort-destructure-keys": "file:../../vendor/types/eslint-plugin-sort-destructure-keys",
     "@types/eslint__eslintrc": "2.1.2",
-    "@types/eslint__js": "8.42.3"
+    "@types/eslint__js": "8.42.3",
+    "eslint-plugin-functional": "7.1.0"
   }
 }
