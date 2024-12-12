@@ -4,6 +4,9 @@
   "references": [
     {
       "path": "../../vendor/astal"
+    },
+    {
+      "path": "../../vendor/types/@girs"
     }
   ]
 }

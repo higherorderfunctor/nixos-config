@@ -1,0 +1,3 @@
+{
+  "extends": "../../../configs/tsconfigs/templates/tsconfig.typings.base.json"
+}
