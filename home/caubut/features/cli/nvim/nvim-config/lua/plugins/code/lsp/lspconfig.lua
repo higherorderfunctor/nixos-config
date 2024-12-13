@@ -7,6 +7,12 @@ local function custom_root_dir(fname)
 end
 require("lazyvim.util").info("test")
 
+local eslintlsp = vim.fn.getcwd() .. "/bin/vscode-eslint-language-server"
+
+if not vim.loop.fs_stat(eslintlsp) then
+  eslintlsp = "vscode-eslint-language-server"
+end
+
 return {
   "neovim/nvim-lspconfig",
   opts = {
@@ -25,7 +31,7 @@ return {
       -- },
       eslint = {
         -- cmd = { "bunx", "--bun", "vscode-eslint-language-server", "--stdio" },
-        cmd = { vim.fn.getcwd() .. "/bin/vscode-eslint-language-server", "--stdio" },
+        cmd = { eslintlsp, "--stdio" },
         flags = {
           unstable_ts_config = true,
         },
