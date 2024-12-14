@@ -37,7 +37,7 @@ return {
         },
         settings = {
           cache = true,
-          --debug = "*",
+          debug = "*",
           useFlatConfig = true, -- set if using flat config
           options = {
             flags = { "unstable_ts_config" },
