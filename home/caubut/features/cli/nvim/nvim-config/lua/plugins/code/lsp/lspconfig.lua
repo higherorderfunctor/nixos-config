@@ -5,13 +5,16 @@ local function custom_root_dir(fname)
   require("lazyvim.util").info("Detected root directory: " .. (root or "none"))
   return root
 end
-require("lazyvim.util").info("test")
 
-local eslintlsp = vim.fn.getcwd() .. "/bin/vscode-eslint-language-server"
+local eslint_lsp_path = vim.fn.getcwd()
+  .. "/node_modules/vscode-langservers-extracted/lib/eslint-language-server/eslintServer.js"
 
-if not vim.loop.fs_stat(eslintlsp) then
-  eslintlsp = "vscode-eslint-language-server"
-end
+local eslint_lsp = { "vscode-eslint-language-server" }
+-- if vim.loop.fs_stat(eslint_lsp_path) then
+--   eslint_lsp = { "bun", eslint_lsp_path }
+-- end
+
+require("lazyvim.util").info(eslint_lsp)
 
 return {
   "neovim/nvim-lspconfig",
@@ -30,22 +33,22 @@ return {
       --   root_dir = custom_root_dir,
       -- },
       eslint = {
-        -- cmd = { "bunx", "--bun", "vscode-eslint-language-server", "--stdio" },
-        cmd = { eslintlsp, "--stdio" },
+        -- cmd = { "bun", eslint_lsp_path, "--stdio" },
+        --cmd = vim.list_extend(eslint_lsp, { "--stdio" }),
         flags = {
           unstable_ts_config = true,
         },
         settings = {
           cache = true,
-          debug = "*",
-          useFlatConfig = true, -- set if using flat config
+          -- debug = "*",
+          -- useFlatConfig = true, -- set if using flat config
           options = {
             flags = { "unstable_ts_config" },
           },
           --overrideConfigFile = vim.fn.getcwd() .. "/eslint.config.ts",
-          experimental = {
-            useFlatConfig = nil, -- option not in the latest eslint-lsp
-          },
+          -- experimental = {
+          --   useFlatConfig = nil, -- option not in the latest eslint-lsp
+          -- },
         },
       },
       lua_ls = {
