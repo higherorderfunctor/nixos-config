@@ -10,11 +10,12 @@ local eslint_lsp_path = vim.fn.getcwd()
   .. "/node_modules/vscode-langservers-extracted/lib/eslint-language-server/eslintServer.js"
 
 local eslint_lsp = { vim.fn.getcwd() .. "/bin/vscode-eslint-language-server" }
+-- local eslint_lsp = { "vscode-eslint-language-server" }
 -- if vim.loop.fs_stat(eslint_lsp_path) then
---   eslint_lsp = { "bun", eslint_lsp_path }
+--   eslint_lsp = { "pnpm", "vscode-eslint-language-server" }
 -- end
 
-require("lazyvim.util").info(eslint_lsp)
+-- require("lazyvim.util").info(eslint_lsp)
 
 return {
   "neovim/nvim-lspconfig",
