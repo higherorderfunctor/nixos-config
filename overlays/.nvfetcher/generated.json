@@ -85,11 +85,11 @@
     "pinned": false,
     "src": {
       "name": "bun-x86_64-linux.zip",
-      "sha256": "sha256-ph2lNX4o1Jd/zNSFH+1i/02j6jOFMAXH3ZPayAvFOTI=",
+      "sha256": "sha256-n5BFNl4hxkZWiWZ8GLFpUZxQYh2+VbCQjidFyAqhMQI=",
       "type": "url",
-      "url": "https://github.com/oven-sh/bun/releases/download/bun-v1.1.38/bun-linux-x64.zip"
+      "url": "https://github.com/oven-sh/bun/releases/download/bun-v1.1.40/bun-linux-x64.zip"
     },
-    "version": "1.1.38"
+    "version": "1.1.40"
   },
   "catppuccin-btop": {
     "cargoLocks": null,
@@ -181,11 +181,11 @@
     "pinned": false,
     "src": {
       "name": null,
-      "sha256": "sha256-OuRduuy2QxLRZr3I6YBsjD2jl+/qOq2FRgvk3JVYai4=",
+      "sha256": "sha256-Q6fzqK8cPPuEF75BvyV16JcKhzvqFNEjEuER3SZ1R6U=",
       "type": "url",
       "url": "https://www.internic.net/domain/named.root"
     },
-    "version": "20241120"
+    "version": "20241218"
   },
   "fblog": {
     "cargoLocks": {
@@ -283,13 +283,13 @@
       "name": null,
       "owner": "JanDeDobbeleer",
       "repo": "oh-my-posh",
-      "rev": "v24.12.0",
-      "sha256": "sha256-0u71eiyJEyvLSXLTcx4Mlk58n6soCUofiyLCVstgoGM=",
+      "rev": "v24.15.1",
+      "sha256": "sha256-exrU6MfI55ZE6J4caALJLTVghM+g5MJzS1E6tbS57tM=",
       "sparseCheckout": [],
       "type": "github"
     },
-    "version": "v24.12.0",
-    "vendorHash": "sha256-YaMW2BUFone3/19/FvT4f8GpfVJxtVBMIOziBhEQPmE="
+    "version": "v24.15.1",
+    "vendorHash": "sha256-zA0arhpIxz8nnmUBXrAXAucWzUYO6dhYwsH4I5SyHMw="
   },
   "spectral": {
     "cargoLocks": null,
@@ -350,7 +350,7 @@
   },
   "vivid-plasma-themes": {
     "cargoLocks": null,
-    "date": "2024-12-07",
+    "date": "2024-12-14",
     "extract": null,
     "name": "vivid-plasma-themes",
     "passthru": null,
@@ -360,13 +360,13 @@
       "fetchSubmodules": false,
       "leaveDotGit": false,
       "name": null,
-      "rev": "740a1fe762f0658e6cc05b3c23da704c33773d83",
-      "sha256": "sha256-ul98o4AV9WeODB577yvxTm2Y0BFa13vyl8De9i6j0h4=",
+      "rev": "c79265c041de5cd5e8e32817c012e5a76b48717f",
+      "sha256": "sha256-xzf9YIwI0oUdWTnAK+hV4Em7Z10HKT1HWutYioXhO1Y=",
       "sparseCheckout": [],
       "type": "git",
       "url": "https://github.com/L4ki/Vivid-Plasma-Themes.git"
     },
-    "version": "740a1fe762f0658e6cc05b3c23da704c33773d83"
+    "version": "c79265c041de5cd5e8e32817c012e5a76b48717f"
   },
   "wezterm": {
     "cargoLocks": {

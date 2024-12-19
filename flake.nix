@@ -44,9 +44,9 @@
       # url = "git+file:///home/caubut/Documents/projects/hyprland-plugins";
       url = "github:hyprwm/hyprland-plugins";
       inputs = {
-        hyprland.follows = "hyprland";
         nixpkgs.follows = "hyprland/nixpkgs";
         systems.follows = "hyprland/systems";
+        hyprland.follows = "hyprland";
       };
     };
     hyprlock = {
@@ -72,6 +72,7 @@
       url = "github:hyprwm/hyprpicker";
       inputs = {
         nixpkgs.follows = "hyprland/nixpkgs";
+        systems.follows = "hyprland/systems";
         hyprutils.follows = "hyprland/hyprutils";
         hyprwayland-scanner.follows = "hyprland/hyprwayland-scanner";
       };

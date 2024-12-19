@@ -46,7 +46,7 @@ return {
           -- useFlatConfig = true, -- set if using flat config
           options = {
             flags = { "unstable_ts_config" },
-            cache = true,
+            cache = false,
           },
           --overrideConfigFile = vim.fn.getcwd() .. "/eslint.config.ts",
           -- experimental = {
