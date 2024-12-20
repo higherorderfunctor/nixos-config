@@ -38,6 +38,13 @@
     #   # TODO all
     # };
   };
+  powerManagement = {
+    enable = true;
+    cpuFreqGovernor = "performance";
+    cpufreq = {
+      max = 3400000;
+    };
+  };
 
   boot = {
     initrd = {

@@ -47,6 +47,7 @@ return {
           workingDirectory = nil,
           workingDirectories = { mode = "auto" },
           options = {
+            cache = true,
             flags = { "unstable_ts_config" },
           },
         },
@@ -54,10 +55,17 @@ return {
       return opts
     end,
     config = function(_, opts)
+      require("lazyvim.util").lsp.on_attach(function(client)
+        if client.name == "eslint" then
+          client.server_capabilities.documentFormattingProvider = true
+        elseif client.name == "tsserver" or client.name == "vtsls" or client.name == "volar" then
+          client.server_capabilities.documentFormattingProvider = false
+        end
+      end)
       require("nvim-eslint").setup(opts)
-      require("lazyvim.util").info(
-        "ESLint post-setup-opts: " .. vim.inspect(require("nvim-eslint").make_settings(vim.api.nvim_get_current_buf()))
-      )
+      -- require("lazyvim.util").info(
+      --   "ESLint post-setup-opts: " .. vim.inspect(require("nvim-eslint").make_settings(vim.api.nvim_get_current_buf()))
+      -- )
     end,
   },
   {
