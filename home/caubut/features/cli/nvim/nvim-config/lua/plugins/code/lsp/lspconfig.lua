@@ -20,6 +20,15 @@ end
 
 return {
   {
+    "soulsam480/nvim-oxlint",
+    opts = {
+      bin_path = { "oxc_language_server", "--stdio" },
+    },
+    -- config = function(_, opts)
+    --   require("nvim-oxlint").setup(opts)
+    -- end,
+  },
+  {
     "esmuellert/nvim-eslint",
     opts = function(_, opts)
       local opts = vim.tbl_deep_extend("force", opts or {}, {
@@ -47,7 +56,7 @@ return {
           workingDirectory = nil,
           workingDirectories = { mode = "auto" },
           options = {
-            cache = true,
+            -- cache = true,
             flags = { "unstable_ts_config" },
           },
         },
