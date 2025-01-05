@@ -65,12 +65,46 @@ cargo_locks = ["Cargo.lock"]
 src.github = "qdm12/gluetun"
 fetch.github = "qdm12/gluetun"
 
-[gluetun]
-src.container = "qmcgaw/gluetun"
-src.include_regex = "latest"
-fetch.docker = "qmcgaw/gluetun"
-docker.os = "linux"
-docker.arch = "amd64"
+# [gluetun]
+# src.container = "qmcgaw/gluetun"
+# src.include_regex = "latest"
+# fetch.docker = "qmcgaw/gluetun"
+# docker.os = "linux"
+# docker.arch = "amd64"
+#
+# gluetun = {
+#    pname = "gluetun";
+#    version = "latest";
+#    src = dockerTools.pullImage {
+#      imageName = "qmcgaw/gluetun";
+#      imageDigest = "sha256:aaaf6c7c108f7f7caae978499b4cb823a135324992ce7cea4acd405a29298141";
+#      sha256 = "sha256-BTICvfWnHiU77CS4IkF63RyPQN4ZhX7c1wWNCMl6Oxc=";
+#      finalImageTag = "latest";
+#      os = "linux";
+#      arch = "amd64";
+#    };
+#  };
+#
+#  "gluetun": {
+#    "cargoLocks": null,
+#    "date": null,
+#    "extract": null,
+#    "name": "gluetun",
+#    "passthru": null,
+#    "pinned": false,
+#    "src": {
+#      "arch": "amd64",
+#      "finalImageName": null,
+#      "finalImageTag": null,
+#      "imageDigest": "sha256:aaaf6c7c108f7f7caae978499b4cb823a135324992ce7cea4acd405a29298141",
+#      "imageName": "qmcgaw/gluetun",
+#      "imageTag": "latest",
+#      "os": "linux",
+#      "sha256": "sha256-BTICvfWnHiU77CS4IkF63RyPQN4ZhX7c1wWNCMl6Oxc=",
+#      "tlsVerify": null
+#    },
+#    "version": "latest"
+#  },
 
 [go]
 src.webpage = "https://go.dev/dl/?mode=json"
@@ -108,11 +142,3 @@ src.git = "https://github.com/L4ki/Vivid-Plasma-Themes.git"
 src.use_commit = true
 src.branch = "main"
 fetch.git = "https://github.com/L4ki/Vivid-Plasma-Themes.git"
-
-[wezterm]
-src.git = "https://github.com/wez/wezterm.git"
-src.use_commit = true
-git.fetchSubmodules = true
-src.branch = "main"
-fetch.git = "https://github.com/wez/wezterm.git"
-cargo_locks = ["Cargo.lock"]

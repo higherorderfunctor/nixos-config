@@ -16,7 +16,7 @@
   # FIXME: https://github.com/NixOS/nixpkgs/pull/307505
   # https://github.com/NixOS/nixpkgs/pull/307476
 
-  # poetry = inputs.nixpkgs-master.legacyPackages.${final.system}.poetry;
+  inherit (inputs.nixpkgs-master.legacyPackages.${final.system}) rocmPackages rocmPackages_5;
 
   # poetry = prev.poetry.overrideAttrs (attrs: {
   #   poetry = attrs.poetry.override {

@@ -10,6 +10,7 @@ lib.composeManyExtensions [
   inputs.hyprland-plugins.overlays.gcc14Stdenv
   inputs.hyprlock.overlays.default
   inputs.hyprpicker.overlays.default
+  inputs.hyprwayland-scanner.overlays.default
   (final: _: let
     catppuccin-hyprland-nv = (import ./nvpkgs.nix).catppuccin-hyprland;
     catppuccin-hyprlock-nv = (import ./nvpkgs.nix).catppuccin-hyprlock;

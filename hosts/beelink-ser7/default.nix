@@ -45,7 +45,7 @@
   # NOTE: https://github.com/NixOS/nixpkgs/issues/319809
   # Do not use with pipewire
   # sound.enable = true;
-  hardware.pulseaudio.enable = false;
+  services.pulseaudio.enable = false;
 
   # TODO: https://nixos.wiki/wiki/JACK
   services.udev.extraRules = ''

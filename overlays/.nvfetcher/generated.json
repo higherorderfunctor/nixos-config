@@ -1,7 +1,27 @@
 {
+  "gluetun": {
+    "cargoLocks": null,
+    "date": null,
+    "extract": null,
+    "name": "gluetun",
+    "passthru": null,
+    "pinned": false,
+    "src": {
+      "arch": "amd64",
+      "finalImageName": null,
+      "finalImageTag": null,
+      "imageDigest": "sha256:aaaf6c7c108f7f7caae978499b4cb823a135324992ce7cea4acd405a29298141",
+      "imageName": "qmcgaw/gluetun",
+      "imageTag": "latest",
+      "os": "linux",
+      "sha256": "sha256-BTICvfWnHiU77CS4IkF63RyPQN4ZhX7c1wWNCMl6Oxc=",
+      "tlsVerify": null
+    },
+    "version": "latest"
+  },
   "amdvlk": {
     "cargoLocks": null,
-    "date": "2024-12-05",
+    "date": "2024-12-23",
     "extract": null,
     "name": "amdvlk",
     "passthru": null,
@@ -11,13 +31,13 @@
       "fetchSubmodules": false,
       "leaveDotGit": false,
       "name": null,
-      "rev": "e03007d96a4ff5a508b11e0c6bd7ee09a6728eca",
-      "sha256": "sha256-k7zcNkySSoTgq9IDZ4ABGMXwlG4FgVvLGJjd7fkFQ/o=",
+      "rev": "9cf5b703f8fed5c18c79a7306cbe57bb0de71eff",
+      "sha256": "sha256-YHIErtMETQZJVpy4XLXJfV+8oeHFyaZhRZhg3adaSzw=",
       "sparseCheckout": [],
       "type": "git",
       "url": "https://github.com/GPUOpen-Drivers/AMDVLK.git"
     },
-    "version": "e03007d96a4ff5a508b11e0c6bd7ee09a6728eca"
+    "version": "9cf5b703f8fed5c18c79a7306cbe57bb0de71eff"
   },
   "arkenfox": {
     "cargoLocks": null,
@@ -49,11 +69,11 @@
     "pinned": false,
     "src": {
       "name": "bruno-x86_64-linux.zip",
-      "sha256": "sha256-tVT6+8bAUDH2tjkSWDwkcA2pap9Wjf9jW+NVU4VJ4M0=",
+      "sha256": "sha256-lSdOgA7tBBozmdiS9jVGRx2uPg6K5gGqfG3ucXONDPU=",
       "type": "url",
-      "url": "https://github.com/usebruno/bruno/releases/download/v1.36.1/bruno_1.36.1_amd64_linux.deb"
+      "url": "https://github.com/usebruno/bruno/releases/download/v1.37.0/bruno_1.37.0_amd64_linux.deb"
     },
-    "version": "1.36.1"
+    "version": "1.37.0"
   },
   "btop": {
     "cargoLocks": null,
@@ -85,11 +105,11 @@
     "pinned": false,
     "src": {
       "name": "bun-x86_64-linux.zip",
-      "sha256": "sha256-n5BFNl4hxkZWiWZ8GLFpUZxQYh2+VbCQjidFyAqhMQI=",
+      "sha256": "sha256-NoIGwwONj6q8Y+MFnu6mTCr5xQ7Q37+4b2SYS6adsa8=",
       "type": "url",
-      "url": "https://github.com/oven-sh/bun/releases/download/bun-v1.1.40/bun-linux-x64.zip"
+      "url": "https://github.com/oven-sh/bun/releases/download/bun-v1.1.42/bun-linux-x64.zip"
     },
-    "version": "1.1.40"
+    "version": "1.1.42"
   },
   "catppuccin-btop": {
     "cargoLocks": null,
@@ -189,10 +209,7 @@
   },
   "fblog": {
     "cargoLocks": {
-      "Cargo.lock": [
-        "./fblog-v4.13.1/Cargo.lock",
-        {}
-      ]
+      "Cargo.lock": ["./fblog-v4.13.1/Cargo.lock", {}]
     },
     "date": null,
     "extract": null,
@@ -213,26 +230,6 @@
     },
     "version": "v4.13.1"
   },
-  "gluetun": {
-    "cargoLocks": null,
-    "date": null,
-    "extract": null,
-    "name": "gluetun",
-    "passthru": null,
-    "pinned": false,
-    "src": {
-      "arch": "amd64",
-      "finalImageName": null,
-      "finalImageTag": null,
-      "imageDigest": "sha256:aaaf6c7c108f7f7caae978499b4cb823a135324992ce7cea4acd405a29298141",
-      "imageName": "qmcgaw/gluetun",
-      "imageTag": "latest",
-      "os": "linux",
-      "sha256": "sha256-BTICvfWnHiU77CS4IkF63RyPQN4ZhX7c1wWNCMl6Oxc=",
-      "tlsVerify": null
-    },
-    "version": "latest"
-  },
   "gluetun-src": {
     "cargoLocks": null,
     "date": null,
@@ -247,12 +244,12 @@
       "name": null,
       "owner": "qdm12",
       "repo": "gluetun",
-      "rev": "v3.39.1",
-      "sha256": "sha256-L70bpmcb7pehKyCYElLEyliLYLetfsmJ524406MJYCM=",
+      "rev": "v3.40.0",
+      "sha256": "sha256-CiA+vCKsjMx+LHVYzHh8x+RFY1rrkkZw5/XU/20it2A=",
       "sparseCheckout": [],
       "type": "github"
     },
-    "version": "v3.39.1"
+    "version": "v3.40.0"
   },
   "go": {
     "cargoLocks": null,
@@ -283,13 +280,13 @@
       "name": null,
       "owner": "JanDeDobbeleer",
       "repo": "oh-my-posh",
-      "rev": "v24.15.1",
-      "sha256": "sha256-exrU6MfI55ZE6J4caALJLTVghM+g5MJzS1E6tbS57tM=",
+      "rev": "v24.18.0",
+      "sha256": "sha256-mIDU7N2saEnMgAMMtbyBPLp8Y03bFwokt7qRqUHbCPs=",
       "sparseCheckout": [],
       "type": "github"
     },
-    "version": "v24.15.1",
-    "vendorHash": "sha256-zA0arhpIxz8nnmUBXrAXAucWzUYO6dhYwsH4I5SyHMw="
+    "version": "v24.18.0",
+    "vendorHash": "sha256-8A63cYB74Q06oHBAsFHsAY2hoa2pZxMjuTu6ojr463Q="
   },
   "spectral": {
     "cargoLocks": null,
@@ -321,11 +318,11 @@
     "pinned": false,
     "src": {
       "name": "standardnotes-desktop-x86_64-linux.deb",
-      "sha256": "sha256-BdzlkvWJo1uCjPZEhftf4WV1FvlujhOA9BO6RUWENic=",
+      "sha256": "sha256-i/G0rgB91RooN4uEvUx4cF1bwoGe7fZ4L82nb1Hfyyc=",
       "type": "url",
-      "url": "https://github.com/standardnotes/app/releases/download/@standardnotes/desktop@3.195.14/standard-notes-3.195.14-linux-amd64.deb"
+      "url": "https://github.com/standardnotes/app/releases/download/@standardnotes/desktop@3.195.15/standard-notes-3.195.15-linux-amd64.deb"
     },
-    "version": "3.195.14"
+    "version": "3.195.15"
   },
   "tree-sitter-cql": {
     "cargoLocks": null,
@@ -350,7 +347,7 @@
   },
   "vivid-plasma-themes": {
     "cargoLocks": null,
-    "date": "2024-12-14",
+    "date": "2025-01-04",
     "extract": null,
     "name": "vivid-plasma-themes",
     "passthru": null,
@@ -360,25 +357,25 @@
       "fetchSubmodules": false,
       "leaveDotGit": false,
       "name": null,
-      "rev": "c79265c041de5cd5e8e32817c012e5a76b48717f",
-      "sha256": "sha256-xzf9YIwI0oUdWTnAK+hV4Em7Z10HKT1HWutYioXhO1Y=",
+      "rev": "b9c66bae954e96a6231a327fd0f09676f941e870",
+      "sha256": "sha256-BpYw58t/s5RnpT8iKn1A3SnrRMUg9+EuVPnMv3RDdAI=",
       "sparseCheckout": [],
       "type": "git",
       "url": "https://github.com/L4ki/Vivid-Plasma-Themes.git"
     },
-    "version": "c79265c041de5cd5e8e32817c012e5a76b48717f"
+    "version": "b9c66bae954e96a6231a327fd0f09676f941e870"
   },
   "wezterm": {
     "cargoLocks": {
       "Cargo.lock": [
-        "./wezterm-6f375e29a2c4d70b8b51956edd494693196c6692/Cargo.lock",
+        "./wezterm-8e9cf912e66f704f300fac6107206a75036de1e7/Cargo.lock",
         {
           "sqlite-cache-0.1.3": "sha256-sBAC8MsQZgH+dcWpoxzq9iw5078vwzCijgyQnMOWIkk=",
           "xcb-imdkit-0.3.0": "sha256-77KaJO+QJWy3tJ9AF1TXKaQHpoVOfGIRqteyqpQaSWo="
         }
       ]
     },
-    "date": "2024-12-05",
+    "date": "2025-01-03",
     "extract": null,
     "name": "wezterm",
     "passthru": null,
@@ -388,12 +385,12 @@
       "fetchSubmodules": true,
       "leaveDotGit": false,
       "name": null,
-      "rev": "6f375e29a2c4d70b8b51956edd494693196c6692",
-      "sha256": "sha256-YbomxkYXeX4XoCAKZn5mIV6jLWLRetFMOmYFclSQmyM=",
+      "rev": "8e9cf912e66f704f300fac6107206a75036de1e7",
+      "sha256": "sha256-JkAovAeoVrH2QlHzzcciraebfsSQPBQPsA3fUKEjRm8=",
       "sparseCheckout": [],
       "type": "git",
       "url": "https://github.com/wez/wezterm.git"
     },
-    "version": "6f375e29a2c4d70b8b51956edd494693196c6692"
+    "version": "8e9cf912e66f704f300fac6107206a75036de1e7"
   }
 }

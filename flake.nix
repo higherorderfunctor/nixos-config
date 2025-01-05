@@ -3,8 +3,9 @@
 
   inputs = {
     nixos.url = "github:nixos/nixpkgs/nixos-unstable";
+    nixpkgs-master.url = "github:NixOS/nixpkgs";
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
-    nixpkgs-91594d11.url = "github:Nixos/nixpkgs?rev=91594d11a2248ebe00f45f6b9be63fe264bb74e1";
+    # nixpkgs-91594d11.url = "github:Nixos/nixpkgs?rev=91594d11a2248ebe00f45f6b9be63fe264bb74e1";
     home-manager = {
       url = "github:nix-community/home-manager";
     };
@@ -26,6 +27,21 @@
     };
     hyprland = {
       url = "github:hyprwm/Hyprland";
+      # inputs = {
+      #   nixpkgs.follows = "hyprland/nixpkgs";
+      #   systems.follows = "hyprland/systems";
+      #   hyprutils.follows = "hyprland/hyprutils";
+      #   hyprlang.follows = "hyprland/hyprlang";
+      #   hyprgraphics.follows = "hyprland/hyprgraphics";
+      #   # hyprwayland-scanner.follows = "hyprland/hyprwayland-scanner";
+      # };
+    };
+    hyprwayland-scanner = {
+      url = "github:hyprwm/hyprwayland-scanner";
+      # inputs = {
+      #   nixpkgs.follows = "hyprland/nixpkgs";
+      #   systems.follows = "hyprland/systems";
+      # };
     };
     # hyprgraphics.follows = "hyprgraphics";
     # url = "git+https://github.com/hyprwm/Hyprland?submodules=1";
@@ -57,6 +73,9 @@
         hyprlang.follows = "hyprland/hyprlang";
         hyprutils.follows = "hyprland/hyprutils";
         hyprgraphics.follows = "hyprland/hyprgraphics";
+        # FIXME: pinned 4.4 but hyprland is only pinned to 4.2
+        # hyprwayland-scanner.follows = "hyprland/hyprwayland-scanner";
+        hyprwayland-scanner.follows = "hyprwayland-scanner";
       };
     };
     hypridle = {
@@ -119,6 +138,11 @@
       # url = "git+file:///home/caubut/Documents/projects/tmux-which-key";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    wezterm = {
+      url = "github:wez/wezterm?dir=nix";
+      # cachix
+      # inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs = {
@@ -136,10 +160,10 @@
         overlays = import ./overlays {inherit inputs lib;};
         config = {
           allowUnfree = true;
-          permittedInsecurePackages = [
-            "electron-27.3.11" # standard notes
-            "olm-3.2.16" # ???
-          ];
+          # permittedInsecurePackages = [
+          #   "electron-27.3.11" # standard notes
+          #   "olm-3.2.16" # ???
+          # ];
         };
       };
   in {
