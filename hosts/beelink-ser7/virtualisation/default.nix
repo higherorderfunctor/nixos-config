@@ -19,7 +19,19 @@ sudo podman exec -it transmission /bin/sh
   pkgs,
   ...
 }: let
-  nv = (import ../../../overlays/nvpkgs.nix)."gluetun";
+  #  nv = (import ../../../overlays/nvpkgs.nix)."gluetun";
+  nv = {
+    pname = "gluetun";
+    version = "latest";
+    src = pkgs.dockerTools.pullImage {
+      imageName = "qmcgaw/gluetun";
+      imageDigest = "sha256:aaaf6c7c108f7f7caae978499b4cb823a135324992ce7cea4acd405a29298141";
+      sha256 = "sha256-BTICvfWnHiU77CS4IkF63RyPQN4ZhX7c1wWNCMl6Oxc=";
+      finalImageTag = "latest";
+      os = "linux";
+      arch = "amd64";
+    };
+  };
   mediaDir = "/var/lib/mediaserver";
   transmission = let
     transmission = pkgs.transmission_4;

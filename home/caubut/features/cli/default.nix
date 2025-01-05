@@ -69,6 +69,7 @@
     ./vim.nix
     ./wget.nix
     ./xclip.nix
+    ./zellij.nix
     ./zip.nix
     ./zsh-fast-syntax-highlighting.nix
     ./zsh.nix
