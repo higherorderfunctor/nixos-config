@@ -330,3 +330,27 @@ journalctl -b -p3
 # reset cache causing rebuilds?
 rm $HOME/.cache/nix/binary-cache-v*.sqlite*
 ```
+
+## Ubuntu
+
+```bash
+sudo vim /etc/apparmor.d/nix
+sudo vim /etc/sysctl.d/60-apparmor-namespace.conf
+echo 0 | sudo tee /proc/sys/kernel/apparmor_restrict_unprivileged_userns
+sudo apparmor_parser -r /etc/apparmor.d/nix
+sudo systemctl restart apparmor
+```
+
+```txt
+abi <abi/4.0>,
+
+include <tunables/global>
+
+/nix/store/**/* flags=(unconfined) {
+  userns,
+}
+```
+
+```txt
+kernel.apparmor_restrict_unprivileged_userns=0
+```

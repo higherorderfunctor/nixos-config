@@ -1,0 +1,11 @@
+{
+  "extends": "./templates/tsconfig.utils.base.json",
+  "include": ["../../vendor/types"],
+  "compilerOptions": {
+    "outDir": "../../dist/types",
+    "noEmit": true,
+    "types": ["node"],
+    "rootDir": "../../vendor/types/",
+    "tsBuildInfoFile": "../../.tsbuildinfo/types.tsbuildinfo"
+  }
+}
