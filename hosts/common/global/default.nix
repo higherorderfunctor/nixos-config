@@ -34,7 +34,6 @@
 
   # disable root
   users.users.root.hashedPassword = "!";
-
   # bootloader
   boot = {
     loader = {
@@ -53,6 +52,10 @@
       };
     };
     kernelPackages = pkgs.linuxPackagesFor pkgs.linux_latest;
+    kernelModules = [
+      "v4l2loopback"
+    ];
+    extraModulePackages = with config.boot.kernelPackages; [v4l2loopback];
   };
   # systemd.services = {
   #   user.serviceConfig.LimitNOFILE = "1048576";
