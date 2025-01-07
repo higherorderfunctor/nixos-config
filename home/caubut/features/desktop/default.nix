@@ -12,6 +12,7 @@
     ./keybase.nix
     ./libre-office.nix
     ./moolticute.nix
+    ./obs-studio.nix
     ./only-key.nix
     ./pulse-sms.nix
     ./signal.nix
