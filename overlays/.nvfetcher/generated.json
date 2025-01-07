@@ -1,24 +1,4 @@
 {
-  "gluetun": {
-    "cargoLocks": null,
-    "date": null,
-    "extract": null,
-    "name": "gluetun",
-    "passthru": null,
-    "pinned": false,
-    "src": {
-      "arch": "amd64",
-      "finalImageName": null,
-      "finalImageTag": null,
-      "imageDigest": "sha256:aaaf6c7c108f7f7caae978499b4cb823a135324992ce7cea4acd405a29298141",
-      "imageName": "qmcgaw/gluetun",
-      "imageTag": "latest",
-      "os": "linux",
-      "sha256": "sha256-BTICvfWnHiU77CS4IkF63RyPQN4ZhX7c1wWNCMl6Oxc=",
-      "tlsVerify": null
-    },
-    "version": "latest"
-  },
   "amdvlk": {
     "cargoLocks": null,
     "date": "2024-12-23",
@@ -209,7 +189,10 @@
   },
   "fblog": {
     "cargoLocks": {
-      "Cargo.lock": ["./fblog-v4.13.1/Cargo.lock", {}]
+      "Cargo.lock": [
+        "./fblog-v4.13.1/Cargo.lock",
+        {}
+      ]
     },
     "date": null,
     "extract": null,
@@ -318,11 +301,11 @@
     "pinned": false,
     "src": {
       "name": "standardnotes-desktop-x86_64-linux.deb",
-      "sha256": "sha256-i/G0rgB91RooN4uEvUx4cF1bwoGe7fZ4L82nb1Hfyyc=",
+      "sha256": "sha256-uUrjl7y+lm8yTKL+yyCOjU/EopkBfzeA63/uldSlRLo=",
       "type": "url",
-      "url": "https://github.com/standardnotes/app/releases/download/@standardnotes/desktop@3.195.15/standard-notes-3.195.15-linux-amd64.deb"
+      "url": "https://github.com/standardnotes/app/releases/download/@standardnotes/desktop@3.195.17/standard-notes-3.195.17-linux-amd64.deb"
     },
-    "version": "3.195.15"
+    "version": "3.195.17"
   },
   "tree-sitter-cql": {
     "cargoLocks": null,
@@ -364,33 +347,5 @@
       "url": "https://github.com/L4ki/Vivid-Plasma-Themes.git"
     },
     "version": "b9c66bae954e96a6231a327fd0f09676f941e870"
-  },
-  "wezterm": {
-    "cargoLocks": {
-      "Cargo.lock": [
-        "./wezterm-8e9cf912e66f704f300fac6107206a75036de1e7/Cargo.lock",
-        {
-          "sqlite-cache-0.1.3": "sha256-sBAC8MsQZgH+dcWpoxzq9iw5078vwzCijgyQnMOWIkk=",
-          "xcb-imdkit-0.3.0": "sha256-77KaJO+QJWy3tJ9AF1TXKaQHpoVOfGIRqteyqpQaSWo="
-        }
-      ]
-    },
-    "date": "2025-01-03",
-    "extract": null,
-    "name": "wezterm",
-    "passthru": null,
-    "pinned": false,
-    "src": {
-      "deepClone": false,
-      "fetchSubmodules": true,
-      "leaveDotGit": false,
-      "name": null,
-      "rev": "8e9cf912e66f704f300fac6107206a75036de1e7",
-      "sha256": "sha256-JkAovAeoVrH2QlHzzcciraebfsSQPBQPsA3fUKEjRm8=",
-      "sparseCheckout": [],
-      "type": "git",
-      "url": "https://github.com/wez/wezterm.git"
-    },
-    "version": "8e9cf912e66f704f300fac6107206a75036de1e7"
   }
 }

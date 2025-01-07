@@ -176,11 +176,11 @@
   };
   standardnotes-desktop-deb-x86_64-linux = {
     pname = "standardnotes-desktop-deb-x86_64-linux";
-    version = "3.195.15";
+    version = "3.195.17";
     src = fetchurl {
-      url = "https://github.com/standardnotes/app/releases/download/@standardnotes/desktop@3.195.15/standard-notes-3.195.15-linux-amd64.deb";
+      url = "https://github.com/standardnotes/app/releases/download/@standardnotes/desktop@3.195.17/standard-notes-3.195.17-linux-amd64.deb";
       name = "standardnotes-desktop-x86_64-linux.deb";
-      sha256 = "sha256-i/G0rgB91RooN4uEvUx4cF1bwoGe7fZ4L82nb1Hfyyc=";
+      sha256 = "sha256-uUrjl7y+lm8yTKL+yyCOjU/EopkBfzeA63/uldSlRLo=";
     };
   };
   tree-sitter-cql = {
@@ -207,26 +207,5 @@
       sha256 = "sha256-BpYw58t/s5RnpT8iKn1A3SnrRMUg9+EuVPnMv3RDdAI=";
     };
     date = "2025-01-04";
-  };
-  wezterm = {
-    pname = "wezterm";
-    version = "8e9cf912e66f704f300fac6107206a75036de1e7";
-    src = fetchgit {
-      url = "https://github.com/wez/wezterm.git";
-      rev = "8e9cf912e66f704f300fac6107206a75036de1e7";
-      fetchSubmodules = true;
-      deepClone = false;
-      leaveDotGit = false;
-      sparseCheckout = [ ];
-      sha256 = "sha256-JkAovAeoVrH2QlHzzcciraebfsSQPBQPsA3fUKEjRm8=";
-    };
-    cargoLock."Cargo.lock" = {
-      lockFile = ./wezterm-8e9cf912e66f704f300fac6107206a75036de1e7/Cargo.lock;
-      outputHashes = {
-        "xcb-imdkit-0.3.0" = "sha256-77KaJO+QJWy3tJ9AF1TXKaQHpoVOfGIRqteyqpQaSWo=";
-        "sqlite-cache-0.1.3" = "sha256-sBAC8MsQZgH+dcWpoxzq9iw5078vwzCijgyQnMOWIkk=";
-      };
-    };
-    date = "2025-01-03";
   };
 }
