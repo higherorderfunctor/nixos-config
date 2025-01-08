@@ -20,13 +20,14 @@ end
 
 return {
   {
-    "soulsam480/nvim-oxlint",
+    dir = vim.fn.stdpath("config") .. "/lua/plugins/code/lsp/nvim-oxlint",
+    -- "soulsam480/nvim-oxlint",
     opts = {
       bin_path = { "oxc_language_server", "--stdio" },
     },
-    -- config = function(_, opts)
-    --   require("nvim-oxlint").setup(opts)
-    -- end,
+    -- -- config = function(_, opts)
+    -- --   require("nvim-oxlint").setup(opts)
+    -- -- end,
   },
   {
     "esmuellert/nvim-eslint",

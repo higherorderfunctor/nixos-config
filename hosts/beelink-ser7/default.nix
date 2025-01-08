@@ -40,6 +40,45 @@
         "default.clock.max-quantum" = 512;
       };
     };
+    wireplumber.extraConfig = {
+      # volume is by default set to 0.4.
+      "60-defaults"."wireplumber.settings"."device.routes.default-sink-volume" = 1.0;
+    };
+    extraConfig.pipewire."60-microphone-rnnoise" = {
+      "context.modules" = [
+        {
+          name = "libpipewire-module-filter-chain";
+          args = {
+            "node.description" = "Microphone (noise suppressed)";
+            "media.name" = "Microphone (noise suppressed)";
+            "filter.graph" = {
+              nodes = [
+                {
+                  type = "ladspa";
+                  name = "rnnoise";
+                  plugin = "${pkgs.rnnoise-plugin}/lib/ladspa/librnnoise_ladspa.so";
+                  label = "noise_suppressor_mono";
+                  control = {
+                    "VAD Threshold (%)" = 50.0;
+                    "VAD Grace Period (ms)" = 200;
+                    "Retroactive VAD Grace (ms)" = 0;
+                  };
+                }
+              ];
+            };
+            "audio.rate" = 48000;
+            "capture.props" = {
+              "node.passive" = true;
+              "node.name" = "rnnoise_input";
+            };
+            "playback.props" = {
+              "media.class" = "Audio/Source";
+              "node.name" = "rnnoise_output";
+            };
+          };
+        }
+      ];
+    };
   };
 
   # NOTE: https://github.com/NixOS/nixpkgs/issues/319809
