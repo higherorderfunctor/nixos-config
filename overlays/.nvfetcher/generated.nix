@@ -28,11 +28,11 @@
   };
   bruno-deb-x86_64-linux = {
     pname = "bruno-deb-x86_64-linux";
-    version = "1.38.0";
+    version = "1.38.1";
     src = fetchurl {
-      url = "https://github.com/usebruno/bruno/releases/download/v1.38.0/bruno_1.38.0_amd64_linux.deb";
+      url = "https://github.com/usebruno/bruno/releases/download/v1.38.1/bruno_1.38.1_amd64_linux.deb";
       name = "bruno-x86_64-linux.zip";
-      sha256 = "sha256-QNNBpKmmvfUy954X0L16Yva6wT+7+OaA2MocY+gDkdQ=";
+      sha256 = "sha256-q+POVqdqCXnpJ754E1ZvPyRvWovVDf8jy+eQ94Cn7XU=";
     };
   };
   btop = {
@@ -48,11 +48,11 @@
   };
   bun-x86_64-linux = {
     pname = "bun-x86_64-linux";
-    version = "1.1.42";
+    version = "1.1.43";
     src = fetchurl {
-      url = "https://github.com/oven-sh/bun/releases/download/bun-v1.1.42/bun-linux-x64.zip";
+      url = "https://github.com/oven-sh/bun/releases/download/bun-v1.1.43/bun-linux-x64.zip";
       name = "bun-x86_64-linux.zip";
-      sha256 = "sha256-NoIGwwONj6q8Y+MFnu6mTCr5xQ7Q37+4b2SYS6adsa8=";
+      sha256 = "sha256-j5iqhwkVV2R9wjxlwyBrFO6QLI4n0CA9qhIAstH6PCE=";
     };
   };
   catppuccin-btop = {
