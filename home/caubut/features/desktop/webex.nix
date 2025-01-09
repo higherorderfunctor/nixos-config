@@ -15,6 +15,7 @@
           postPatch = ''
             substituteInPlace opt/Webex/bin/webex.desktop \
               --replace-fail /opt $out/opt \
+              --replace-fail Exec= "Exec=env WAYLAND_DISPLAY= GDK_BACKEND=x11 CLUTTER_BACKEND=x11 QT_QPA_PLATFORM=xcb " \
               --replace-fail CiscoCollabHost "CiscoCollabHost $out/opt/Webex/lib/ libWebexAppLoader.so /Start"
           '';
         })

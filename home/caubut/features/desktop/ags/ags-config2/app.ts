@@ -11,7 +11,7 @@ App.start({
         res("ok")
     },
     main: () => {
-      App.get_monitors().map(Bar),
-      Applauncher()
+      App.get_monitors().map(Bar);
+      Applauncher();
     }
 })

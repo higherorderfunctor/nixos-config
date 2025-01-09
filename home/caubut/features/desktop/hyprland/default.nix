@@ -27,7 +27,7 @@
     sessionVariables = {
       NIXOS_OZONE_WL = 1; # fixes some apps in wayland
     };
-    packages = with pkgs; [hyprshot];
+    packages = with pkgs; [hyprshot kdePackages.xwaylandvideobridge];
   };
 
   # TODO: X11
@@ -148,10 +148,35 @@
         (f "xdg-desktop-portal-gnome") # FIXME: check
         (f "transmission-gtk") # FIXME: check
         (f "com.github.Aylur.ags")
+        "opacity 0.0 override 0.0 override,class:^(xwaylandvideobridge)$"
+        "noanim,class:^(xwaylandvideobridge)$"
+        "noinitialfocus,class:^(xwaylandvideobridge)$"
+        "maxsize 1 1,class:^(xwaylandvideobridge)$"
+        "noblur,class:^(xwaylandvideobridge)$"
       ];
 
       windowrulev2 = [
-        # "float,class:(CiscoCollabHost)"
+        # https://github.com/mentalAdventurer/config/blob/97782801b168dc4fb08d423053368956dece9606/hypr/windowrules.conf#L37
+        ### Webex"
+        "noborder, class:^(CiscoCollabHost), title: ^(PopupWidgetTitle)"
+        "float, class:^(CiscoCollabHost), title: ^(PopupWidgetTitle)"
+        "noinitialfocus, class:^(CiscoCollabHost), title: ^(PopupWidgetTitle)"
+        "noborder, title: ^(PopupWidgetTitle), xwayland: 1" # x11 - no class set
+        "float, title: ^(PopupWidgetTitle), xwayland: 1" # x11 - no class set
+        # Device Connection
+        "stayfocused,title:^(PopupDeviceConnectionFrame), xwayland: 1"
+
+        # Messages
+        "unset, title: (Form), xwayland: 1" # does not work"
+        "center, title: (Form), xwayland: 1" # does not work"
+
+        # Call Window (x11), Can't be seperated from the rest of the windows
+        #"size 3965 667, title: ^(Webex), xwayland: 1
+        #"float, title: ^(Webex), class: ^(Webex), xwayland: 1
+
+        "unset, class:^(CiscoCollabHost), title: ^(Webex), floating: 1"
+        "noborder, class:^(CiscoCollabHost), title: ^(Webex), floating: 1"
+        "noinitialfocus, class:^(CiscoCollabHost), title: ^(Webex), floating: 1"
       ];
 
       input = {

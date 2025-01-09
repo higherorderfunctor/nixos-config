@@ -1,3 +1,3 @@
 {pkgs, ...}: {
-  # TODO: home.packages = [pkgs.zoom-us pkgs.pulseaudio];
+  home.packages = [pkgs.zoom-us];
 }

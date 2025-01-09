@@ -11,22 +11,16 @@ import Tray from "gi://AstalTray"
 function SysTray() {
     const tray = Tray.get_default()
 
-    return <box>
-        {bind(tray, "items").as(items => items.map(item => {
-            if (item.iconThemePath)
-                App.add_icons(item.iconThemePath)
-
-            const menu = item.create_menu()
-
-            return <button
+    return <box className="SysTray">
+        {bind(tray, "items").as(items => items.map(item => (
+            <menubutton
                 tooltipMarkup={bind(item, "tooltipMarkup")}
-                onDestroy={() => menu?.destroy()}
-                onClickRelease={self => {
-                    menu?.popup_at_widget(self, Gdk.Gravity.SOUTH, Gdk.Gravity.NORTH, null)
-                }}>
-                <icon gIcon={bind(item, "gicon")} />
-            </button>
-        }))}
+                usePopover={false}
+                actionGroup={bind(item, "action-group").as(ag => ["dbusmenu", ag])}
+                menuModel={bind(item, "menu-model")}>
+                <icon gicon={bind(item, "gicon")} />
+            </menubutton>
+        )))}
     </box>
 }
 
@@ -43,7 +37,7 @@ function Wifi() {
 function AudioSlider() {
     const speaker = Wp.get_default()?.audio.defaultSpeaker!
 
-    return <box className="AudioSlider" css="min-width: 140px">
+    return <box className="AudioSlider" css="min-width: 300px">
         <icon icon={bind(speaker, "volumeIcon")} />
         <slider
             hexpand
@@ -147,15 +141,12 @@ export default function Bar(monitor: Gdk.Monitor) {
                 <Workspaces />
                 <FocusedClient />
             </box>
-            <box>
-                <Media />
-            </box>
+            <Time />
             <box hexpand halign={Gtk.Align.END} >
                 <SysTray />
                 <Wifi />
                 <AudioSlider />
                 <BatteryLevel />
-                <Time />
             </box>
         </centerbox>
     </window>
