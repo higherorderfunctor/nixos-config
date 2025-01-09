@@ -215,9 +215,9 @@
 
             maximizeAction = "hyprctl dispatch togglefloating";
           in [
-            "$red,12,,${closeAction}"
-            "$green,12,,${maximizeAction}"
-            "$yellow,12,,${minimizeAction}"
+            "$red,12,x,${closeAction}"
+            "$green,12,+,${maximizeAction}"
+            "$yellow,12,-,${minimizeAction}"
           ];
         };
         hyprexpo = {

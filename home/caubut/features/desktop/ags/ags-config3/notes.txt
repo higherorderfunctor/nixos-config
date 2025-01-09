@@ -1,4 +1,0 @@
-mkdir out
-bun build ./node_modules/vscode-langservers-extracted/lib/eslint-language-server/eslintServer.js --outfile ./out/eslint-language-server --bytecode --compile
-bun build ./node_modules/@vtsls/language-server/bin/vtsls.js --outfile ./out/vtsls --bytecode --compile
-bun build ./node_modules/eslint/bin/eslint.js --outfile ./out/eslint --bytecode --compile

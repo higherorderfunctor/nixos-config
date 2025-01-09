@@ -1,6 +1,5 @@
 {
   description = "NixOS Configuration";
-
   inputs = {
     nixos.url = "github:nixos/nixpkgs/nixos-unstable";
     nixpkgs-master.url = "github:NixOS/nixpkgs";
@@ -36,13 +35,13 @@
       #   # hyprwayland-scanner.follows = "hyprland/hyprwayland-scanner";
       # };
     };
-    hyprwayland-scanner = {
-      url = "github:hyprwm/hyprwayland-scanner";
-      # inputs = {
-      #   nixpkgs.follows = "hyprland/nixpkgs";
-      #   systems.follows = "hyprland/systems";
-      # };
-    };
+    # hyprwayland-scanner = {
+    #   url = "github:hyprwm/hyprwayland-scanner";
+    #   # inputs = {
+    #   #   nixpkgs.follows = "hyprland/nixpkgs";
+    #   #   systems.follows = "hyprland/systems";
+    #   # };
+    # };
     # hyprgraphics.follows = "hyprgraphics";
     # url = "git+https://github.com/hyprwm/Hyprland?submodules=1";
     # url = "git+https://github.com/hyprwm/Hyprland?submodules=1&rev=6e5804b53de753f24953d9d647940df66bc68f6d";
@@ -74,8 +73,8 @@
         hyprutils.follows = "hyprland/hyprutils";
         hyprgraphics.follows = "hyprland/hyprgraphics";
         # FIXME: pinned 4.4 but hyprland is only pinned to 4.2
-        # hyprwayland-scanner.follows = "hyprland/hyprwayland-scanner";
-        hyprwayland-scanner.follows = "hyprwayland-scanner";
+        hyprwayland-scanner.follows = "hyprland/hyprwayland-scanner";
+        # hyprwayland-scanner.follows = "hyprwayland-scanner";
       };
     };
     hypridle = {
@@ -99,10 +98,15 @@
     impermanence = {
       url = "github:nix-community/impermanence";
     };
+    neovim-src = {
+      url = "github:neovim/neovim";
+      flake = false;
+    };
     neovim-nightly-overlay = {
       url = "github:nix-community/neovim-nightly-overlay";
       inputs = {
         nixpkgs.follows = "nixpkgs";
+        neovim-src.follows = "neovim-src";
       };
     };
     nixd = {

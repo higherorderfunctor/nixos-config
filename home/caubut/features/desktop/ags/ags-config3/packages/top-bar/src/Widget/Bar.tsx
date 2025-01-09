@@ -1,34 +1,28 @@
  import { App } from "astal/gtk3"
  import { Variable, GLib, bind } from "astal"
  import { Astal, Gtk, Gdk } from "astal/gtk3"
- import Hyprland from "gi://AstalHyprland"
- import Mpris from "gi://AstalMpris"
- import Battery from "gi://AstalBattery"
- import Wp from "gi://AstalWp"
- import Network from "gi://AstalNetwork"
- import Tray from "gi://AstalTray"
+ import Hyprland from "@astal/hyprland"
+ import Mpris from "@astal/mpris"
+ import Battery from "@astal/battery"
+ import Wp from "@astal/wp"
+ import Network from "@astal/network"
+ import Tray from "@astal/tray"
 
- function SysTray() {
-     const tray = Tray.get_default()
+function SysTray() {
+    const tray = Tray.get_default()
 
-     return <box>
-         {bind(tray, "items").as(items => items.map(item => {
-             if (item.iconThemePath)
-                 App.add_icons(item.iconThemePath)
-
-             const menu = item.create_menu()
-
-             return <button
-                 tooltipMarkup={bind(item, "tooltipMarkup")}
-                 onDestroy={() => menu?.destroy()}
-                 onClickRelease={self => {
-                     menu?.popup_at_widget(self, Gdk.Gravity.SOUTH, Gdk.Gravity.NORTH, null)
-                 }}>
-                 <icon gIcon={bind(item, "gicon")} />
-             </button>
-         }))}
-     </box>
- }
+    return <box className="SysTray">
+        {bind(tray, "items").as(items => items.map(item => (
+            <menubutton
+                tooltipMarkup={bind(item, "tooltipMarkup")}
+                usePopover={false}
+                actionGroup={bind(item, "action-group").as(ag => ["dbusmenu", ag])}
+                menuModel={bind(item, "menu-model")}>
+                <icon gicon={bind(item, "gicon")} />
+            </menubutton>
+        )))}
+    </box>
+}
 
  function Wifi() {
      const { wifi } = Network.get_default()

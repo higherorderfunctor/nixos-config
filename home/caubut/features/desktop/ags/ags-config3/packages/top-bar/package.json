@@ -8,7 +8,14 @@
     "build": "rollup-build --tsconfig ./tsconfig.build.json --bundle topbar"
   },
   "dependencies": {
-    "astal": "link:/home/caubut/.local/share/ags",
     "effect": "*"
+  },
+  "devDependencies": {
+    "@types/astal__battery": "link:../../vendor/@types/astal__battery",
+    "@types/astal__hyprland": "link:../../vendor/@types/astal__hyprland",
+    "@types/astal__mpris": "link:../../vendor/@types/astal__mpris",
+    "@types/astal__network": "link:../../vendor/@types/astal__network",
+    "@types/astal__tray": "link:../../vendor/@types/astal__tray",
+    "@types/astal__wp": "link:../../vendor/@types/astal__wp"
   }
 }

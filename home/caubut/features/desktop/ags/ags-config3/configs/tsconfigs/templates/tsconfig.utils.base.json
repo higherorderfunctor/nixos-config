@@ -1,7 +1,0 @@
-{
-  "extends": "../../../tsconfig.base.json",
-  "compilerOptions": {
-    "types": ["node"],
-    "tsBuildInfoFile": "${configDir}/.tsbuildinfo/utils.tsbuildinfo",
-  }
-}

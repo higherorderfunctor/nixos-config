@@ -1,9 +1,0 @@
-{
-  "extends": "../../../tsconfig.base.json",
-  "include": ["${configDir}/*.d.ts"],
-  "compilerOptions": {
-    "tsBuildInfoFile": "${configDir}/.tsbuildinfo/typings.tsbuildinfo",
-    "rootDir": "${configDir}",
-    "outDir": "${configDir}/dist/typings"
-  }
-}

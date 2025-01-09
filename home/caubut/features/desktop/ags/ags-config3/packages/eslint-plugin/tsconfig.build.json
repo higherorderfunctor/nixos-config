@@ -1,3 +1,0 @@
-{
-  "extends": ["./tsconfig.lib.json", "../../configs/tsconfigs/templates/tsconfig.build.base.json"]
-}

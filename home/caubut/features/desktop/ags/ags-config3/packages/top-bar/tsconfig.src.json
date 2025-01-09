@@ -1,12 +1,4 @@
 {
   "$schema": "https://json.schemastore.org/tsconfig",
-  "extends": "../../configs/tsconfigs/templates/tsconfig.src.base.json",
-  "references": [
-    {
-      "path": "../../vendor/astal"
-    },
-    {
-      "path": "../../vendor/types/@girs"
-    }
-  ]
+  "extends": "../../configs/tsconfigs/templates/tsconfig.gtk3.template.json"
 }
