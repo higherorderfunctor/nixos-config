@@ -15,7 +15,7 @@
     "incremental": true,
     "isolatedDeclarations": false,
     "isolatedModules": true,
-    "lib": ["ESNext"],
+    "lib": null,
     "module": "nodenext",
     "moduleDetection": "force",
     "moduleResolution": "nodenext",

@@ -47,6 +47,7 @@
     ./nvim
     ./oh-my-posh.nix
     ./onlykey.nix
+    ./oxlint.nix
     ./poetry.nix
     ./prettierd.nix
     ./python_311.nix

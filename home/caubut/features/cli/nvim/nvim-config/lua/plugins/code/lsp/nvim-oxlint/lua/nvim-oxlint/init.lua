@@ -13,6 +13,38 @@ function M.resolve_git_dir(bufnr)
   return git_dir
 end
 
+-- function M.resolve_workspace_root(bufnr)
+--   -- get the full path of the file in the given buffer
+--   local current_file = vim.api.nvim_buf_get_name(bufnr)
+--   local current_dir = vim.fn.fnamemodify(current_file, ":h") -- Get the directory of the file
+--   local git_root = M.resolve_git_dir(bufnr) -- Resolve the Git root directory
+--
+--   if not git_root then
+--     vim.notify("oxlint: Not inside a git repository", vim.log.levels.ERROR)
+--     return nil
+--   end
+--
+--   local last_package_json = nil
+--
+--   while current_dir and current_dir ~= git_root do
+--     local package_json_path = current_dir .. "/package.json"
+--     if vim.fn.filereadable(package_json_path) == 1 then
+--       last_package_json = package_json_path -- record the last found package.json
+--     end
+--     current_dir = vim.fn.fnamemodify(current_dir, ":h") -- go one level up
+--   end
+--
+--   -- check for package.json in the git root directory as well
+--   local git_root_package_json = git_root .. "/package.json"
+--   if vim.fn.filereadable(git_root_package_json) == 1 then
+--     last_package_json = git_root_package_json
+--   end
+--
+--   vim.notify("oxlint: " .. last_package_json, vim.log.levels.ERROR)
+--
+--   return last_package_json
+-- end
+
 function M.make_settings(buffer)
   local settings_with_function = vim.tbl_deep_extend("keep", M.user_config.settings or {}, {
     enable = true,
@@ -67,12 +99,17 @@ function M.make_client_capabilities()
 end
 
 function M.find_config(bufnr)
-  local root_dir = M.resolve_git_dir(bufnr)
-  if vim.fn.filereadable(root_dir .. "/.oxlintrc.json") == 1 then
-    return root_dir .. "/.oxlintrc.json"
+  local workspace_root = M.resolve_git_dir(bufnr)
+  vim.notify(workspace_root)
+  local config = workspace_root .. "/.oxlintrc.json"
+  if vim.fn.filereadable(config) == 1 then
+    vim.notify(config)
+    return config
   end
-  if vim.fn.filereadable(root_dir .. "/.oxlintrc.jsonc") == 1 then
-    return root_dir .. "/.oxlintrc.jsonc"
+  config = workspace_root .. "/.oxlintrc.jsonc"
+  if vim.fn.filereadable(config) == 1 then
+    vim.notify(config)
+    return config
   end
   vim.notify("oxlint: No config found", vim.log.levels.ERROR)
 end

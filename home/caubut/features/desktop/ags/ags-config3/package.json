@@ -23,14 +23,27 @@
       "@effect/printer": "$@effect/printer",
       "@effect/printer-ansi": "$@effect/printer-ansi",
       "@effect/typeclass": "$@effect/typeclass",
+      "@typescript-eslint/eslint-plugin": "$typescript-eslint",
+      "@typescript-eslint/parser": "$typescript-eslint",
+      "@typescript-eslint/scope-manager": "$typescript-eslint",
+      "@typescript-eslint/type-utils": "$typescript-eslint",
+      "@typescript-eslint/types": "$typescript-eslint",
+      "@typescript-eslint/typescript-estree": "$typescript-eslint",
+      "@typescript-eslint/utils": "$typescript-eslint",
+      "@typescript-eslint/visitor-keys": "$typescript-eslint",
       "effect": "$effect",
-      "typescript": "$typescript"
+      "eslint": "$eslint",
+      "jiti": "$jiti",
+      "typescript": "$typescript",
+      "typescript-eslint": "$typescript-eslint"
     }
   },
   "scripts": {
     "build": "tsc -b configs/tsconfigs/tsconfig.build.json && pnpm -r --reporter=append-only --reporter-hide-prefix build",
     "clean": "rimraf -g **/dist .eslintcache **/.tsbuildinfo **/.rollup.cache",
     "clean:node_modules": "find . -name node_modules -print0 | xargs -0 rm -rf",
+    "eslint": "TIMING=1 pnpm exec eslint --cache --flag unstable_ts_config",
+    "lint:eslint": "GITLAB_CI=1 pnpm eslint",
     "lint:spellcheck": "FORCE_COLOR=1 cspell --color",
     "lint:tsc": "tsc -b",
     "outdated": "pnpm -r outdated",
@@ -49,34 +62,45 @@
     "effect": "3.11.5"
   },
   "devDependencies": {
+    "@astal-config/eslint-plugin": "workspace:*",
+    "@astal-config/girs-fixup": "workspace:*",
     "@effect/language-service": "0.2.0",
-    "@microsoft/api-extractor": "^7.49.1",
+    "@jsr/unplugin__isolated-decl": "0.10.4",
     "@types/bun": "1.1.14",
     "@types/girs__dom": "link:./vendor/@types/girs__dom",
     "@types/girs__gjs": "link:./vendor/@types/girs__gjs",
     "@types/node": "22.10.2",
-    "@vtsls/language-server": "^0.2.6",
+    "@vtsls/language-server": "0.2.6",
     "astal": "github:Aylur/astal#path:/lang/gjs",
-    "esbuild": "^0.24.2",
+    "esbuild": "0.24.2",
+    "madge": "8.0.0",
+    "eslint": "9.17.0",
+    "jiti": "2.4.2",
     "prettier": "3.4.2",
     "rimraf": "6.0.1",
-    "tsx": "^4.19.2",
+    "tsx": "4.19.2",
     "typescript": "5.7.2",
-    "vscode-langservers-extracted": "4.10.0"
+    "typescript-eslint": "8.19.0"
   },
   "prettier": {
     "semi": true,
     "trailingComma": "all",
     "singleQuote": true,
     "printWidth": 120,
-    "tabWidth": 2
+    "tabWidth": 2,
+    "singleAttributePerLine": true
   },
   "madge": {
-    "tsConfig": {
-      "compilerOptions": {
-        "baseUrl": "."
-      }
-    },
+    "tsConfig": "tsconfig.json",
+    "excludeRegExp": [
+      ".*/node_module",
+      ".*/dist"
+    ],
+    "fileExtensions": [
+      "js",
+      "ts",
+      "vue"
+    ],
     "detectiveOptions": {
       "ts": {
         "skipTypeImports": true

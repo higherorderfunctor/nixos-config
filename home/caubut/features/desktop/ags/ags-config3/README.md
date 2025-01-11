@@ -9,6 +9,7 @@ ags types 'Astal*' -d vendor/@types
 
 pnpm patch astal
 cd node_modules/.pnpm_patches/astal@*/lang/gjs
+pnpm tsc --rootDir src --emitDeclarationOnly --declaration --outDir dist/dts src/**/*.ts
 pnpm esbuild src/index.ts \
   --bundle \
   --tsconfig=tsconfig.json \

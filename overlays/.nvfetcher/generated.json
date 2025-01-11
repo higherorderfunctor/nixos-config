@@ -271,6 +271,26 @@
     "version": "v24.18.0",
     "vendorHash": "sha256-8A63cYB74Q06oHBAsFHsAY2hoa2pZxMjuTu6ojr463Q="
   },
+  "oxc": {
+    "cargoLocks": {
+      "Cargo.lock": [
+        "./oxc-0.15.5/Cargo.lock",
+        {}
+      ]
+    },
+    "date": null,
+    "extract": null,
+    "name": "oxc",
+    "passthru": null,
+    "pinned": false,
+    "src": {
+      "name": null,
+      "sha256": "sha256-MmZAv1Tm4fjca7QZW7anxYmVzk8WixNx35/6nlP4eu8=",
+      "type": "url",
+      "url": "https://github.com/oxc-project/oxc/archive/refs/tags/oxlint_v0.15.5.tar.gz"
+    },
+    "version": "0.15.5"
+  },
   "spectral": {
     "cargoLocks": null,
     "date": null,
@@ -301,11 +321,11 @@
     "pinned": false,
     "src": {
       "name": "standardnotes-desktop-x86_64-linux.deb",
-      "sha256": "sha256-uUrjl7y+lm8yTKL+yyCOjU/EopkBfzeA63/uldSlRLo=",
+      "sha256": "sha256-lpyvWO8w3vjiBqeGvSxcDofQwcI4zdueXMgqaHwxzXA=",
       "type": "url",
-      "url": "https://github.com/standardnotes/app/releases/download/@standardnotes/desktop@3.195.17/standard-notes-3.195.17-linux-amd64.deb"
+      "url": "https://github.com/standardnotes/app/releases/download/@standardnotes/desktop@3.195.22/standard-notes-3.195.22-linux-amd64.deb"
     },
-    "version": "3.195.17"
+    "version": "3.195.22"
   },
   "tree-sitter-cql": {
     "cargoLocks": null,

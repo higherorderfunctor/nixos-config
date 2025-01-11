@@ -19,6 +19,7 @@ args: let
     ./nixd-overlay.nix
     ./nvfetcher-overlay.nix
     ./oh-my-posh-overlay.nix
+    ./oxlint-overlay.nix
     ./rust-overlay.nix
     ./spectral-overlay.nix
     ./standardnotes-overlay.nix

@@ -163,6 +163,20 @@
       sha256 = "sha256-mIDU7N2saEnMgAMMtbyBPLp8Y03bFwokt7qRqUHbCPs=";
     };
   };
+  oxc = {
+    pname = "oxc";
+    version = "0.15.5";
+    src = fetchurl {
+      url = "https://github.com/oxc-project/oxc/archive/refs/tags/oxlint_v0.15.5.tar.gz";
+      sha256 = "sha256-MmZAv1Tm4fjca7QZW7anxYmVzk8WixNx35/6nlP4eu8=";
+    };
+    cargoLock."Cargo.lock" = {
+      lockFile = ./oxc-0.15.5/Cargo.lock;
+      outputHashes = {
+        
+      };
+    };
+  };
   spectral = {
     pname = "spectral";
     version = "v6.14.2";
@@ -176,11 +190,11 @@
   };
   standardnotes-desktop-deb-x86_64-linux = {
     pname = "standardnotes-desktop-deb-x86_64-linux";
-    version = "3.195.17";
+    version = "3.195.22";
     src = fetchurl {
-      url = "https://github.com/standardnotes/app/releases/download/@standardnotes/desktop@3.195.17/standard-notes-3.195.17-linux-amd64.deb";
+      url = "https://github.com/standardnotes/app/releases/download/@standardnotes/desktop@3.195.22/standard-notes-3.195.22-linux-amd64.deb";
       name = "standardnotes-desktop-x86_64-linux.deb";
-      sha256 = "sha256-uUrjl7y+lm8yTKL+yyCOjU/EopkBfzeA63/uldSlRLo=";
+      sha256 = "sha256-lpyvWO8w3vjiBqeGvSxcDofQwcI4zdueXMgqaHwxzXA=";
     };
   };
   tree-sitter-cql = {

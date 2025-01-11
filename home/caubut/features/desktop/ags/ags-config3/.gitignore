@@ -2,3 +2,4 @@
 **/.tsbuildinfo
 **/dist
 **/.rollup.cache
+/.eslintcache
