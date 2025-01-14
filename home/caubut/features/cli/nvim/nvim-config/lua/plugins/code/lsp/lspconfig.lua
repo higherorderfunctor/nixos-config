@@ -36,7 +36,8 @@ return {
         cmd = {
           "node",
           "--enable-source-maps",
-          require("nvim-eslint").get_plugin_root() .. "/vscode-eslint/server/out/eslintServer.js",
+          eslint_lsp_path,
+          -- require("nvim-eslint").get_plugin_root() .. "/vscode-eslint/server/out/eslintServer.js",
           "--stdio",
         },
         handlers = {
