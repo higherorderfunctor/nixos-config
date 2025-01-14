@@ -38,12 +38,11 @@
     #   # TODO all
     # };
   };
+
+  # powerprofilesctl
   powerManagement = {
     enable = true;
     cpuFreqGovernor = "performance";
-    cpufreq = {
-      max = 3400000;
-    };
   };
 
   boot = {

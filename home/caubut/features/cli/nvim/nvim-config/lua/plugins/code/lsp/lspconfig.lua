@@ -58,7 +58,7 @@ return {
           workingDirectories = { mode = "auto" },
           options = {
             -- cache = true,
-            flags = { "unstable_ts_config" },
+            -- flags = { "unstable_ts_config" },
           },
         },
       })

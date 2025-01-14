@@ -17,13 +17,13 @@
   };
   arkenfox = {
     pname = "arkenfox";
-    version = "128.0";
+    version = "133.0";
     src = fetchFromGitHub {
       owner = "arkenfox";
       repo = "user.js";
-      rev = "128.0";
+      rev = "133.0";
       fetchSubmodules = false;
-      sha256 = "sha256-XLswsa2u2qsUPsLYRYn6lwis7VwSjAW6BRNdI4brbSM=";
+      sha256 = "sha256-iHj+4UGeB1FVGvOWB9ZZA4aiiJynBxRSFFfJqToYEdQ=";
     };
   };
   bruno-deb-x86_64-linux = {
@@ -154,24 +154,24 @@
   };
   oh-my-posh = {
     pname = "oh-my-posh";
-    version = "v24.18.0";
+    version = "v24.18.1";
     src = fetchFromGitHub {
       owner = "JanDeDobbeleer";
       repo = "oh-my-posh";
-      rev = "v24.18.0";
+      rev = "v24.18.1";
       fetchSubmodules = false;
-      sha256 = "sha256-mIDU7N2saEnMgAMMtbyBPLp8Y03bFwokt7qRqUHbCPs=";
+      sha256 = "sha256-xx63IsIM/XirW0Ov6jxlffwIy5fCGGZiPcWmnrc9Zrc=";
     };
   };
   oxc = {
     pname = "oxc";
-    version = "0.15.5";
+    version = "0.15.6";
     src = fetchurl {
-      url = "https://github.com/oxc-project/oxc/archive/refs/tags/oxlint_v0.15.5.tar.gz";
-      sha256 = "sha256-MmZAv1Tm4fjca7QZW7anxYmVzk8WixNx35/6nlP4eu8=";
+      url = "https://github.com/oxc-project/oxc/archive/refs/tags/oxlint_v0.15.6.tar.gz";
+      sha256 = "sha256-QF5vClPenfa7sjg8TLE/xH2wM1aMplkbbhwUhwmd28k=";
     };
     cargoLock."Cargo.lock" = {
-      lockFile = ./oxc-0.15.5/Cargo.lock;
+      lockFile = ./oxc-0.15.6/Cargo.lock;
       outputHashes = {
         
       };
@@ -210,16 +210,16 @@
   };
   vivid-plasma-themes = {
     pname = "vivid-plasma-themes";
-    version = "b9c66bae954e96a6231a327fd0f09676f941e870";
+    version = "9a67d3f501f8f0bb79fa395ab14c84defb10f5ea";
     src = fetchgit {
       url = "https://github.com/L4ki/Vivid-Plasma-Themes.git";
-      rev = "b9c66bae954e96a6231a327fd0f09676f941e870";
+      rev = "9a67d3f501f8f0bb79fa395ab14c84defb10f5ea";
       fetchSubmodules = false;
       deepClone = false;
       leaveDotGit = false;
       sparseCheckout = [ ];
-      sha256 = "sha256-BpYw58t/s5RnpT8iKn1A3SnrRMUg9+EuVPnMv3RDdAI=";
+      sha256 = "sha256-BflRZfpzmhiDtn/m2HD3NQepsNZs18noER0ZL4Q7uGA=";
     };
-    date = "2025-01-04";
+    date = "2025-01-11";
   };
 }
