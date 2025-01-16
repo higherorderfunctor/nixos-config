@@ -128,6 +128,10 @@ cargo_locks = ["Cargo.lock"]
 src.github = "stoplightio/spectral"
 fetch.github = "stoplightio/spectral"
 
+[spectral-language-server]
+src.github = "stoplightio/vscode-spectral"
+fetch.github = "stoplightio/vscode-spectral"
+
 [standardnotes-desktop-deb-x86_64-linux]
 src.github_tag = "standardnotes/app"
 src.include_regex = "^@standardnotes/desktop@[0-9]+\\.[0-9]+\\.[0-9]+$"

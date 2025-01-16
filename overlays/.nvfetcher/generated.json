@@ -312,6 +312,27 @@
     },
     "version": "v6.14.2"
   },
+  "spectral-language-server": {
+    "cargoLocks": null,
+    "date": null,
+    "extract": null,
+    "name": "spectral-language-server",
+    "passthru": null,
+    "pinned": false,
+    "src": {
+      "deepClone": false,
+      "fetchSubmodules": false,
+      "leaveDotGit": false,
+      "name": null,
+      "owner": "stoplightio",
+      "repo": "vscode-spectral",
+      "rev": "v1.1.4",
+      "sha256": "sha256-0p5aFzaddgSKM62R5Y0K10eCNo9CJkGuJZBhJ2cUF/w=",
+      "sparseCheckout": [],
+      "type": "github"
+    },
+    "version": "v1.1.4"
+  },
   "standardnotes-desktop-deb-x86_64-linux": {
     "cargoLocks": null,
     "date": null,

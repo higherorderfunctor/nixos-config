@@ -59,6 +59,7 @@
     ./shellharden.nix
     ./shfmt.nix
     ./sops.nix
+    ./spectral.nix
     ./sqlite.nix
     ./ssh-to-age.nix
     ./ssh.nix

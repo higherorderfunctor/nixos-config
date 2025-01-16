@@ -15,19 +15,19 @@ export NIX_PATH
 echo "$NIX_PATH"
 
 while [[ $# -gt 0 ]]; do
-	case $1 in
+  case $1 in
 
-	--noflake)
-		FLAKE=0
-		;;
+  --noflake)
+    FLAKE=0
+    ;;
 
-	*)
-		echo -e "Unknown option: $1\n"
-		exit 1
-		;;
+  *)
+    echo -e "Unknown option: $1\n"
+    exit 1
+    ;;
 
-	esac
-	shift
+  esac
+  shift
 done
 
 ##
@@ -48,33 +48,41 @@ yq e -iP '.oh-my-posh.vendorHash = "'"$oh_my_posh_vendor_hash"'"' overlays/.nvfe
 ##
 # Fixup externally generated hashes
 (
-	# used to collect command output while still piping it to stdout
-	exec 5>&1
+  # used to collect command output while still piping it to stdout
+  exec 5>&1
 
-	# oh-my-posh
-	oh_my_posh="$(
-		cat <<EOF
+  # oh-my-posh
+  oh_my_posh="$(
+    cat <<EOF
 { pkgs ? import <nixpkgs> { overlays = [(import ./overlays/oh-my-posh-overlay.nix {}) ]; } }:
 pkgs.oh-my-posh
 EOF
-	)"
+  )"
 
-	# this command succeeds if its already in the store and the rest is skipped,
-	# otherwise, on failure, it tries to build, captures the correct hash, and updates generated.json
-	if ! output=$(nix-build --expr "$oh_my_posh" 2>&1 | tee >(cat - >&5)); then
-		# if the command fails, it should just be on the vendor hash which is captured
-		oh_my_posh_vendor_hash=$(echo "$output" | grep -oP 'got:\s+\Ksha256-[a-zA-Z0-9+/=]+')
-		echo -e "\nUpdating vendorHash: $oh_my_posh_vendor_hash\n"
-		yq e -iP '.oh-my-posh.vendorHash = "'"$oh_my_posh_vendor_hash"'"' overlays/.nvfetcher/generated.json -o json
-	fi
+  # this command succeeds if its already in the store and the rest is skipped,
+  # otherwise, on failure, it tries to build, captures the correct hash, and updates generated.json
+  if ! output=$(nix-build --expr "$oh_my_posh" 2>&1 | tee >(cat - >&5)); then
+    # if the command fails, it should just be on the vendor hash which is captured
+    oh_my_posh_vendor_hash=$(echo "$output" | grep -oP 'got:\s+\Ksha256-[a-zA-Z0-9+/=]+')
+    echo -e "\nUpdating vendorHash: $oh_my_posh_vendor_hash\n"
+    yq e -iP '.oh-my-posh.vendorHash = "'"$oh_my_posh_vendor_hash"'"' overlays/.nvfetcher/generated.json -o json
+  fi
 
-	rm -rf result 2>/dev/null
+  rm -rf result 2>/dev/null
 )
+
+SPECTRAL_VERSION=$(yq -r '.spectral.version' overlays/.nvfetcher/generated.json)
+mkdir -p overlays/.nvfetcher/spectral
+curl -o overlays/.nvfetcher/spectral/yarn.lock \
+  "https://raw.githubusercontent.com/stoplightio/spectral/refs/tags/${SPECTRAL_VERSION}/yarn.lock"
+if ! git diff --quiet HEAD -- overlays/.nvfetcher/spectral/yarn.lock; then
+  nix run nixpkgs#yarn-lock-converter -- -i overlays/.nvfetcher/spectral/yarn.lock -o overlays/.nvfetcher/spectral/yarn.lock
+fi
 
 # cargo locks and stuff
 git add overlays/.nvfetcher
 
 # update flake dependencies
 if [ "$FLAKE" = "1" ]; then
-	nix flake update
+  nix flake update
 fi

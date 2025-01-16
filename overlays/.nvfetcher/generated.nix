@@ -188,6 +188,17 @@
       sha256 = "sha256-yxT+a1XD6HKllCYSpW4/R26ufDwDDdapccf/5nfFBlw=";
     };
   };
+  spectral-language-server = {
+    pname = "spectral-language-server";
+    version = "v1.1.4";
+    src = fetchFromGitHub {
+      owner = "stoplightio";
+      repo = "vscode-spectral";
+      rev = "v1.1.4";
+      fetchSubmodules = false;
+      sha256 = "sha256-0p5aFzaddgSKM62R5Y0K10eCNo9CJkGuJZBhJ2cUF/w=";
+    };
+  };
   standardnotes-desktop-deb-x86_64-linux = {
     pname = "standardnotes-desktop-deb-x86_64-linux";
     version = "3.195.22";
