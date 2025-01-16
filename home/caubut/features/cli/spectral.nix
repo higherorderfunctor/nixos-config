@@ -1,3 +1,3 @@
 {pkgs, ...}: {
-  home.packages = with pkgs; [spectral2];
+  # home.packages = with pkgs; [spectral];
 }
