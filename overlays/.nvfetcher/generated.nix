@@ -110,10 +110,10 @@
   };
   dns-root-hints = {
     pname = "dns-root-hints";
-    version = "20241218";
+    version = "20250116";
     src = fetchurl {
       url = "https://www.internic.net/domain/named.root";
-      sha256 = "sha256-Q6fzqK8cPPuEF75BvyV16JcKhzvqFNEjEuER3SZ1R6U=";
+      sha256 = "sha256-HZqzy+7SL4YAXG3Qw5qD5xCSa1LxBwu+aqPakeJTggY=";
     };
   };
   fblog = {
@@ -146,10 +146,10 @@
   };
   go = {
     pname = "go";
-    version = "1.23.4";
+    version = "1.23.5";
     src = fetchurl {
-      url = "https://go.dev/dl/go1.23.4.src.tar.gz";
-      sha256 = "sha256-rTRaxCHpCBQpOpaZzKGd1SOCUcP2h5gLvK4oSVsmNTE=";
+      url = "https://go.dev/dl/go1.23.5.src.tar.gz";
+      sha256 = "sha256-pvP0u9PmvdYm95tmjyEvu1ZJ2vdQhPt5tnigrk2XQjs=";
     };
   };
   oh-my-posh = {

@@ -181,11 +181,11 @@
     "pinned": false,
     "src": {
       "name": null,
-      "sha256": "sha256-Q6fzqK8cPPuEF75BvyV16JcKhzvqFNEjEuER3SZ1R6U=",
+      "sha256": "sha256-HZqzy+7SL4YAXG3Qw5qD5xCSa1LxBwu+aqPakeJTggY=",
       "type": "url",
       "url": "https://www.internic.net/domain/named.root"
     },
-    "version": "20241218"
+    "version": "20250116"
   },
   "fblog": {
     "cargoLocks": {
@@ -243,11 +243,11 @@
     "pinned": false,
     "src": {
       "name": null,
-      "sha256": "sha256-rTRaxCHpCBQpOpaZzKGd1SOCUcP2h5gLvK4oSVsmNTE=",
+      "sha256": "sha256-pvP0u9PmvdYm95tmjyEvu1ZJ2vdQhPt5tnigrk2XQjs=",
       "type": "url",
-      "url": "https://go.dev/dl/go1.23.4.src.tar.gz"
+      "url": "https://go.dev/dl/go1.23.5.src.tar.gz"
     },
-    "version": "1.23.4"
+    "version": "1.23.5"
   },
   "oh-my-posh": {
     "cargoLocks": null,
