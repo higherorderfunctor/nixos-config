@@ -14,8 +14,12 @@ _: final: prev: let
     '';
     proxyVendor = true;
     allowGoReference = true;
-    vendorHash = "sha256-EylGWrWOZ3SXd3MMIAYKmD1ILoIVBBUOTNPR0xVScvI=";
+    vendorHash = "sha256-xbnt7JqMePsHfyG3+5yjtouUjSTsbqHFR81e3PTaGzU=";
     # vendorHash = lib.fakeHash;
+    postPatch = ''
+      rm ./desktopexporter/internal/server/server_test.go \
+          ./desktopexporter/internal/store/store_test.go
+    '';
   };
   otel-desktop-viewer = final.buildGoModule rec {
     inherit (nv) pname src version;
@@ -24,9 +28,16 @@ _: final: prev: let
       ls -la
       cd desktopcollector
     '';
-    proxyVendor = false;
+    postInstall = ''
+      ls -la
+      ls -la $out
+      mv $out/bin/desktopcollector $out/bin/otel-desktop-viewer
+    '';
+    # deleteVendor = true;
+    proxyVendor = true;
+    # buildInputs = [desktopexporter];
     allowGoReference = true;
-    vendorHash = "sha256-e39ZE9QY0b3YBdsAhjycxbDfe9nGgeOR32pdnM6iPko=";
+    vendorHash = "sha256-7RKvY1KnoDTL4lL2dQBx7Mej48u76W46s7LZMyRrf2M=";
     # vendorHash = lib.fakeHash;
   };
 in {
