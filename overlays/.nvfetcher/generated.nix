@@ -48,11 +48,11 @@
   };
   bun-x86_64-linux = {
     pname = "bun-x86_64-linux";
-    version = "1.1.43";
+    version = "1.1.44";
     src = fetchurl {
-      url = "https://github.com/oven-sh/bun/releases/download/bun-v1.1.43/bun-linux-x64.zip";
+      url = "https://github.com/oven-sh/bun/releases/download/bun-v1.1.44/bun-linux-x64.zip";
       name = "bun-x86_64-linux.zip";
-      sha256 = "sha256-j5iqhwkVV2R9wjxlwyBrFO6QLI4n0CA9qhIAstH6PCE=";
+      sha256 = "sha256-CzXRBAm5UTotBknu4/jRTUn8ROHa6GLt1dcyZDFQAZM=";
     };
   };
   catppuccin-btop = {
@@ -161,6 +161,28 @@
       rev = "v24.18.1";
       fetchSubmodules = false;
       sha256 = "sha256-xx63IsIM/XirW0Ov6jxlffwIy5fCGGZiPcWmnrc9Zrc=";
+    };
+  };
+  otel-desktop-viewer = {
+    pname = "otel-desktop-viewer";
+    version = "144834b57a6df27f85ec30d1ef0f3f7e3d788dff";
+    src = fetchgit {
+      url = "https://github.com/CtrlSpice/otel-desktop-viewer.git";
+      rev = "144834b57a6df27f85ec30d1ef0f3f7e3d788dff";
+      fetchSubmodules = false;
+      deepClone = false;
+      leaveDotGit = false;
+      sparseCheckout = [ ];
+      sha256 = "sha256-qmo1QNi3ZWHzdz8G8zZf6eM8w28axwvgId0xzdHwrEE=";
+    };
+    date = "2024-12-04";
+  };
+  otel-tui-x86_64-linux = {
+    pname = "otel-tui-x86_64-linux";
+    version = "0.3.10";
+    src = fetchurl {
+      url = "https://github.com/ymtdzzz/otel-tui/releases/download/v0.3.10/otel-tui_Linux_x86_64.tar.gz";
+      sha256 = "sha256-fzlMmF116oP8oRvJG8tQl+fGhu5bbMJ0Tc8WY1q+OOM=";
     };
   };
   oxc = {

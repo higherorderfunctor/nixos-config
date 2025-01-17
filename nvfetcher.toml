@@ -117,6 +117,17 @@ fetch.url = "https://go.dev/dl/go$ver.src.tar.gz"
 src.github = "JanDeDobbeleer/oh-my-posh"
 fetch.github = "JanDeDobbeleer/oh-my-posh"
 
+[otel-desktop-viewer]
+src.branch = "main"
+src.git = "https://github.com/CtrlSpice/otel-desktop-viewer.git"
+fetch.git = "https://github.com/CtrlSpice/otel-desktop-viewer.git"
+
+[otel-tui-x86_64-linux]
+src.github = "ymtdzzz/otel-tui"
+src.from_pattern = "v([0-9]+\\.[0-9]+\\.[0-9]+)"
+src.to_pattern = "\\1"
+fetch.url = "https://github.com/ymtdzzz/otel-tui/releases/download/v$ver/otel-tui_Linux_x86_64.tar.gz"
+
 [oxc]
 src.github = "oxc-project/oxc"
 src.from_pattern = "oxlint_v([0-9]+\\.[0-9]+\\.[0-9]+)"

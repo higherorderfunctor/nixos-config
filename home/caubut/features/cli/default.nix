@@ -47,6 +47,7 @@
     ./nvim
     ./oh-my-posh.nix
     ./onlykey.nix
+    ./otel.nix
     ./oxlint.nix
     ./poetry.nix
     ./prettierd.nix

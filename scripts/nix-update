@@ -71,13 +71,13 @@ EOF
   rm -rf result 2>/dev/null
 )
 
-SPECTRAL_VERSION=$(yq -r '.spectral.version' overlays/.nvfetcher/generated.json)
-mkdir -p overlays/.nvfetcher/spectral
-curl -o overlays/.nvfetcher/spectral/yarn.lock \
-  "https://raw.githubusercontent.com/stoplightio/spectral/refs/tags/${SPECTRAL_VERSION}/yarn.lock"
-if ! git diff --quiet HEAD -- overlays/.nvfetcher/spectral/yarn.lock; then
-  nix run nixpkgs#yarn-lock-converter -- -i overlays/.nvfetcher/spectral/yarn.lock -o overlays/.nvfetcher/spectral/yarn.lock
-fi
+# SPECTRAL_VERSION=$(yq -r '.spectral.version' overlays/.nvfetcher/generated.json)
+# mkdir -p overlays/.nvfetcher/spectral
+# curl -o overlays/.nvfetcher/spectral/yarn.lock \
+#   "https://raw.githubusercontent.com/stoplightio/spectral/refs/tags/${SPECTRAL_VERSION}/yarn.lock"
+# if ! git diff --quiet HEAD -- overlays/.nvfetcher/spectral/yarn.lock; then
+#   nix run nixpkgs#yarn-lock-converter -- -i overlays/.nvfetcher/spectral/yarn.lock -o overlays/.nvfetcher/spectral/yarn.lock
+# fi
 
 # cargo locks and stuff
 git add overlays/.nvfetcher
