@@ -14,6 +14,7 @@ args: let
     ./gluetun-overlay.nix
     ./hotfixes-overlay.nix
     ./hyprland-overlay.nix
+    ./mirrors-overlay.nix
     ./neovim-nightly-overlay.nix
     ./nix-gl-host-overlay.nix
     ./nixd-overlay.nix
