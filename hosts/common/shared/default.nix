@@ -1,17 +1,22 @@
-{lib, ...}: {
+{lib, ...}: let
+  substituters = [
+    "https://cache.nixos.org/"
+    "https://nix-community.cachix.org"
+    "https://hyprland.cachix.org"
+    "https://wezterm.cachix.org"
+  ];
+in {
   nix = {
     settings = {
       cores = lib.mkForce 4;
       max-jobs = lib.mkForce 1;
-      trusted-users = ["root" "@wheel"];
+      trusted-users = ["root" "caubut" "@wheel"];
       auto-optimise-store = lib.mkDefault true;
       experimental-features = ["nix-command" "flakes"];
-      substituters = [
-        "https://cache.nixos.org/"
-        "https://nix-community.cachix.org"
-        "https://hyprland.cachix.org"
-        "https://wezterm.cachix.org"
-      ];
+      # nixos
+      inherit substituters;
+      # home manager
+      trusted-substituters = substituters;
       trusted-public-keys = [
         "cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY="
         "hyprland.cachix.org-1:a7pgxzMz7+chwVL3/pzj6jIBMioiJM7ypFP8PwtkuGc="
