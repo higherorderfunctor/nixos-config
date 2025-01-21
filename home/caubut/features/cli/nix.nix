@@ -1,13 +1,15 @@
 {
   config,
   lib,
+  pkgs,
   ...
 }: let
-  username = config.home.username;
+  inherit (config.home) username;
 in {
   imports = [../../../../hosts/common/shared];
 
   nix = {
+    package = pkgs.nix;
     gc = {
       frequency = "weekly";
     };
