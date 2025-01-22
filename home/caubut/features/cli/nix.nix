@@ -9,7 +9,6 @@ in {
   imports = [../../../../hosts/common/shared];
 
   nix = {
-    package = pkgs.nix;
     gc = {
       frequency = "weekly";
     };

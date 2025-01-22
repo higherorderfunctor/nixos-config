@@ -14,7 +14,7 @@ in {
       !include ${config.sops.secrets."${username}-nix-conf-secrets".path}
     '';
     settings = {
-      trusted-substituters = lib.mkForce null;
+      #trusted-substituters = lib.mkForce null;
     };
   };
 

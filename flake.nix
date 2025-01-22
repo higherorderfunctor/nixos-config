@@ -164,10 +164,10 @@
         overlays = import ./overlays {inherit inputs lib;};
         config = {
           allowUnfree = true;
-          # permittedInsecurePackages = [
-          #   "electron-27.3.11" # standard notes
-          #   "olm-3.2.16" # ???
-          # ];
+          permittedInsecurePackages = [
+            "electron-31.7.7" # standard notes
+            #   "olm-3.2.16" # ???
+          ];
         };
       };
   in {

@@ -1,4 +1,8 @@
-{lib, ...}: let
+{
+  lib,
+  pkgs,
+  ...
+}: let
   substituters = [
     "https://cache.nixos.org/"
     "https://nix-community.cachix.org"
@@ -7,15 +11,14 @@
   ];
 in {
   nix = {
+    package = lib.mkForce pkgs.nix;
     settings = {
       cores = lib.mkForce 4;
       max-jobs = lib.mkForce 1;
       trusted-users = ["root" "caubut" "@wheel"];
       auto-optimise-store = lib.mkDefault true;
       experimental-features = ["nix-command" "flakes"];
-      # nixos
       inherit substituters;
-      # home manager
       trusted-substituters = substituters;
       trusted-public-keys = [
         "cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY="
