@@ -2,6 +2,7 @@
   imports = [
     # FIXME: nix-tree
     ./code
+    ./awscli.nix
     ./alejandra.nix
     ./aspell.nix
     ./bash-language-server.nix
