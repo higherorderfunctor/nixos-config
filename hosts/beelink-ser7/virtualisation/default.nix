@@ -165,9 +165,14 @@ sudo podman exec -it transmission /bin/sh
           ];
         };
         fakeRootCommands = ''
+          set -x
+          ls -la
+          ls -la bin
+          ls -la etc/transmission
+          ls -la
           mkdir -p ./tmp
           chmod 777 ./tmp
-          chmod +x ./entrypoint
+          # chmod +x ./entrypoint
         '';
         # chown -R 2001:2001 ./var/run/transmission
       };

@@ -48,11 +48,11 @@
   };
   bun-x86_64-linux = {
     pname = "bun-x86_64-linux";
-    version = "1.1.45";
+    version = "1.2.0";
     src = fetchurl {
-      url = "https://github.com/oven-sh/bun/releases/download/bun-v1.1.45/bun-linux-x64.zip";
+      url = "https://github.com/oven-sh/bun/releases/download/bun-v1.2.0/bun-linux-x64.zip";
       name = "bun-x86_64-linux.zip";
-      sha256 = "sha256-bQqVKJIWF3DKbmQTaIrToFCy79queouJOQUjWLJRga8=";
+      sha256 = "sha256-B0fpcBILE6HaU0G3UaXwrxd4vYr9cLXEWPr/+VzppFM=";
     };
   };
   catppuccin-btop = {
@@ -187,13 +187,13 @@
   };
   oxc = {
     pname = "oxc";
-    version = "0.15.7";
+    version = "0.15.8";
     src = fetchurl {
-      url = "https://github.com/oxc-project/oxc/archive/refs/tags/oxlint_v0.15.7.tar.gz";
-      sha256 = "sha256-91e/nbf8nWH2xExxxI559PAlNHsYfoYOeQ47DaOTrcg=";
+      url = "https://github.com/oxc-project/oxc/archive/refs/tags/oxlint_v0.15.8.tar.gz";
+      sha256 = "sha256-wWPyQwug3FrFwyHUn4gmXLBlnbIi5V0d7Kwk/E20eTg=";
     };
     cargoLock."Cargo.lock" = {
-      lockFile = ./oxc-0.15.7/Cargo.lock;
+      lockFile = ./oxc-0.15.8/Cargo.lock;
       outputHashes = {
         
       };
@@ -243,16 +243,16 @@
   };
   vivid-plasma-themes = {
     pname = "vivid-plasma-themes";
-    version = "370ebfddc06011059b55873d557be566d45e5dc4";
+    version = "6753fc4f3eea176c472e1ea1b5275e699aba0fd8";
     src = fetchgit {
       url = "https://github.com/L4ki/Vivid-Plasma-Themes.git";
-      rev = "370ebfddc06011059b55873d557be566d45e5dc4";
+      rev = "6753fc4f3eea176c472e1ea1b5275e699aba0fd8";
       fetchSubmodules = false;
       deepClone = false;
       leaveDotGit = false;
       sparseCheckout = [ ];
-      sha256 = "sha256-j65f7yEICJQnDulCL4hHXXARHY/y6MGemJfnYWRqvQ0=";
+      sha256 = "sha256-sq9m2m8NXiDZDfN8r0BktfAriErXDWA4MTjh6cKi0z0=";
     };
-    date = "2025-01-18";
+    date = "2025-01-25";
   };
 }
