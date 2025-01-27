@@ -263,13 +263,13 @@
       "name": null,
       "owner": "JanDeDobbeleer",
       "repo": "oh-my-posh",
-      "rev": "v24.18.1",
-      "sha256": "sha256-xx63IsIM/XirW0Ov6jxlffwIy5fCGGZiPcWmnrc9Zrc=",
+      "rev": "v24.19.0",
+      "sha256": "sha256-HwBLFa7CEAYjCcCn9P7wsgsa4po2x5CewcarcPZAjHI=",
       "sparseCheckout": [],
       "type": "github"
     },
-    "version": "v24.18.1",
-    "vendorHash": "sha256-V7+csBkAksgZlyCzzCMl7d46edEfLpfiuZXGEUKOP8Q="
+    "version": "v24.19.0",
+    "vendorHash": "sha256-0xnUvPSSYtIDOFqvRdNO6VNZYN5xjLt8aq54pgKnvC0="
   },
   "otel-desktop-viewer": {
     "cargoLocks": null,
@@ -300,11 +300,11 @@
     "pinned": false,
     "src": {
       "name": null,
-      "sha256": "sha256-fzlMmF116oP8oRvJG8tQl+fGhu5bbMJ0Tc8WY1q+OOM=",
+      "sha256": "sha256-WG7Zf/aZI7TVWdtOTtFLau2vlAGJnPi5hrqfQuoglI0=",
       "type": "url",
-      "url": "https://github.com/ymtdzzz/otel-tui/releases/download/v0.3.10/otel-tui_Linux_x86_64.tar.gz"
+      "url": "https://github.com/ymtdzzz/otel-tui/releases/download/v0.4.0/otel-tui_Linux_x86_64.tar.gz"
     },
-    "version": "0.3.10"
+    "version": "0.4.0"
   },
   "oxc": {
     "cargoLocks": {

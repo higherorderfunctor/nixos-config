@@ -154,13 +154,13 @@
   };
   oh-my-posh = {
     pname = "oh-my-posh";
-    version = "v24.18.1";
+    version = "v24.19.0";
     src = fetchFromGitHub {
       owner = "JanDeDobbeleer";
       repo = "oh-my-posh";
-      rev = "v24.18.1";
+      rev = "v24.19.0";
       fetchSubmodules = false;
-      sha256 = "sha256-xx63IsIM/XirW0Ov6jxlffwIy5fCGGZiPcWmnrc9Zrc=";
+      sha256 = "sha256-HwBLFa7CEAYjCcCn9P7wsgsa4po2x5CewcarcPZAjHI=";
     };
   };
   otel-desktop-viewer = {
@@ -179,10 +179,10 @@
   };
   otel-tui-x86_64-linux = {
     pname = "otel-tui-x86_64-linux";
-    version = "0.3.10";
+    version = "0.4.0";
     src = fetchurl {
-      url = "https://github.com/ymtdzzz/otel-tui/releases/download/v0.3.10/otel-tui_Linux_x86_64.tar.gz";
-      sha256 = "sha256-fzlMmF116oP8oRvJG8tQl+fGhu5bbMJ0Tc8WY1q+OOM=";
+      url = "https://github.com/ymtdzzz/otel-tui/releases/download/v0.4.0/otel-tui_Linux_x86_64.tar.gz";
+      sha256 = "sha256-WG7Zf/aZI7TVWdtOTtFLau2vlAGJnPi5hrqfQuoglI0=";
     };
   };
   oxc = {

@@ -57,8 +57,10 @@ return {
           useFlatConfig = true,
           workingDirectory = nil,
           workingDirectories = { mode = "auto" },
+          -- ["typescript.tsdk"] = "<workspace>\\node_modules\\typescript\\lib",
           options = {
-            -- cache = true,
+            cache = true,
+            cacheLocation = ".lsp.eslintcache",
             -- flags = { "unstable_ts_config" },
           },
         },
