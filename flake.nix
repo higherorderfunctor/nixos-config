@@ -95,6 +95,7 @@
         hyprwayland-scanner.follows = "hyprland/hyprwayland-scanner";
       };
     };
+    isd.url = "github:isd-project/isd";
     impermanence = {
       url = "github:nix-community/impermanence";
     };

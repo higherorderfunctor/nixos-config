@@ -27,6 +27,7 @@
     ./gjs.nix
     ./gnumake.nix
     ./inotify-info.nix
+    ./isd.nix
     ./jq.nix
     ./json-lsp.nix
     ./keybase.nix
