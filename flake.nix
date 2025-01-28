@@ -107,7 +107,7 @@
       url = "github:nix-community/neovim-nightly-overlay";
       inputs = {
         nixpkgs.follows = "nixpkgs";
-        neovim-src.follows = "neovim-src";
+        # neovim-src.follows = "neovim-src";
       };
     };
     nixd = {
