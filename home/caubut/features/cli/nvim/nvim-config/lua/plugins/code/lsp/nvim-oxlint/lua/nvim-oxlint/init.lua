@@ -100,15 +100,15 @@ end
 
 function M.find_config(bufnr)
   local workspace_root = M.resolve_git_dir(bufnr)
-  vim.notify(workspace_root)
+  -- vim.notify(workspace_root)
   local config = workspace_root .. "/.oxlintrc.json"
   if vim.fn.filereadable(config) == 1 then
-    vim.notify(config)
+    --vim.notify(config)
     return config
   end
   config = workspace_root .. "/.oxlintrc.jsonc"
   if vim.fn.filereadable(config) == 1 then
-    vim.notify(config)
+    -- vim.notify(config)
     return config
   end
   vim.notify("oxlint: No config found", vim.log.levels.ERROR)
