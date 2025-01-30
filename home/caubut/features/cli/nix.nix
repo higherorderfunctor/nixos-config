@@ -16,7 +16,7 @@ in {
       !include ${config.sops.secrets."${username}-nix-conf-secrets".path}
     '';
     settings = {
-      substituters = lib.mkForce null;
+      # substituters = lib.mkForce null;
     };
   };
 

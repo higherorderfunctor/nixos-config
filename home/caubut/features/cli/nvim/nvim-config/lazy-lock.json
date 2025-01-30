@@ -31,7 +31,7 @@
   "mini.indentscope": { "branch": "main", "commit": "613df2830d7faeae7483ba2e736683154b95921e" },
   "neo-tree.nvim": { "branch": "main", "commit": "6a4f0a830f2322f187bce6f18a9e6b5b7ba188e3" },
   "neogen": { "branch": "main", "commit": "dd0301bfba1f83a3bc009b5430fce7aa3cee6941" },
-  "noice.nvim": { "branch": "main", "commit": "eaed6cc9c06aa2013b5255349e4f26a6b17ab70f" },
+  "noice.nvim": { "branch": "main", "commit": "e3c68a4d2275a01268a52e2931bfccfbfb693d15" },
   "none-ls.nvim": { "branch": "main", "commit": "ed8f80849ef1ad31c2f74679fafdef7801091247" },
   "nui.nvim": { "branch": "main", "commit": "53e907ffe5eedebdca1cd503b00aa8692068ca46" },
   "nvim": { "branch": "main", "commit": "f67b886d65a029f12ffa298701fb8f1efd89295d" },
