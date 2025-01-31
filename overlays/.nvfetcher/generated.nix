@@ -110,10 +110,10 @@
   };
   dns-root-hints = {
     pname = "dns-root-hints";
-    version = "20250116";
+    version = "20250129";
     src = fetchurl {
       url = "https://www.internic.net/domain/named.root";
-      sha256 = "sha256-HZqzy+7SL4YAXG3Qw5qD5xCSa1LxBwu+aqPakeJTggY=";
+      sha256 = "sha256-axHjPoZx/mCtjFMyewF+kQomdZToI0Wf4NYvT6fXMcY=";
     };
   };
   fblog = {
@@ -165,17 +165,17 @@
   };
   otel-desktop-viewer = {
     pname = "otel-desktop-viewer";
-    version = "144834b57a6df27f85ec30d1ef0f3f7e3d788dff";
+    version = "50bc41bb3810f199e9fe12ebeda286baf0718e4f";
     src = fetchgit {
       url = "https://github.com/CtrlSpice/otel-desktop-viewer.git";
-      rev = "144834b57a6df27f85ec30d1ef0f3f7e3d788dff";
+      rev = "50bc41bb3810f199e9fe12ebeda286baf0718e4f";
       fetchSubmodules = false;
       deepClone = false;
       leaveDotGit = false;
       sparseCheckout = [ ];
-      sha256 = "sha256-qmo1QNi3ZWHzdz8G8zZf6eM8w28axwvgId0xzdHwrEE=";
+      sha256 = "sha256-xqfNokFCgRytA0sf5YEojxKKt2tH5mJbstLgk/sbyPw=";
     };
-    date = "2024-12-04";
+    date = "2025-01-29";
   };
   otel-tui-x86_64-linux = {
     pname = "otel-tui-x86_64-linux";
