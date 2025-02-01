@@ -48,11 +48,11 @@
   };
   bun-x86_64-linux = {
     pname = "bun-x86_64-linux";
-    version = "1.2.1";
+    version = "1.2.2";
     src = fetchurl {
-      url = "https://github.com/oven-sh/bun/releases/download/bun-v1.2.1/bun-linux-x64.zip";
+      url = "https://github.com/oven-sh/bun/releases/download/bun-v1.2.2/bun-linux-x64.zip";
       name = "bun-x86_64-linux.zip";
-      sha256 = "sha256-Q4DjmFTLTIqt8jfI9dJwJWSaK0lwXakc4zBm3pWdUug=";
+      sha256 = "sha256-P077iv0fhKwqmMBGYciYVh0dNVJ9Awy0Vx6Zt8hfUHk=";
     };
   };
   catppuccin-btop = {
@@ -187,13 +187,13 @@
   };
   oxc = {
     pname = "oxc";
-    version = "0.15.8";
+    version = "0.15.9";
     src = fetchurl {
-      url = "https://github.com/oxc-project/oxc/archive/refs/tags/oxlint_v0.15.8.tar.gz";
-      sha256 = "sha256-wWPyQwug3FrFwyHUn4gmXLBlnbIi5V0d7Kwk/E20eTg=";
+      url = "https://github.com/oxc-project/oxc/archive/refs/tags/oxlint_v0.15.9.tar.gz";
+      sha256 = "sha256-KenwR7Q0IlBExetb1cApcaPlgLWFWb6x/PpFX38d+zM=";
     };
     cargoLock."Cargo.lock" = {
-      lockFile = ./oxc-0.15.8/Cargo.lock;
+      lockFile = ./oxc-0.15.9/Cargo.lock;
       outputHashes = {
         
       };
@@ -223,11 +223,11 @@
   };
   standardnotes-desktop-deb-x86_64-linux = {
     pname = "standardnotes-desktop-deb-x86_64-linux";
-    version = "3.195.24";
+    version = "3.195.25";
     src = fetchurl {
-      url = "https://github.com/standardnotes/app/releases/download/@standardnotes/desktop@3.195.24/standard-notes-3.195.24-linux-amd64.deb";
+      url = "https://github.com/standardnotes/app/releases/download/@standardnotes/desktop@3.195.25/standard-notes-3.195.25-linux-amd64.deb";
       name = "standardnotes-desktop-x86_64-linux.deb";
-      sha256 = "sha256-7MZu8GEvm/OYIAor9Kja/z+aKAuke37bg4ZmXAnolUA=";
+      sha256 = "sha256-tOpCirXEkKTGYLBJyxq6Hz4w/jHW6bLaNnJxHqpgHLY=";
     };
   };
   tree-sitter-cql = {
@@ -243,16 +243,16 @@
   };
   vivid-plasma-themes = {
     pname = "vivid-plasma-themes";
-    version = "6753fc4f3eea176c472e1ea1b5275e699aba0fd8";
+    version = "ff2e85afe894cd527ab707cf2a06f7a14ba8f657";
     src = fetchgit {
       url = "https://github.com/L4ki/Vivid-Plasma-Themes.git";
-      rev = "6753fc4f3eea176c472e1ea1b5275e699aba0fd8";
+      rev = "ff2e85afe894cd527ab707cf2a06f7a14ba8f657";
       fetchSubmodules = false;
       deepClone = false;
       leaveDotGit = false;
       sparseCheckout = [ ];
-      sha256 = "sha256-sq9m2m8NXiDZDfN8r0BktfAriErXDWA4MTjh6cKi0z0=";
+      sha256 = "sha256-E0/jp9+DO4VvrtKaJf7dQySZoEJ5cSVPGNWh+In2mZ4=";
     };
-    date = "2025-01-25";
+    date = "2025-01-31";
   };
 }
