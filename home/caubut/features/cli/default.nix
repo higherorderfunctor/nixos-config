@@ -24,6 +24,7 @@
     ./gawk.nix
     ./gcc.nix
     ./git.nix
+    ./gitlab-language-server.nix
     ./gjs.nix
     ./gnumake.nix
     ./inotify-info.nix
