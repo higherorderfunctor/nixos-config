@@ -1,24 +1,32 @@
-{lib, ...}: final: _: {
+{lib, ...}: final: _: let
+  nv = (import ./nvpkgs.nix).gitlab-language-server;
+in {
   gitlab-language-server = final.buildNpmPackage {
-    pname = "gitlab-lsp";
-    version = "7.10.0"; # Replace with a specific version if needed
+    pname = "gitlab-language-server";
+    inherit (nv) version npmDepsHash;
 
-    src = final.fetchFromGitLab {
-      owner = "gitlab-org";
-      repo = "editor-extensions/gitlab-lsp";
-      rev = "v7.10.0"; # Replace with a specific commit or tag if needed
-      sha256 = "sha256-FQYPVP1pDSKjPDcKVjv4qu/Q64E8WPGwYz+7vl315pQ="; # Replace with the actual hash
-      # sha256 = lib.fakeHash; # Replace with the actual hash
+    src = final.fetchgit {
+      inherit
+        (nv.src)
+        url
+        rev
+        fetchSubmodules
+        deepClone
+        leaveDotGit
+        sparseCheckout
+        sha256
+        ;
     };
+
+    patches = [./.nvfetcher/gitlab-language-server/fix-package-lock.patch];
 
     buildInputs = [final.nodejs];
 
-    # npmDepsHash = lib.fakeHash;
-    npmDepsHash = "sha256-n0CzAIq3LaaGNO6wufodoJ7jStUhHknBRTjQ/J0GR3U=";
+    # npmDepsHash = "sha256-n0CzAIq3LaaGNO6wufodoJ7jStUhHknBRTjQ/J0GR3U=";
     npmBuild = "npm run build:language-server-only";
     forceGitDeps = true;
-    makeCacheWritable = true;
-    npmFlags = ["--legacy-peer-deps"];
+    # npmFlags = ["--cache" "/tmp/npm-cache" "--legacy-peer-deps"];
+    # makeCacheWritable = true;
 
     installPhase = ''
       mkdir -p $out/share/gitlab-language-server

@@ -133,6 +133,20 @@
       };
     };
   };
+  gitlab-language-server = {
+    pname = "gitlab-language-server";
+    version = "93f1b04f6f31c8210d6b50176123efb414f9be24";
+    src = fetchgit {
+      url = "https://gitlab.com/gitlab-org/editor-extensions/gitlab-lsp.git";
+      rev = "93f1b04f6f31c8210d6b50176123efb414f9be24";
+      fetchSubmodules = false;
+      deepClone = false;
+      leaveDotGit = false;
+      sparseCheckout = [ ];
+      sha256 = "sha256-GAFcLRfVKCzL84b9YaKj02ROP9+hTpPDjKXQOH+6y7w=";
+    };
+    date = "2025-01-31";
+  };
   gluetun-src = {
     pname = "gluetun-src";
     version = "v3.40.0";

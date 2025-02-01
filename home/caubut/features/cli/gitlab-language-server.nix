@@ -1,5 +1,5 @@
 {pkgs, ...}: {
-  # home.packages = with pkgs; [
-  #   gitlab-language-server
-  # ];
+  home.packages = with pkgs; [
+    gitlab-language-server
+  ];
 }
