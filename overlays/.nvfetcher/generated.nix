@@ -213,6 +213,15 @@
       };
     };
   };
+  pnpm = {
+    pname = "pnpm";
+    version = "10.1.0";
+    src = fetchurl {
+      url = "https://registry.npmjs.org/pnpm/-/pnpm-10.1.0.tgz";
+      name = "pnpm.tgz";
+      sha256 = "sha256-PuU+kUAR7H8abjqwxYuaAkoFK/4YKVsjtoVn1qal680=";
+    };
+  };
   spectral = {
     pname = "spectral";
     version = "v6.14.2";

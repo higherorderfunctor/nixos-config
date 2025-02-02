@@ -24,6 +24,7 @@ args: let
     ./otel-desktop-viewer-overlay.nix
     ./otel-tui-overlay.nix
     ./oxlint-overlay.nix
+    ./pnpm-overlay.nix
     ./rust-overlay.nix
     ./spectral-overlay.nix
     ./standardnotes-overlay.nix

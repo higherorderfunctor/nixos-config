@@ -11,6 +11,7 @@
     ags = {
       url = "github:Aylur/ags";
       inputs.nixpkgs.follows = "nixpkgs";
+      inputs.astal.follows = "astal";
     };
     astal = {
       url = "github:Aylur/astal";
@@ -82,8 +83,10 @@
       inputs = {
         nixpkgs.follows = "hyprland/nixpkgs";
         systems.follows = "hyprland/systems";
+        hyprland-protocols.follows = "hyprland/hyprland-protocols";
         hyprlang.follows = "hyprland/hyprlang";
         hyprutils.follows = "hyprland/hyprutils";
+        hyprwayland-scanner.follows = "hyprland/hyprwayland-scanner";
       };
     };
     hyprpicker = {
@@ -107,7 +110,7 @@
       url = "github:nix-community/neovim-nightly-overlay";
       inputs = {
         nixpkgs.follows = "nixpkgs";
-        # neovim-src.follows = "neovim-src";
+        neovim-src.follows = "neovim-src";
       };
     };
     nixd = {
@@ -147,6 +150,7 @@
       url = "github:wez/wezterm?dir=nix";
       # cachix
       # inputs.nixpkgs.follows = "nixpkgs";
+      # inputs.rust-overlay.follows = "rust-overlay";
     };
   };
 
