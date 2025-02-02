@@ -25,8 +25,8 @@ in {
     # npmDepsHash = "sha256-n0CzAIq3LaaGNO6wufodoJ7jStUhHknBRTjQ/J0GR3U=";
     npmBuild = "npm run build:language-server-only";
     forceGitDeps = true;
-    # npmFlags = ["--cache" "/tmp/npm-cache" "--legacy-peer-deps"];
-    # makeCacheWritable = true;
+    npmFlags = ["--legacy-peer-deps"];
+    makeCacheWritable = true;
 
     installPhase = ''
       mkdir -p $out/share/gitlab-language-server
