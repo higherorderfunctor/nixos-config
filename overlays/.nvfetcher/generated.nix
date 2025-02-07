@@ -135,17 +135,17 @@
   };
   gitlab-language-server = {
     pname = "gitlab-language-server";
-    version = "93f1b04f6f31c8210d6b50176123efb414f9be24";
+    version = "cdfac9b08a4915e656e621ae9c8067eda00b64ad";
     src = fetchgit {
       url = "https://gitlab.com/gitlab-org/editor-extensions/gitlab-lsp.git";
-      rev = "93f1b04f6f31c8210d6b50176123efb414f9be24";
+      rev = "cdfac9b08a4915e656e621ae9c8067eda00b64ad";
       fetchSubmodules = false;
       deepClone = false;
       leaveDotGit = false;
       sparseCheckout = [ ];
-      sha256 = "sha256-GAFcLRfVKCzL84b9YaKj02ROP9+hTpPDjKXQOH+6y7w=";
+      sha256 = "sha256-EeAQFLGMHslQpd11fccng06QfVvOopVei+jtZp9MbE8=";
     };
-    date = "2025-01-31";
+    date = "2025-02-06";
   };
   gluetun-src = {
     pname = "gluetun-src";
@@ -160,10 +160,10 @@
   };
   go = {
     pname = "go";
-    version = "1.23.5";
+    version = "1.23.6";
     src = fetchurl {
-      url = "https://go.dev/dl/go1.23.5.src.tar.gz";
-      sha256 = "sha256-pvP0u9PmvdYm95tmjyEvu1ZJ2vdQhPt5tnigrk2XQjs=";
+      url = "https://go.dev/dl/go1.23.6.src.tar.gz";
+      sha256 = "sha256-A5xbBOZSedrO7opvcecL0Fz1uAF4K293xuGeLtBREiI=";
     };
   };
   oh-my-posh = {
@@ -193,21 +193,21 @@
   };
   otel-tui-x86_64-linux = {
     pname = "otel-tui-x86_64-linux";
-    version = "0.4.0";
+    version = "0.4.1";
     src = fetchurl {
-      url = "https://github.com/ymtdzzz/otel-tui/releases/download/v0.4.0/otel-tui_Linux_x86_64.tar.gz";
-      sha256 = "sha256-WG7Zf/aZI7TVWdtOTtFLau2vlAGJnPi5hrqfQuoglI0=";
+      url = "https://github.com/ymtdzzz/otel-tui/releases/download/v0.4.1/otel-tui_Linux_x86_64.tar.gz";
+      sha256 = "sha256-pnPWOBHECnj3uEP9OXHUYs+bOSw0ata8upByONxuiR4=";
     };
   };
   oxc = {
     pname = "oxc";
-    version = "0.15.9";
+    version = "0.15.10";
     src = fetchurl {
-      url = "https://github.com/oxc-project/oxc/archive/refs/tags/oxlint_v0.15.9.tar.gz";
-      sha256 = "sha256-KenwR7Q0IlBExetb1cApcaPlgLWFWb6x/PpFX38d+zM=";
+      url = "https://github.com/oxc-project/oxc/archive/refs/tags/oxlint_v0.15.10.tar.gz";
+      sha256 = "sha256-04XqWIJZBk6Xv/RoftyY+fisCvvUleQr5ulSd7NivcU=";
     };
     cargoLock."Cargo.lock" = {
-      lockFile = ./oxc-0.15.9/Cargo.lock;
+      lockFile = ./oxc-0.15.10/Cargo.lock;
       outputHashes = {
         
       };
@@ -215,11 +215,11 @@
   };
   pnpm = {
     pname = "pnpm";
-    version = "10.1.0";
+    version = "10.2.1";
     src = fetchurl {
-      url = "https://registry.npmjs.org/pnpm/-/pnpm-10.1.0.tgz";
+      url = "https://registry.npmjs.org/pnpm/-/pnpm-10.2.1.tgz";
       name = "pnpm.tgz";
-      sha256 = "sha256-PuU+kUAR7H8abjqwxYuaAkoFK/4YKVsjtoVn1qal680=";
+      sha256 = "sha256-+Yjw2TuH4dotjN9qx/RaAcb4Q642BrTKDy/9cTuF+XU=";
     };
   };
   spectral = {

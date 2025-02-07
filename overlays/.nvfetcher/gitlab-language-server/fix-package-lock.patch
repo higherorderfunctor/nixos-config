@@ -1,5 +1,5 @@
 diff --git a/package-lock.json b/package-lock.json
-index 5079b4b..8d302a8 100644
+index d9ecdec..7c42d12 100644
 --- a/package-lock.json
 +++ b/package-lock.json
 @@ -153,7 +153,9 @@
@@ -4718,7 +4718,7 @@ index 5079b4b..8d302a8 100644
      },
      "node_modules/safe-regex": {
        "version": "2.1.1",
-@@ -21924,14 +22804,18 @@
+@@ -21925,14 +22805,18 @@
        },
        "engines": {
          "node": ">=8"
@@ -4739,7 +4739,7 @@ index 5079b4b..8d302a8 100644
      },
      "node_modules/shell-quote": {
        "version": "1.8.1",
-@@ -21969,7 +22853,9 @@
+@@ -21970,7 +22854,9 @@
      "node_modules/signal-exit": {
        "version": "3.0.7",
        "dev": true,
@@ -4750,7 +4750,7 @@ index 5079b4b..8d302a8 100644
      },
      "node_modules/signale": {
        "version": "1.4.0",
-@@ -22084,7 +22970,9 @@
+@@ -22085,7 +22971,9 @@
            "url": "https://feross.org/support"
          }
        ],
@@ -4761,7 +4761,7 @@ index 5079b4b..8d302a8 100644
      },
      "node_modules/simple-get": {
        "version": "4.0.1",
-@@ -22107,7 +22995,9 @@
+@@ -22108,7 +22996,9 @@
          "decompress-response": "^6.0.0",
          "once": "^1.3.1",
          "simple-concat": "^1.0.0"
@@ -4772,7 +4772,7 @@ index 5079b4b..8d302a8 100644
      },
      "node_modules/sisteransi": {
        "version": "1.0.5",
-@@ -22133,7 +23023,9 @@
+@@ -22134,7 +23024,9 @@
        "license": "MIT",
        "engines": {
          "node": ">=8"
@@ -4783,7 +4783,7 @@ index 5079b4b..8d302a8 100644
      },
      "node_modules/smart-buffer": {
        "version": "4.2.0",
-@@ -22250,7 +23142,9 @@
+@@ -22251,7 +23143,9 @@
        "license": "BSD-3-Clause",
        "engines": {
          "node": ">=0.10.0"
@@ -4794,7 +4794,7 @@ index 5079b4b..8d302a8 100644
      },
      "node_modules/source-map-js": {
        "version": "1.2.0",
-@@ -22339,12 +23233,16 @@
+@@ -22340,12 +23234,16 @@
        "license": "ISC",
        "engines": {
          "node": ">= 10.x"
@@ -4813,7 +4813,7 @@ index 5079b4b..8d302a8 100644
      },
      "node_modules/stack-utils": {
        "version": "2.0.6",
-@@ -22355,7 +23253,9 @@
+@@ -22356,7 +23254,9 @@
        },
        "engines": {
          "node": ">=10"
@@ -4824,7 +4824,7 @@ index 5079b4b..8d302a8 100644
      },
      "node_modules/stack-utils/node_modules/escape-string-regexp": {
        "version": "2.0.0",
-@@ -22363,7 +23263,9 @@
+@@ -22364,7 +23264,9 @@
        "license": "MIT",
        "engines": {
          "node": ">=8"
@@ -4835,7 +4835,7 @@ index 5079b4b..8d302a8 100644
      },
      "node_modules/statuses": {
        "version": "2.0.1",
-@@ -22389,18 +23291,24 @@
+@@ -22390,18 +23292,24 @@
        "license": "MIT",
        "dependencies": {
          "readable-stream": "^2.1.4"
@@ -4863,7 +4863,7 @@ index 5079b4b..8d302a8 100644
      },
      "node_modules/string-length": {
        "version": "4.0.2",
-@@ -22425,7 +23333,9 @@
+@@ -22426,7 +23334,9 @@
        },
        "engines": {
          "node": ">=8"
@@ -4874,7 +4874,7 @@ index 5079b4b..8d302a8 100644
      },
      "node_modules/string-width-cjs": {
        "name": "string-width",
-@@ -22498,7 +23408,9 @@
+@@ -22499,7 +23409,9 @@
        },
        "engines": {
          "node": ">=8"
@@ -4885,7 +4885,7 @@ index 5079b4b..8d302a8 100644
      },
      "node_modules/strip-ansi-cjs": {
        "name": "strip-ansi",
-@@ -22554,7 +23466,9 @@
+@@ -22555,7 +23467,9 @@
        },
        "funding": {
          "url": "https://github.com/sponsors/sindresorhus"
@@ -4896,7 +4896,7 @@ index 5079b4b..8d302a8 100644
      },
      "node_modules/strnum": {
        "version": "1.0.5",
-@@ -22649,7 +23563,9 @@
+@@ -22650,7 +23564,9 @@
        },
        "engines": {
          "node": ">=8"
@@ -4907,7 +4907,7 @@ index 5079b4b..8d302a8 100644
      },
      "node_modules/supports-hyperlinks": {
        "version": "3.1.0",
-@@ -22675,7 +23591,9 @@
+@@ -22676,7 +23592,9 @@
        },
        "funding": {
          "url": "https://github.com/sponsors/ljharb"
@@ -4918,7 +4918,7 @@ index 5079b4b..8d302a8 100644
      },
      "node_modules/symbol-tree": {
        "version": "3.2.4",
-@@ -22790,7 +23708,9 @@
+@@ -22791,7 +23709,9 @@
          "mkdirp-classic": "^0.5.2",
          "pump": "^3.0.0",
          "tar-stream": "^2.1.4"
@@ -4929,7 +4929,7 @@ index 5079b4b..8d302a8 100644
      },
      "node_modules/tar-stream": {
        "version": "2.2.0",
-@@ -22805,7 +23725,9 @@
+@@ -22806,7 +23726,9 @@
        },
        "engines": {
          "node": ">=6"
@@ -4940,7 +4940,7 @@ index 5079b4b..8d302a8 100644
      },
      "node_modules/tar-stream/node_modules/readable-stream": {
        "version": "3.6.2",
-@@ -22818,7 +23740,9 @@
+@@ -22819,7 +23741,9 @@
        },
        "engines": {
          "node": ">= 6"
@@ -4951,7 +4951,7 @@ index 5079b4b..8d302a8 100644
      },
      "node_modules/tcp-port-used": {
        "version": "1.0.2",
-@@ -22827,7 +23751,9 @@
+@@ -22828,7 +23752,9 @@
        "dependencies": {
          "debug": "4.3.1",
          "is2": "^2.0.6"
@@ -4962,7 +4962,7 @@ index 5079b4b..8d302a8 100644
      },
      "node_modules/tcp-port-used/node_modules/debug": {
        "version": "4.3.1",
-@@ -22843,7 +23769,9 @@
+@@ -22844,7 +23770,9 @@
          "supports-color": {
            "optional": true
          }
@@ -4973,7 +4973,7 @@ index 5079b4b..8d302a8 100644
      },
      "node_modules/temp-dir": {
        "version": "3.0.0",
-@@ -22851,7 +23779,9 @@
+@@ -22852,7 +23780,9 @@
        "license": "MIT",
        "engines": {
          "node": ">=14.16"
@@ -4984,7 +4984,7 @@ index 5079b4b..8d302a8 100644
      },
      "node_modules/tempfile": {
        "version": "5.0.0",
-@@ -22865,7 +23795,9 @@
+@@ -22866,7 +23796,9 @@
        },
        "funding": {
          "url": "https://github.com/sponsors/sindresorhus"
@@ -4995,7 +4995,7 @@ index 5079b4b..8d302a8 100644
      },
      "node_modules/tempy": {
        "version": "3.1.0",
-@@ -22920,7 +23852,9 @@
+@@ -22921,7 +23853,9 @@
        },
        "engines": {
          "node": ">=8"
@@ -5006,7 +5006,7 @@ index 5079b4b..8d302a8 100644
      },
      "node_modules/test-exclude/node_modules/brace-expansion": {
        "version": "1.1.11",
-@@ -22947,7 +23881,9 @@
+@@ -22948,7 +23882,9 @@
      "node_modules/text-table": {
        "version": "0.2.0",
        "dev": true,
@@ -5017,7 +5017,7 @@ index 5079b4b..8d302a8 100644
      },
      "node_modules/thenify": {
        "version": "3.3.1",
-@@ -23012,7 +23948,9 @@
+@@ -23013,7 +23949,9 @@
        "license": "MIT",
        "engines": {
          "node": ">=4"
@@ -5028,7 +5028,7 @@ index 5079b4b..8d302a8 100644
      },
      "node_modules/to-regex-range": {
        "version": "5.0.1",
-@@ -23022,7 +23960,9 @@
+@@ -23023,7 +23961,9 @@
        },
        "engines": {
          "node": ">=8.0"
@@ -5039,7 +5039,7 @@ index 5079b4b..8d302a8 100644
      },
      "node_modules/toad-cache": {
        "version": "3.7.0",
-@@ -23068,7 +24008,9 @@
+@@ -23069,7 +24009,9 @@
      },
      "node_modules/tr46": {
        "version": "0.0.3",
@@ -5050,7 +5050,7 @@ index 5079b4b..8d302a8 100644
      },
      "node_modules/traverse": {
        "version": "0.6.8",
-@@ -23566,7 +24508,7 @@
+@@ -23567,7 +24509,7 @@
      },
      "node_modules/tree-sitter-scala": {
        "version": "0.23.4",
@@ -5059,7 +5059,7 @@ index 5079b4b..8d302a8 100644
        "hasInstallScript": true,
        "license": "MIT",
        "optional": true,
-@@ -23581,7 +24523,8 @@
+@@ -23582,7 +24524,8 @@
          "tree-sitter": {
            "optional": true
          }
@@ -5069,7 +5069,7 @@ index 5079b4b..8d302a8 100644
      },
      "node_modules/tree-sitter-scala/node_modules/node-addon-api": {
        "version": "8.3.0",
-@@ -23848,7 +24791,9 @@
+@@ -23849,7 +24792,9 @@
      },
      "node_modules/tslib": {
        "version": "2.6.2",
@@ -5080,7 +5080,7 @@ index 5079b4b..8d302a8 100644
      },
      "node_modules/tsutils": {
        "version": "3.21.0",
-@@ -24323,7 +25268,9 @@
+@@ -24324,7 +25269,9 @@
        },
        "engines": {
          "node": "*"
@@ -5091,7 +5091,7 @@ index 5079b4b..8d302a8 100644
      },
      "node_modules/type-check": {
        "version": "0.4.0",
-@@ -24334,7 +25281,9 @@
+@@ -24335,7 +25282,9 @@
        },
        "engines": {
          "node": ">= 0.8.0"
@@ -5102,7 +5102,7 @@ index 5079b4b..8d302a8 100644
      },
      "node_modules/type-detect": {
        "version": "4.0.8",
-@@ -24574,7 +25523,9 @@
+@@ -24575,7 +25524,9 @@
        "license": "MIT",
        "engines": {
          "node": ">= 10.0.0"
@@ -5113,7 +5113,7 @@ index 5079b4b..8d302a8 100644
      },
      "node_modules/update-browserslist-db": {
        "version": "1.1.1",
-@@ -24612,7 +25563,9 @@
+@@ -24613,7 +25564,9 @@
        "license": "BSD-2-Clause",
        "dependencies": {
          "punycode": "^2.1.0"
@@ -5124,7 +5124,7 @@ index 5079b4b..8d302a8 100644
      },
      "node_modules/urix": {
        "version": "0.1.0",
-@@ -24640,7 +25593,9 @@
+@@ -24641,7 +25594,9 @@
      },
      "node_modules/util-deprecate": {
        "version": "1.0.2",
@@ -5135,7 +5135,7 @@ index 5079b4b..8d302a8 100644
      },
      "node_modules/uuid": {
        "version": "10.0.0",
-@@ -24838,7 +25793,9 @@
+@@ -24839,7 +25794,9 @@
        "license": "MIT",
        "engines": {
          "node": ">=14.0.0"
@@ -5146,7 +5146,7 @@ index 5079b4b..8d302a8 100644
      },
      "node_modules/vscode-languageserver": {
        "version": "9.0.1",
-@@ -24848,7 +25805,9 @@
+@@ -24849,7 +25806,9 @@
        },
        "bin": {
          "installServerIntoExtension": "bin/installServerIntoExtension"
@@ -5157,7 +5157,7 @@ index 5079b4b..8d302a8 100644
      },
      "node_modules/vscode-languageserver-protocol": {
        "version": "3.17.5",
-@@ -24856,7 +25815,9 @@
+@@ -24857,7 +25816,9 @@
        "dependencies": {
          "vscode-jsonrpc": "8.2.0",
          "vscode-languageserver-types": "3.17.5"
@@ -5168,7 +5168,7 @@ index 5079b4b..8d302a8 100644
      },
      "node_modules/vscode-languageserver-textdocument": {
        "version": "1.0.12",
-@@ -24866,7 +25827,9 @@
+@@ -24867,7 +25828,9 @@
      },
      "node_modules/vscode-languageserver-types": {
        "version": "3.17.5",
@@ -5178,8 +5178,8 @@ index 5079b4b..8d302a8 100644
 +      "integrity": "sha512-Ld1VelNuX9pdF39h2Hgaeb5hEZM2Z3jUrrMgWQAu82jMtZp7p3vJT3BzToKtZI7NgQssZje5o0zryOrhQvzQAg=="
      },
      "node_modules/vscode-uri": {
-       "version": "3.0.8",
-@@ -25115,7 +26078,9 @@
+       "version": "3.1.0",
+@@ -25117,7 +26080,9 @@
      },
      "node_modules/webidl-conversions": {
        "version": "3.0.1",
@@ -5190,7 +5190,7 @@ index 5079b4b..8d302a8 100644
      },
      "node_modules/whatwg-encoding": {
        "version": "2.0.0",
-@@ -25146,7 +26111,9 @@
+@@ -25148,7 +26113,9 @@
        "dependencies": {
          "tr46": "~0.0.3",
          "webidl-conversions": "^3.0.0"
@@ -5201,7 +5201,7 @@ index 5079b4b..8d302a8 100644
      },
      "node_modules/which": {
        "version": "2.0.2",
-@@ -25159,7 +26126,9 @@
+@@ -25161,7 +26128,9 @@
        },
        "engines": {
          "node": ">= 8"
@@ -5212,7 +5212,7 @@ index 5079b4b..8d302a8 100644
      },
      "node_modules/which-boxed-primitive": {
        "version": "1.0.2",
-@@ -25216,7 +26185,9 @@
+@@ -25218,7 +26187,9 @@
        },
        "funding": {
          "url": "https://github.com/chalk/wrap-ansi?sponsor=1"
@@ -5223,7 +5223,7 @@ index 5079b4b..8d302a8 100644
      },
      "node_modules/wrap-ansi-cjs": {
        "name": "wrap-ansi",
-@@ -25237,7 +26208,9 @@
+@@ -25239,7 +26210,9 @@
      },
      "node_modules/wrappy": {
        "version": "1.0.2",
@@ -5234,7 +5234,7 @@ index 5079b4b..8d302a8 100644
      },
      "node_modules/write-file-atomic": {
        "version": "4.0.2",
-@@ -25249,7 +26222,9 @@
+@@ -25251,7 +26224,9 @@
        },
        "engines": {
          "node": "^12.13.0 || ^14.15.0 || >=16.0.0"
@@ -5245,7 +5245,7 @@ index 5079b4b..8d302a8 100644
      },
      "node_modules/ws": {
        "version": "8.11.0",
-@@ -25274,7 +26249,9 @@
+@@ -25276,7 +26251,9 @@
      "node_modules/xml": {
        "version": "1.0.1",
        "dev": true,
@@ -5256,7 +5256,7 @@ index 5079b4b..8d302a8 100644
      },
      "node_modules/xml-name-validator": {
        "version": "4.0.0",
-@@ -25315,7 +26292,9 @@
+@@ -25317,7 +26294,9 @@
        "license": "ISC",
        "engines": {
          "node": ">=10"
@@ -5267,7 +5267,7 @@ index 5079b4b..8d302a8 100644
      },
      "node_modules/yallist": {
        "version": "2.1.2",
-@@ -25350,7 +26329,9 @@
+@@ -25352,7 +26331,9 @@
        },
        "engines": {
          "node": ">=12"
@@ -5278,7 +5278,7 @@ index 5079b4b..8d302a8 100644
      },
      "node_modules/yargs-parser": {
        "version": "20.2.9",
-@@ -25358,7 +26339,9 @@
+@@ -25360,7 +26341,9 @@
        "license": "ISC",
        "engines": {
          "node": ">=10"
@@ -5289,7 +5289,7 @@ index 5079b4b..8d302a8 100644
      },
      "node_modules/yargs/node_modules/yargs-parser": {
        "version": "21.1.1",
-@@ -25366,7 +26349,9 @@
+@@ -25368,7 +26351,9 @@
        "license": "ISC",
        "engines": {
          "node": ">=12"
@@ -5300,7 +5300,7 @@ index 5079b4b..8d302a8 100644
      },
      "node_modules/yn": {
        "version": "3.1.1",
-@@ -25386,7 +26371,9 @@
+@@ -25388,7 +26373,9 @@
        },
        "funding": {
          "url": "https://github.com/sponsors/sindresorhus"
@@ -5311,7 +5311,7 @@ index 5079b4b..8d302a8 100644
      },
      "node_modules/yoctocolors": {
        "version": "2.0.0",
-@@ -29722,4 +30709,4 @@
+@@ -29724,4 +30711,4 @@
        }
      }
    }
