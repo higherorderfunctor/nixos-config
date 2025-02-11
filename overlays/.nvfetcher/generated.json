@@ -1,7 +1,7 @@
 {
   "amdvlk": {
     "cargoLocks": null,
-    "date": "2024-12-23",
+    "date": "2025-02-07",
     "extract": null,
     "name": "amdvlk",
     "passthru": null,
@@ -11,13 +11,13 @@
       "fetchSubmodules": false,
       "leaveDotGit": false,
       "name": null,
-      "rev": "9cf5b703f8fed5c18c79a7306cbe57bb0de71eff",
-      "sha256": "sha256-YHIErtMETQZJVpy4XLXJfV+8oeHFyaZhRZhg3adaSzw=",
+      "rev": "667b847d7c680b461a8dc8a4ff993c72413374a8",
+      "sha256": "sha256-vzITnZF6AI+Srt9+TgE0+Tpb4q94Up0F+Q25Cgm/8IU=",
       "sparseCheckout": [],
       "type": "git",
       "url": "https://github.com/GPUOpen-Drivers/AMDVLK.git"
     },
-    "version": "9cf5b703f8fed5c18c79a7306cbe57bb0de71eff"
+    "version": "667b847d7c680b461a8dc8a4ff993c72413374a8"
   },
   "arkenfox": {
     "cargoLocks": null,
@@ -215,7 +215,7 @@
   },
   "gitlab-language-server": {
     "cargoLocks": null,
-    "date": "2025-02-06",
+    "date": "2025-02-10",
     "extract": null,
     "name": "gitlab-language-server",
     "passthru": null,
@@ -225,14 +225,14 @@
       "fetchSubmodules": false,
       "leaveDotGit": false,
       "name": null,
-      "rev": "cdfac9b08a4915e656e621ae9c8067eda00b64ad",
-      "sha256": "sha256-EeAQFLGMHslQpd11fccng06QfVvOopVei+jtZp9MbE8=",
+      "rev": "e53540e41e4dfa3056a156e7c95463cea39df1ec",
+      "sha256": "sha256-1L7qsRW/qylakpehzc4kbzELDuYudqEbl3YBYbecquc=",
       "sparseCheckout": [],
       "type": "git",
       "url": "https://gitlab.com/gitlab-org/editor-extensions/gitlab-lsp.git"
     },
-    "version": "cdfac9b08a4915e656e621ae9c8067eda00b64ad",
-    "npmDepsHash": "sha256-0tfCX5npSEbXfVN5TftQEEVFVe9abLl0Yyqz6HGBYTI="
+    "version": "e53540e41e4dfa3056a156e7c95463cea39df1ec",
+    "npmDepsHash": "sha256-/+r2eolPqDeGjOq//zhQcV9isbciQv0ute0b8h3F+pg="
   },
   "gluetun-src": {
     "cargoLocks": null,
@@ -294,7 +294,7 @@
   },
   "otel-desktop-viewer": {
     "cargoLocks": null,
-    "date": "2025-01-29",
+    "date": "2025-02-10",
     "extract": null,
     "name": "otel-desktop-viewer",
     "passthru": null,
@@ -304,13 +304,13 @@
       "fetchSubmodules": false,
       "leaveDotGit": false,
       "name": null,
-      "rev": "50bc41bb3810f199e9fe12ebeda286baf0718e4f",
-      "sha256": "sha256-xqfNokFCgRytA0sf5YEojxKKt2tH5mJbstLgk/sbyPw=",
+      "rev": "c70ffd4ede8cadbcfeb5bcf03e1077787c59f2d0",
+      "sha256": "sha256-SG3+HLSOhTviu7vO99JrCKmbZ8uteLFFsUD1/lsjVTo=",
       "sparseCheckout": [],
       "type": "git",
       "url": "https://github.com/CtrlSpice/otel-desktop-viewer.git"
     },
-    "version": "50bc41bb3810f199e9fe12ebeda286baf0718e4f"
+    "version": "c70ffd4ede8cadbcfeb5bcf03e1077787c59f2d0"
   },
   "otel-tui-x86_64-linux": {
     "cargoLocks": null,
@@ -356,11 +356,11 @@
     "pinned": false,
     "src": {
       "name": "pnpm.tgz",
-      "sha256": "sha256-+Yjw2TuH4dotjN9qx/RaAcb4Q642BrTKDy/9cTuF+XU=",
+      "sha256": "sha256-JN1cZdhsfQcQq6FmmfvEbXT8ms8rQZ9JRSB/LenlfiM=",
       "type": "url",
-      "url": "https://registry.npmjs.org/pnpm/-/pnpm-10.2.1.tgz"
+      "url": "https://registry.npmjs.org/pnpm/-/pnpm-10.3.0.tgz"
     },
-    "version": "10.2.1"
+    "version": "10.3.0"
   },
   "spectral": {
     "cargoLocks": null,
@@ -442,7 +442,7 @@
   },
   "vivid-plasma-themes": {
     "cargoLocks": null,
-    "date": "2025-01-31",
+    "date": "2025-02-08",
     "extract": null,
     "name": "vivid-plasma-themes",
     "passthru": null,
@@ -452,12 +452,12 @@
       "fetchSubmodules": false,
       "leaveDotGit": false,
       "name": null,
-      "rev": "ff2e85afe894cd527ab707cf2a06f7a14ba8f657",
-      "sha256": "sha256-E0/jp9+DO4VvrtKaJf7dQySZoEJ5cSVPGNWh+In2mZ4=",
+      "rev": "ea4520a4a45c3d1dad565e0b6e10e8752f46afed",
+      "sha256": "sha256-a7E7cwM+fiqboCd1hpZP39VXzqTCz9qzHkXwIDw645s=",
       "sparseCheckout": [],
       "type": "git",
       "url": "https://github.com/L4ki/Vivid-Plasma-Themes.git"
     },
-    "version": "ff2e85afe894cd527ab707cf2a06f7a14ba8f657"
+    "version": "ea4520a4a45c3d1dad565e0b6e10e8752f46afed"
   }
 }

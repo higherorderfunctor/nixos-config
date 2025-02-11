@@ -1,59 +1,136 @@
--- vim.lsp.set_log_level("trace") -- FIXME:
-
-return {
-  "neovim/nvim-lspconfig",
-  opts = {
-    servers = {
-      -- eslint = {
-      -- settings = {
-      --   cache = true,
-      --   useFlatConfig = true, -- set if using flat config
-      --   overrideConfigFile = vim.fn.getcwd() .. "/eslint.config.ts",
-      --   experimental = {
-      --     useFlatConfig = nil, -- option not in the latest eslint-lsp
-      --   },
-      -- },
-      -- },
-      vtsls = {
-        root_dir = function()
-          local lazyvimRoot = require("lazyvim.util.root")
-          return lazyvimRoot.git()
-        end,
-        -- settings = {
-        --   typescript = {
-        --     -- tsserver = {
-        --     --   log = "verbose",
-        --     --   -- experimental = {
-        --     --   --   useVsCodeWatcher = true
-        --     --   -- }
-        --     -- },
-        --   },
-        -- },
-      },
-    },
-    setup = {
-      -- tsserver = function()
-      --   require("lazyvim.util").lsp.on_attach(function(client)
-      --     -- Enable trace logging
-      --     client.config.flags = client.config.flags or {}
-      --     client.config.flags.allow_incremental_sync = true
-      --     client.config.init_options = {
-      --       logVerbosity = "verbose",  -- Set log verbosity to verbose
-      --       trace = "verbose"  -- Set trace level to verbose
-      --     }
-      --   end)
-      -- end,
-      -- eslint = function()
-      --   require("lazyvim.util").lsp.on_attach(function(client)
-      --     if client.name == "eslint" then
-      --       client.server_capabilities.documentFormattingProvider = true
-      --     elseif client.name == "tsserver" or client.name == "vtsls" or client.name == "volar" then
-      --       client.server_capabilities.documentFormattingProvider = false
-      --     end
-      --   end)
-      -- end,
-    },
-  },
-}
-
--- export TSS_LOG="-logToFile true -file $PWD/tsserver.log -level verbose"
+-- -- vim.lsp.set_log_level("trace") -- FIXME:
+--
+-- return {
+--   "neovim/nvim-lspconfig",
+--   opts = {
+--     diagnostics = {
+--       update_in_insert = false,
+--       severity_sort = true,
+--     },
+--     capabilities = {
+--       workspace = {
+--         fileOperations = {
+--           didRename = true,
+--           willRename = true,
+--         },
+--       },
+--     },
+--     servers = {
+--       -- eslint = {
+--       -- settings = {
+--       --   cache = true,
+--       --   useFlatConfig = true, -- set if using flat config
+--       --   overrideConfigFile = vim.fn.getcwd() .. "/eslint.config.ts",
+--       --   experimental = {
+--       --     useFlatConfig = nil, -- option not in the latest eslint-lsp
+--       --   },
+--       -- },
+--       -- },
+--       -- https://github.com/tmm/dotfiles/blob/1167fd3b0a63792bdf63691a9f9bbd1d5fbadf8e/.config/nvim/lua/plugins.lua#L1736
+--   opts = function(_, opts)
+--     table.insert(opts.servers.vtsls.filetypes, "vue")
+--     LazyVim.extend(opts.servers.vtsls, "settings.vtsls.tsserver.globalPlugins", {
+--       {
+--         name = "@vue/typescript-plugin",
+--         location = LazyVim.get_pkg_path("vue-language-server", "/node_modules/@vue/language-server"),
+--         languages = { "vue" },
+--         configNamespace = "typescript",
+--         enableForWorkspaceTypeScriptVersions = true,
+--       },
+--     })
+--   end,
+--       vtsls = {
+--         root_dir = function()
+--           local lazyvimRoot = require("lazyvim.util.root")
+--           return lazyvimRoot.git()
+--         end,
+--         filetypes = {
+--           "javascript",
+--           "javascriptreact",
+--           "javascript.jsx",
+--           "svelte",
+--           "typescript",
+--           "typescriptreact",
+--           "typescript.tsx",
+--           "vue",
+--         },
+--         init_options = {},
+--         settings = {
+--           complete_function_calls = true,
+--           vtsls = {
+--             enableMoveToFileCodeAction = true,
+--             autoUseWorkspaceTsdk = true,
+--             experimental = {
+--               completion = {
+--                 enableServerSideFuzzyMatch = true,
+--               },
+--             },
+--             tsserver = {
+--               globalPlugins = {
+--                 {
+--                   name = "@vue/typescript-plugin",
+--                   -- location = require("util.init").get_pkg_path(
+--                   --   "vue-language-server",
+--                   --   "/node_modules/@vue/language-server"
+--                   -- ),
+--                   languages = { "vue" },
+--                   configNamespace = "typescript",
+--                   enableForWorkspaceTypeScriptVersions = true,
+--                 },
+--                 -- {
+--                 --   name = "typescript-svelte-plugin",
+--                 --   location = require("util.init").get_pkg_path(
+--                 --     "svelte-language-server",
+--                 --     "/node_modules/typescript-svelte-plugin"
+--                 --   ),
+--                 --   languages = { "svelte" },
+--                 --   enableForWorkspaceTypeScriptVersions = true,
+--                 -- },
+--               },
+--             },
+--           },
+--           typescript = {
+--             updateImportsOnFileMove = { enabled = "always" },
+--             suggest = {
+--               completeFunctionCalls = true,
+--             },
+--           },
+--         },
+--         -- settings = {
+--         --   typescript = {
+--         --     -- tsserver = {
+--         --     --   log = "verbose",
+--         --     --   -- experimental = {
+--         --     --   --   useVsCodeWatcher = true
+--         --     --   -- }
+--         --     -- },
+--         --   },
+--         -- },
+--       },
+--     },
+--     -- setup = {
+--     --   -- tsserver = function()
+--     --   --   require("lazyvim.util").lsp.on_attach(function(client)
+--     --   --     -- Enable trace logging
+--     --   --     client.config.flags = client.config.flags or {}
+--     --   --     client.config.flags.allow_incremental_sync = true
+--     --   --     client.config.init_options = {
+--     --   --       logVerbosity = "verbose",  -- Set log verbosity to verbose
+--     --   --       trace = "verbose"  -- Set trace level to verbose
+--     --   --     }
+--     --   --   end)
+--     --   -- end,
+--     --   -- eslint = function()
+--     --   --   require("lazyvim.util").lsp.on_attach(function(client)
+--     --   --     if client.name == "eslint" then
+--     --   --       client.server_capabilities.documentFormattingProvider = true
+--     --   --     elseif client.name == "tsserver" or client.name == "vtsls" or client.name == "volar" then
+--     --   --       client.server_capabilities.documentFormattingProvider = false
+--     --   --     end
+--     --   --   end)
+--     --   -- end,
+--     -- },
+--   },
+-- }
+--
+-- -- export TSS_LOG="-logToFile true -file $PWD/tsserver.log -level verbose"

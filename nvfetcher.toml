@@ -159,6 +159,8 @@ fetch.github = "stoplightio/vscode-spectral"
 [standardnotes-desktop-deb-x86_64-linux]
 src.github_tag = "standardnotes/app"
 src.include_regex = "^@standardnotes/desktop@[0-9]+\\.[0-9]+\\.[0-9]+$"
+# no binary with this release
+src.exclude_regex = "^@standardnotes/desktop@3.195.26$"
 src.from_pattern = "^@standardnotes/desktop@([0-9]+\\.[0-9]+\\.[0-9]+)$"
 src.to_pattern = "\\1"
 fetch.url = "https://github.com/standardnotes/app/releases/download/@standardnotes/desktop@$ver/standard-notes-$ver-linux-amd64.deb"

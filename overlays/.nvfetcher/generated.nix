@@ -3,17 +3,17 @@
 {
   amdvlk = {
     pname = "amdvlk";
-    version = "9cf5b703f8fed5c18c79a7306cbe57bb0de71eff";
+    version = "667b847d7c680b461a8dc8a4ff993c72413374a8";
     src = fetchgit {
       url = "https://github.com/GPUOpen-Drivers/AMDVLK.git";
-      rev = "9cf5b703f8fed5c18c79a7306cbe57bb0de71eff";
+      rev = "667b847d7c680b461a8dc8a4ff993c72413374a8";
       fetchSubmodules = false;
       deepClone = false;
       leaveDotGit = false;
       sparseCheckout = [ ];
-      sha256 = "sha256-YHIErtMETQZJVpy4XLXJfV+8oeHFyaZhRZhg3adaSzw=";
+      sha256 = "sha256-vzITnZF6AI+Srt9+TgE0+Tpb4q94Up0F+Q25Cgm/8IU=";
     };
-    date = "2024-12-23";
+    date = "2025-02-07";
   };
   arkenfox = {
     pname = "arkenfox";
@@ -135,17 +135,17 @@
   };
   gitlab-language-server = {
     pname = "gitlab-language-server";
-    version = "cdfac9b08a4915e656e621ae9c8067eda00b64ad";
+    version = "e53540e41e4dfa3056a156e7c95463cea39df1ec";
     src = fetchgit {
       url = "https://gitlab.com/gitlab-org/editor-extensions/gitlab-lsp.git";
-      rev = "cdfac9b08a4915e656e621ae9c8067eda00b64ad";
+      rev = "e53540e41e4dfa3056a156e7c95463cea39df1ec";
       fetchSubmodules = false;
       deepClone = false;
       leaveDotGit = false;
       sparseCheckout = [ ];
-      sha256 = "sha256-EeAQFLGMHslQpd11fccng06QfVvOopVei+jtZp9MbE8=";
+      sha256 = "sha256-1L7qsRW/qylakpehzc4kbzELDuYudqEbl3YBYbecquc=";
     };
-    date = "2025-02-06";
+    date = "2025-02-10";
   };
   gluetun-src = {
     pname = "gluetun-src";
@@ -179,17 +179,17 @@
   };
   otel-desktop-viewer = {
     pname = "otel-desktop-viewer";
-    version = "50bc41bb3810f199e9fe12ebeda286baf0718e4f";
+    version = "c70ffd4ede8cadbcfeb5bcf03e1077787c59f2d0";
     src = fetchgit {
       url = "https://github.com/CtrlSpice/otel-desktop-viewer.git";
-      rev = "50bc41bb3810f199e9fe12ebeda286baf0718e4f";
+      rev = "c70ffd4ede8cadbcfeb5bcf03e1077787c59f2d0";
       fetchSubmodules = false;
       deepClone = false;
       leaveDotGit = false;
       sparseCheckout = [ ];
-      sha256 = "sha256-xqfNokFCgRytA0sf5YEojxKKt2tH5mJbstLgk/sbyPw=";
+      sha256 = "sha256-SG3+HLSOhTviu7vO99JrCKmbZ8uteLFFsUD1/lsjVTo=";
     };
-    date = "2025-01-29";
+    date = "2025-02-10";
   };
   otel-tui-x86_64-linux = {
     pname = "otel-tui-x86_64-linux";
@@ -215,11 +215,11 @@
   };
   pnpm = {
     pname = "pnpm";
-    version = "10.2.1";
+    version = "10.3.0";
     src = fetchurl {
-      url = "https://registry.npmjs.org/pnpm/-/pnpm-10.2.1.tgz";
+      url = "https://registry.npmjs.org/pnpm/-/pnpm-10.3.0.tgz";
       name = "pnpm.tgz";
-      sha256 = "sha256-+Yjw2TuH4dotjN9qx/RaAcb4Q642BrTKDy/9cTuF+XU=";
+      sha256 = "sha256-JN1cZdhsfQcQq6FmmfvEbXT8ms8rQZ9JRSB/LenlfiM=";
     };
   };
   spectral = {
@@ -266,16 +266,16 @@
   };
   vivid-plasma-themes = {
     pname = "vivid-plasma-themes";
-    version = "ff2e85afe894cd527ab707cf2a06f7a14ba8f657";
+    version = "ea4520a4a45c3d1dad565e0b6e10e8752f46afed";
     src = fetchgit {
       url = "https://github.com/L4ki/Vivid-Plasma-Themes.git";
-      rev = "ff2e85afe894cd527ab707cf2a06f7a14ba8f657";
+      rev = "ea4520a4a45c3d1dad565e0b6e10e8752f46afed";
       fetchSubmodules = false;
       deepClone = false;
       leaveDotGit = false;
       sparseCheckout = [ ];
-      sha256 = "sha256-E0/jp9+DO4VvrtKaJf7dQySZoEJ5cSVPGNWh+In2mZ4=";
+      sha256 = "sha256-a7E7cwM+fiqboCd1hpZP39VXzqTCz9qzHkXwIDw645s=";
     };
-    date = "2025-01-31";
+    date = "2025-02-08";
   };
 }

@@ -83,63 +83,82 @@ return {
   },
   {
     "neovim/nvim-lspconfig",
-    opts = {
-      servers = {
-        bashls = { mason = false },
-        docker_compose_language_service = { mason = false },
-        dockerls = { mason = false },
-        jsonls = {
-          cmd = { "vscode-json-languageserver", "--stdio" },
-          mason = false,
+    opts = function(_, opts)
+      return vim.tbl_deep_extend("force", opts or {}, {
+        diagnostics = {
+          underline = true,
+          update_in_insert = false,
         },
-        -- vtsls = {
-        --   cmd = { "bunx", "--bun", "vtsls", "--stdio" },
-        --   -- cmd = { vim.fn.getcwd() .. "/bin/vtsls.sh", "--stdio" },
-        --   root_dir = custom_root_dir,
-        -- },
-        eslint = {
-          enabled = false,
-          --   -- cmd = { "bun", eslint_lsp_path, "--stdio" },
-          --   -- NOTE: useful for getting logs
-          --   -- cmd = vim.list_extend(eslint_lsp, { "--stdio" }),
-          --   flags = {
-          --     unstable_ts_config = true,
-          --   },
-          --   settings = {
-          --     --cache = true,
-          --     -- debug = "*",
-          --     -- useFlatConfig = true, -- set if using flat config
-          --     options = {
-          --       flags = { "unstable_ts_config" },
-          --       cache = false,
+        servers = {
+          bashls = { mason = false },
+          docker_compose_language_service = { mason = false },
+          dockerls = { mason = false },
+          jsonls = {
+            cmd = { "vscode-json-languageserver", "--stdio" },
+            mason = false,
+          },
+          -- vtsls = {
+          --   cmd = { "bunx", "--bun", "vtsls", "--stdio" },
+          --   -- cmd = { vim.fn.getcwd() .. "/bin/vtsls.sh", "--stdio" },
+          --   root_dir = custom_root_dir,
+          -- },
+          eslint = {
+            enabled = false,
+            --   -- cmd = { "bun", eslint_lsp_path, "--stdio" },
+            --   -- NOTE: useful for getting logs
+            --   -- cmd = vim.list_extend(eslint_lsp, { "--stdio" }),
+            --   flags = {
+            --     unstable_ts_config = true,
+            --   },
+            --   settings = {
+            --     --cache = true,
+            --     -- debug = "*",
+            --     -- useFlatConfig = true, -- set if using flat config
+            --     options = {
+            --       flags = { "unstable_ts_config" },
+            --       cache = false,
+            --     },
+            --     --overrideConfigFile = vim.fn.getcwd() .. "/eslint.config.ts",
+            --     -- experimental = {
+            --     --   useFlatConfig = nil, -- option not in the latest eslint-lsp
+            --     -- },
+            --   },
+          },
+          lua_ls = {
+            cmd = { "lua-language-server" },
+            mason = false,
+          },
+          marksman = { mason = false },
+          nil_ls = { mason = false },
+          nixd = { mason = false },
+          yamlls = {
+            cmd = { "/etc/profiles/per-user/caubut/bin/yaml-language-server", "--stdio" },
+            mason = false,
+          },
+          -- vtsls = {
+          --   tsserver = {
+          --     globalPlugins = {
+          --       {
+          --         configNamespace = "typescript",
+          --         enableForWorkspaceTypeScriptVersions = true,
+          --         languages = { "typescript", "vue" },
+          --         location = "/home/caubut/.local/share/nvim/mason/packages/vue-language-server//node_modules/@vue/language-server",
+          --         name = "@vue/typescript-plugin",
+          --       },
           --     },
-          --     --overrideConfigFile = vim.fn.getcwd() .. "/eslint.config.ts",
-          --     -- experimental = {
-          --     --   useFlatConfig = nil, -- option not in the latest eslint-lsp
-          --     -- },
           --   },
+          -- },
+          -- tsserver = {
+          --   cmd = {
+          --     "bunx",
+          --     "typescript-language-server",
+          --     "--stdio",
+          --   },
+          -- },
         },
-        lua_ls = {
-          cmd = { "lua-language-server" },
-          mason = false,
-        },
-        marksman = { mason = false },
-        nil_ls = { mason = false },
-        nixd = { mason = false },
-        yamlls = {
-          cmd = { "/etc/profiles/per-user/caubut/bin/yaml-language-server", "--stdio" },
-          mason = false,
-        },
-        -- tsserver = {
-        --   cmd = {
-        --     "bunx",
-        --     "typescript-language-server",
-        --     "--stdio",
-        --   },
-        -- },
-      },
-      format = { timeout_ms = 60000 },
-    },
+        format = { timeout_ms = 60000 },
+      })
+    end,
     init = function()
       local keys = require("lazyvim.plugins.lsp.keymaps").get()
       -- change a keymap
@@ -148,6 +167,18 @@ return {
       -- keys[#keys + 1] = { "K", false }
       -- add a keymap
       keys[#keys + 1] = { "<leader>cz", "<cmd>LspRestart<cr>", desc = "Restart LSP" }
+    end,
+  },
+  {
+    "neovim/nvim-lspconfig",
+    opts = function(_, opts)
+      local plugins = opts.servers.vtsls.settings.vtsls.tsserver.globalPlugins
+      for _, plugin in ipairs(plugins) do
+        if plugin.name == "@vue/typescript-plugin" then
+          plugin.languages = { "vue", "typescript" }
+          break
+        end
+      end
     end,
   },
 }
