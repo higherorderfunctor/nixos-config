@@ -215,7 +215,7 @@
   },
   "gitlab-language-server": {
     "cargoLocks": null,
-    "date": "2025-02-10",
+    "date": "2025-02-13",
     "extract": null,
     "name": "gitlab-language-server",
     "passthru": null,
@@ -225,14 +225,14 @@
       "fetchSubmodules": false,
       "leaveDotGit": false,
       "name": null,
-      "rev": "e53540e41e4dfa3056a156e7c95463cea39df1ec",
-      "sha256": "sha256-1L7qsRW/qylakpehzc4kbzELDuYudqEbl3YBYbecquc=",
+      "rev": "808f1eef0d667d0b4a80bcabe718ba31920d28fb",
+      "sha256": "sha256-iben1jyczTNhWrzeScFEJL8UH3wqrUuE4SEFe4/0tEw=",
       "sparseCheckout": [],
       "type": "git",
       "url": "https://gitlab.com/gitlab-org/editor-extensions/gitlab-lsp.git"
     },
-    "version": "e53540e41e4dfa3056a156e7c95463cea39df1ec",
-    "npmDepsHash": "sha256-/+r2eolPqDeGjOq//zhQcV9isbciQv0ute0b8h3F+pg="
+    "version": "808f1eef0d667d0b4a80bcabe718ba31920d28fb",
+    "npmDepsHash": "sha256-9dcVNgO7dqEcQmRa7r2LkbbEKSouVUrrpE9ZRYqrJjQ="
   },
   "gluetun-src": {
     "cargoLocks": null,
@@ -264,11 +264,11 @@
     "pinned": false,
     "src": {
       "name": null,
-      "sha256": "sha256-A5xbBOZSedrO7opvcecL0Fz1uAF4K293xuGeLtBREiI=",
+      "sha256": "sha256-0UEgYUrLKdEryrcr1onyV+tL6eC2+IqPt+Qaxl+FVuU=",
       "type": "url",
-      "url": "https://go.dev/dl/go1.23.6.src.tar.gz"
+      "url": "https://go.dev/dl/go1.24.0.src.tar.gz"
     },
-    "version": "1.23.6"
+    "version": "1.24.0"
   },
   "oh-my-posh": {
     "cargoLocks": null,
@@ -356,11 +356,11 @@
     "pinned": false,
     "src": {
       "name": "pnpm.tgz",
-      "sha256": "sha256-JN1cZdhsfQcQq6FmmfvEbXT8ms8rQZ9JRSB/LenlfiM=",
+      "sha256": "sha256-5X6KVE96hCR8+nfdbZI+rlGZo3NHTlPqsfVAx5Yok4Y=",
       "type": "url",
-      "url": "https://registry.npmjs.org/pnpm/-/pnpm-10.3.0.tgz"
+      "url": "https://registry.npmjs.org/pnpm/-/pnpm-10.4.0.tgz"
     },
-    "version": "10.3.0"
+    "version": "10.4.0"
   },
   "spectral": {
     "cargoLocks": null,

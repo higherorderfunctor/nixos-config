@@ -135,17 +135,17 @@
   };
   gitlab-language-server = {
     pname = "gitlab-language-server";
-    version = "e53540e41e4dfa3056a156e7c95463cea39df1ec";
+    version = "808f1eef0d667d0b4a80bcabe718ba31920d28fb";
     src = fetchgit {
       url = "https://gitlab.com/gitlab-org/editor-extensions/gitlab-lsp.git";
-      rev = "e53540e41e4dfa3056a156e7c95463cea39df1ec";
+      rev = "808f1eef0d667d0b4a80bcabe718ba31920d28fb";
       fetchSubmodules = false;
       deepClone = false;
       leaveDotGit = false;
       sparseCheckout = [ ];
-      sha256 = "sha256-1L7qsRW/qylakpehzc4kbzELDuYudqEbl3YBYbecquc=";
+      sha256 = "sha256-iben1jyczTNhWrzeScFEJL8UH3wqrUuE4SEFe4/0tEw=";
     };
-    date = "2025-02-10";
+    date = "2025-02-13";
   };
   gluetun-src = {
     pname = "gluetun-src";
@@ -160,10 +160,10 @@
   };
   go = {
     pname = "go";
-    version = "1.23.6";
+    version = "1.24.0";
     src = fetchurl {
-      url = "https://go.dev/dl/go1.23.6.src.tar.gz";
-      sha256 = "sha256-A5xbBOZSedrO7opvcecL0Fz1uAF4K293xuGeLtBREiI=";
+      url = "https://go.dev/dl/go1.24.0.src.tar.gz";
+      sha256 = "sha256-0UEgYUrLKdEryrcr1onyV+tL6eC2+IqPt+Qaxl+FVuU=";
     };
   };
   oh-my-posh = {
@@ -215,11 +215,11 @@
   };
   pnpm = {
     pname = "pnpm";
-    version = "10.3.0";
+    version = "10.4.0";
     src = fetchurl {
-      url = "https://registry.npmjs.org/pnpm/-/pnpm-10.3.0.tgz";
+      url = "https://registry.npmjs.org/pnpm/-/pnpm-10.4.0.tgz";
       name = "pnpm.tgz";
-      sha256 = "sha256-JN1cZdhsfQcQq6FmmfvEbXT8ms8rQZ9JRSB/LenlfiM=";
+      sha256 = "sha256-5X6KVE96hCR8+nfdbZI+rlGZo3NHTlPqsfVAx5Yok4Y=";
     };
   };
   spectral = {

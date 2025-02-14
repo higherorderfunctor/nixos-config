@@ -16,22 +16,22 @@ _: final: prev: let
     if lib.hasAttr "vendorHash" nv
     then nv.vendorHash
     else lib.fakeHash;
-  buildGoModule = let
-    nv = (import ./nvpkgs.nix).go;
-    go = final.go.overrideAttrs {
-      inherit (nv) version;
-      src = final.fetchurl {
-        inherit (nv.src) url sha256;
-      };
-    };
-  in
-    final.buildGoModule.override {inherit go;};
+  # buildGoModule = let
+  #   nv = (import ./nvpkgs.nix).go;
+  #   go = final.go.overrideAttrs {
+  #     inherit (nv) version;
+  #     src = final.fetchurl {
+  #       inherit (nv.src) url sha256;
+  #     };
+  #   };
+  # in
+  #   final.buildGoModule.override {inherit go;};
 in {
   oh-my-posh =
     prev.oh-my-posh.override
-    (_: {
+    {
       buildGoModule = orig:
-        buildGoModule (orig
+        final.buildGo124Module (orig
           // {
             inherit version src vendorHash;
 
@@ -47,5 +47,5 @@ in {
 
             meta.changelog = "https://github.com/JanDeDobbeleer/oh-my-posh/releases/tag/v${nv.version}";
           });
-    });
+    };
 }
