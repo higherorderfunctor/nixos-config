@@ -49,11 +49,11 @@
     "pinned": false,
     "src": {
       "name": "bruno-x86_64-linux.zip",
-      "sha256": "sha256-q+POVqdqCXnpJ754E1ZvPyRvWovVDf8jy+eQ94Cn7XU=",
+      "sha256": "sha256-VA8TxyOF5QUSAR3ZPOnJzBeYQM+7Dk7QKgadj5aPIBY=",
       "type": "url",
-      "url": "https://github.com/usebruno/bruno/releases/download/v1.38.1/bruno_1.38.1_amd64_linux.deb"
+      "url": "https://github.com/usebruno/bruno/releases/download/v1.39.0/bruno_1.39.0_amd64_linux.deb"
     },
-    "version": "1.38.1"
+    "version": "1.39.0"
   },
   "btop": {
     "cargoLocks": null,
@@ -215,7 +215,7 @@
   },
   "gitlab-language-server": {
     "cargoLocks": null,
-    "date": "2025-02-13",
+    "date": "2025-02-17",
     "extract": null,
     "name": "gitlab-language-server",
     "passthru": null,
@@ -225,14 +225,14 @@
       "fetchSubmodules": false,
       "leaveDotGit": false,
       "name": null,
-      "rev": "808f1eef0d667d0b4a80bcabe718ba31920d28fb",
-      "sha256": "sha256-iben1jyczTNhWrzeScFEJL8UH3wqrUuE4SEFe4/0tEw=",
+      "rev": "10ec9d0edc113f269af3281c7cd21cb710354835",
+      "sha256": "sha256-2KNogIqvpiIO/WOAyPe2grUSRp9zYEDUXoqJMbprchk=",
       "sparseCheckout": [],
       "type": "git",
       "url": "https://gitlab.com/gitlab-org/editor-extensions/gitlab-lsp.git"
     },
-    "version": "808f1eef0d667d0b4a80bcabe718ba31920d28fb",
-    "npmDepsHash": "sha256-9dcVNgO7dqEcQmRa7r2LkbbEKSouVUrrpE9ZRYqrJjQ="
+    "version": "10ec9d0edc113f269af3281c7cd21cb710354835",
+    "npmDepsHash": "sha256-07OEALtIVKxRx09OtWP3+RlkAngmlcX6Nzj1p8LMh+c="
   },
   "gluetun-src": {
     "cargoLocks": null,
@@ -294,7 +294,7 @@
   },
   "otel-desktop-viewer": {
     "cargoLocks": null,
-    "date": "2025-02-10",
+    "date": "2025-02-15",
     "extract": null,
     "name": "otel-desktop-viewer",
     "passthru": null,
@@ -304,13 +304,13 @@
       "fetchSubmodules": false,
       "leaveDotGit": false,
       "name": null,
-      "rev": "c70ffd4ede8cadbcfeb5bcf03e1077787c59f2d0",
-      "sha256": "sha256-SG3+HLSOhTviu7vO99JrCKmbZ8uteLFFsUD1/lsjVTo=",
+      "rev": "3057d294509c80a628ac94d34995a74da83f8924",
+      "sha256": "sha256-nHvQ1Guk7NK5AGW+wqFPEn/U59oEh6FOY6GueKAhpPY=",
       "sparseCheckout": [],
       "type": "git",
       "url": "https://github.com/CtrlSpice/otel-desktop-viewer.git"
     },
-    "version": "c70ffd4ede8cadbcfeb5bcf03e1077787c59f2d0"
+    "version": "3057d294509c80a628ac94d34995a74da83f8924"
   },
   "otel-tui-x86_64-linux": {
     "cargoLocks": null,
@@ -330,7 +330,7 @@
   "oxc": {
     "cargoLocks": {
       "Cargo.lock": [
-        "./oxc-0.15.10/Cargo.lock",
+        "./oxc-0.15.11/Cargo.lock",
         {}
       ]
     },
@@ -341,11 +341,11 @@
     "pinned": false,
     "src": {
       "name": null,
-      "sha256": "sha256-04XqWIJZBk6Xv/RoftyY+fisCvvUleQr5ulSd7NivcU=",
+      "sha256": "sha256-AqOyoQhW4SrfhO9qfsi719BtYgPQY+T8D7crQu3hUmc=",
       "type": "url",
-      "url": "https://github.com/oxc-project/oxc/archive/refs/tags/oxlint_v0.15.10.tar.gz"
+      "url": "https://github.com/oxc-project/oxc/archive/refs/tags/oxlint_v0.15.11.tar.gz"
     },
-    "version": "0.15.10"
+    "version": "0.15.11"
   },
   "pnpm": {
     "cargoLocks": null,
@@ -356,11 +356,11 @@
     "pinned": false,
     "src": {
       "name": "pnpm.tgz",
-      "sha256": "sha256-5X6KVE96hCR8+nfdbZI+rlGZo3NHTlPqsfVAx5Yok4Y=",
+      "sha256": "sha256-S3Aoh5hplZM9QwCDawTW0CpDvHK1Lk9+k6TKYIuVkZc=",
       "type": "url",
-      "url": "https://registry.npmjs.org/pnpm/-/pnpm-10.4.0.tgz"
+      "url": "https://registry.npmjs.org/pnpm/-/pnpm-10.4.1.tgz"
     },
-    "version": "10.4.0"
+    "version": "10.4.1"
   },
   "spectral": {
     "cargoLocks": null,
@@ -442,7 +442,7 @@
   },
   "vivid-plasma-themes": {
     "cargoLocks": null,
-    "date": "2025-02-08",
+    "date": "2025-02-15",
     "extract": null,
     "name": "vivid-plasma-themes",
     "passthru": null,
@@ -452,12 +452,12 @@
       "fetchSubmodules": false,
       "leaveDotGit": false,
       "name": null,
-      "rev": "ea4520a4a45c3d1dad565e0b6e10e8752f46afed",
-      "sha256": "sha256-a7E7cwM+fiqboCd1hpZP39VXzqTCz9qzHkXwIDw645s=",
+      "rev": "48e042e9ab7f275dfc7ffd337511dcf0a7f2844f",
+      "sha256": "sha256-aG61qmjnJErl8PB2jc2TFAXtJgqSTnjsku/MAxXl5YM=",
       "sparseCheckout": [],
       "type": "git",
       "url": "https://github.com/L4ki/Vivid-Plasma-Themes.git"
     },
-    "version": "ea4520a4a45c3d1dad565e0b6e10e8752f46afed"
+    "version": "48e042e9ab7f275dfc7ffd337511dcf0a7f2844f"
   }
 }
