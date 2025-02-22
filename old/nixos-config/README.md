@@ -316,31 +316,29 @@ nix store gc
 sudo nix-store --verify --check-contents --repair
 
 # update a single input
-nix flake lock --update-input foobar
-
-nix flake lock \
-  --update-input ags \
-  --update-input astal \
-  --update-input disko \
-  --update-input firefox-nightly \
-  --update-input hyprland \
-  --update-input hyprland-plugins \
-  --update-input hyprlock \
-  --update-input hypridle \
-  --update-input hyprpicker \
-  --update-input isd.url \
-  --update-input impermanence \
-  --update-input neovim-src \
-  --update-input neovim-nightly-overlay \
-  --update-input nixd \
-  --update-input nix-index-database \
-  --update-input nix-gl-host \
-  --update-input nixos-hardware \
-  --update-input nvfetcher \
-  --update-input rust-overlay \
-  --update-input sops-nix \
-  --update-input tmux-which-key \
-  --update-input wezterm
+nix flake update \
+  ags \
+  astal \
+  disko \
+  firefox-nightly \
+  hyprland \
+  hyprland-plugins \
+  hyprlock \
+  hypridle \
+  hyprpicker \
+  isd \
+  impermanence \
+  neovim-src \
+  neovim-nightly-overlay \
+  nixd \
+  nix-index-database \
+  nix-gl-host \
+  nixos-hardware \
+  nvfetcher \
+  rust-overlay \
+  sops-nix \
+  tmux-which-key \
+  wezterm
 ````
 
 ## Home Manager
