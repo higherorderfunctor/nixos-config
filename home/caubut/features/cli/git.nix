@@ -11,7 +11,7 @@ in {
     package = pkgs.git;
     userName = "Christopher Aubut";
     userEmail = "christopher@aubut.me";
-    signing.format = "ssh";
+    # signing.format = "ssh";
     extraConfig = {
       init.defaultBranch = "main";
       merge.tool = "diffview";

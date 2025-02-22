@@ -1,7 +1,7 @@
 {
   "amdvlk": {
     "cargoLocks": null,
-    "date": "2025-02-07",
+    "date": "2025-02-19",
     "extract": null,
     "name": "amdvlk",
     "passthru": null,
@@ -11,13 +11,13 @@
       "fetchSubmodules": false,
       "leaveDotGit": false,
       "name": null,
-      "rev": "667b847d7c680b461a8dc8a4ff993c72413374a8",
-      "sha256": "sha256-vzITnZF6AI+Srt9+TgE0+Tpb4q94Up0F+Q25Cgm/8IU=",
+      "rev": "62471a82057466946e82044d64d92259b016657e",
+      "sha256": "sha256-hiFXKeY1kzaswkbDngfuVpps7Fx9kGXIr1Gns/7WimQ=",
       "sparseCheckout": [],
       "type": "git",
       "url": "https://github.com/GPUOpen-Drivers/AMDVLK.git"
     },
-    "version": "667b847d7c680b461a8dc8a4ff993c72413374a8"
+    "version": "62471a82057466946e82044d64d92259b016657e"
   },
   "arkenfox": {
     "cargoLocks": null,
@@ -49,11 +49,11 @@
     "pinned": false,
     "src": {
       "name": "bruno-x86_64-linux.zip",
-      "sha256": "sha256-VA8TxyOF5QUSAR3ZPOnJzBeYQM+7Dk7QKgadj5aPIBY=",
+      "sha256": "sha256-N7QLcbgJcwf8xUDCZzKURiF3GgeOYgHWyaR1ITiIJEk=",
       "type": "url",
-      "url": "https://github.com/usebruno/bruno/releases/download/v1.39.0/bruno_1.39.0_amd64_linux.deb"
+      "url": "https://github.com/usebruno/bruno/releases/download/v1.39.1/bruno_1.39.1_amd64_linux.deb"
     },
-    "version": "1.39.0"
+    "version": "1.39.1"
   },
   "btop": {
     "cargoLocks": null,
@@ -215,7 +215,7 @@
   },
   "gitlab-language-server": {
     "cargoLocks": null,
-    "date": "2025-02-17",
+    "date": "2025-02-21",
     "extract": null,
     "name": "gitlab-language-server",
     "passthru": null,
@@ -225,14 +225,14 @@
       "fetchSubmodules": false,
       "leaveDotGit": false,
       "name": null,
-      "rev": "10ec9d0edc113f269af3281c7cd21cb710354835",
-      "sha256": "sha256-2KNogIqvpiIO/WOAyPe2grUSRp9zYEDUXoqJMbprchk=",
+      "rev": "bbd542ced65a7aaf5dd12b2f7d2b85fe12bda78b",
+      "sha256": "sha256-ybSyvNkGq+NdGbgFJ5pt+sX0xLF17Kt8tLu2An0qPJ4=",
       "sparseCheckout": [],
       "type": "git",
       "url": "https://gitlab.com/gitlab-org/editor-extensions/gitlab-lsp.git"
     },
-    "version": "10ec9d0edc113f269af3281c7cd21cb710354835",
-    "npmDepsHash": "sha256-07OEALtIVKxRx09OtWP3+RlkAngmlcX6Nzj1p8LMh+c="
+    "version": "bbd542ced65a7aaf5dd12b2f7d2b85fe12bda78b",
+    "npmDepsHash": "sha256-TzRJT3lH6L/2k63VrgsIkekPRjmAFiYz3PHXC8jYKuE="
   },
   "gluetun-src": {
     "cargoLocks": null,
@@ -376,12 +376,12 @@
       "name": null,
       "owner": "stoplightio",
       "repo": "spectral",
-      "rev": "v6.14.2",
-      "sha256": "sha256-yxT+a1XD6HKllCYSpW4/R26ufDwDDdapccf/5nfFBlw=",
+      "rev": "v6.14.3",
+      "sha256": "sha256-n29EzfozhEuhSzk4x+ZU3ftZht+1yi4PE3qbADyzWgc=",
       "sparseCheckout": [],
       "type": "github"
     },
-    "version": "v6.14.2"
+    "version": "v6.14.3"
   },
   "spectral-language-server": {
     "cargoLocks": null,

@@ -3,17 +3,17 @@
 {
   amdvlk = {
     pname = "amdvlk";
-    version = "667b847d7c680b461a8dc8a4ff993c72413374a8";
+    version = "62471a82057466946e82044d64d92259b016657e";
     src = fetchgit {
       url = "https://github.com/GPUOpen-Drivers/AMDVLK.git";
-      rev = "667b847d7c680b461a8dc8a4ff993c72413374a8";
+      rev = "62471a82057466946e82044d64d92259b016657e";
       fetchSubmodules = false;
       deepClone = false;
       leaveDotGit = false;
       sparseCheckout = [ ];
-      sha256 = "sha256-vzITnZF6AI+Srt9+TgE0+Tpb4q94Up0F+Q25Cgm/8IU=";
+      sha256 = "sha256-hiFXKeY1kzaswkbDngfuVpps7Fx9kGXIr1Gns/7WimQ=";
     };
-    date = "2025-02-07";
+    date = "2025-02-19";
   };
   arkenfox = {
     pname = "arkenfox";
@@ -28,11 +28,11 @@
   };
   bruno-deb-x86_64-linux = {
     pname = "bruno-deb-x86_64-linux";
-    version = "1.39.0";
+    version = "1.39.1";
     src = fetchurl {
-      url = "https://github.com/usebruno/bruno/releases/download/v1.39.0/bruno_1.39.0_amd64_linux.deb";
+      url = "https://github.com/usebruno/bruno/releases/download/v1.39.1/bruno_1.39.1_amd64_linux.deb";
       name = "bruno-x86_64-linux.zip";
-      sha256 = "sha256-VA8TxyOF5QUSAR3ZPOnJzBeYQM+7Dk7QKgadj5aPIBY=";
+      sha256 = "sha256-N7QLcbgJcwf8xUDCZzKURiF3GgeOYgHWyaR1ITiIJEk=";
     };
   };
   btop = {
@@ -135,17 +135,17 @@
   };
   gitlab-language-server = {
     pname = "gitlab-language-server";
-    version = "10ec9d0edc113f269af3281c7cd21cb710354835";
+    version = "bbd542ced65a7aaf5dd12b2f7d2b85fe12bda78b";
     src = fetchgit {
       url = "https://gitlab.com/gitlab-org/editor-extensions/gitlab-lsp.git";
-      rev = "10ec9d0edc113f269af3281c7cd21cb710354835";
+      rev = "bbd542ced65a7aaf5dd12b2f7d2b85fe12bda78b";
       fetchSubmodules = false;
       deepClone = false;
       leaveDotGit = false;
       sparseCheckout = [ ];
-      sha256 = "sha256-2KNogIqvpiIO/WOAyPe2grUSRp9zYEDUXoqJMbprchk=";
+      sha256 = "sha256-ybSyvNkGq+NdGbgFJ5pt+sX0xLF17Kt8tLu2An0qPJ4=";
     };
-    date = "2025-02-17";
+    date = "2025-02-21";
   };
   gluetun-src = {
     pname = "gluetun-src";
@@ -224,13 +224,13 @@
   };
   spectral = {
     pname = "spectral";
-    version = "v6.14.2";
+    version = "v6.14.3";
     src = fetchFromGitHub {
       owner = "stoplightio";
       repo = "spectral";
-      rev = "v6.14.2";
+      rev = "v6.14.3";
       fetchSubmodules = false;
-      sha256 = "sha256-yxT+a1XD6HKllCYSpW4/R26ufDwDDdapccf/5nfFBlw=";
+      sha256 = "sha256-n29EzfozhEuhSzk4x+ZU3ftZht+1yi4PE3qbADyzWgc=";
     };
   };
   spectral-language-server = {

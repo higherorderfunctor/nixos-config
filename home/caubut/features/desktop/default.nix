@@ -22,6 +22,7 @@
     # ./transmission.nix only cli and doing over docker
     # ./virtualbox.nix
     ./vlc.nix
+    ./vscode.nix
     ./webex.nix
     ./zoom.nix
     # ./wezterm.nix
