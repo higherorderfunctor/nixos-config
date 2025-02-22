@@ -13,8 +13,8 @@ in {
   nix = {
     package = lib.mkForce pkgs.nix;
     settings = {
-      cores = lib.mkForce 4;
-      max-jobs = lib.mkForce 1;
+      # cores = lib.mkForce 4;
+      # max-jobs = lib.mkForce 1;
       trusted-users = ["root" "caubut" "@wheel"];
       auto-optimise-store = lib.mkDefault true;
       experimental-features = ["nix-command" "flakes"];

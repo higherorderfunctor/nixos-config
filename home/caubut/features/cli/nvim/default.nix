@@ -30,7 +30,8 @@ in {
     extraPackages = with pkgs; [
       # TODO:
       fswatch
-      tree-sitter
+      # NOTE: bundled with nightly
+      # tree-sitter
     ];
   };
 
