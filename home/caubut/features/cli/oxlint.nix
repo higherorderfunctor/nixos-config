@@ -1,3 +1,3 @@
 {pkgs, ...}: {
-  home.packages = with pkgs; [oxlint oxc-language-server];
+  # home.packages = with pkgs; [oxlint oxc-language-server];
 }

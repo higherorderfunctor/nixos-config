@@ -21,9 +21,9 @@ args: let
     ./nixd-overlay.nix
     ./nvfetcher-overlay.nix
     ./oh-my-posh-overlay.nix
-    ./otel-desktop-viewer-overlay.nix
+    # ./otel-desktop-viewer-overlay.nix
     ./otel-tui-overlay.nix
-    ./oxlint-overlay.nix
+    # ./oxlint-overlay.nix
     ./pnpm-overlay.nix
     ./rust-overlay.nix
     ./spectral-overlay.nix
