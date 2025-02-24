@@ -38,17 +38,17 @@ oh_my_posh_vendor_hash=$(yq -r '.oh-my-posh.vendorHash // "'"$FAKE_HASH"'"' over
 # Run nvfetcher to get updates
 nvfetcher -k ~/.config/nvfetcher/keyfile.toml -o overlays/.nvfetcher
 
-tmp_dir=$(mktemp -d)
-git clone --depth 1 https://gitlab.com/gitlab-org/editor-extensions/gitlab-lsp.git "$tmp_dir"
-cd "$tmp_dir"
-nix run nixpkgs#npm-lockfile-fix -- package-lock.json
-deps_hash="$(FORCE_GIT_DEPS=true nix run nixpkgs#prefetch-npm-deps package-lock.json)"
-git add package-lock.json
-git diff --cached >fix-package-lock.patch
-cd "$(dirname "$0")"/..
-mkdir -p overlays/.nvfetcher/gitlab-language-server
-mv "$tmp_dir/fix-package-lock.patch" overlays/.nvfetcher/gitlab-language-server/
-yq -iP '.["gitlab-language-server"].npmDepsHash = "'"$deps_hash"'"' overlays/.nvfetcher/generated.json -o json
+# tmp_dir=$(mktemp -d)
+# git clone --depth 1 https://gitlab.com/gitlab-org/editor-extensions/gitlab-lsp.git "$tmp_dir"
+# cd "$tmp_dir"
+# nix run nixpkgs#npm-lockfile-fix -- package-lock.json
+# deps_hash="$(FORCE_GIT_DEPS=true nix run nixpkgs#prefetch-npm-deps package-lock.json)"
+# git add package-lock.json
+# git diff --cached >fix-package-lock.patch
+# cd "$(dirname "$0")"/..
+# mkdir -p overlays/.nvfetcher/gitlab-language-server
+# mv "$tmp_dir/fix-package-lock.patch" overlays/.nvfetcher/gitlab-language-server/
+# yq -iP '.["gitlab-language-server"].npmDepsHash = "'"$deps_hash"'"' overlays/.nvfetcher/generated.json -o json
 
 ##
 # Restore externally generated hashes

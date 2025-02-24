@@ -48,11 +48,11 @@
   };
   bun-x86_64-linux = {
     pname = "bun-x86_64-linux";
-    version = "1.2.2";
+    version = "1.2.3";
     src = fetchurl {
-      url = "https://github.com/oven-sh/bun/releases/download/bun-v1.2.2/bun-linux-x64.zip";
+      url = "https://github.com/oven-sh/bun/releases/download/bun-v1.2.3/bun-linux-x64.zip";
       name = "bun-x86_64-linux.zip";
-      sha256 = "sha256-P077iv0fhKwqmMBGYciYVh0dNVJ9Awy0Vx6Zt8hfUHk=";
+      sha256 = "sha256-wNNfzF/rCOi4SDLr5hcS0r+x8Rgd5wbpOHvBLiNGPzU=";
     };
   };
   catppuccin-btop = {
@@ -135,17 +135,17 @@
   };
   gitlab-language-server = {
     pname = "gitlab-language-server";
-    version = "bbd542ced65a7aaf5dd12b2f7d2b85fe12bda78b";
+    version = "e42d2406c92c4f5ccc319556b7133800a5e98aa3";
     src = fetchgit {
       url = "https://gitlab.com/gitlab-org/editor-extensions/gitlab-lsp.git";
-      rev = "bbd542ced65a7aaf5dd12b2f7d2b85fe12bda78b";
+      rev = "e42d2406c92c4f5ccc319556b7133800a5e98aa3";
       fetchSubmodules = false;
       deepClone = false;
       leaveDotGit = false;
       sparseCheckout = [ ];
-      sha256 = "sha256-ybSyvNkGq+NdGbgFJ5pt+sX0xLF17Kt8tLu2An0qPJ4=";
+      sha256 = "sha256-oYhnjzwaqtx9kXLeYKuYre5oEcRJ/BJRJHJPaAeUNiw=";
     };
-    date = "2025-02-21";
+    date = "2025-02-23";
   };
   gluetun-src = {
     pname = "gluetun-src";
@@ -193,10 +193,10 @@
   };
   otel-tui-x86_64-linux = {
     pname = "otel-tui-x86_64-linux";
-    version = "0.4.1";
+    version = "0.4.2";
     src = fetchurl {
-      url = "https://github.com/ymtdzzz/otel-tui/releases/download/v0.4.1/otel-tui_Linux_x86_64.tar.gz";
-      sha256 = "sha256-pnPWOBHECnj3uEP9OXHUYs+bOSw0ata8upByONxuiR4=";
+      url = "https://github.com/ymtdzzz/otel-tui/releases/download/v0.4.2/otel-tui_Linux_x86_64.tar.gz";
+      sha256 = "sha256-cz/Ox18CZYhMDUKOwIEMGSbafX1UFfGrVoXTx1oDrk4=";
     };
   };
   oxc = {
@@ -266,16 +266,16 @@
   };
   vivid-plasma-themes = {
     pname = "vivid-plasma-themes";
-    version = "48e042e9ab7f275dfc7ffd337511dcf0a7f2844f";
+    version = "be7799451503cc13111b2ffe962e8e5068fcfc46";
     src = fetchgit {
       url = "https://github.com/L4ki/Vivid-Plasma-Themes.git";
-      rev = "48e042e9ab7f275dfc7ffd337511dcf0a7f2844f";
+      rev = "be7799451503cc13111b2ffe962e8e5068fcfc46";
       fetchSubmodules = false;
       deepClone = false;
       leaveDotGit = false;
       sparseCheckout = [ ];
-      sha256 = "sha256-aG61qmjnJErl8PB2jc2TFAXtJgqSTnjsku/MAxXl5YM=";
+      sha256 = "sha256-MK/RS68qJ361nr5s2Uo7heMwgslgBP16FiZSMcW/cRw=";
     };
-    date = "2025-02-15";
+    date = "2025-02-22";
   };
 }

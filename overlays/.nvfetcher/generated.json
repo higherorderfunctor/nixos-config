@@ -85,11 +85,11 @@
     "pinned": false,
     "src": {
       "name": "bun-x86_64-linux.zip",
-      "sha256": "sha256-P077iv0fhKwqmMBGYciYVh0dNVJ9Awy0Vx6Zt8hfUHk=",
+      "sha256": "sha256-wNNfzF/rCOi4SDLr5hcS0r+x8Rgd5wbpOHvBLiNGPzU=",
       "type": "url",
-      "url": "https://github.com/oven-sh/bun/releases/download/bun-v1.2.2/bun-linux-x64.zip"
+      "url": "https://github.com/oven-sh/bun/releases/download/bun-v1.2.3/bun-linux-x64.zip"
     },
-    "version": "1.2.2"
+    "version": "1.2.3"
   },
   "catppuccin-btop": {
     "cargoLocks": null,
@@ -215,7 +215,7 @@
   },
   "gitlab-language-server": {
     "cargoLocks": null,
-    "date": "2025-02-21",
+    "date": "2025-02-23",
     "extract": null,
     "name": "gitlab-language-server",
     "passthru": null,
@@ -225,14 +225,13 @@
       "fetchSubmodules": false,
       "leaveDotGit": false,
       "name": null,
-      "rev": "bbd542ced65a7aaf5dd12b2f7d2b85fe12bda78b",
-      "sha256": "sha256-ybSyvNkGq+NdGbgFJ5pt+sX0xLF17Kt8tLu2An0qPJ4=",
+      "rev": "e42d2406c92c4f5ccc319556b7133800a5e98aa3",
+      "sha256": "sha256-oYhnjzwaqtx9kXLeYKuYre5oEcRJ/BJRJHJPaAeUNiw=",
       "sparseCheckout": [],
       "type": "git",
       "url": "https://gitlab.com/gitlab-org/editor-extensions/gitlab-lsp.git"
     },
-    "version": "bbd542ced65a7aaf5dd12b2f7d2b85fe12bda78b",
-    "npmDepsHash": "sha256-TzRJT3lH6L/2k63VrgsIkekPRjmAFiYz3PHXC8jYKuE="
+    "version": "e42d2406c92c4f5ccc319556b7133800a5e98aa3"
   },
   "gluetun-src": {
     "cargoLocks": null,
@@ -321,11 +320,11 @@
     "pinned": false,
     "src": {
       "name": null,
-      "sha256": "sha256-pnPWOBHECnj3uEP9OXHUYs+bOSw0ata8upByONxuiR4=",
+      "sha256": "sha256-cz/Ox18CZYhMDUKOwIEMGSbafX1UFfGrVoXTx1oDrk4=",
       "type": "url",
-      "url": "https://github.com/ymtdzzz/otel-tui/releases/download/v0.4.1/otel-tui_Linux_x86_64.tar.gz"
+      "url": "https://github.com/ymtdzzz/otel-tui/releases/download/v0.4.2/otel-tui_Linux_x86_64.tar.gz"
     },
-    "version": "0.4.1"
+    "version": "0.4.2"
   },
   "oxc": {
     "cargoLocks": {
@@ -442,7 +441,7 @@
   },
   "vivid-plasma-themes": {
     "cargoLocks": null,
-    "date": "2025-02-15",
+    "date": "2025-02-22",
     "extract": null,
     "name": "vivid-plasma-themes",
     "passthru": null,
@@ -452,12 +451,12 @@
       "fetchSubmodules": false,
       "leaveDotGit": false,
       "name": null,
-      "rev": "48e042e9ab7f275dfc7ffd337511dcf0a7f2844f",
-      "sha256": "sha256-aG61qmjnJErl8PB2jc2TFAXtJgqSTnjsku/MAxXl5YM=",
+      "rev": "be7799451503cc13111b2ffe962e8e5068fcfc46",
+      "sha256": "sha256-MK/RS68qJ361nr5s2Uo7heMwgslgBP16FiZSMcW/cRw=",
       "sparseCheckout": [],
       "type": "git",
       "url": "https://github.com/L4ki/Vivid-Plasma-Themes.git"
     },
-    "version": "48e042e9ab7f275dfc7ffd337511dcf0a7f2844f"
+    "version": "be7799451503cc13111b2ffe962e8e5068fcfc46"
   }
 }

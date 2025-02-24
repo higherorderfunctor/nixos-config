@@ -102,16 +102,16 @@
     impermanence = {
       url = "github:nix-community/impermanence";
     };
-    neovim-src = {
-      url = "github:neovim/neovim";
-      flake = false;
-    };
+    # neovim-src = {
+    #   url = "github:neovim/neovim";
+    #   flake = false;
+    # };
     neovim-nightly-overlay = {
       url = "github:nix-community/neovim-nightly-overlay";
-      inputs = {
-        nixpkgs.follows = "nixpkgs";
-        neovim-src.follows = "neovim-src";
-      };
+      # inputs = {
+      #   nixpkgs.follows = "nixpkgs";
+      #   neovim-src.follows = "neovim-src";
+      # };
     };
     nixd = {
       url = "github:nix-community/nixd";
