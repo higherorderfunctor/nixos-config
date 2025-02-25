@@ -26,6 +26,7 @@
     ./git.nix
     ./gitlab-language-server.nix
     ./gjs.nix
+    ./graphviz.nix
     ./gnumake.nix
     ./inotify-info.nix
     ./isd.nix

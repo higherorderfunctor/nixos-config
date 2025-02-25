@@ -135,17 +135,17 @@
   };
   gitlab-language-server = {
     pname = "gitlab-language-server";
-    version = "e42d2406c92c4f5ccc319556b7133800a5e98aa3";
+    version = "7c28a667dfdd2fa3297d4fa25f7a60079ab874df";
     src = fetchgit {
       url = "https://gitlab.com/gitlab-org/editor-extensions/gitlab-lsp.git";
-      rev = "e42d2406c92c4f5ccc319556b7133800a5e98aa3";
+      rev = "7c28a667dfdd2fa3297d4fa25f7a60079ab874df";
       fetchSubmodules = false;
       deepClone = false;
       leaveDotGit = false;
       sparseCheckout = [ ];
-      sha256 = "sha256-oYhnjzwaqtx9kXLeYKuYre5oEcRJ/BJRJHJPaAeUNiw=";
+      sha256 = "sha256-McryUn6vDyzcapmPxFjAYSqPZva2eNB97o4kcVjoH/M=";
     };
-    date = "2025-02-23";
+    date = "2025-02-24";
   };
   gluetun-src = {
     pname = "gluetun-src";
@@ -201,13 +201,13 @@
   };
   oxc = {
     pname = "oxc";
-    version = "0.15.11";
+    version = "0.15.12";
     src = fetchurl {
-      url = "https://github.com/oxc-project/oxc/archive/refs/tags/oxlint_v0.15.11.tar.gz";
-      sha256 = "sha256-AqOyoQhW4SrfhO9qfsi719BtYgPQY+T8D7crQu3hUmc=";
+      url = "https://github.com/oxc-project/oxc/archive/refs/tags/oxlint_v0.15.12.tar.gz";
+      sha256 = "sha256-0z9X0aXdPgT9LmHnGaJ0XjDLjbKy6a9H8iESldlfJhI=";
     };
     cargoLock."Cargo.lock" = {
-      lockFile = ./oxc-0.15.11/Cargo.lock;
+      lockFile = ./oxc-0.15.12/Cargo.lock;
       outputHashes = {
         
       };
