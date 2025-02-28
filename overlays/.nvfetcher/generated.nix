@@ -48,11 +48,11 @@
   };
   bun-x86_64-linux = {
     pname = "bun-x86_64-linux";
-    version = "1.2.3";
+    version = "1.2.4";
     src = fetchurl {
-      url = "https://github.com/oven-sh/bun/releases/download/bun-v1.2.3/bun-linux-x64.zip";
+      url = "https://github.com/oven-sh/bun/releases/download/bun-v1.2.4/bun-linux-x64.zip";
       name = "bun-x86_64-linux.zip";
-      sha256 = "sha256-wNNfzF/rCOi4SDLr5hcS0r+x8Rgd5wbpOHvBLiNGPzU=";
+      sha256 = "sha256-ity9dM8a8H3DYH6+4yv+WlM1OxrvlRWWN4EYPVxAFYY=";
     };
   };
   catppuccin-btop = {
@@ -110,7 +110,7 @@
   };
   dns-root-hints = {
     pname = "dns-root-hints";
-    version = "20250129";
+    version = "20250226";
     src = fetchurl {
       url = "https://www.internic.net/domain/named.root";
       sha256 = "sha256-axHjPoZx/mCtjFMyewF+kQomdZToI0Wf4NYvT6fXMcY=";
@@ -135,17 +135,17 @@
   };
   gitlab-language-server = {
     pname = "gitlab-language-server";
-    version = "7c28a667dfdd2fa3297d4fa25f7a60079ab874df";
+    version = "f423a072598db96515aa148b8a44a787859c0c80";
     src = fetchgit {
       url = "https://gitlab.com/gitlab-org/editor-extensions/gitlab-lsp.git";
-      rev = "7c28a667dfdd2fa3297d4fa25f7a60079ab874df";
+      rev = "f423a072598db96515aa148b8a44a787859c0c80";
       fetchSubmodules = false;
       deepClone = false;
       leaveDotGit = false;
       sparseCheckout = [ ];
-      sha256 = "sha256-McryUn6vDyzcapmPxFjAYSqPZva2eNB97o4kcVjoH/M=";
+      sha256 = "sha256-mUDZfXEtagItvf27TlCMPvTXt4MpFvr1GYVJec6x+7Y=";
     };
-    date = "2025-02-24";
+    date = "2025-02-28";
   };
   gluetun-src = {
     pname = "gluetun-src";
@@ -168,13 +168,13 @@
   };
   oh-my-posh = {
     pname = "oh-my-posh";
-    version = "v24.19.0";
+    version = "v25.0.0";
     src = fetchFromGitHub {
       owner = "JanDeDobbeleer";
       repo = "oh-my-posh";
-      rev = "v24.19.0";
+      rev = "v25.0.0";
       fetchSubmodules = false;
-      sha256 = "sha256-HwBLFa7CEAYjCcCn9P7wsgsa4po2x5CewcarcPZAjHI=";
+      sha256 = "sha256-Qhk+ke4EoCGYUltpOJgA2qojE+KftDxRx4OJnq4Z048=";
     };
   };
   otel-desktop-viewer = {
@@ -215,11 +215,11 @@
   };
   pnpm = {
     pname = "pnpm";
-    version = "10.4.1";
+    version = "10.5.2";
     src = fetchurl {
-      url = "https://registry.npmjs.org/pnpm/-/pnpm-10.4.1.tgz";
+      url = "https://registry.npmjs.org/pnpm/-/pnpm-10.5.2.tgz";
       name = "pnpm.tgz";
-      sha256 = "sha256-S3Aoh5hplZM9QwCDawTW0CpDvHK1Lk9+k6TKYIuVkZc=";
+      sha256 = "sha256-eamNqpAki1CBXjFGB5DxGMVv4JkRM3CCbKoBU75tq6U=";
     };
   };
   spectral = {
