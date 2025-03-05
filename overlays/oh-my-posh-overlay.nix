@@ -45,6 +45,12 @@ in {
                  upgrade/notice_test.go
             '';
 
+            postInstall = ''
+              mv $out/bin/{src,oh-my-posh}
+              mkdir -p $out/share/oh-my-posh
+              cp -r $src/themes $out/share/oh-my-posh/
+            '';
+
             meta.changelog = "https://github.com/JanDeDobbeleer/oh-my-posh/releases/tag/v${nv.version}";
           });
     };

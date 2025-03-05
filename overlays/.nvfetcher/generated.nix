@@ -3,17 +3,17 @@
 {
   amdvlk = {
     pname = "amdvlk";
-    version = "62471a82057466946e82044d64d92259b016657e";
+    version = "79a0d4757b173a624e82491e76c04b3b55c7a21d";
     src = fetchgit {
       url = "https://github.com/GPUOpen-Drivers/AMDVLK.git";
-      rev = "62471a82057466946e82044d64d92259b016657e";
+      rev = "79a0d4757b173a624e82491e76c04b3b55c7a21d";
       fetchSubmodules = false;
       deepClone = false;
       leaveDotGit = false;
       sparseCheckout = [ ];
-      sha256 = "sha256-hiFXKeY1kzaswkbDngfuVpps7Fx9kGXIr1Gns/7WimQ=";
+      sha256 = "sha256-tNDEsHehSIsY1CF0ZA2WCV2jgRzjwLWh0WquyNNiZwc=";
     };
-    date = "2025-02-19";
+    date = "2025-02-28";
   };
   arkenfox = {
     pname = "arkenfox";
@@ -113,7 +113,7 @@
     version = "20250226";
     src = fetchurl {
       url = "https://www.internic.net/domain/named.root";
-      sha256 = "sha256-axHjPoZx/mCtjFMyewF+kQomdZToI0Wf4NYvT6fXMcY=";
+      sha256 = "sha256-+EgttKHFRlG+CoC8VVEEayjpBlYri2S9BYG6hmTAmEk=";
     };
   };
   fblog = {
@@ -135,17 +135,17 @@
   };
   gitlab-language-server = {
     pname = "gitlab-language-server";
-    version = "f423a072598db96515aa148b8a44a787859c0c80";
+    version = "743131a2755b73745397f6ce1149e99949c2b42f";
     src = fetchgit {
       url = "https://gitlab.com/gitlab-org/editor-extensions/gitlab-lsp.git";
-      rev = "f423a072598db96515aa148b8a44a787859c0c80";
+      rev = "743131a2755b73745397f6ce1149e99949c2b42f";
       fetchSubmodules = false;
       deepClone = false;
       leaveDotGit = false;
       sparseCheckout = [ ];
-      sha256 = "sha256-mUDZfXEtagItvf27TlCMPvTXt4MpFvr1GYVJec6x+7Y=";
+      sha256 = "sha256-uiV14YTwuGmjZO4NV2ffZOSbl83GtNzJn5mqgQtKOAs=";
     };
-    date = "2025-02-28";
+    date = "2025-03-05";
   };
   gluetun-src = {
     pname = "gluetun-src";
@@ -160,21 +160,21 @@
   };
   go = {
     pname = "go";
-    version = "1.24.0";
+    version = "1.24.1";
     src = fetchurl {
-      url = "https://go.dev/dl/go1.24.0.src.tar.gz";
-      sha256 = "sha256-0UEgYUrLKdEryrcr1onyV+tL6eC2+IqPt+Qaxl+FVuU=";
+      url = "https://go.dev/dl/go1.24.1.src.tar.gz";
+      sha256 = "sha256-gkTr9GxlYH2xAiK1gGrrMcH8+JecG2sS9gxnfpo8BlY=";
     };
   };
   oh-my-posh = {
     pname = "oh-my-posh";
-    version = "v25.0.0";
+    version = "v25.1.1";
     src = fetchFromGitHub {
       owner = "JanDeDobbeleer";
       repo = "oh-my-posh";
-      rev = "v25.0.0";
+      rev = "v25.1.1";
       fetchSubmodules = false;
-      sha256 = "sha256-Qhk+ke4EoCGYUltpOJgA2qojE+KftDxRx4OJnq4Z048=";
+      sha256 = "sha256-lRbsMhjyTEpvJMA3dxKmSap2KfeO7q/dXZOES7iFhlA=";
     };
   };
   otel-desktop-viewer = {
@@ -201,13 +201,13 @@
   };
   oxc = {
     pname = "oxc";
-    version = "0.15.12";
+    version = "0.15.13";
     src = fetchurl {
-      url = "https://github.com/oxc-project/oxc/archive/refs/tags/oxlint_v0.15.12.tar.gz";
-      sha256 = "sha256-0z9X0aXdPgT9LmHnGaJ0XjDLjbKy6a9H8iESldlfJhI=";
+      url = "https://github.com/oxc-project/oxc/archive/refs/tags/oxlint_v0.15.13.tar.gz";
+      sha256 = "sha256-wZvVdqA+FVx/Iud3vg2QhJFs/BgsFjBjbyrdyqcmthA=";
     };
     cargoLock."Cargo.lock" = {
-      lockFile = ./oxc-0.15.12/Cargo.lock;
+      lockFile = ./oxc-0.15.13/Cargo.lock;
       outputHashes = {
         
       };
@@ -266,16 +266,16 @@
   };
   vivid-plasma-themes = {
     pname = "vivid-plasma-themes";
-    version = "be7799451503cc13111b2ffe962e8e5068fcfc46";
+    version = "1ad2ec91351fc1368a1b044fd6f4d6e9b0f7b3ec";
     src = fetchgit {
       url = "https://github.com/L4ki/Vivid-Plasma-Themes.git";
-      rev = "be7799451503cc13111b2ffe962e8e5068fcfc46";
+      rev = "1ad2ec91351fc1368a1b044fd6f4d6e9b0f7b3ec";
       fetchSubmodules = false;
       deepClone = false;
       leaveDotGit = false;
       sparseCheckout = [ ];
-      sha256 = "sha256-MK/RS68qJ361nr5s2Uo7heMwgslgBP16FiZSMcW/cRw=";
+      sha256 = "sha256-/ibnGwWCWK3h8xh/spD9b11PQPWxCMdiwQT0X1R9Hok=";
     };
-    date = "2025-02-22";
+    date = "2025-03-01";
   };
 }

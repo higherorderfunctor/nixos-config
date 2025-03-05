@@ -13,14 +13,54 @@ in {
     userEmail = "christopher@aubut.me";
     # signing.format = "ssh";
     extraConfig = {
+      column.ui = "auto";
+      branch.sort = "-committerdate";
+      commit.verbose = true;
+      core = {
+        fsmonitor = true;
+        untrackedCache = true;
+      };
+      diff = {
+        algorithm = "histogram";
+        colorMoved = "plain";
+        # NOTE: i/ (index), w/ (working directory), c/ commit
+        mnemonicPrefix = true;
+        renames = true;
+      };
+      fetch = {
+        prune = true;
+        pruneTags = true;
+        all = true;
+      };
+      help.autocorrect = "prompt";
       init.defaultBranch = "main";
-      merge.tool = "diffview";
+      tag.sort = "version:refname";
+      merge = {
+        conflictStyle = "diff3";
+        tool = "diffview";
+      };
       mergetool = {
         prompt = false;
         diffview.cmd = ''nvim -n -c "DiffviewOpen" "$MERGE"'';
       };
-      pull.ff = "only";
-      push.autoSetupRemote = true;
+      pull = {
+        ff = "only";
+        rebase = true;
+      };
+      push = {
+        autoSetupRemote = true;
+        default = "simple";
+        followTags = true;
+      };
+      rebase = {
+        autoStash = true;
+        autoSquash = true;
+        updateRefs = true;
+      };
+      rerere = {
+        enabled = true;
+        autoupdate = true;
+      };
     };
     includes = [
       {

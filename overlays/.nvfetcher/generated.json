@@ -1,7 +1,7 @@
 {
   "amdvlk": {
     "cargoLocks": null,
-    "date": "2025-02-19",
+    "date": "2025-02-28",
     "extract": null,
     "name": "amdvlk",
     "passthru": null,
@@ -11,13 +11,13 @@
       "fetchSubmodules": false,
       "leaveDotGit": false,
       "name": null,
-      "rev": "62471a82057466946e82044d64d92259b016657e",
-      "sha256": "sha256-hiFXKeY1kzaswkbDngfuVpps7Fx9kGXIr1Gns/7WimQ=",
+      "rev": "79a0d4757b173a624e82491e76c04b3b55c7a21d",
+      "sha256": "sha256-tNDEsHehSIsY1CF0ZA2WCV2jgRzjwLWh0WquyNNiZwc=",
       "sparseCheckout": [],
       "type": "git",
       "url": "https://github.com/GPUOpen-Drivers/AMDVLK.git"
     },
-    "version": "62471a82057466946e82044d64d92259b016657e"
+    "version": "79a0d4757b173a624e82491e76c04b3b55c7a21d"
   },
   "arkenfox": {
     "cargoLocks": null,
@@ -181,7 +181,7 @@
     "pinned": false,
     "src": {
       "name": null,
-      "sha256": "sha256-axHjPoZx/mCtjFMyewF+kQomdZToI0Wf4NYvT6fXMcY=",
+      "sha256": "sha256-+EgttKHFRlG+CoC8VVEEayjpBlYri2S9BYG6hmTAmEk=",
       "type": "url",
       "url": "https://www.internic.net/domain/named.root"
     },
@@ -215,7 +215,7 @@
   },
   "gitlab-language-server": {
     "cargoLocks": null,
-    "date": "2025-02-28",
+    "date": "2025-03-05",
     "extract": null,
     "name": "gitlab-language-server",
     "passthru": null,
@@ -225,13 +225,13 @@
       "fetchSubmodules": false,
       "leaveDotGit": false,
       "name": null,
-      "rev": "f423a072598db96515aa148b8a44a787859c0c80",
-      "sha256": "sha256-mUDZfXEtagItvf27TlCMPvTXt4MpFvr1GYVJec6x+7Y=",
+      "rev": "743131a2755b73745397f6ce1149e99949c2b42f",
+      "sha256": "sha256-uiV14YTwuGmjZO4NV2ffZOSbl83GtNzJn5mqgQtKOAs=",
       "sparseCheckout": [],
       "type": "git",
       "url": "https://gitlab.com/gitlab-org/editor-extensions/gitlab-lsp.git"
     },
-    "version": "f423a072598db96515aa148b8a44a787859c0c80"
+    "version": "743131a2755b73745397f6ce1149e99949c2b42f"
   },
   "gluetun-src": {
     "cargoLocks": null,
@@ -263,11 +263,11 @@
     "pinned": false,
     "src": {
       "name": null,
-      "sha256": "sha256-0UEgYUrLKdEryrcr1onyV+tL6eC2+IqPt+Qaxl+FVuU=",
+      "sha256": "sha256-gkTr9GxlYH2xAiK1gGrrMcH8+JecG2sS9gxnfpo8BlY=",
       "type": "url",
-      "url": "https://go.dev/dl/go1.24.0.src.tar.gz"
+      "url": "https://go.dev/dl/go1.24.1.src.tar.gz"
     },
-    "version": "1.24.0"
+    "version": "1.24.1"
   },
   "oh-my-posh": {
     "cargoLocks": null,
@@ -283,12 +283,12 @@
       "name": null,
       "owner": "JanDeDobbeleer",
       "repo": "oh-my-posh",
-      "rev": "v25.0.0",
-      "sha256": "sha256-Qhk+ke4EoCGYUltpOJgA2qojE+KftDxRx4OJnq4Z048=",
+      "rev": "v25.1.1",
+      "sha256": "sha256-lRbsMhjyTEpvJMA3dxKmSap2KfeO7q/dXZOES7iFhlA=",
       "sparseCheckout": [],
       "type": "github"
     },
-    "version": "v25.0.0",
+    "version": "v25.1.1",
     "vendorHash": "sha256-LGPlPJWysptHoYL+Q5qyL9WERJhgeKbrlmW9QvEjnFA="
   },
   "otel-desktop-viewer": {
@@ -329,7 +329,7 @@
   "oxc": {
     "cargoLocks": {
       "Cargo.lock": [
-        "./oxc-0.15.12/Cargo.lock",
+        "./oxc-0.15.13/Cargo.lock",
         {}
       ]
     },
@@ -340,11 +340,11 @@
     "pinned": false,
     "src": {
       "name": null,
-      "sha256": "sha256-0z9X0aXdPgT9LmHnGaJ0XjDLjbKy6a9H8iESldlfJhI=",
+      "sha256": "sha256-wZvVdqA+FVx/Iud3vg2QhJFs/BgsFjBjbyrdyqcmthA=",
       "type": "url",
-      "url": "https://github.com/oxc-project/oxc/archive/refs/tags/oxlint_v0.15.12.tar.gz"
+      "url": "https://github.com/oxc-project/oxc/archive/refs/tags/oxlint_v0.15.13.tar.gz"
     },
-    "version": "0.15.12"
+    "version": "0.15.13"
   },
   "pnpm": {
     "cargoLocks": null,
@@ -441,7 +441,7 @@
   },
   "vivid-plasma-themes": {
     "cargoLocks": null,
-    "date": "2025-02-22",
+    "date": "2025-03-01",
     "extract": null,
     "name": "vivid-plasma-themes",
     "passthru": null,
@@ -451,12 +451,12 @@
       "fetchSubmodules": false,
       "leaveDotGit": false,
       "name": null,
-      "rev": "be7799451503cc13111b2ffe962e8e5068fcfc46",
-      "sha256": "sha256-MK/RS68qJ361nr5s2Uo7heMwgslgBP16FiZSMcW/cRw=",
+      "rev": "1ad2ec91351fc1368a1b044fd6f4d6e9b0f7b3ec",
+      "sha256": "sha256-/ibnGwWCWK3h8xh/spD9b11PQPWxCMdiwQT0X1R9Hok=",
       "sparseCheckout": [],
       "type": "git",
       "url": "https://github.com/L4ki/Vivid-Plasma-Themes.git"
     },
-    "version": "be7799451503cc13111b2ffe962e8e5068fcfc46"
+    "version": "1ad2ec91351fc1368a1b044fd6f4d6e9b0f7b3ec"
   }
 }
