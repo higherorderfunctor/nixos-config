@@ -17,13 +17,13 @@
   };
   arkenfox = {
     pname = "arkenfox";
-    version = "133.0";
+    version = "135.0";
     src = fetchFromGitHub {
       owner = "arkenfox";
       repo = "user.js";
-      rev = "133.0";
+      rev = "135.0";
       fetchSubmodules = false;
-      sha256 = "sha256-iHj+4UGeB1FVGvOWB9ZZA4aiiJynBxRSFFfJqToYEdQ=";
+      sha256 = "sha256-21DoV4SMueMFRHMsvfsPfQIOtsvRWNY06rE4gB7xFnc=";
     };
   };
   bruno-deb-x86_64-linux = {
@@ -135,17 +135,17 @@
   };
   gitlab-language-server = {
     pname = "gitlab-language-server";
-    version = "743131a2755b73745397f6ce1149e99949c2b42f";
+    version = "852493b940a883bb642258f6bc0b8879a7e3f9c1";
     src = fetchgit {
       url = "https://gitlab.com/gitlab-org/editor-extensions/gitlab-lsp.git";
-      rev = "743131a2755b73745397f6ce1149e99949c2b42f";
+      rev = "852493b940a883bb642258f6bc0b8879a7e3f9c1";
       fetchSubmodules = false;
       deepClone = false;
       leaveDotGit = false;
       sparseCheckout = [ ];
-      sha256 = "sha256-uiV14YTwuGmjZO4NV2ffZOSbl83GtNzJn5mqgQtKOAs=";
+      sha256 = "sha256-YSQq3QGvsWMPTij/Rbj11wT4m1yWplDg4y7xfGdYt0s=";
     };
-    date = "2025-03-05";
+    date = "2025-03-06";
   };
   gluetun-src = {
     pname = "gluetun-src";

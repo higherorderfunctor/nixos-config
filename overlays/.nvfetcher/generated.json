@@ -33,12 +33,12 @@
       "name": null,
       "owner": "arkenfox",
       "repo": "user.js",
-      "rev": "133.0",
-      "sha256": "sha256-iHj+4UGeB1FVGvOWB9ZZA4aiiJynBxRSFFfJqToYEdQ=",
+      "rev": "135.0",
+      "sha256": "sha256-21DoV4SMueMFRHMsvfsPfQIOtsvRWNY06rE4gB7xFnc=",
       "sparseCheckout": [],
       "type": "github"
     },
-    "version": "133.0"
+    "version": "135.0"
   },
   "bruno-deb-x86_64-linux": {
     "cargoLocks": null,
@@ -215,7 +215,7 @@
   },
   "gitlab-language-server": {
     "cargoLocks": null,
-    "date": "2025-03-05",
+    "date": "2025-03-06",
     "extract": null,
     "name": "gitlab-language-server",
     "passthru": null,
@@ -225,13 +225,13 @@
       "fetchSubmodules": false,
       "leaveDotGit": false,
       "name": null,
-      "rev": "743131a2755b73745397f6ce1149e99949c2b42f",
-      "sha256": "sha256-uiV14YTwuGmjZO4NV2ffZOSbl83GtNzJn5mqgQtKOAs=",
+      "rev": "852493b940a883bb642258f6bc0b8879a7e3f9c1",
+      "sha256": "sha256-YSQq3QGvsWMPTij/Rbj11wT4m1yWplDg4y7xfGdYt0s=",
       "sparseCheckout": [],
       "type": "git",
       "url": "https://gitlab.com/gitlab-org/editor-extensions/gitlab-lsp.git"
     },
-    "version": "743131a2755b73745397f6ce1149e99949c2b42f"
+    "version": "852493b940a883bb642258f6bc0b8879a7e3f9c1"
   },
   "gluetun-src": {
     "cargoLocks": null,
