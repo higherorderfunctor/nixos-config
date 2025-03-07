@@ -4,6 +4,7 @@
     ./markdown.nix
     ./openapi.nix
     ./yaml.nix
+    ./zig.nix
   ];
 
   home.packages = with pkgs; [
