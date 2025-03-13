@@ -9,6 +9,7 @@ args: let
     ./bun-overlay.nix
     ./catppuccin-gtk-overlay.nix
     ./dns-root-hints-overlay.nix
+    ./git-branchless.nix
     # ./gitlab-language-server-overlay.nix
     ./fblog-overlay.nix
     ./firefox-nightly-overlay.nix

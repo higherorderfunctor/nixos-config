@@ -25,6 +25,9 @@
       url = "github:nix-community/flake-firefox-nightly";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    git-branchless = {
+      url = "github:arxanas/git-branchless";
+    };
     hyprland = {
       url = "github:hyprwm/Hyprland";
       # inputs = {
