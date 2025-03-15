@@ -3,17 +3,17 @@
 {
   amdvlk = {
     pname = "amdvlk";
-    version = "79a0d4757b173a624e82491e76c04b3b55c7a21d";
+    version = "b29187c0bd82d39e4f93cb77fab75520ff53871f";
     src = fetchgit {
       url = "https://github.com/GPUOpen-Drivers/AMDVLK.git";
-      rev = "79a0d4757b173a624e82491e76c04b3b55c7a21d";
+      rev = "b29187c0bd82d39e4f93cb77fab75520ff53871f";
       fetchSubmodules = false;
       deepClone = false;
       leaveDotGit = false;
       sparseCheckout = [ ];
-      sha256 = "sha256-tNDEsHehSIsY1CF0ZA2WCV2jgRzjwLWh0WquyNNiZwc=";
+      sha256 = "sha256-AyGTvHTgWlq5vDeX0t82kEE03uSj5iv6Mi4lhwnZwLM=";
     };
-    date = "2025-02-28";
+    date = "2025-03-13";
   };
   arkenfox = {
     pname = "arkenfox";
@@ -48,11 +48,11 @@
   };
   bun-x86_64-linux = {
     pname = "bun-x86_64-linux";
-    version = "1.2.4";
+    version = "1.2.5";
     src = fetchurl {
-      url = "https://github.com/oven-sh/bun/releases/download/bun-v1.2.4/bun-linux-x64.zip";
+      url = "https://github.com/oven-sh/bun/releases/download/bun-v1.2.5/bun-linux-x64.zip";
       name = "bun-x86_64-linux.zip";
-      sha256 = "sha256-ity9dM8a8H3DYH6+4yv+WlM1OxrvlRWWN4EYPVxAFYY=";
+      sha256 = "sha256-iPZL7e4zD/TWMo4+kMZpvHrFMUknxgT4XjKeoqHRl5s=";
     };
   };
   catppuccin-btop = {
@@ -96,24 +96,24 @@
   };
   catppuccin-hyprlock = {
     pname = "catppuccin-hyprlock";
-    version = "958e70b1cd8799defd16dee070d07f977d4fd76b";
+    version = "5ce9289bfb578f05b8ad4263ff9112002a7ccf94";
     src = fetchgit {
       url = "https://github.com/catppuccin/hyprlock.git";
-      rev = "958e70b1cd8799defd16dee070d07f977d4fd76b";
+      rev = "5ce9289bfb578f05b8ad4263ff9112002a7ccf94";
       fetchSubmodules = false;
       deepClone = false;
       leaveDotGit = false;
       sparseCheckout = [ ];
-      sha256 = "sha256-l4CbAUeb/Tg603QnZ/VWxuGqRBztpHN0HLX/h8ndc5w=";
+      sha256 = "sha256-ppDGJk9nXvVxI+wUWKYzeyI9KddkEN/4RqWFttkqoc4=";
     };
-    date = "2024-08-06";
+    date = "2025-03-13";
   };
   dns-root-hints = {
     pname = "dns-root-hints";
-    version = "20250226";
+    version = "20250313";
     src = fetchurl {
       url = "https://www.internic.net/domain/named.root";
-      sha256 = "sha256-+EgttKHFRlG+CoC8VVEEayjpBlYri2S9BYG6hmTAmEk=";
+      sha256 = "sha256-uy7OY/kgT9Bh8GBmh+5t8hx9tfLW/eI2DCeCBUOm6xg=";
     };
   };
   fblog = {
@@ -135,17 +135,17 @@
   };
   gitlab-language-server = {
     pname = "gitlab-language-server";
-    version = "852493b940a883bb642258f6bc0b8879a7e3f9c1";
+    version = "a5304ea5fd82306a70f2992cf87e6f86fa46b140";
     src = fetchgit {
       url = "https://gitlab.com/gitlab-org/editor-extensions/gitlab-lsp.git";
-      rev = "852493b940a883bb642258f6bc0b8879a7e3f9c1";
+      rev = "a5304ea5fd82306a70f2992cf87e6f86fa46b140";
       fetchSubmodules = false;
       deepClone = false;
       leaveDotGit = false;
       sparseCheckout = [ ];
-      sha256 = "sha256-YSQq3QGvsWMPTij/Rbj11wT4m1yWplDg4y7xfGdYt0s=";
+      sha256 = "sha256-0hUo2LVMYbFgQ5bEd+3Vx8j/8lzHYwqYIo+TC3iC4Ww=";
     };
-    date = "2025-03-06";
+    date = "2025-03-14";
   };
   gluetun-src = {
     pname = "gluetun-src";
@@ -168,13 +168,13 @@
   };
   oh-my-posh = {
     pname = "oh-my-posh";
-    version = "v25.1.1";
+    version = "v25.4.2";
     src = fetchFromGitHub {
       owner = "JanDeDobbeleer";
       repo = "oh-my-posh";
-      rev = "v25.1.1";
+      rev = "v25.4.2";
       fetchSubmodules = false;
-      sha256 = "sha256-lRbsMhjyTEpvJMA3dxKmSap2KfeO7q/dXZOES7iFhlA=";
+      sha256 = "sha256-0CZE3VC2wGxyHhyEZvlWKVbaUP8KwpdtT+gvwutgvio=";
     };
   };
   otel-desktop-viewer = {
@@ -193,21 +193,21 @@
   };
   otel-tui-x86_64-linux = {
     pname = "otel-tui-x86_64-linux";
-    version = "0.4.2";
+    version = "0.4.3";
     src = fetchurl {
-      url = "https://github.com/ymtdzzz/otel-tui/releases/download/v0.4.2/otel-tui_Linux_x86_64.tar.gz";
-      sha256 = "sha256-cz/Ox18CZYhMDUKOwIEMGSbafX1UFfGrVoXTx1oDrk4=";
+      url = "https://github.com/ymtdzzz/otel-tui/releases/download/v0.4.3/otel-tui_Linux_x86_64.tar.gz";
+      sha256 = "sha256-CSzDnoPSho6XxztSIFcs0Xji9XX6AnjRX9bXOC5yqJY=";
     };
   };
   oxc = {
     pname = "oxc";
-    version = "0.15.13";
+    version = "0.15.15";
     src = fetchurl {
-      url = "https://github.com/oxc-project/oxc/archive/refs/tags/oxlint_v0.15.13.tar.gz";
-      sha256 = "sha256-wZvVdqA+FVx/Iud3vg2QhJFs/BgsFjBjbyrdyqcmthA=";
+      url = "https://github.com/oxc-project/oxc/archive/refs/tags/oxlint_v0.15.15.tar.gz";
+      sha256 = "sha256-W0KcngkjwFRSthVKG/9fo9BH/HXTzPtX0mma1DKrcBk=";
     };
     cargoLock."Cargo.lock" = {
-      lockFile = ./oxc-0.15.13/Cargo.lock;
+      lockFile = ./oxc-0.15.15/Cargo.lock;
       outputHashes = {
         
       };
@@ -215,11 +215,11 @@
   };
   pnpm = {
     pname = "pnpm";
-    version = "10.5.2";
+    version = "10.6.3";
     src = fetchurl {
-      url = "https://registry.npmjs.org/pnpm/-/pnpm-10.5.2.tgz";
+      url = "https://registry.npmjs.org/pnpm/-/pnpm-10.6.3.tgz";
       name = "pnpm.tgz";
-      sha256 = "sha256-eamNqpAki1CBXjFGB5DxGMVv4JkRM3CCbKoBU75tq6U=";
+      sha256 = "sha256-vB7+ku5NQLGnpkTlyp4YVcXF6vxrFRL5AXsxuSRUGds=";
     };
   };
   spectral = {
@@ -266,16 +266,16 @@
   };
   vivid-plasma-themes = {
     pname = "vivid-plasma-themes";
-    version = "1ad2ec91351fc1368a1b044fd6f4d6e9b0f7b3ec";
+    version = "d929797665716a406f2fe095a36c52eb5b9465d3";
     src = fetchgit {
       url = "https://github.com/L4ki/Vivid-Plasma-Themes.git";
-      rev = "1ad2ec91351fc1368a1b044fd6f4d6e9b0f7b3ec";
+      rev = "d929797665716a406f2fe095a36c52eb5b9465d3";
       fetchSubmodules = false;
       deepClone = false;
       leaveDotGit = false;
       sparseCheckout = [ ];
-      sha256 = "sha256-/ibnGwWCWK3h8xh/spD9b11PQPWxCMdiwQT0X1R9Hok=";
+      sha256 = "sha256-StFWNNoV1xF40XZaGS9CWJenNnsCJ94VSiRyXI8oVmA=";
     };
-    date = "2025-03-01";
+    date = "2025-03-08";
   };
 }
