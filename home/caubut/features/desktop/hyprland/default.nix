@@ -132,30 +132,25 @@
         preserve_split = "yes"; # preserve split ratio when resizing
       };
 
-      windowrule = let
-        f = regex: "float, ^(${regex})$";
-      in [
-        (f "org.gnome.Calculator")
-        (f "org.gnome.Nautilus") # FIXME: check
-        (f "org.gnome.font-viewer") # FIXME: check
-        (f "pavucontrol") # FIXME: check
-        (f "nm-connection-editor") # FIXME: check
-        (f "blueberry.py") # FIXME: check
-        (f "org.gnome.Settings") # FIXME: check
-        (f "org.gnome.design.Palette") # FIXME: check
-        (f "Color Picker") # FIXME: check
-        (f "xdg-desktop-portal") # FIXME: check
-        (f "xdg-desktop-portal-gnome") # FIXME: check
-        (f "transmission-gtk") # FIXME: check
-        (f "com.github.Aylur.ags")
+      windowrule = [
+        "float, class:^(org.gnome.Calculator)$"
+        "float, class:^(org.gnome.Nautilus)$" # FIXME: check
+        "float, class:^(org.gnome.font-viewer)$" # FIXME: check
+        "float, class:^(pavucontrol)$" # FIXME: check
+        "float, class:^(nm-connection-editor)$" # FIXME: check
+        "float, class:^(blueberry.py)$" # FIXME: check
+        "float, class:^(org.gnome.Settings)$" # FIXME: check
+        "float, class:^(org.gnome.design.Palette)$" # FIXME: check
+        "float, class:^(Color Picker)$" # FIXME: check
+        "float, class:^(xdg-desktop-portal)$" # FIXME: check
+        "float, class:^(xdg-desktop-portal-gnome)$" # FIXME: check
+        "float, class:^(transmission-gtk)$" # FIXME: check
+        "float, class:^(com.github.Aylur.ags)$"
         "opacity 0.0 override 0.0 override,class:^(xwaylandvideobridge)$"
-        "noanim,class:^(xwaylandvideobridge)$"
-        "noinitialfocus,class:^(xwaylandvideobridge)$"
-        "maxsize 1 1,class:^(xwaylandvideobridge)$"
-        "noblur,class:^(xwaylandvideobridge)$"
-      ];
-
-      windowrulev2 = [
+        "noanim, class:^(xwaylandvideobridge)$"
+        "noinitialfocus, class:^(xwaylandvideobridge)$"
+        "maxsize 1 1, class:^(xwaylandvideobridge)$"
+        "noblur, class:^(xwaylandvideobridge)$"
         # https://github.com/mentalAdventurer/config/blob/97782801b168dc4fb08d423053368956dece9606/hypr/windowrules.conf#L37
         ### Webex"
         "noborder, class:^(CiscoCollabHost), title: ^(PopupWidgetTitle)"

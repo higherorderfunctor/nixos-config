@@ -6,7 +6,7 @@
     settings = {
       theme = "catppuccin-mocha";
       scroll_buffer_size = 50000;
-      # layout_dir
+      show_startup_tips = false;
       ui = {
         pane_frames = {
           hide_session_name = true;

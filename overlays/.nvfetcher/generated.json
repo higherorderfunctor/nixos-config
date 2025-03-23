@@ -49,11 +49,11 @@
     "pinned": false,
     "src": {
       "name": "bruno-x86_64-linux.zip",
-      "sha256": "sha256-N7QLcbgJcwf8xUDCZzKURiF3GgeOYgHWyaR1ITiIJEk=",
+      "sha256": "sha256-avq0NxXas4Gmq1UgXoM6eWNq0AR0nOqX3+1qHkoEwlA=",
       "type": "url",
-      "url": "https://github.com/usebruno/bruno/releases/download/v1.39.1/bruno_1.39.1_amd64_linux.deb"
+      "url": "https://github.com/usebruno/bruno/releases/download/v1.40.0/bruno_1.40.0_amd64_linux.deb"
     },
-    "version": "1.39.1"
+    "version": "1.40.0"
   },
   "btop": {
     "cargoLocks": null,
@@ -154,7 +154,7 @@
   },
   "catppuccin-hyprlock": {
     "cargoLocks": null,
-    "date": "2025-03-13",
+    "date": "2025-03-21",
     "extract": null,
     "name": "catppuccin-hyprlock",
     "passthru": null,
@@ -164,13 +164,13 @@
       "fetchSubmodules": false,
       "leaveDotGit": false,
       "name": null,
-      "rev": "5ce9289bfb578f05b8ad4263ff9112002a7ccf94",
-      "sha256": "sha256-ppDGJk9nXvVxI+wUWKYzeyI9KddkEN/4RqWFttkqoc4=",
+      "rev": "0770fee4afbabf0448b92455b592f00463f26406",
+      "sha256": "sha256-e/uXGFgqcI9k5UULQzo882rNf2r4yqAsPJGBv0oqSmw=",
       "sparseCheckout": [],
       "type": "git",
       "url": "https://github.com/catppuccin/hyprlock.git"
     },
-    "version": "5ce9289bfb578f05b8ad4263ff9112002a7ccf94"
+    "version": "0770fee4afbabf0448b92455b592f00463f26406"
   },
   "dns-root-hints": {
     "cargoLocks": null,
@@ -189,7 +189,10 @@
   },
   "fblog": {
     "cargoLocks": {
-      "Cargo.lock": ["./fblog-v4.13.1/Cargo.lock", {}]
+      "Cargo.lock": [
+        "./fblog-v4.13.1/Cargo.lock",
+        {}
+      ]
     },
     "date": null,
     "extract": null,
@@ -212,7 +215,7 @@
   },
   "gitlab-language-server": {
     "cargoLocks": null,
-    "date": "2025-03-14",
+    "date": "2025-03-21",
     "extract": null,
     "name": "gitlab-language-server",
     "passthru": null,
@@ -222,13 +225,13 @@
       "fetchSubmodules": false,
       "leaveDotGit": false,
       "name": null,
-      "rev": "a5304ea5fd82306a70f2992cf87e6f86fa46b140",
-      "sha256": "sha256-0hUo2LVMYbFgQ5bEd+3Vx8j/8lzHYwqYIo+TC3iC4Ww=",
+      "rev": "a96db9ca2ae1ff94cf1644dc3b93ebeddd4ded23",
+      "sha256": "sha256-AYdI3a4oN3H3eaJa1vMY+iIcscer56n+93ovlSDSpao=",
       "sparseCheckout": [],
       "type": "git",
       "url": "https://gitlab.com/gitlab-org/editor-extensions/gitlab-lsp.git"
     },
-    "version": "a5304ea5fd82306a70f2992cf87e6f86fa46b140"
+    "version": "a96db9ca2ae1ff94cf1644dc3b93ebeddd4ded23"
   },
   "gluetun-src": {
     "cargoLocks": null,
@@ -280,13 +283,13 @@
       "name": null,
       "owner": "JanDeDobbeleer",
       "repo": "oh-my-posh",
-      "rev": "v25.4.2",
-      "sha256": "sha256-0CZE3VC2wGxyHhyEZvlWKVbaUP8KwpdtT+gvwutgvio=",
+      "rev": "v25.5.1",
+      "sha256": "sha256-9hE1AZ2AWE0+Aj5PLPy5xKVIqZ0Ep1attZm+JLeFOJc=",
       "sparseCheckout": [],
       "type": "github"
     },
-    "version": "v25.4.2",
-    "vendorHash": "sha256-GblOrLiVY5Dhn8PQTw+dTNhwlPektwOgYTIZgBb6PSk="
+    "version": "v25.5.1",
+    "vendorHash": "sha256-QcUMFaZLAYQxxuJFJe62oMEha71F/e7SO3SJeAp+ULE="
   },
   "otel-desktop-viewer": {
     "cargoLocks": null,
@@ -317,15 +320,18 @@
     "pinned": false,
     "src": {
       "name": null,
-      "sha256": "sha256-CSzDnoPSho6XxztSIFcs0Xji9XX6AnjRX9bXOC5yqJY=",
+      "sha256": "sha256-hwJCBrUOnd+u2XMkn1YjbQ6Gc7voQPIAbfm56qlrsJc=",
       "type": "url",
-      "url": "https://github.com/ymtdzzz/otel-tui/releases/download/v0.4.3/otel-tui_Linux_x86_64.tar.gz"
+      "url": "https://github.com/ymtdzzz/otel-tui/releases/download/v0.4.8/otel-tui_Linux_x86_64.tar.gz"
     },
-    "version": "0.4.3"
+    "version": "0.4.8"
   },
   "oxc": {
     "cargoLocks": {
-      "Cargo.lock": ["./oxc-0.15.15/Cargo.lock", {}]
+      "Cargo.lock": [
+        "./oxc-0.16.2/Cargo.lock",
+        {}
+      ]
     },
     "date": null,
     "extract": null,
@@ -334,11 +340,11 @@
     "pinned": false,
     "src": {
       "name": null,
-      "sha256": "sha256-W0KcngkjwFRSthVKG/9fo9BH/HXTzPtX0mma1DKrcBk=",
+      "sha256": "sha256-tBnJBbqxn1sU/WBV8fdfKRJNeOM7GMgJ3yfMFK1sqGA=",
       "type": "url",
-      "url": "https://github.com/oxc-project/oxc/archive/refs/tags/oxlint_v0.15.15.tar.gz"
+      "url": "https://github.com/oxc-project/oxc/archive/refs/tags/oxlint_v0.16.2.tar.gz"
     },
-    "version": "0.15.15"
+    "version": "0.16.2"
   },
   "pnpm": {
     "cargoLocks": null,
@@ -349,11 +355,11 @@
     "pinned": false,
     "src": {
       "name": "pnpm.tgz",
-      "sha256": "sha256-vB7+ku5NQLGnpkTlyp4YVcXF6vxrFRL5AXsxuSRUGds=",
+      "sha256": "sha256-R8i8pCtLSFNLWxso1XPFBnc5N7AvaOUpkvvYJpExxcg=",
       "type": "url",
-      "url": "https://registry.npmjs.org/pnpm/-/pnpm-10.6.3.tgz"
+      "url": "https://registry.npmjs.org/pnpm/-/pnpm-10.6.5.tgz"
     },
-    "version": "10.6.3"
+    "version": "10.6.5"
   },
   "spectral": {
     "cargoLocks": null,
@@ -435,7 +441,7 @@
   },
   "vivid-plasma-themes": {
     "cargoLocks": null,
-    "date": "2025-03-08",
+    "date": "2025-03-22",
     "extract": null,
     "name": "vivid-plasma-themes",
     "passthru": null,
@@ -445,12 +451,12 @@
       "fetchSubmodules": false,
       "leaveDotGit": false,
       "name": null,
-      "rev": "d929797665716a406f2fe095a36c52eb5b9465d3",
-      "sha256": "sha256-StFWNNoV1xF40XZaGS9CWJenNnsCJ94VSiRyXI8oVmA=",
+      "rev": "d7879f2e34b0b93024018d8affdb65a4a719c02b",
+      "sha256": "sha256-IdnmwLTvorEnFXfpQhbSCRBVP06tm41dJ9ZyCBEVpFA=",
       "sparseCheckout": [],
       "type": "git",
       "url": "https://github.com/L4ki/Vivid-Plasma-Themes.git"
     },
-    "version": "d929797665716a406f2fe095a36c52eb5b9465d3"
+    "version": "d7879f2e34b0b93024018d8affdb65a4a719c02b"
   }
 }

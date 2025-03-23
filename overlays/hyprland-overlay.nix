@@ -7,7 +7,6 @@ lib.composeManyExtensions [
   inputs.hyprland.overlays.default
   inputs.hypridle.overlays.default
   inputs.hyprland-plugins.overlays.default
-  inputs.hyprland-plugins.overlays.gcc14Stdenv
   inputs.hyprlock.overlays.default
   inputs.hyprpicker.overlays.default
   # inputs.hyprwayland-scanner.overlays.default

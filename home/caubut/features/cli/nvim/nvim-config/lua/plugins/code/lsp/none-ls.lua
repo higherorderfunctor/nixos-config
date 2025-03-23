@@ -55,21 +55,21 @@ return {
       -- require("lazyvim.util").info(vim.inspect(vim.lsp.get_clients({ bufnr = vim.api.nvim_get_current_buf(), method = "textDocument/formatting" })))
       vim.list_extend(opts.sources or {}, {
         -- code actions
-        none_ls.builtins.code_actions.refactoring,  -- go, javascript, lua, python, typescript
-        none_ls.builtins.code_actions.statix,       -- nix
+        none_ls.builtins.code_actions.refactoring, -- go, javascript, lua, python, typescript
+        none_ls.builtins.code_actions.statix, -- nix
         -- diagnostics
-        none_ls.builtins.diagnostics.alex,          -- markdown
-        none_ls.builtins.diagnostics.deadnix,       -- nix
+        none_ls.builtins.diagnostics.alex, -- markdown
+        none_ls.builtins.diagnostics.deadnix, -- nix
         none_ls.builtins.diagnostics.dotenv_linter, -- sh
-        none_ls.builtins.diagnostics.markdownlint,  -- markdown
-        none_ls.builtins.diagnostics.pylint,        -- python
-        none_ls.builtins.diagnostics.selene,        -- lua
-        none_ls.builtins.diagnostics.statix,        -- nix
+        none_ls.builtins.diagnostics.markdownlint, -- markdown
+        none_ls.builtins.diagnostics.pylint, -- python
+        none_ls.builtins.diagnostics.selene, -- lua
+        none_ls.builtins.diagnostics.statix, -- nix
         -- formatting
-        none_ls.builtins.formatting.alejandra,      -- nix
-        none_ls.builtins.formatting.markdownlint,   -- markdown
-        none_ls.builtins.formatting.shellharden,    -- sh
-        none_ls.builtins.formatting.shfmt,          -- sh
+        none_ls.builtins.formatting.alejandra, -- nix
+        -- none_ls.builtins.formatting.markdownlint,   -- markdown
+        none_ls.builtins.formatting.shellharden, -- sh
+        none_ls.builtins.formatting.shfmt, -- sh
         -- none_ls.builtins.formatting.stylua, -- lua
         none_ls.builtins.formatting.stylua.with({
           command = "/etc/profiles/per-user/caubut/bin/stylua",
@@ -96,7 +96,7 @@ return {
           },
         }),
         -- hover
-        none_ls.builtins.hover.printenv,   -- sh, dosbatch, ps1
+        none_ls.builtins.hover.printenv, -- sh, dosbatch, ps1
         none_ls.builtins.hover.dictionary, -- org, text, markdown
       })
       require("null-ls").setup(opts)

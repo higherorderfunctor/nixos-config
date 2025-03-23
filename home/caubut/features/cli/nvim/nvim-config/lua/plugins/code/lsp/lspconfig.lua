@@ -128,6 +128,7 @@ return {
             cmd = { "lua-language-server" },
             mason = false,
           },
+          dprint = { mason = false },
           marksman = { mason = false },
           nil_ls = { mason = false },
           nixd = { mason = false },
