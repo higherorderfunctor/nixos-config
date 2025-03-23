@@ -1,11 +1,12 @@
 {
-  lib,
   config,
+  inputs,
   ...
 }: let
   username = "caubut";
 in {
-  imports = [../../common/shared];
+  imports = [inputs.sops-nix.nixosModules.sops ../../common/shared];
+
   nix = {
     gc = {
       dates = "weekly";
