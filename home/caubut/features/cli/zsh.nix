@@ -29,6 +29,7 @@ in {
       nv = "${config.home.homeDirectory}/Documents/projects/nixos-config/scripts/nix-update";
       sw = "NIX_DEBUG=8 sudo nixos-rebuild --show-trace --option eval-cache false --flake \"${config.home.homeDirectory}/Documents/projects/nixos-config#$(hostname)\" switch"; # -b backup
       gc = "nix store gc";
+      # git = "git-branchless wrap --";
     };
     # TODO: https://thevaluable.dev/zsh-completion-guide-examples/
     initExtraBeforeCompInit = ''
@@ -79,6 +80,8 @@ in {
 
       # colors
       zstyle ':completion:*:default' list-colors ''${(s.:.)LS_COLORS}
+
+      function git() { git-branchless wrap -- "$@" }
     '';
   };
 
