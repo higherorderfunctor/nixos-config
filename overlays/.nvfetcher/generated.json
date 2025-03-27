@@ -49,11 +49,11 @@
     "pinned": false,
     "src": {
       "name": "bruno-x86_64-linux.zip",
-      "sha256": "sha256-avq0NxXas4Gmq1UgXoM6eWNq0AR0nOqX3+1qHkoEwlA=",
+      "sha256": "sha256-o2Cgyf5YdPzrrr8Hc5rTcQfbt4locmTNOuY+WJ7oQIE=",
       "type": "url",
-      "url": "https://github.com/usebruno/bruno/releases/download/v1.40.0/bruno_1.40.0_amd64_linux.deb"
+      "url": "https://github.com/usebruno/bruno/releases/download/v1.40.1/bruno_1.40.1_amd64_linux.deb"
     },
-    "version": "1.40.0"
+    "version": "1.40.1"
   },
   "btop": {
     "cargoLocks": null,
@@ -85,11 +85,11 @@
     "pinned": false,
     "src": {
       "name": "bun-x86_64-linux.zip",
-      "sha256": "sha256-iPZL7e4zD/TWMo4+kMZpvHrFMUknxgT4XjKeoqHRl5s=",
+      "sha256": "sha256-z96q3OE/6DgepiFMpyEuhUb6+Iom8+23yNbGpqvFjh8=",
       "type": "url",
-      "url": "https://github.com/oven-sh/bun/releases/download/bun-v1.2.5/bun-linux-x64.zip"
+      "url": "https://github.com/oven-sh/bun/releases/download/bun-v1.2.6/bun-linux-x64.zip"
     },
-    "version": "1.2.5"
+    "version": "1.2.6"
   },
   "catppuccin-btop": {
     "cargoLocks": null,
@@ -181,11 +181,11 @@
     "pinned": false,
     "src": {
       "name": null,
-      "sha256": "sha256-uy7OY/kgT9Bh8GBmh+5t8hx9tfLW/eI2DCeCBUOm6xg=",
+      "sha256": "sha256-oqgvtFM6nmU+0qybM8eNvunAgztPR6oNaMGTtGlFRiI=",
       "type": "url",
       "url": "https://www.internic.net/domain/named.root"
     },
-    "version": "20250313"
+    "version": "20250326"
   },
   "fblog": {
     "cargoLocks": {
@@ -215,7 +215,7 @@
   },
   "gitlab-language-server": {
     "cargoLocks": null,
-    "date": "2025-03-21",
+    "date": "2025-03-26",
     "extract": null,
     "name": "gitlab-language-server",
     "passthru": null,
@@ -225,13 +225,13 @@
       "fetchSubmodules": false,
       "leaveDotGit": false,
       "name": null,
-      "rev": "a96db9ca2ae1ff94cf1644dc3b93ebeddd4ded23",
-      "sha256": "sha256-AYdI3a4oN3H3eaJa1vMY+iIcscer56n+93ovlSDSpao=",
+      "rev": "78d9d55a1a1b279eff9ba7f745c2dfe2357dc627",
+      "sha256": "sha256-Bmu8CyyWhrGWX3zzSnpUT4SzSnGhtmqVsViKQuTtQ68=",
       "sparseCheckout": [],
       "type": "git",
       "url": "https://gitlab.com/gitlab-org/editor-extensions/gitlab-lsp.git"
     },
-    "version": "a96db9ca2ae1ff94cf1644dc3b93ebeddd4ded23"
+    "version": "78d9d55a1a1b279eff9ba7f745c2dfe2357dc627"
   },
   "gluetun-src": {
     "cargoLocks": null,
@@ -283,12 +283,12 @@
       "name": null,
       "owner": "JanDeDobbeleer",
       "repo": "oh-my-posh",
-      "rev": "v25.5.1",
-      "sha256": "sha256-9hE1AZ2AWE0+Aj5PLPy5xKVIqZ0Ep1attZm+JLeFOJc=",
+      "rev": "v25.6.0",
+      "sha256": "sha256-ZgoDeVFmqTRf86riTTERv++7jGiqff1K85gvpwtPMyk=",
       "sparseCheckout": [],
       "type": "github"
     },
-    "version": "v25.5.1",
+    "version": "v25.6.0",
     "vendorHash": "sha256-QcUMFaZLAYQxxuJFJe62oMEha71F/e7SO3SJeAp+ULE="
   },
   "otel-desktop-viewer": {
@@ -329,7 +329,7 @@
   "oxc": {
     "cargoLocks": {
       "Cargo.lock": [
-        "./oxc-0.16.2/Cargo.lock",
+        "./oxc-0.16.3/Cargo.lock",
         {}
       ]
     },
@@ -340,11 +340,11 @@
     "pinned": false,
     "src": {
       "name": null,
-      "sha256": "sha256-tBnJBbqxn1sU/WBV8fdfKRJNeOM7GMgJ3yfMFK1sqGA=",
+      "sha256": "sha256-zE9M0yJxbeaGZPahNFrpUcAn6b0LUPYQfCpsQZTAgOY=",
       "type": "url",
-      "url": "https://github.com/oxc-project/oxc/archive/refs/tags/oxlint_v0.16.2.tar.gz"
+      "url": "https://github.com/oxc-project/oxc/archive/refs/tags/oxlint_v0.16.3.tar.gz"
     },
-    "version": "0.16.2"
+    "version": "0.16.3"
   },
   "pnpm": {
     "cargoLocks": null,
@@ -355,11 +355,11 @@
     "pinned": false,
     "src": {
       "name": "pnpm.tgz",
-      "sha256": "sha256-R8i8pCtLSFNLWxso1XPFBnc5N7AvaOUpkvvYJpExxcg=",
+      "sha256": "sha256-NcqyaVO/kIR+eYg521jJoqgtUmt68Xn9KhA8GCQsrcY=",
       "type": "url",
-      "url": "https://registry.npmjs.org/pnpm/-/pnpm-10.6.5.tgz"
+      "url": "https://registry.npmjs.org/pnpm/-/pnpm-10.7.0.tgz"
     },
-    "version": "10.6.5"
+    "version": "10.7.0"
   },
   "spectral": {
     "cargoLocks": null,

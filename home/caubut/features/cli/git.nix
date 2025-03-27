@@ -6,6 +6,7 @@
 }: let
   username = "${config.home.username}";
 in {
+  home.packages = with pkgs; [git-branchless];
   programs.git = {
     enable = true;
     package = pkgs.git;

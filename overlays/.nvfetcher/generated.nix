@@ -28,11 +28,11 @@
   };
   bruno-deb-x86_64-linux = {
     pname = "bruno-deb-x86_64-linux";
-    version = "1.40.0";
+    version = "1.40.1";
     src = fetchurl {
-      url = "https://github.com/usebruno/bruno/releases/download/v1.40.0/bruno_1.40.0_amd64_linux.deb";
+      url = "https://github.com/usebruno/bruno/releases/download/v1.40.1/bruno_1.40.1_amd64_linux.deb";
       name = "bruno-x86_64-linux.zip";
-      sha256 = "sha256-avq0NxXas4Gmq1UgXoM6eWNq0AR0nOqX3+1qHkoEwlA=";
+      sha256 = "sha256-o2Cgyf5YdPzrrr8Hc5rTcQfbt4locmTNOuY+WJ7oQIE=";
     };
   };
   btop = {
@@ -48,11 +48,11 @@
   };
   bun-x86_64-linux = {
     pname = "bun-x86_64-linux";
-    version = "1.2.5";
+    version = "1.2.6";
     src = fetchurl {
-      url = "https://github.com/oven-sh/bun/releases/download/bun-v1.2.5/bun-linux-x64.zip";
+      url = "https://github.com/oven-sh/bun/releases/download/bun-v1.2.6/bun-linux-x64.zip";
       name = "bun-x86_64-linux.zip";
-      sha256 = "sha256-iPZL7e4zD/TWMo4+kMZpvHrFMUknxgT4XjKeoqHRl5s=";
+      sha256 = "sha256-z96q3OE/6DgepiFMpyEuhUb6+Iom8+23yNbGpqvFjh8=";
     };
   };
   catppuccin-btop = {
@@ -110,10 +110,10 @@
   };
   dns-root-hints = {
     pname = "dns-root-hints";
-    version = "20250313";
+    version = "20250326";
     src = fetchurl {
       url = "https://www.internic.net/domain/named.root";
-      sha256 = "sha256-uy7OY/kgT9Bh8GBmh+5t8hx9tfLW/eI2DCeCBUOm6xg=";
+      sha256 = "sha256-oqgvtFM6nmU+0qybM8eNvunAgztPR6oNaMGTtGlFRiI=";
     };
   };
   fblog = {
@@ -135,17 +135,17 @@
   };
   gitlab-language-server = {
     pname = "gitlab-language-server";
-    version = "a96db9ca2ae1ff94cf1644dc3b93ebeddd4ded23";
+    version = "78d9d55a1a1b279eff9ba7f745c2dfe2357dc627";
     src = fetchgit {
       url = "https://gitlab.com/gitlab-org/editor-extensions/gitlab-lsp.git";
-      rev = "a96db9ca2ae1ff94cf1644dc3b93ebeddd4ded23";
+      rev = "78d9d55a1a1b279eff9ba7f745c2dfe2357dc627";
       fetchSubmodules = false;
       deepClone = false;
       leaveDotGit = false;
       sparseCheckout = [ ];
-      sha256 = "sha256-AYdI3a4oN3H3eaJa1vMY+iIcscer56n+93ovlSDSpao=";
+      sha256 = "sha256-Bmu8CyyWhrGWX3zzSnpUT4SzSnGhtmqVsViKQuTtQ68=";
     };
-    date = "2025-03-21";
+    date = "2025-03-26";
   };
   gluetun-src = {
     pname = "gluetun-src";
@@ -168,13 +168,13 @@
   };
   oh-my-posh = {
     pname = "oh-my-posh";
-    version = "v25.5.1";
+    version = "v25.6.0";
     src = fetchFromGitHub {
       owner = "JanDeDobbeleer";
       repo = "oh-my-posh";
-      rev = "v25.5.1";
+      rev = "v25.6.0";
       fetchSubmodules = false;
-      sha256 = "sha256-9hE1AZ2AWE0+Aj5PLPy5xKVIqZ0Ep1attZm+JLeFOJc=";
+      sha256 = "sha256-ZgoDeVFmqTRf86riTTERv++7jGiqff1K85gvpwtPMyk=";
     };
   };
   otel-desktop-viewer = {
@@ -201,13 +201,13 @@
   };
   oxc = {
     pname = "oxc";
-    version = "0.16.2";
+    version = "0.16.3";
     src = fetchurl {
-      url = "https://github.com/oxc-project/oxc/archive/refs/tags/oxlint_v0.16.2.tar.gz";
-      sha256 = "sha256-tBnJBbqxn1sU/WBV8fdfKRJNeOM7GMgJ3yfMFK1sqGA=";
+      url = "https://github.com/oxc-project/oxc/archive/refs/tags/oxlint_v0.16.3.tar.gz";
+      sha256 = "sha256-zE9M0yJxbeaGZPahNFrpUcAn6b0LUPYQfCpsQZTAgOY=";
     };
     cargoLock."Cargo.lock" = {
-      lockFile = ./oxc-0.16.2/Cargo.lock;
+      lockFile = ./oxc-0.16.3/Cargo.lock;
       outputHashes = {
         
       };
@@ -215,11 +215,11 @@
   };
   pnpm = {
     pname = "pnpm";
-    version = "10.6.5";
+    version = "10.7.0";
     src = fetchurl {
-      url = "https://registry.npmjs.org/pnpm/-/pnpm-10.6.5.tgz";
+      url = "https://registry.npmjs.org/pnpm/-/pnpm-10.7.0.tgz";
       name = "pnpm.tgz";
-      sha256 = "sha256-R8i8pCtLSFNLWxso1XPFBnc5N7AvaOUpkvvYJpExxcg=";
+      sha256 = "sha256-NcqyaVO/kIR+eYg521jJoqgtUmt68Xn9KhA8GCQsrcY=";
     };
   };
   spectral = {
