@@ -28,11 +28,11 @@
   };
   bruno-deb-x86_64-linux = {
     pname = "bruno-deb-x86_64-linux";
-    version = "1.40.1";
+    version = "2.0.1";
     src = fetchurl {
-      url = "https://github.com/usebruno/bruno/releases/download/v1.40.1/bruno_1.40.1_amd64_linux.deb";
+      url = "https://github.com/usebruno/bruno/releases/download/v2.0.1/bruno_2.0.1_amd64_linux.deb";
       name = "bruno-x86_64-linux.zip";
-      sha256 = "sha256-o2Cgyf5YdPzrrr8Hc5rTcQfbt4locmTNOuY+WJ7oQIE=";
+      sha256 = "sha256-qqdjMu+7sbnMFUe+h2ccTsUNFUY9Y04TVtdcuFmNhQs=";
     };
   };
   btop = {
@@ -48,11 +48,11 @@
   };
   bun-x86_64-linux = {
     pname = "bun-x86_64-linux";
-    version = "1.2.6";
+    version = "1.2.7";
     src = fetchurl {
-      url = "https://github.com/oven-sh/bun/releases/download/bun-v1.2.6/bun-linux-x64.zip";
+      url = "https://github.com/oven-sh/bun/releases/download/bun-v1.2.7/bun-linux-x64.zip";
       name = "bun-x86_64-linux.zip";
-      sha256 = "sha256-z96q3OE/6DgepiFMpyEuhUb6+Iom8+23yNbGpqvFjh8=";
+      sha256 = "sha256-hHsTjLGOq4Inyx87Fu3Kuvdk5Yp5pef5BeunaOo138s=";
     };
   };
   catppuccin-btop = {
@@ -135,17 +135,17 @@
   };
   gitlab-language-server = {
     pname = "gitlab-language-server";
-    version = "78d9d55a1a1b279eff9ba7f745c2dfe2357dc627";
+    version = "1445c97ceec987e4d3c53f4e2f98c668c65dbfc1";
     src = fetchgit {
       url = "https://gitlab.com/gitlab-org/editor-extensions/gitlab-lsp.git";
-      rev = "78d9d55a1a1b279eff9ba7f745c2dfe2357dc627";
+      rev = "1445c97ceec987e4d3c53f4e2f98c668c65dbfc1";
       fetchSubmodules = false;
       deepClone = false;
       leaveDotGit = false;
       sparseCheckout = [ ];
-      sha256 = "sha256-Bmu8CyyWhrGWX3zzSnpUT4SzSnGhtmqVsViKQuTtQ68=";
+      sha256 = "sha256-6+WAYjPLCkE+T6vV0cefsMjuGSy7ybRd8eeht3ah12w=";
     };
-    date = "2025-03-26";
+    date = "2025-03-28";
   };
   gluetun-src = {
     pname = "gluetun-src";
@@ -168,13 +168,13 @@
   };
   oh-my-posh = {
     pname = "oh-my-posh";
-    version = "v25.6.0";
+    version = "v25.8.0";
     src = fetchFromGitHub {
       owner = "JanDeDobbeleer";
       repo = "oh-my-posh";
-      rev = "v25.6.0";
+      rev = "v25.8.0";
       fetchSubmodules = false;
-      sha256 = "sha256-ZgoDeVFmqTRf86riTTERv++7jGiqff1K85gvpwtPMyk=";
+      sha256 = "sha256-whTa190b9NcNhB8tOursqEgS0fM15TFXbozdlO5Io0I=";
     };
   };
   otel-desktop-viewer = {
@@ -266,16 +266,16 @@
   };
   vivid-plasma-themes = {
     pname = "vivid-plasma-themes";
-    version = "d7879f2e34b0b93024018d8affdb65a4a719c02b";
+    version = "adac46229829855e47bfc41f7f0e1804d268c419";
     src = fetchgit {
       url = "https://github.com/L4ki/Vivid-Plasma-Themes.git";
-      rev = "d7879f2e34b0b93024018d8affdb65a4a719c02b";
+      rev = "adac46229829855e47bfc41f7f0e1804d268c419";
       fetchSubmodules = false;
       deepClone = false;
       leaveDotGit = false;
       sparseCheckout = [ ];
-      sha256 = "sha256-IdnmwLTvorEnFXfpQhbSCRBVP06tm41dJ9ZyCBEVpFA=";
+      sha256 = "sha256-HFLlajVUMRTpsE4tqZA+fAqeUxZsTKHHwxGLD0sWsTU=";
     };
-    date = "2025-03-22";
+    date = "2025-03-29";
   };
 }

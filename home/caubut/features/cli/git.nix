@@ -16,6 +16,15 @@ in {
     extraConfig = {
       column.ui = "auto";
       branch.sort = "-committerdate";
+      branchless = {
+        core = {
+          mainBranch = "main";
+        };
+        smartlog = {
+          defaultRevset = "(@ % main()) | stack() | descendants(@) | @";
+          # ((draft() | branches() | @) % main()) | branches() | @
+        };
+      };
       commit.verbose = true;
       core = {
         fsmonitor = true;
