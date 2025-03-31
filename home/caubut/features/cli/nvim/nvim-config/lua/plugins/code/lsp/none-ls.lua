@@ -74,27 +74,27 @@ return {
         none_ls.builtins.formatting.stylua.with({
           command = "/etc/profiles/per-user/caubut/bin/stylua",
         }),
-        none_ls.builtins.formatting.prettierd.with({
-          filetypes = {
-            -- "javascript",
-            -- "javascriptreact",
-            -- "typescript",
-            -- "typescriptreact",
-            -- "vue",
-            "css",
-            "scss",
-            -- "less",
-            "html",
-            "json",
-            "jsonc",
-            "json5",
-            -- "yaml",
-            -- "markdown",
-            -- "markdown.mdx",
-            "graphql",
-            -- "handlebars",
-          },
-        }),
+        -- none_ls.builtins.formatting.prettierd.with({
+        --   filetypes = {
+        --     -- "javascript",
+        --     -- "javascriptreact",
+        --     -- "typescript",
+        --     -- "typescriptreact",
+        --     -- "vue",
+        --     -- "css",
+        --     -- "scss",
+        --     -- "less",
+        --     -- "html",
+        --     -- "json",
+        --     -- "jsonc",
+        --     -- "json5",
+        --     -- "yaml",
+        --     -- "markdown",
+        --     -- "markdown.mdx",
+        --     -- "graphql",
+        --     -- "handlebars",
+        --   },
+        -- }),
         -- hover
         none_ls.builtins.hover.printenv, -- sh, dosbatch, ps1
         none_ls.builtins.hover.dictionary, -- org, text, markdown
