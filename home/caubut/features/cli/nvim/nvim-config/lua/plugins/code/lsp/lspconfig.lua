@@ -153,26 +153,33 @@ return {
             cmd = { "/etc/profiles/per-user/caubut/bin/yaml-language-server", "--stdio" },
             mason = false,
           },
-          -- vtsls = {
-          --   tsserver = {
-          --     globalPlugins = {
-          --       {
-          --         configNamespace = "typescript",
-          --         enableForWorkspaceTypeScriptVersions = true,
-          --         languages = { "typescript", "vue" },
-          --         location = "/home/caubut/.local/share/nvim/mason/packages/vue-language-server//node_modules/@vue/language-server",
-          --         name = "@vue/typescript-plugin",
-          --       },
-          --     },
-          --   },
-          -- },
-          -- tsserver = {
-          --   cmd = {
-          --     "bunx",
-          --     "typescript-language-server",
-          --     "--stdio",
-          --   },
-          -- },
+          vtsls = {
+            settings = {
+              typescript = {
+                tsserver = {
+                  pluginPaths = { "./node_modules" },
+                },
+              },
+            },
+            --   tsserver = {
+            --     globalPlugins = {
+            --       {
+            --         configNamespace = "typescript",
+            --         enableForWorkspaceTypeScriptVersions = true,
+            --         languages = { "typescript", "vue" },
+            --         location = "/home/caubut/.local/share/nvim/mason/packages/vue-language-server//node_modules/@vue/language-server",
+            --         name = "@vue/typescript-plugin",
+            --       },
+            --     },
+            --   },
+            -- },
+            -- tsserver = {
+            --   cmd = {
+            --     "bunx",
+            --     "typescript-language-server",
+            --     "--stdio",
+            --   },
+          },
         },
         format = { timeout_ms = 60000 },
       })
@@ -194,9 +201,23 @@ return {
       for _, plugin in ipairs(plugins) do
         if plugin.name == "@vue/typescript-plugin" then
           plugin.languages = { "vue", "typescript" }
+          plugin.location = LazyVim.root() .. "/node_modules/@vue/language-server"
           break
         end
       end
+      return opts
     end,
   },
 }
+-- opts = function(_, opts)
+--   table.insert(opts.servers.vtsls.filetypes, "vue")
+--   LazyVim.extend(opts.servers.vtsls, "settings.vtsls.tsserver.globalPlugins", {
+--     {
+--       name = "@vue/typescript-plugin",
+--       location = LazyVim.get_pkg_path("vue-language-server", "/node_modules/@vue/language-server"),
+--       languages = { "vue" },
+--       configNamespace = "typescript",
+--       enableForWorkspaceTypeScriptVersions = true,
+--     },
+--   })
+-- end
