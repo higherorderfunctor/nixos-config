@@ -27,6 +27,7 @@ in {
       };
       commit.verbose = true;
       core = {
+        autocrlf = "input";
         fsmonitor = true;
         untrackedCache = true;
       };
@@ -38,15 +39,15 @@ in {
         renames = true;
       };
       fetch = {
+        all = true;
         prune = true;
         pruneTags = true;
-        all = true;
       };
       help.autocorrect = "prompt";
       init.defaultBranch = "main";
       tag.sort = "version:refname";
       merge = {
-        conflictStyle = "diff3";
+        conflictStyle = "zdiff3";
         tool = "diffview";
       };
       mergetool = {
