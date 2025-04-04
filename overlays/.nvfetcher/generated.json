@@ -215,7 +215,7 @@
   },
   "gitlab-language-server": {
     "cargoLocks": null,
-    "date": "2025-04-02",
+    "date": "2025-04-03",
     "extract": null,
     "name": "gitlab-language-server",
     "passthru": null,
@@ -225,13 +225,13 @@
       "fetchSubmodules": false,
       "leaveDotGit": false,
       "name": null,
-      "rev": "e783536190b19c1d10228e64a5d232ab948a5466",
-      "sha256": "sha256-v6awyPB+qSVgjDK9c8H0Z+hOVM+dYUr+wpkALU9pROo=",
+      "rev": "8a116d2ea63a79e0d7ed94d0afebb4767e39e707",
+      "sha256": "sha256-+RlOf7b3NR7zMKUHo/eT1ZyO92DwrOXFluuRMIzWTe0=",
       "sparseCheckout": [],
       "type": "git",
       "url": "https://gitlab.com/gitlab-org/editor-extensions/gitlab-lsp.git"
     },
-    "version": "e783536190b19c1d10228e64a5d232ab948a5466"
+    "version": "8a116d2ea63a79e0d7ed94d0afebb4767e39e707"
   },
   "gluetun-src": {
     "cargoLocks": null,
@@ -283,12 +283,12 @@
       "name": null,
       "owner": "JanDeDobbeleer",
       "repo": "oh-my-posh",
-      "rev": "v25.11.2",
-      "sha256": "sha256-nbyHkO9g8XqiGwfOVBnei/XOCQS8keiGnEL6qwEydWg=",
+      "rev": "v25.12.0",
+      "sha256": "sha256-7cecxQSqLo/w2WHeUFfJAWQrdWxwl1oX2Kqy6sO44+Y=",
       "sparseCheckout": [],
       "type": "github"
     },
-    "version": "v25.11.2",
+    "version": "v25.12.0",
     "vendorHash": "sha256-a0dfmr0A5u+2Vt2ALEpDL+X09rPYIpJw5PiYoxVtb+Q="
   },
   "otel-desktop-viewer": {

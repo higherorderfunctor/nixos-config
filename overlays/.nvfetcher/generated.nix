@@ -135,17 +135,17 @@
   };
   gitlab-language-server = {
     pname = "gitlab-language-server";
-    version = "e783536190b19c1d10228e64a5d232ab948a5466";
+    version = "8a116d2ea63a79e0d7ed94d0afebb4767e39e707";
     src = fetchgit {
       url = "https://gitlab.com/gitlab-org/editor-extensions/gitlab-lsp.git";
-      rev = "e783536190b19c1d10228e64a5d232ab948a5466";
+      rev = "8a116d2ea63a79e0d7ed94d0afebb4767e39e707";
       fetchSubmodules = false;
       deepClone = false;
       leaveDotGit = false;
       sparseCheckout = [ ];
-      sha256 = "sha256-v6awyPB+qSVgjDK9c8H0Z+hOVM+dYUr+wpkALU9pROo=";
+      sha256 = "sha256-+RlOf7b3NR7zMKUHo/eT1ZyO92DwrOXFluuRMIzWTe0=";
     };
-    date = "2025-04-02";
+    date = "2025-04-03";
   };
   gluetun-src = {
     pname = "gluetun-src";
@@ -168,13 +168,13 @@
   };
   oh-my-posh = {
     pname = "oh-my-posh";
-    version = "v25.11.2";
+    version = "v25.12.0";
     src = fetchFromGitHub {
       owner = "JanDeDobbeleer";
       repo = "oh-my-posh";
-      rev = "v25.11.2";
+      rev = "v25.12.0";
       fetchSubmodules = false;
-      sha256 = "sha256-nbyHkO9g8XqiGwfOVBnei/XOCQS8keiGnEL6qwEydWg=";
+      sha256 = "sha256-7cecxQSqLo/w2WHeUFfJAWQrdWxwl1oX2Kqy6sO44+Y=";
     };
   };
   otel-desktop-viewer = {
