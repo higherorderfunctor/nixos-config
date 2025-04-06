@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+
+set -euETo pipefail
+shopt -s inherit_errexit 2>/dev/null || :
+
+mapfile -t my_array < <(home-manager generations | cut -d" " -f5 | sed -e 1b -e '$!d')
+first="${my_array[1]}"
+last=$(("${my_array[0]}" - 1))
+for i in $(seq "$first" "$last"); do
+    home-manager remove-generations "$i"
+done

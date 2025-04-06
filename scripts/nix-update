@@ -1,0 +1,100 @@
+#!/usr/bin/env bash
+
+set -euETo pipefail
+shopt -s inherit_errexit 2>/dev/null || :
+
+cd "$(dirname "$0")"/..
+
+FAKE_HASH="sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA="
+
+FLAKE=1
+
+# get the current flake's store path
+NIX_PATH="nixpkgs=$(nix flake prefetch nixpkgs --json | jq --raw-output '.storePath')"
+export NIX_PATH
+echo "$NIX_PATH"
+
+while [[ $# -gt 0 ]]; do
+	case $1 in
+
+	--noflake)
+		FLAKE=0
+		;;
+
+	*)
+		echo -e "Unknown option: $1\n"
+		exit 1
+		;;
+
+	esac
+	shift
+done
+
+##
+# Cache externally generated hashes for nvfetcher
+oh_my_posh_vendor_hash=$(yq -r '.oh-my-posh.vendorHash // "'"$FAKE_HASH"'"' overlays/.nvfetcher/generated.json)
+
+##
+# Run nvfetcher to get updates
+nvfetcher -k ~/.config/nvfetcher/keyfile.toml -o overlays/.nvfetcher
+
+# tmp_dir=$(mktemp -d)
+# git clone --depth 1 https://gitlab.com/gitlab-org/editor-extensions/gitlab-lsp.git "$tmp_dir"
+# cd "$tmp_dir"
+# nix run nixpkgs#npm-lockfile-fix -- package-lock.json
+# deps_hash="$(FORCE_GIT_DEPS=true nix run nixpkgs#prefetch-npm-deps package-lock.json)"
+# git add package-lock.json
+# git diff --cached >fix-package-lock.patch
+# cd "$(dirname "$0")"/..
+# mkdir -p overlays/.nvfetcher/gitlab-language-server
+# mv "$tmp_dir/fix-package-lock.patch" overlays/.nvfetcher/gitlab-language-server/
+# yq -iP '.["gitlab-language-server"].npmDepsHash = "'"$deps_hash"'"' overlays/.nvfetcher/generated.json -o json
+
+##
+# Restore externally generated hashes
+#
+# nvfetcher always writes a file with or without updates so they need
+# to be restored. and then fixed after if there is an actual update
+yq e -iP '.oh-my-posh.vendorHash = "'"$oh_my_posh_vendor_hash"'"' overlays/.nvfetcher/generated.json -o json
+
+##
+# Fixup externally generated hashes
+(
+	# used to collect command output while still piping it to stdout
+	exec 5>&1
+
+	# oh-my-posh
+	oh_my_posh="$(
+		cat <<EOF
+{ pkgs ? import <nixpkgs> { overlays = [(import ./overlays/oh-my-posh-overlay.nix {}) ]; } }:
+pkgs.oh-my-posh
+EOF
+	)"
+
+	# this command succeeds if its already in the store and the rest is skipped,
+	# otherwise, on failure, it tries to build, captures the correct hash, and updates generated.json
+	if ! output=$(nix-build --expr "$oh_my_posh" 2>&1 | tee >(cat - >&5)); then
+		# if the command fails, it should just be on the vendor hash which is captured
+		oh_my_posh_vendor_hash=$(echo "$output" | grep -oP 'got:\s+\Ksha256-[a-zA-Z0-9+/=]+')
+		echo -e "\nUpdating vendorHash: $oh_my_posh_vendor_hash\n"
+		yq e -iP '.oh-my-posh.vendorHash = "'"$oh_my_posh_vendor_hash"'"' overlays/.nvfetcher/generated.json -o json
+	fi
+
+	rm -rf result 2>/dev/null
+)
+
+# SPECTRAL_VERSION=$(yq -r '.spectral.version' overlays/.nvfetcher/generated.json)
+# mkdir -p overlays/.nvfetcher/spectral
+# curl -o overlays/.nvfetcher/spectral/yarn.lock \
+#   "https://raw.githubusercontent.com/stoplightio/spectral/refs/tags/${SPECTRAL_VERSION}/yarn.lock"
+# if ! git diff --quiet HEAD -- overlays/.nvfetcher/spectral/yarn.lock; then
+#   nix run nixpkgs#yarn-lock-converter -- -i overlays/.nvfetcher/spectral/yarn.lock -o overlays/.nvfetcher/spectral/yarn.lock
+# fi
+
+# cargo locks and stuff
+git add overlays/.nvfetcher
+
+# update flake dependencies
+if [ "$FLAKE" = "1" ]; then
+	nix flake update
+fi

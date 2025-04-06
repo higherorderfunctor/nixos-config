@@ -1,0 +1,181 @@
+[amdvlk]
+src.git = "https://github.com/GPUOpen-Drivers/AMDVLK.git"
+src.use_commit = true
+src.branch = "master"
+fetch.git = "https://github.com/GPUOpen-Drivers/AMDVLK.git"
+
+[arkenfox]
+src.github = "arkenfox/user.js"
+fetch.github = "arkenfox/user.js"
+
+[btop]
+src.github = "aristocratos/btop"
+fetch.github = "aristocratos/btop"
+
+[bun-x86_64-linux]
+src.github = "oven-sh/bun"
+src.from_pattern = "bun-v([0-9]+\\.[0-9]+\\.[0-9]+)"
+src.to_pattern = "\\1"
+fetch.url = "https://github.com/oven-sh/bun/releases/download/bun-v$ver/bun-linux-x64.zip"
+url.name = "bun-x86_64-linux.zip"
+
+[bruno-deb-x86_64-linux]
+src.github = "usebruno/bruno"
+src.from_pattern = "v([0-9]+\\.[0-9]+\\.[0-9]+)"
+src.to_pattern = "\\1"
+fetch.url = "https://github.com/usebruno/bruno/releases/download/v$ver/bruno_$ver_amd64_linux.deb"
+url.name = "bruno-x86_64-linux.zip"
+
+[catppuccin-btop]
+src.github = "catppuccin/btop"
+fetch.github = "catppuccin/btop"
+
+[catppuccin-gtk]
+src.git = "https://github.com/catppuccin/gtk.git"
+src.use_commit = true
+fetch.git = "https://github.com/catppuccin/gtk.git"
+
+[catppuccin-hyprland ]
+src.git = "https://github.com/catppuccin/hyprland.git"
+src.use_commit = true
+src.branch = "main"
+fetch.git = "https://github.com/catppuccin/hyprland.git"
+
+[catppuccin-hyprlock ]
+src.git = "https://github.com/catppuccin/hyprlock.git"
+src.use_commit = true
+src.branch = "main"
+fetch.git = "https://github.com/catppuccin/hyprlock.git"
+
+# [catppuccin-python]
+# src.github = "catppuccin/python"
+# fetch.github = "catppuccin/python"
+
+[dns-root-hints]
+src.webpage = "https://www.internic.net/domain/named.root"
+src.regex = "version of root zone:\\s+([0-9]{8})"
+fetch.url = "https://www.internic.net/domain/named.root"
+
+[fblog]
+src.github = "brocode/fblog"
+fetch.github = "brocode/fblog"
+cargo_locks = ["Cargo.lock"]
+
+[gitlab-language-server]
+src.git = "https://gitlab.com/gitlab-org/editor-extensions/gitlab-lsp.git"
+src.use_commit = true
+src.branch = "main"
+fetch.git = "https://gitlab.com/gitlab-org/editor-extensions/gitlab-lsp.git"
+
+[gluetun-src]
+src.github = "qdm12/gluetun"
+fetch.github = "qdm12/gluetun"
+
+# [gluetun]
+# src.container = "qmcgaw/gluetun"
+# src.include_regex = "latest"
+# fetch.docker = "qmcgaw/gluetun"
+# docker.os = "linux"
+# docker.arch = "amd64"
+#
+# gluetun = {
+#    pname = "gluetun";
+#    version = "latest";
+#    src = dockerTools.pullImage {
+#      imageName = "qmcgaw/gluetun";
+#      imageDigest = "sha256:aaaf6c7c108f7f7caae978499b4cb823a135324992ce7cea4acd405a29298141";
+#      sha256 = "sha256-BTICvfWnHiU77CS4IkF63RyPQN4ZhX7c1wWNCMl6Oxc=";
+#      finalImageTag = "latest";
+#      os = "linux";
+#      arch = "amd64";
+#    };
+#  };
+#
+#  "gluetun": {
+#    "cargoLocks": null,
+#    "date": null,
+#    "extract": null,
+#    "name": "gluetun",
+#    "passthru": null,
+#    "pinned": false,
+#    "src": {
+#      "arch": "amd64",
+#      "finalImageName": null,
+#      "finalImageTag": null,
+#      "imageDigest": "sha256:aaaf6c7c108f7f7caae978499b4cb823a135324992ce7cea4acd405a29298141",
+#      "imageName": "qmcgaw/gluetun",
+#      "imageTag": "latest",
+#      "os": "linux",
+#      "sha256": "sha256-BTICvfWnHiU77CS4IkF63RyPQN4ZhX7c1wWNCMl6Oxc=",
+#      "tlsVerify": null
+#    },
+#    "version": "latest"
+#  },
+
+[go]
+src.webpage = "https://go.dev/dl/?mode=json"
+src.regex = "\"version\": \"go([0-9]+\\.[0-9]+\\.[0-9]+)\""
+src.from_pattern = "^([0-9]+\\.[0-9]+\\.[0-9]+)$"
+src.to_pattern = "\\1"
+fetch.url = "https://go.dev/dl/go$ver.src.tar.gz"
+
+[oh-my-posh]
+src.github = "JanDeDobbeleer/oh-my-posh"
+fetch.github = "JanDeDobbeleer/oh-my-posh"
+
+[otel-desktop-viewer]
+src.branch = "main"
+src.git = "https://github.com/CtrlSpice/otel-desktop-viewer.git"
+fetch.git = "https://github.com/CtrlSpice/otel-desktop-viewer.git"
+
+[otel-tui-x86_64-linux]
+src.github = "ymtdzzz/otel-tui"
+src.from_pattern = "v([0-9]+\\.[0-9]+\\.[0-9]+)"
+src.to_pattern = "\\1"
+fetch.url = "https://github.com/ymtdzzz/otel-tui/releases/download/v$ver/otel-tui_Linux_x86_64.tar.gz"
+
+[oxc]
+src.github = "oxc-project/oxc"
+src.from_pattern = "oxlint_v([0-9]+\\.[0-9]+\\.[0-9]+)"
+src.to_pattern = "\\1"
+fetch.url = "https://github.com/oxc-project/oxc/archive/refs/tags/oxlint_v$ver.tar.gz"
+cargo_locks = ["Cargo.lock"]
+
+[pnpm]
+src.github_tag = "pnpm/pnpm"
+src.from_pattern = "v([0-9]+\\.[0-9]+\\.[0-9]+)"
+src.to_pattern = "\\1"
+fetch.url = "https://registry.npmjs.org/pnpm/-/pnpm-$ver.tgz"
+url.name = "pnpm.tgz"
+
+[spectral]
+src.github = "stoplightio/spectral"
+fetch.github = "stoplightio/spectral"
+
+[spectral-language-server]
+src.github = "stoplightio/vscode-spectral"
+fetch.github = "stoplightio/vscode-spectral"
+
+[standardnotes-desktop-deb-x86_64-linux]
+src.github_tag = "standardnotes/app"
+src.include_regex = "^@standardnotes/desktop@[0-9]+\\.[0-9]+\\.[0-9]+$"
+# no binary with this release
+src.exclude_regex = "^@standardnotes/desktop@3.195.26"
+src.from_pattern = "^@standardnotes/desktop@([0-9]+\\.[0-9]+\\.[0-9]+)$"
+src.to_pattern = "\\1"
+fetch.url = "https://github.com/standardnotes/app/releases/download/@standardnotes/desktop@$ver/standard-notes-$ver-linux-amd64.deb"
+url.name = "standardnotes-desktop-x86_64-linux.deb"
+
+[tree-sitter-cql]
+src.github_tag = "shotover/tree-sitter-cql"
+fetch.github = "shotover/tree-sitter-cql"
+
+# [vacuum]
+# src.github = "daveshanley/vacuum"
+# fetch.github = "daveshanley/vacuum"
+
+[vivid-plasma-themes]
+src.git = "https://github.com/L4ki/Vivid-Plasma-Themes.git"
+src.use_commit = true
+src.branch = "main"
+fetch.git = "https://github.com/L4ki/Vivid-Plasma-Themes.git"
