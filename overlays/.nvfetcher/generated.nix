@@ -135,17 +135,17 @@
   };
   gitlab-language-server = {
     pname = "gitlab-language-server";
-    version = "8a116d2ea63a79e0d7ed94d0afebb4767e39e707";
+    version = "1c2345982e8eda12e74d43a61ad7042be0a4152c";
     src = fetchgit {
       url = "https://gitlab.com/gitlab-org/editor-extensions/gitlab-lsp.git";
-      rev = "8a116d2ea63a79e0d7ed94d0afebb4767e39e707";
+      rev = "1c2345982e8eda12e74d43a61ad7042be0a4152c";
       fetchSubmodules = false;
       deepClone = false;
       leaveDotGit = false;
       sparseCheckout = [ ];
-      sha256 = "sha256-+RlOf7b3NR7zMKUHo/eT1ZyO92DwrOXFluuRMIzWTe0=";
+      sha256 = "sha256-iDQkQ303kAex8oxnxbQ7rM5Gs4plQIcKPNgwqxrFcLI=";
     };
-    date = "2025-04-03";
+    date = "2025-04-04";
   };
   gluetun-src = {
     pname = "gluetun-src";
@@ -266,16 +266,16 @@
   };
   vivid-plasma-themes = {
     pname = "vivid-plasma-themes";
-    version = "adac46229829855e47bfc41f7f0e1804d268c419";
+    version = "b744ed4632a67bd21470ef458c5f91eb7e1fa60e";
     src = fetchgit {
       url = "https://github.com/L4ki/Vivid-Plasma-Themes.git";
-      rev = "adac46229829855e47bfc41f7f0e1804d268c419";
+      rev = "b744ed4632a67bd21470ef458c5f91eb7e1fa60e";
       fetchSubmodules = false;
       deepClone = false;
       leaveDotGit = false;
       sparseCheckout = [ ];
-      sha256 = "sha256-HFLlajVUMRTpsE4tqZA+fAqeUxZsTKHHwxGLD0sWsTU=";
+      sha256 = "sha256-iM6N2Vioe2A5kBmPbEj+fPnRQpyy2uxqOdThMrXwgmM=";
     };
-    date = "2025-03-29";
+    date = "2025-04-05";
   };
 }

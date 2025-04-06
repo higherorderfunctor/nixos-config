@@ -46,12 +46,6 @@ in {
     };
   };
 
-  services.nixos-config = {
-    enable = true;
-    path = "${config.xdg.userDirs.documents}/projects/nixos-config";
-    remote = "git@github.com:higherorderfunctor/nixos-config.git";
-  };
-
   systemd.user = {
     # switches services on rebuilds
     startServices = "sd-switch";

@@ -1,5 +1,0 @@
-# typescript-eslint
-tseslint
-
-# astal
-astal

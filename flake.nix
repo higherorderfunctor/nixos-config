@@ -164,7 +164,7 @@
     ...
   } @ inputs: let
     inherit (self) outputs;
-    lib = (nixpkgs.lib.extend (import ./lib {inherit inputs;})) // home-manager.lib;
+    lib = nixpkgs.lib // home-manager.lib;
     forAllSystems = f: nixpkgs.lib.genAttrs nixpkgs.lib.systems.flakeExposed (system: f (pkgsFor system));
     pkgsFor = system:
       import nixpkgs {

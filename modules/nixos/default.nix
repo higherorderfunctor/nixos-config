@@ -1,3 +1,1 @@
-{
-  servarr = import ./servarr;
-}
+{}

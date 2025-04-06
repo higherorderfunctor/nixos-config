@@ -27,7 +27,7 @@
     sessionVariables = {
       NIXOS_OZONE_WL = 1; # fixes some apps in wayland
     };
-    packages = with pkgs; [hyprshot kdePackages.xwaylandvideobridge];
+    packages = with pkgs; [hyprshot];
   };
 
   # TODO: X11
@@ -146,11 +146,6 @@
         "float, class:^(xdg-desktop-portal-gnome)$" # FIXME: check
         "float, class:^(transmission-gtk)$" # FIXME: check
         "float, class:^(com.github.Aylur.ags)$"
-        "opacity 0.0 override 0.0 override,class:^(xwaylandvideobridge)$"
-        "noanim, class:^(xwaylandvideobridge)$"
-        "noinitialfocus, class:^(xwaylandvideobridge)$"
-        "maxsize 1 1, class:^(xwaylandvideobridge)$"
-        "noblur, class:^(xwaylandvideobridge)$"
         # https://github.com/mentalAdventurer/config/blob/97782801b168dc4fb08d423053368956dece9606/hypr/windowrules.conf#L37
         ### Webex"
         "noborder, class:^(CiscoCollabHost), title: ^(PopupWidgetTitle)"
