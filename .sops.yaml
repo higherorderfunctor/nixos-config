@@ -3,6 +3,7 @@ keys:
       - &caubut age1cepr9aqfkt084kmt2683wl5mh376lazqeezwwtfvq33dzrhdpczqyvfqd8
   - hosts:
       - &beelink-ser7 age1ygpwhp7g7nldj043h0z3krwpx9t403e0z26cky7yz35prrvu8y6svysgcx
+      - &insensitive-cube age1jfgehqqumhq8xx3wnrlr0a9r57uncp3y3phmhu5nx3v3yxtx25ksscdska
       - &vm age1l30yklruazhata9v7ak796ak0zffaf48xx7xy8zvl20uz3rc4prqucdvzl
 
 creation_rules:
@@ -24,6 +25,11 @@ creation_rules:
       - age:
           - *caubut
           - *beelink-ser7
+  - path_regex: hosts/insensitive-cube/secrets/secrets.yaml$
+    key_groups:
+      - age:
+          - *caubut
+          - *insensitive-cube
   - path_regex: hosts/vm/secrets/.*\.yaml$
     key_groups:
       - age:
