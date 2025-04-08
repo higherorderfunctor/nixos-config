@@ -51,7 +51,8 @@
   # TODO: DISPLAY=:0 ags -b hypr
   wayland.windowManager.hyprland = {
     enable = true;
-    package = pkgs.hyprland;
+    package = null; # use nixos module
+    portalPackage = null; # use nixos module
     # xwayland.enable = true;
 
     systemd = {

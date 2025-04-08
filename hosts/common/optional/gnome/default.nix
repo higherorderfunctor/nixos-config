@@ -89,11 +89,11 @@
   };
 
   xdg.portal = {
-    enable = true; # required for flatpak even though enabled by home manager
+    enable = true;
     config.common.default = "gtk";
-    # extraPortals = with pkgs; [
-    #   xdg-desktop-portal-gtk # required to enable the portal
-    # ];
+    extraPortals = with pkgs; [
+      xdg-desktop-portal-gtk # adds services xdph doesn't have like the file picker
+    ];
   };
   # TODO: GDK_BACKEND=x11
 

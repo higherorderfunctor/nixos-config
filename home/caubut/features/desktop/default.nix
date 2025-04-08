@@ -3,6 +3,7 @@
     ./bitwarden.nix
     ./bruno.nix
     ./chromium.nix
+    ./d-spy.nix
     ./discord.nix
     ./evolution.nix
     ./firefox.nix

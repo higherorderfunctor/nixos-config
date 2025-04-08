@@ -1,3 +1,3 @@
 {pkgs, ...}: {
-  home.packages = [pkgs.onlykey-cli];
+  home.packages = with pkgs; [onlykey-cli gcr];
 }

@@ -19,6 +19,8 @@ in {
     setSocketVariable = true;
   };
 
+  hardware.onlykey.enable = true;
+
   users.users.${username} = {
     uid = 1000;
     group = "${username}";
