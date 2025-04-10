@@ -45,12 +45,12 @@ return {
             require("lazyvim.util").warn(result.message)
             return {}
           end,
-          ["workspace/diagnostic/refresh"] = function(_, _, ctx)
-            local ns = vim.lsp.diagnostic.get_namespace(ctx.client_id)
-            local bufnr = vim.api.nvim_get_current_buf()
-            vim.diagnostic.reset(ns, bufnr)
-            return true
-          end,
+          -- ["workspace/diagnostic/refresh"] = function(_, _, ctx)
+          --   local ns = vim.lsp.diagnostic.get_namespace(ctx.client_id)
+          --   local bufnr = vim.api.nvim_get_current_buf()
+          --   vim.diagnostic.reset(ns, bufnr)
+          --   return true
+          -- end,
         },
         settings = {
           format = true,
