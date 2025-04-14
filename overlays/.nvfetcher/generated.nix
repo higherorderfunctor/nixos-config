@@ -135,17 +135,17 @@
   };
   gitlab-language-server = {
     pname = "gitlab-language-server";
-    version = "9ec7624c3681b84d4320c84e831792a913ca4497";
+    version = "bb967c7975b52aa83aff9a72ce052df8b15262ba";
     src = fetchgit {
       url = "https://gitlab.com/gitlab-org/editor-extensions/gitlab-lsp.git";
-      rev = "9ec7624c3681b84d4320c84e831792a913ca4497";
+      rev = "bb967c7975b52aa83aff9a72ce052df8b15262ba";
       fetchSubmodules = false;
       deepClone = false;
       leaveDotGit = false;
       sparseCheckout = [ ];
-      sha256 = "sha256-dZm0FUUhJS5k97nAcJibQ03/e+obx6hDhIer2MI7+sY=";
+      sha256 = "sha256-twFsBhpMWjk+dWyzhVsWHAxzvAtXZcs3NN1lRwDUtgc=";
     };
-    date = "2025-04-10";
+    date = "2025-04-11";
   };
   gluetun-src = {
     pname = "gluetun-src";
@@ -193,10 +193,10 @@
   };
   otel-tui-x86_64-linux = {
     pname = "otel-tui-x86_64-linux";
-    version = "0.4.8";
+    version = "0.4.9";
     src = fetchurl {
-      url = "https://github.com/ymtdzzz/otel-tui/releases/download/v0.4.8/otel-tui_Linux_x86_64.tar.gz";
-      sha256 = "sha256-hwJCBrUOnd+u2XMkn1YjbQ6Gc7voQPIAbfm56qlrsJc=";
+      url = "https://github.com/ymtdzzz/otel-tui/releases/download/v0.4.9/otel-tui_Linux_x86_64.tar.gz";
+      sha256 = "sha256-908e3aFU1Lk0VqQV9SSbRC8baT0dNU0MyVc9kU8Lo8M=";
     };
   };
   oxc = {
@@ -266,16 +266,16 @@
   };
   vivid-plasma-themes = {
     pname = "vivid-plasma-themes";
-    version = "b744ed4632a67bd21470ef458c5f91eb7e1fa60e";
+    version = "ff98ca9ce3b49a970572b19e502a4a262c490407";
     src = fetchgit {
       url = "https://github.com/L4ki/Vivid-Plasma-Themes.git";
-      rev = "b744ed4632a67bd21470ef458c5f91eb7e1fa60e";
+      rev = "ff98ca9ce3b49a970572b19e502a4a262c490407";
       fetchSubmodules = false;
       deepClone = false;
       leaveDotGit = false;
       sparseCheckout = [ ];
-      sha256 = "sha256-iM6N2Vioe2A5kBmPbEj+fPnRQpyy2uxqOdThMrXwgmM=";
+      sha256 = "sha256-R7wog4MI5WQzhNdmPXmQgq0ac/5h1x6Dv502S7CctkA=";
     };
-    date = "2025-04-05";
+    date = "2025-04-12";
   };
 }
