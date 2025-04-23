@@ -48,11 +48,11 @@
   };
   bun-x86_64-linux = {
     pname = "bun-x86_64-linux";
-    version = "1.2.9";
+    version = "1.2.10";
     src = fetchurl {
-      url = "https://github.com/oven-sh/bun/releases/download/bun-v1.2.9/bun-linux-x64.zip";
+      url = "https://github.com/oven-sh/bun/releases/download/bun-v1.2.10/bun-linux-x64.zip";
       name = "bun-x86_64-linux.zip";
-      sha256 = "sha256-LAjGN0h8YcN38pmlkZ6P9Pyghbqa/obOE9Wy93mb82s=";
+      sha256 = "sha256-aKFU/xvpaFG00ah8xRl/An74Crea+j1FhxUPrlw0w24=";
     };
   };
   catppuccin-btop = {
@@ -135,17 +135,17 @@
   };
   gitlab-language-server = {
     pname = "gitlab-language-server";
-    version = "bb967c7975b52aa83aff9a72ce052df8b15262ba";
+    version = "b6e63ce2d5a42f6913bc364b00ed60e2c87bea58";
     src = fetchgit {
       url = "https://gitlab.com/gitlab-org/editor-extensions/gitlab-lsp.git";
-      rev = "bb967c7975b52aa83aff9a72ce052df8b15262ba";
+      rev = "b6e63ce2d5a42f6913bc364b00ed60e2c87bea58";
       fetchSubmodules = false;
       deepClone = false;
       leaveDotGit = false;
       sparseCheckout = [ ];
-      sha256 = "sha256-twFsBhpMWjk+dWyzhVsWHAxzvAtXZcs3NN1lRwDUtgc=";
+      sha256 = "sha256-ls2i+cjRU5W52qAxcCLGjg5mrRBHsAulyU3Wf3RJorU=";
     };
-    date = "2025-04-11";
+    date = "2025-04-22";
   };
   gluetun-src = {
     pname = "gluetun-src";
@@ -168,13 +168,13 @@
   };
   oh-my-posh = {
     pname = "oh-my-posh";
-    version = "v25.13.0";
+    version = "v25.17.0";
     src = fetchFromGitHub {
       owner = "JanDeDobbeleer";
       repo = "oh-my-posh";
-      rev = "v25.13.0";
+      rev = "v25.17.0";
       fetchSubmodules = false;
-      sha256 = "sha256-IZ19aKSNy2UIFT90XivOIO3al/+sNTMKOqQdN+b7UUk=";
+      sha256 = "sha256-S7CY5+oqFJFId/9RCpxbv/uFvIatEy9Nuk3+3rYjDEw=";
     };
   };
   otel-desktop-viewer = {
@@ -193,21 +193,21 @@
   };
   otel-tui-x86_64-linux = {
     pname = "otel-tui-x86_64-linux";
-    version = "0.4.9";
+    version = "0.4.10";
     src = fetchurl {
-      url = "https://github.com/ymtdzzz/otel-tui/releases/download/v0.4.9/otel-tui_Linux_x86_64.tar.gz";
-      sha256 = "sha256-908e3aFU1Lk0VqQV9SSbRC8baT0dNU0MyVc9kU8Lo8M=";
+      url = "https://github.com/ymtdzzz/otel-tui/releases/download/v0.4.10/otel-tui_Linux_x86_64.tar.gz";
+      sha256 = "sha256-WFb3Qh41HiHieKyR+RvvwKXINojbjwbleyXc5VUNcTA=";
     };
   };
   oxc = {
     pname = "oxc";
-    version = "0.16.5";
+    version = "0.16.7";
     src = fetchurl {
-      url = "https://github.com/oxc-project/oxc/archive/refs/tags/oxlint_v0.16.5.tar.gz";
-      sha256 = "sha256-nTGs843vElMCifipWEBR0YS7DE5kH4/U5PlYPg322eg=";
+      url = "https://github.com/oxc-project/oxc/archive/refs/tags/oxlint_v0.16.7.tar.gz";
+      sha256 = "sha256-iJfYnV2K6dMJBvV5Il/Q6G7VvKZoaT9+RU0YX/tUdfQ=";
     };
     cargoLock."Cargo.lock" = {
-      lockFile = ./oxc-0.16.5/Cargo.lock;
+      lockFile = ./oxc-0.16.7/Cargo.lock;
       outputHashes = {
         
       };
@@ -215,22 +215,22 @@
   };
   pnpm = {
     pname = "pnpm";
-    version = "10.8.0";
+    version = "10.9.0";
     src = fetchurl {
-      url = "https://registry.npmjs.org/pnpm/-/pnpm-10.8.0.tgz";
+      url = "https://registry.npmjs.org/pnpm/-/pnpm-10.9.0.tgz";
       name = "pnpm.tgz";
-      sha256 = "sha256-Kb8sXOrqeZHugu7BX+cWLg+tgW0MSms1oWwB05J0v2k=";
+      sha256 = "sha256-6lOrdHrIt5Id5jtC6rGt8CHh/m3tBfYvAIhcwzpGEY0=";
     };
   };
   spectral = {
     pname = "spectral";
-    version = "v6.14.3";
+    version = "v6.15.0";
     src = fetchFromGitHub {
       owner = "stoplightio";
       repo = "spectral";
-      rev = "v6.14.3";
+      rev = "v6.15.0";
       fetchSubmodules = false;
-      sha256 = "sha256-n29EzfozhEuhSzk4x+ZU3ftZht+1yi4PE3qbADyzWgc=";
+      sha256 = "sha256-6ywvyZe0ol2B7ZMS/9zWkDKu4u/9dh2fsPegJ6FlLAs=";
     };
   };
   spectral-language-server = {
@@ -246,11 +246,11 @@
   };
   standardnotes-desktop-deb-x86_64-linux = {
     pname = "standardnotes-desktop-deb-x86_64-linux";
-    version = "3.195.25";
+    version = "3.195.32";
     src = fetchurl {
-      url = "https://github.com/standardnotes/app/releases/download/@standardnotes/desktop@3.195.25/standard-notes-3.195.25-linux-amd64.deb";
+      url = "https://github.com/standardnotes/app/releases/download/@standardnotes/desktop@3.195.32/standard-notes-3.195.32-linux-amd64.deb";
       name = "standardnotes-desktop-x86_64-linux.deb";
-      sha256 = "sha256-tOpCirXEkKTGYLBJyxq6Hz4w/jHW6bLaNnJxHqpgHLY=";
+      sha256 = "sha256-Syw1dL3IZPHomWPIhe1lG6W/MK5/71eEBIdYnEK6Ii8=";
     };
   };
   tree-sitter-cql = {
@@ -266,16 +266,16 @@
   };
   vivid-plasma-themes = {
     pname = "vivid-plasma-themes";
-    version = "ff98ca9ce3b49a970572b19e502a4a262c490407";
+    version = "b5b2f53cf923d343c3174e4d57cd52d24270bf8f";
     src = fetchgit {
       url = "https://github.com/L4ki/Vivid-Plasma-Themes.git";
-      rev = "ff98ca9ce3b49a970572b19e502a4a262c490407";
+      rev = "b5b2f53cf923d343c3174e4d57cd52d24270bf8f";
       fetchSubmodules = false;
       deepClone = false;
       leaveDotGit = false;
       sparseCheckout = [ ];
-      sha256 = "sha256-R7wog4MI5WQzhNdmPXmQgq0ac/5h1x6Dv502S7CctkA=";
+      sha256 = "sha256-JlyzC4I1XDFg2ndLNPZkcOymntnUE4AEkf/3Y7bqQLw=";
     };
-    date = "2025-04-12";
+    date = "2025-04-19";
   };
 }
