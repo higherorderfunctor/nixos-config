@@ -201,6 +201,11 @@
         specialArgs = {inherit inputs outputs;};
         pkgs = pkgsFor "x86_64-linux";
       };
+      insensitive-cube = lib.nixosSystem {
+        modules = [./hosts/insensitive-cube];
+        specialArgs = {inherit inputs outputs;};
+        pkgs = pkgsFor "x86_64-linux";
+      };
       vm = lib.nixosSystem {
         modules = [./hosts/vm];
         specialArgs = {inherit inputs outputs;};

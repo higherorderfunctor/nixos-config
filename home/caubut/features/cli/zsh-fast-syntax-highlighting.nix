@@ -15,7 +15,7 @@
     fast-syntax-highlighting-catppuccin = builtins.fetchTarball {
       url = "https://github.com/catppuccin/zsh-fsh/archive/master.tar.gz";
       # sha256 = lib.fakeSha256;
-      sha256 = "1044pbfykcm16m7v3vwc6g1f9r3cxxmlaqch670yw6appbw62nfz";
+      sha256 = "1b6dgks9c78qskki3x1gqq1mdmmha26p9dkgd8hp4fyklnqazsjr";
       name = "fast-syntax-highlighting-catppuccin";
     };
   };

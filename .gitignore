@@ -1,2 +1,8 @@
+# nix build artifacts
 /result
+
+# vim merge conflicts
 *.orig
+
+# private keys
+ssh_host_ed25519_key

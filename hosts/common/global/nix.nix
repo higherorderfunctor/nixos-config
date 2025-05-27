@@ -13,9 +13,13 @@ in {
     };
     extraOptions = ''
       !include ${config.sops.secrets."${username}-nix-conf-secrets".path}
+
+      keep-outputs = true
+      keep-derivations = true
     '';
     settings = {
-      #trusted-substituters = lib.mkForce null;
+      cores = 0;
+      max-jobs = "auto";
     };
   };
 

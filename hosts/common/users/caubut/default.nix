@@ -36,7 +36,7 @@ in {
         "media"
         "transmission" # TODO: had issues with just media
       ];
-    hashedPasswordFile = config.sops.secrets."${username}-password".path;
+    hashedPasswordFile = config.sops.secrets."${username}-host-password/${config.networking.hostName}".path;
     packages = [pkgs.home-manager];
   };
 
@@ -86,7 +86,7 @@ in {
       mode = "400";
       sopsFile = ../../../../home/${username}/secrets/secrets.yaml;
     };
-    "${username}-password" = {
+    "${username}-host-password/${config.networking.hostName}" = {
       neededForUsers = true;
       sopsFile = ../../../../home/${username}/secrets/secrets.yaml;
     };
