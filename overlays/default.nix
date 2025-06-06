@@ -29,7 +29,6 @@ args: let
     ./rust-overlay.nix
     ./spectral-overlay.nix
     ./standardnotes-overlay.nix
-    ./tmux-which-key-overlay.nix
     # ./tree-sitter-cql-overlay.nix
     ./vivid-icons-themes-overlay.nix
     ./wezterm-overlay.nix

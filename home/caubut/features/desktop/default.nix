@@ -4,7 +4,7 @@
     ./bruno.nix
     ./chromium.nix
     ./discord.nix
-    ./evolution.nix
+    # ./evolution.nix
     ./firefox.nix
     ./gajim.nix
     ./gimp.nix

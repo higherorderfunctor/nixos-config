@@ -3,17 +3,17 @@
 {
   amdvlk = {
     pname = "amdvlk";
-    version = "b29187c0bd82d39e4f93cb77fab75520ff53871f";
+    version = "66d23ef671b19b488dddd2408954737be4b53458";
     src = fetchgit {
       url = "https://github.com/GPUOpen-Drivers/AMDVLK.git";
-      rev = "b29187c0bd82d39e4f93cb77fab75520ff53871f";
+      rev = "66d23ef671b19b488dddd2408954737be4b53458";
       fetchSubmodules = false;
       deepClone = false;
       leaveDotGit = false;
       sparseCheckout = [ ];
-      sha256 = "sha256-AyGTvHTgWlq5vDeX0t82kEE03uSj5iv6Mi4lhwnZwLM=";
+      sha256 = "sha256-wZ6iRCaK0cA225KMTNvt5o9EXFmZvuXwbADMW2e8fpw=";
     };
-    date = "2025-03-13";
+    date = "2025-04-30";
   };
   arkenfox = {
     pname = "arkenfox";
@@ -28,31 +28,31 @@
   };
   bruno-deb-x86_64-linux = {
     pname = "bruno-deb-x86_64-linux";
-    version = "2.1.0";
+    version = "2.4.0";
     src = fetchurl {
-      url = "https://github.com/usebruno/bruno/releases/download/v2.1.0/bruno_2.1.0_amd64_linux.deb";
+      url = "https://github.com/usebruno/bruno/releases/download/v2.4.0/bruno_2.4.0_amd64_linux.deb";
       name = "bruno-x86_64-linux.zip";
-      sha256 = "sha256-OfKyd1ZU2cIi9dhQfzvEAPNrOQg2YMaxChejiEBLxzc=";
+      sha256 = "sha256-7fkCtYzZMD3a6gg0obtpMCPSn7/hlgKVsGnGonrnBe8=";
     };
   };
   btop = {
     pname = "btop";
-    version = "v1.4.0";
+    version = "v1.4.3";
     src = fetchFromGitHub {
       owner = "aristocratos";
       repo = "btop";
-      rev = "v1.4.0";
+      rev = "v1.4.3";
       fetchSubmodules = false;
-      sha256 = "sha256-A5hOBxj8tKlkHd8zDHfDoU6fIu8gDpt3/usbiDk0/G0=";
+      sha256 = "sha256-4x2vGmH2dfHZHG+zj2KGsL/pRNIZ8K8sXYRHy0io5IE=";
     };
   };
   bun-x86_64-linux = {
     pname = "bun-x86_64-linux";
-    version = "1.2.10";
+    version = "1.2.15";
     src = fetchurl {
-      url = "https://github.com/oven-sh/bun/releases/download/bun-v1.2.10/bun-linux-x64.zip";
+      url = "https://github.com/oven-sh/bun/releases/download/bun-v1.2.15/bun-linux-x64.zip";
       name = "bun-x86_64-linux.zip";
-      sha256 = "sha256-aKFU/xvpaFG00ah8xRl/An74Crea+j1FhxUPrlw0w24=";
+      sha256 = "sha256-omFiY2eDW7N1SgGuB/iESE7RewiGsB5Be3mVkfpNeQE=";
     };
   };
   catppuccin-btop = {
@@ -96,56 +96,42 @@
   };
   catppuccin-hyprlock = {
     pname = "catppuccin-hyprlock";
-    version = "6fd5ae62624bbb7f07072cd2a79e75de62c19713";
+    version = "f650895064ae80db7c0e095829fce83fd85d0b26";
     src = fetchgit {
       url = "https://github.com/catppuccin/hyprlock.git";
-      rev = "6fd5ae62624bbb7f07072cd2a79e75de62c19713";
+      rev = "f650895064ae80db7c0e095829fce83fd85d0b26";
       fetchSubmodules = false;
       deepClone = false;
       leaveDotGit = false;
       sparseCheckout = [ ];
-      sha256 = "sha256-wEWBQvn1jwYGIF9wIA8TDWJAA2/o19KjFb0TmtYbcA8=";
+      sha256 = "sha256-kgVlPaWeaH/p0qGc1+Lj2H6YlDAk5CemNo1FFF8ymZ8=";
     };
-    date = "2025-04-09";
+    date = "2025-06-02";
   };
   dns-root-hints = {
     pname = "dns-root-hints";
-    version = "20250410";
+    version = "20250529";
     src = fetchurl {
       url = "https://www.internic.net/domain/named.root";
-      sha256 = "sha256-Tz8j/zVjveR2kYAA+gDLxTtx+pq7mZfnzHCyUrB/MCE=";
+      sha256 = "sha256-H2loKjfXhWsc9XRl4IDlm1jQ0E67SgwjopMwxti3JWA=";
     };
   };
   fblog = {
     pname = "fblog";
-    version = "v4.13.1";
+    version = "v4.14.0";
     src = fetchFromGitHub {
       owner = "brocode";
       repo = "fblog";
-      rev = "v4.13.1";
+      rev = "v4.14.0";
       fetchSubmodules = false;
-      sha256 = "sha256-YOHLw8YCgOGB1Nn2tD+EnicKd/tiMk07OWv+49btbpw=";
+      sha256 = "sha256-ImuNl7ERM7auuGkPHJ93unrqgXRCUBLAuG8OyJXFqms=";
     };
     cargoLock."Cargo.lock" = {
-      lockFile = ./fblog-v4.13.1/Cargo.lock;
+      lockFile = ./fblog-v4.14.0/Cargo.lock;
       outputHashes = {
         
       };
     };
-  };
-  gitlab-language-server = {
-    pname = "gitlab-language-server";
-    version = "b6e63ce2d5a42f6913bc364b00ed60e2c87bea58";
-    src = fetchgit {
-      url = "https://gitlab.com/gitlab-org/editor-extensions/gitlab-lsp.git";
-      rev = "b6e63ce2d5a42f6913bc364b00ed60e2c87bea58";
-      fetchSubmodules = false;
-      deepClone = false;
-      leaveDotGit = false;
-      sparseCheckout = [ ];
-      sha256 = "sha256-ls2i+cjRU5W52qAxcCLGjg5mrRBHsAulyU3Wf3RJorU=";
-    };
-    date = "2025-04-22";
   };
   gluetun-src = {
     pname = "gluetun-src";
@@ -160,54 +146,54 @@
   };
   go = {
     pname = "go";
-    version = "1.24.2";
+    version = "1.24.4";
     src = fetchurl {
-      url = "https://go.dev/dl/go1.24.2.src.tar.gz";
-      sha256 = "sha256-ncd/+twW2DehvzLZnGJMtN8GR87nsRnt2eexvMBfLgA=";
+      url = "https://go.dev/dl/go1.24.4.src.tar.gz";
+      sha256 = "sha256-WoaoOjH5+oFJC4xUIKw4T9PZWj5x+6Zlx7P5XR3+8rQ=";
     };
   };
   oh-my-posh = {
     pname = "oh-my-posh";
-    version = "v25.17.0";
+    version = "v26.3.0";
     src = fetchFromGitHub {
       owner = "JanDeDobbeleer";
       repo = "oh-my-posh";
-      rev = "v25.17.0";
+      rev = "v26.3.0";
       fetchSubmodules = false;
-      sha256 = "sha256-S7CY5+oqFJFId/9RCpxbv/uFvIatEy9Nuk3+3rYjDEw=";
+      sha256 = "sha256-wjfCr+QR9WMfb5L8i59mHd+yXF2/iWbaHWsPFR2Ehro=";
     };
   };
   otel-desktop-viewer = {
     pname = "otel-desktop-viewer";
-    version = "d473e2bec8df3272832e9c0b6f797976cb8f46ce";
+    version = "bf06b91239c5ebe29d1aff0918dca62e276cc3c4";
     src = fetchgit {
       url = "https://github.com/CtrlSpice/otel-desktop-viewer.git";
-      rev = "d473e2bec8df3272832e9c0b6f797976cb8f46ce";
+      rev = "bf06b91239c5ebe29d1aff0918dca62e276cc3c4";
       fetchSubmodules = false;
       deepClone = false;
       leaveDotGit = false;
       sparseCheckout = [ ];
-      sha256 = "sha256-hI8F+3NkoyCIR9b0aZpUFDI9Y6FA7cLdVTtODJ+IC+A=";
+      sha256 = "sha256-qvMpebhbg/OnheZIZBoiitGYUUMdTghSwEapblE0DkA=";
     };
-    date = "2025-04-01";
+    date = "2025-05-29";
   };
   otel-tui-x86_64-linux = {
     pname = "otel-tui-x86_64-linux";
-    version = "0.4.10";
+    version = "0.4.11";
     src = fetchurl {
-      url = "https://github.com/ymtdzzz/otel-tui/releases/download/v0.4.10/otel-tui_Linux_x86_64.tar.gz";
-      sha256 = "sha256-WFb3Qh41HiHieKyR+RvvwKXINojbjwbleyXc5VUNcTA=";
+      url = "https://github.com/ymtdzzz/otel-tui/releases/download/v0.4.11/otel-tui_Linux_x86_64.tar.gz";
+      sha256 = "sha256-8wPj5pPfinPIZ1g4BO35vjp0BNReAvnqoD6zMD6OucU=";
     };
   };
   oxc = {
     pname = "oxc";
-    version = "0.16.7";
+    version = "0.17.0";
     src = fetchurl {
-      url = "https://github.com/oxc-project/oxc/archive/refs/tags/oxlint_v0.16.7.tar.gz";
-      sha256 = "sha256-iJfYnV2K6dMJBvV5Il/Q6G7VvKZoaT9+RU0YX/tUdfQ=";
+      url = "https://github.com/oxc-project/oxc/archive/refs/tags/oxlint_v0.17.0.tar.gz";
+      sha256 = "sha256-TiostRbJ7KTRfUtnAzrIkdrsItLRisMGgZHYC+WdNPo=";
     };
     cargoLock."Cargo.lock" = {
-      lockFile = ./oxc-0.16.7/Cargo.lock;
+      lockFile = ./oxc-0.17.0/Cargo.lock;
       outputHashes = {
         
       };
@@ -215,11 +201,11 @@
   };
   pnpm = {
     pname = "pnpm";
-    version = "10.9.0";
+    version = "10.11.1";
     src = fetchurl {
-      url = "https://registry.npmjs.org/pnpm/-/pnpm-10.9.0.tgz";
+      url = "https://registry.npmjs.org/pnpm/-/pnpm-10.11.1.tgz";
       name = "pnpm.tgz";
-      sha256 = "sha256-6lOrdHrIt5Id5jtC6rGt8CHh/m3tBfYvAIhcwzpGEY0=";
+      sha256 = "sha256-IR6ZkBSElcn8MLflg5b37tqD2SQ+t1QH6k+GUPsWH3w=";
     };
   };
   spectral = {
@@ -246,11 +232,11 @@
   };
   standardnotes-desktop-deb-x86_64-linux = {
     pname = "standardnotes-desktop-deb-x86_64-linux";
-    version = "3.195.32";
+    version = "3.196.8";
     src = fetchurl {
-      url = "https://github.com/standardnotes/app/releases/download/@standardnotes/desktop@3.195.32/standard-notes-3.195.32-linux-amd64.deb";
+      url = "https://github.com/standardnotes/app/releases/download/@standardnotes/desktop@3.196.8/standard-notes-3.196.8-linux-amd64.deb";
       name = "standardnotes-desktop-x86_64-linux.deb";
-      sha256 = "sha256-Syw1dL3IZPHomWPIhe1lG6W/MK5/71eEBIdYnEK6Ii8=";
+      sha256 = "sha256-jpgJEV+Ri9S7uqZkaUvliT8b2uNImRv2Ssl6NbVoUec=";
     };
   };
   tree-sitter-cql = {
@@ -266,16 +252,16 @@
   };
   vivid-plasma-themes = {
     pname = "vivid-plasma-themes";
-    version = "b5b2f53cf923d343c3174e4d57cd52d24270bf8f";
+    version = "5cb3ff3ee01d6c9418db44f93548d30ee9342204";
     src = fetchgit {
       url = "https://github.com/L4ki/Vivid-Plasma-Themes.git";
-      rev = "b5b2f53cf923d343c3174e4d57cd52d24270bf8f";
+      rev = "5cb3ff3ee01d6c9418db44f93548d30ee9342204";
       fetchSubmodules = false;
       deepClone = false;
       leaveDotGit = false;
       sparseCheckout = [ ];
-      sha256 = "sha256-JlyzC4I1XDFg2ndLNPZkcOymntnUE4AEkf/3Y7bqQLw=";
+      sha256 = "sha256-XNE3fjgQrb3LuZLAfSLEqhteS4DbbnfVZMpCvxJLnI8=";
     };
-    date = "2025-04-19";
+    date = "2025-06-02";
   };
 }

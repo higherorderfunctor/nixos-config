@@ -52,7 +52,12 @@ in {
               cp -r $src/themes $out/share/oh-my-posh/
             '';
 
-            meta.changelog = "https://github.com/JanDeDobbeleer/oh-my-posh/releases/tag/v${nv.version}";
+            meta =
+              orig.meta
+              // {
+                changelog = "https://github.com/JanDeDobbeleer/oh-my-posh/releases/tag/v${nv.version}";
+                mainProgresm = "oh-my-posh";
+              };
           });
     };
 }

@@ -337,7 +337,6 @@ nix flake update \
   nvfetcher \
   rust-overlay \
   sops-nix \
-  tmux-which-key \
   wezterm
 ````
 

@@ -53,7 +53,7 @@
     '';
   };
 in {
-  programs.zsh.initExtra = ''
+  programs.zsh.initContent = ''
     # fast-syntax-highlighting
     source "${config.xdg.configHome}/${configDir}/fast-syntax-highlighting.plugin.zsh"
     if ! fast-theme --show | grep -q 'catppuccin-mocha'; then

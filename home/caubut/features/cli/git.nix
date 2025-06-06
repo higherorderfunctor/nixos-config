@@ -6,7 +6,7 @@
 }: let
   username = "${config.home.username}";
 in {
-  home.packages = with pkgs; [git-branchless];
+  home.packages = with pkgs; [git-branchless dprint];
   programs.git = {
     enable = true;
     package = pkgs.git;
@@ -54,6 +54,10 @@ in {
         prompt = false;
         diffview.cmd = ''nvim -n -c "DiffviewOpen" "$MERGE"'';
       };
+      paging = {
+        colorArg = "always";
+        pager = "delta --dark --paging=never";
+      };
       pull = {
         ff = "only";
         rebase = true;
@@ -79,6 +83,7 @@ in {
         condition = "gitdir:${config.xdg.userDirs.documents}/work/";
       }
     ];
+    delta.enable = true;
   };
   xdg.configFile."git/work.inc".text = lib.generators.toGitINI {
     user.email = "christopher.aubut@charter.com";

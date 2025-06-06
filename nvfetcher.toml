@@ -35,13 +35,13 @@ src.git = "https://github.com/catppuccin/gtk.git"
 src.use_commit = true
 fetch.git = "https://github.com/catppuccin/gtk.git"
 
-[catppuccin-hyprland ]
+[catppuccin-hyprland]
 src.git = "https://github.com/catppuccin/hyprland.git"
 src.use_commit = true
 src.branch = "main"
 fetch.git = "https://github.com/catppuccin/hyprland.git"
 
-[catppuccin-hyprlock ]
+[catppuccin-hyprlock]
 src.git = "https://github.com/catppuccin/hyprlock.git"
 src.use_commit = true
 src.branch = "main"
@@ -61,11 +61,11 @@ src.github = "brocode/fblog"
 fetch.github = "brocode/fblog"
 cargo_locks = ["Cargo.lock"]
 
-[gitlab-language-server]
-src.git = "https://gitlab.com/gitlab-org/editor-extensions/gitlab-lsp.git"
-src.use_commit = true
-src.branch = "main"
-fetch.git = "https://gitlab.com/gitlab-org/editor-extensions/gitlab-lsp.git"
+# [gitlab-language-server]
+# src.git = "https://gitlab.com/gitlab-org/editor-extensions/gitlab-lsp.git"
+# src.use_commit = true
+# src.branch = "main"
+# fetch.git = "https://gitlab.com/gitlab-org/editor-extensions/gitlab-lsp.git"
 
 [gluetun-src]
 src.github = "qdm12/gluetun"

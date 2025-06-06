@@ -15,6 +15,7 @@ _: (final: _: let
     glib
     gtk3
     libdrm
+    libgbm
     libglvnd
     libxkbcommon
     mesa
