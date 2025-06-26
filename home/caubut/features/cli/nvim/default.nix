@@ -22,6 +22,15 @@
   #   generate = true;
   # };
 in {
+  sops.secrets = {
+    "${username}-ai-hub-mix-api-key" = {
+      mode = "400";
+    };
+    "${username}-kagi-api-key" = {
+      mode = "400";
+    };
+  };
+
   home.packages = [pkgs.tree-sitter];
   programs.neovim = {
     enable = true;
