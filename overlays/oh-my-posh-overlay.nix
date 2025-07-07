@@ -16,17 +16,17 @@ _: final: prev: let
     if lib.hasAttr "vendorHash" nv
     then nv.vendorHash
     else lib.fakeHash;
-  buildGoModule =
-    #let
-    # nv = (import ./nvpkgs.nix).go;
-    # go = final.go.overrideAttrs {
-    #   inherit (nv) version;
-    #   src = final.fetchurl {
-    #     inherit (nv.src) url sha256;
-    #   };
-    # };
-    # in
-    final.buildGoModule.override {inherit (final) go;};
+  buildGoModule = let
+    nv = (import ./nvpkgs.nix).go;
+    go = final.go.overrideAttrs {
+      inherit (nv) version;
+      src = final.fetchurl {
+        inherit (nv.src) url sha256;
+      };
+    };
+  in
+    final.buildGoModule.override {inherit go;};
+  # final.buildGoModule.override {inherit (final) go;};
 in {
   oh-my-posh =
     prev.oh-my-posh.override
@@ -39,12 +39,12 @@ in {
             ldflags = builtins.map replaceVersion orig.ldflags;
 
             postPatch = ''
-              rm image/image_test.go \
-                 config/migrate_glyphs_test.go \
+              rm config/migrate_glyphs_test.go \
                  segments/nba_test.go \
                  segments/upgrade_test.go \
-                 upgrade/notice_test.go
+                 cli/upgrade/notice_test.go
             '';
+            # image/image_test.go
 
             postInstall = ''
               mv $out/bin/{src,oh-my-posh}

@@ -1,8 +1,9 @@
 {pkgs, ...}: {
   home.packages = [
-    (pkgs.epapirus-icon-theme.override
-      {
-        withElementary = true;
-      })
+    pkgs.papirus-icon-theme
+    #(pkgs.epapirus-icon-theme.override
+    #  {
+    #    withElementary = true;
+    #  })
   ];
 }

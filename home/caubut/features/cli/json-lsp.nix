@@ -1,5 +1,5 @@
 {pkgs, ...}: {
   home.packages = [
-    pkgs.nodePackages.vscode-json-languageserver
+    # pkgs.nodePackages.vscode-json-languageserver
   ];
 }

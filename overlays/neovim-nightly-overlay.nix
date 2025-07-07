@@ -9,7 +9,7 @@
             final.rustPlatform.buildRustPackage (
               args
               // {
-                cargoHash = "sha256-rjUn8F6WSxLQGrFzK23q4ClLePSpcMN2+i7rC02Fisk=";
+                # cargoHash = "sha256-rjUn8F6WSxLQGrFzK23q4ClLePSpcMN2+i7rC02Fisk=";
               }
             );
         };
