@@ -243,11 +243,11 @@
     "pinned": false,
     "src": {
       "name": null,
-      "sha256": "sha256-WoaoOjH5+oFJC4xUIKw4T9PZWj5x+6Zlx7P5XR3+8rQ=",
+      "sha256": "sha256-dP2wnyNS4rJbeUPlaDbJtHNj0o3sHItWxKlXDzC49Z8=",
       "type": "url",
-      "url": "https://go.dev/dl/go1.24.4.src.tar.gz"
+      "url": "https://go.dev/dl/go1.24.5.src.tar.gz"
     },
-    "version": "1.24.4"
+    "version": "1.24.5"
   },
   "oh-my-posh": {
     "cargoLocks": null,
@@ -335,11 +335,11 @@
     "pinned": false,
     "src": {
       "name": "pnpm.tgz",
-      "sha256": "sha256-yt/Z5sn8wst2/nwHeaUlC2MomK6l9T2DOnNpDHeneNk=",
+      "sha256": "sha256-D57UjYCJlq4AeDX7XEZBz5owDe8u3cnpV9m75HaMXyg=",
       "type": "url",
-      "url": "https://registry.npmjs.org/pnpm/-/pnpm-10.12.4.tgz"
+      "url": "https://registry.npmjs.org/pnpm/-/pnpm-10.13.1.tgz"
     },
-    "version": "10.12.4"
+    "version": "10.13.1"
   },
   "spectral": {
     "cargoLocks": null,
@@ -421,7 +421,7 @@
   },
   "vivid-plasma-themes": {
     "cargoLocks": null,
-    "date": "2025-07-07",
+    "date": "2025-07-14",
     "extract": null,
     "name": "vivid-plasma-themes",
     "passthru": null,
@@ -431,12 +431,12 @@
       "fetchSubmodules": false,
       "leaveDotGit": false,
       "name": null,
-      "rev": "cca32f2aee58052281d8dbe8dc520274c95c5155",
-      "sha256": "sha256-asW2Ki1sOxGGb2fqy8PyAk+arG75oBzNkE2JfqDRFg8=",
+      "rev": "1d83ea9f6df590e2cb72ebe7236099d33eb5d438",
+      "sha256": "sha256-48C+5gEKJlzMUhRm3hk2z/G8HqGg8W0dCYkD7Y1OVnc=",
       "sparseCheckout": [],
       "type": "git",
       "url": "https://github.com/L4ki/Vivid-Plasma-Themes.git"
     },
-    "version": "cca32f2aee58052281d8dbe8dc520274c95c5155"
+    "version": "1d83ea9f6df590e2cb72ebe7236099d33eb5d438"
   }
 }

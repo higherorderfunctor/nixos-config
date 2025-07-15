@@ -146,7 +146,7 @@
       url = "github:isd-project/isd";
       inputs = {
         nixpkgs.follows = "nixpkgs";
-        nix-appimage.follows = "nix-appimage";
+        # nix-appimage.follows = "nix-appimage";
         systems.follows = "systems";
       };
     };
@@ -160,14 +160,14 @@
         flake-utils.follows = "flake-utils";
       };
     };
-    nix-appimage = {
-      url = "github:ralismark/nix-appimage";
-      inputs = {
-        nixpkgs.follows = "nixpkgs";
-        flake-compat.follows = "flake-compat";
-        flake-utils.follows = "flake-utils";
-      };
-    };
+    # nix-appimage = {
+    #   url = "github:ralismark/nix-appimage";
+    #   inputs = {
+    #     nixpkgs.follows = "nixpkgs";
+    #     flake-compat.follows = "flake-compat";
+    #     flake-utils.follows = "flake-utils";
+    #   };
+    # };
     nix-gl-host = {
       url = "github:numtide/nix-gl-host";
       inputs.nixpkgs.follows = "nixpkgs";
