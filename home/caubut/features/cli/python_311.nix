@@ -1,3 +1,3 @@
 {pkgs, ...}: {
-  home.packages = [pkgs.python311Full];
+  home.packages = [pkgs.python313];
 }
