@@ -82,7 +82,7 @@ return {
       return opts
     end,
     config = function(_, opts)
-      require("lazyvim.util").lsp.on_attach(function(client)
+      Snacks.util.lsp.on(function(client)
         if client.name == "eslint" then
           client.server_capabilities.documentFormattingProvider = true
         elseif client.name == "tsserver" or client.name == "vtsls" or client.name == "volar" then
@@ -108,6 +108,11 @@ return {
     "neovim/nvim-lspconfig",
     opts = {
       servers = {
+        ["*"] = {
+          keys = {
+            { "<leader>cz", "<cmd>LspRestart<cr>", desc = "Restart LSP" },
+          },
+        },
         bashls = { mason = false },
         docker_compose_language_service = { mason = false },
         dockerls = { mason = false },
@@ -150,15 +155,15 @@ return {
       },
     },
 
-    init = function()
-      local keys = require("lazyvim.plugins.lsp.keymaps").get()
-      -- change a keymap
-      -- keys[#keys + 1] = { "K", "<cmd>echo 'hello'<cr>" }
-      -- disable a keymap
-      -- keys[#keys + 1] = { "K", false }
-      -- add a keymap
-      keys[#keys + 1] = { "<leader>cz", "<cmd>LspRestart<cr>", desc = "Restart LSP" }
-    end,
+    -- init = function()
+    --   local keys = require("lazyvim.plugins.lsp.keymaps").get()
+    --   -- change a keymap
+    --   -- keys[#keys + 1] = { "K", "<cmd>echo 'hello'<cr>" }
+    --   -- disable a keymap
+    --   -- keys[#keys + 1] = { "K", false }
+    --   -- add a keymap
+    --   keys[#keys + 1] = { "<leader>cz", "<cmd>LspRestart<cr>", desc = "Restart LSP" }
+    -- end,
   },
   {
     "neovim/nvim-lspconfig",
