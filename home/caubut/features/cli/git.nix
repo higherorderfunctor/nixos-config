@@ -10,10 +10,12 @@ in {
   programs.git = {
     enable = true;
     package = pkgs.git;
-    userName = "Christopher Aubut";
-    userEmail = "christopher@aubut.me";
     # signing.format = "ssh";
-    extraConfig = {
+    settings = {
+      user = {
+        name = "Christopher Aubut";
+        email = "christopher@aubut.me";
+      };
       column.ui = "auto";
       branch.sort = "-committerdate";
       branchless = {
@@ -83,7 +85,10 @@ in {
         condition = "gitdir:${config.xdg.userDirs.documents}/work/";
       }
     ];
-    delta.enable = true;
+  };
+  programs.delta = {
+    enable = true;
+    enableGitIntegration = true;
   };
   xdg.configFile."git/work.inc".text = lib.generators.toGitINI {
     user.email = "christopher.aubut@charter.com";

@@ -195,12 +195,8 @@
       url = "github:nix-community/neovim-nightly-overlay";
       inputs = {
         nixpkgs.follows = "nixpkgs";
-        flake-compat.follows = "flake-compat";
         flake-parts.follows = "flake-parts";
-        git-hooks.follows = "git-hooks";
-        hercules-ci-effects.follows = "hercules-ci-effects";
         neovim-src.follows = "neovim-src";
-        treefmt-nix.follows = "treefmt-nix";
       };
     };
     nixpkgs-lib = {
@@ -254,6 +250,7 @@
           permittedInsecurePackages = [
             "electron-31.7.7" # standard notes
             #   "olm-3.2.16" # ???
+            "python3.13-ecdsa-0.19.1" # ???
           ];
         };
       };

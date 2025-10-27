@@ -10,7 +10,7 @@ in {
 
   nix = {
     gc = {
-      frequency = "weekly";
+      dates = "weekly";
     };
     extraOptions = ''
       !include ${config.sops.secrets."${username}-nix-conf-secrets".path}
