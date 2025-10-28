@@ -82,17 +82,17 @@ return {
       return opts
     end,
     config = function(_, opts)
-      Snacks.util.lsp.on(function(client)
-        if client.name == "eslint" then
-          client.server_capabilities.documentFormattingProvider = true
-        elseif client.name == "tsserver" or client.name == "vtsls" or client.name == "volar" then
-          client.server_capabilities.documentFormattingProvider = false
+      Snacks.util.lsp.on(function(client_id)
+        local client = vim.lsp.get_client_by_id(client_id)
+        if client then
+          if client.name == "eslint" then
+            client.server_capabilities.documentFormattingProvider = true
+          elseif client.name == "tsserver" or client.name == "vtsls" or client.name == "volar" then
+            client.server_capabilities.documentFormattingProvider = false
+          end
         end
       end)
       require("nvim-eslint").setup(opts)
-      -- require("lazyvim.util").info(
-      --   "ESLint post-setup-opts: " .. vim.inspect(require("nvim-eslint").make_settings(vim.api.nvim_get_current_buf()))
-      -- )
     end,
   },
   {
