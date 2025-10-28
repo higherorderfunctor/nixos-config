@@ -20,7 +20,7 @@ in
                 inherit (nv.src) owner repo rev sha256;
               };
               cargoLock = {
-                lockFile = ./.nvfetcher/${lib.head nv.cargoLocks."Cargo.lock"};
+                lockFile = ./.nvfetcher/${lib.head nv.cargoLock."Cargo.lock"};
                 allowBuiltinFetchGit = true;
               };
               cargoHash = null;
