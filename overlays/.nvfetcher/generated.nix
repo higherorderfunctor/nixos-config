@@ -115,7 +115,7 @@
   };
   dns-root-hints = {
     pname = "dns-root-hints";
-    version = "20251022";
+    version = "20251029";
     src = fetchurl {
       url = "https://www.internic.net/domain/named.root";
       sha256 = "sha256-Jndwkxy2OEiYjSUfphU3NKyMYZNOMAXqR8So5ow3mUo=";
@@ -159,13 +159,13 @@
   };
   oh-my-posh = {
     pname = "oh-my-posh";
-    version = "v27.4.0";
+    version = "v27.4.2";
     src = fetchFromGitHub {
       owner = "JanDeDobbeleer";
       repo = "oh-my-posh";
-      rev = "v27.4.0";
+      rev = "v27.4.2";
       fetchSubmodules = false;
-      sha256 = "sha256-isFoWkx5JMzTRzwD1RDQs980x9n4q55wVvWefw7Ibr0=";
+      sha256 = "sha256-mnD6B1htzKE4lUzwOxrl02dsGWWk358iZTdnDb3TvSg=";
     };
   };
   otel-desktop-viewer = {
@@ -192,13 +192,13 @@
   };
   oxc = {
     pname = "oxc";
-    version = "1.24.0";
+    version = "1.25.0";
     src = fetchurl {
-      url = "https://github.com/oxc-project/oxc/archive/refs/tags/oxlint_v1.24.0.tar.gz";
-      sha256 = "sha256-1dECT/MS7G6dMjVfOISfFGgSX9Dhnikyj9O3HExynnM=";
+      url = "https://github.com/oxc-project/oxc/archive/refs/tags/oxlint_v1.25.0.tar.gz";
+      sha256 = "sha256-ZUcoVkTBDsGybl/jQfCOMf63Y5fP2c/L8mQ0igitWkc=";
     };
     cargoLock."Cargo.lock" = {
-      lockFile = ./. + "/sha256-1dECT_MS7G6dMjVfOISfFGgSX9Dhnikyj9O3HExynnM=/Cargo.lock";
+      lockFile = ./. + "/sha256-ZUcoVkTBDsGybl_jQfCOMf63Y5fP2c_L8mQ0igitWkc=/Cargo.lock";
       outputHashes = {
         
       };
@@ -206,11 +206,11 @@
   };
   pnpm = {
     pname = "pnpm";
-    version = "10.19.0";
+    version = "10.20.0";
     src = fetchurl {
-      url = "https://registry.npmjs.org/pnpm/-/pnpm-10.19.0.tgz";
+      url = "https://registry.npmjs.org/pnpm/-/pnpm-10.20.0.tgz";
       name = "pnpm.tgz";
-      sha256 = "sha256-HF9e5ZJn5OLhv9M19DKhjcSPmplECU1dJkl1fnJa03Y=";
+      sha256 = "sha256-R6M1KAhQG40e8gESJztqXc+lPSilW8zjbSaOh4vWv+k=";
     };
   };
   spectral = {
@@ -237,11 +237,11 @@
   };
   standardnotes-desktop-deb-x86_64-linux = {
     pname = "standardnotes-desktop-deb-x86_64-linux";
-    version = "3.200.7";
+    version = "3.200.9";
     src = fetchurl {
-      url = "https://github.com/standardnotes/app/releases/download/@standardnotes/desktop@3.200.7/standard-notes-3.200.7-linux-amd64.deb";
+      url = "https://github.com/standardnotes/app/releases/download/@standardnotes/desktop@3.200.9/standard-notes-3.200.9-linux-amd64.deb";
       name = "standardnotes-desktop-x86_64-linux.deb";
-      sha256 = "sha256-p7xK1OfNDiUHAwccGyvLnBAYf8LDYh3193jURT3Lgi4=";
+      sha256 = "sha256-NJtMmLsMuSOnKH0nVVun/O9PVs98EpOmANYJNhnDsM0=";
     };
   };
   tree-sitter-cql = {
