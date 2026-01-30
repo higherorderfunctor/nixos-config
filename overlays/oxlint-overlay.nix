@@ -24,53 +24,27 @@ _: final: prev: let
     (prev
       .oxlint
       .overrideAttrs {
-        meta = mkMeta {
-          homepage = "https://github.com/oxc-project/oxc/tree/main/apps/oxlint";
-          mainProgram = "oxlint";
-        };
-      })
+      meta = mkMeta {
+        homepage = "https://github.com/oxc-project/oxc/tree/main/apps/oxlint";
+        mainProgram = "oxlint";
+      };
+    })
     .override
     (_: {
       rustPlatform.buildRustPackage = args:
-        rustPlatform.buildRustPackage (args
-          // {
-            pname = "oxlint";
-            inherit (nv) version src;
-            cargoLock = nv.cargoLock."Cargo.lock";
-            buildInputs =
-              args.buildInputs
-              ++ [
-                final.nodejs
-              ];
-          });
-    });
-  oxc-language-server =
-    (prev
-      .oxlint
-      .overrideAttrs {
-        meta = mkMeta {
-          homepage = "https://github.com/oxc-project/oxc/tree/main/crates/oxc_language_server";
-          mainProgram = "oxc-language-server";
-        };
-      })
-    .override
-    (_: {
-      rustPlatform.buildRustPackage = args:
-        rustPlatform.buildRustPackage (args
-          // rec {
-            pname = "oxc-language-server";
-            inherit (nv) version src;
-            cargoLock = nv.cargoLock."Cargo.lock";
-            buildInputs =
-              args.buildInputs
-              ++ [
-                final.nodejs
-              ];
-            cargoWorkspaceDir = "${nv.src}/crates/oxc_language_server";
-            cargoBuildFlags = ["--bin=oxc_language_server"];
-            cargoTestFlags = cargoBuildFlags;
-          });
+        rustPlatform.buildRustPackage (
+          finalAttrs: let
+            a = (lib.toFunction args) finalAttrs;
+          in
+            a
+            // {
+              pname = "oxlint";
+              inherit (nv) version src;
+              cargoLock = nv.cargoLock."Cargo.lock";
+              buildInputs = (a.buildInputs or []) ++ [final.nodejs];
+            }
+        );
     });
 in {
-  inherit oxlint oxc-language-server;
+  inherit oxlint;
 }

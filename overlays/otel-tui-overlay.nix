@@ -3,10 +3,10 @@ _: final: _: let
     ((import ./.nvfetcher/generated.nix) {
       inherit (final) fetchgit fetchurl fetchFromGitHub dockerTools;
     })
-    ."otel-tui-${final.system}";
+    ."otel-tui-${final.stdenv.hostPlatform.system}";
 in {
   otel-tui = final.stdenv.mkDerivation {
-    name = "otel-tui";
+    pname = "otel-tui";
     inherit (otel-tui) src version;
 
     phases = ["unpackPhase" "installPhase" "patchPhase"];

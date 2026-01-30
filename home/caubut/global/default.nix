@@ -11,7 +11,7 @@
 in {
   imports =
     [
-      inputs.impermanence.nixosModules.home-manager.impermanence
+      # inputs.impermanence.nixosModules.home-manager.impermanence
       ../features/cli
       ../features/colors/catppuccin-mocha.nix
     ]

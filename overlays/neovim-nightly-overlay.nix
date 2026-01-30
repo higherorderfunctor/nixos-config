@@ -1,16 +1,22 @@
-# {inputs, ...}: inputs.neovim-nightly-overlay.overlays.default
-{inputs, ...}: final: _: {
-  neovim = inputs.neovim-nightly-overlay.packages.${final.system}.neovim.override (args: {
+{inputs, ...}: final: _: let
+  inherit (final) lib;
+in {
+  neovim = inputs.neovim-nightly-overlay.packages.${final.stdenv.hostPlatform.system}.neovim
+      .override (args: {
     tree-sitter = args.tree-sitter.override {
       rustPlatform =
         final.rustPlatform
         // {
-          buildRustPackage = args:
+          buildRustPackage = args':
             final.rustPlatform.buildRustPackage (
-              args
-              // {
-                # cargoHash = "sha256-rjUn8F6WSxLQGrFzK23q4ClLePSpcMN2+i7rC02Fisk=";
-              }
+              finalAttrs: let
+                a = (lib.toFunction args') finalAttrs;
+              in
+                a
+                // {
+                  # If you need to pin it, set it here:
+                  # cargoHash = "sha256-...";
+                }
             );
         };
     };

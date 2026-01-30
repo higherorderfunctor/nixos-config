@@ -1,5 +1,5 @@
 _: (final: prev: let
-  nv = (import ./nvpkgs.nix)."standardnotes-desktop-deb-${final.system}";
+  nv = (import ./nvpkgs.nix)."standardnotes-desktop-deb-${final.stdenv.hostPlatform.system}";
   electron = final.electron;
   rpath = final.lib.makeLibraryPath (with final; [
     libsecret

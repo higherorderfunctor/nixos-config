@@ -1,5 +1,5 @@
 _: (final: _: let
-  nv = (import ./nvpkgs.nix)."bruno-deb-${final.system}";
+  nv = (import ./nvpkgs.nix)."bruno-deb-${final.stdenv.hostPlatform.system}";
   rpath = final.lib.makeLibraryPath (with final; [
     alsa-lib
     at-spi2-atk
@@ -105,7 +105,7 @@ in {
     meta = with final.lib; {
       description = "Open-source IDE For exploring and testing APIs.";
       homepage = "https://www.usebruno.com";
-      platforms = [final.system];
+      platforms = [final.stdenv.hostPlatform.system];
       license = licenses.unfree;
       maintainers = with maintainers; [water-sucks lucasew kashw2 mattpolzin];
       mainProgram = "bruno";
