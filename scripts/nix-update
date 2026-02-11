@@ -73,7 +73,7 @@ EOF
 
 	# this command succeeds if its already in the store and the rest is skipped,
 	# otherwise, on failure, it tries to build, captures the correct hash, and updates generated.json
-	if ! output=$(nix-build --expr "$oh_my_posh" 2>&1 | tee >(cat - >&5)); then
+	if ! output=$(nix-build --show-trace --expr "$oh_my_posh" 2>&1 | tee >(cat - >&5)); then
 		# if the command fails, it should just be on the vendor hash which is captured
 		oh_my_posh_vendor_hash=$(echo "$output" | grep -oP 'got:\s+\Ksha256-[a-zA-Z0-9+/=]+')
 		echo -e "\nUpdating vendorHash: $oh_my_posh_vendor_hash\n"

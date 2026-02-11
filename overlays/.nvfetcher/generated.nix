@@ -53,11 +53,11 @@
   };
   bun-x86_64-linux = {
     pname = "bun-x86_64-linux";
-    version = "1.3.8";
+    version = "1.3.9";
     src = fetchurl {
-      url = "https://github.com/oven-sh/bun/releases/download/bun-v1.3.8/bun-linux-x64.zip";
+      url = "https://github.com/oven-sh/bun/releases/download/bun-v1.3.9/bun-linux-x64.zip";
       name = "bun-x86_64-linux.zip";
-      sha256 = "sha256-AyKxfwci2namQpiq1JgiWu3L9t8QCKHe5F4W7LImo/E=";
+      sha256 = "sha256-RoDoDkTjKqcYVgzq6F0i7Pvy77jzZBeC415Lfv1loao=";
     };
   };
   catppuccin-btop = {
@@ -140,32 +140,32 @@
   };
   gluetun-src = {
     pname = "gluetun-src";
-    version = "v3.41.0";
+    version = "v3.41.1";
     src = fetchFromGitHub {
       owner = "qdm12";
       repo = "gluetun";
-      rev = "v3.41.0";
+      rev = "v3.41.1";
       fetchSubmodules = false;
-      sha256 = "sha256-bAVz/04z9osN8OYcMwL0fH3o5bRC1bNJzDy7ZqoRwaM=";
+      sha256 = "sha256-tLfX0bIj/6XC7sSdVqFcJMOv+EChYMqakFuQiZ4WXz8=";
     };
   };
   go = {
     pname = "go";
-    version = "1.25.6";
+    version = "1.26.0";
     src = fetchurl {
-      url = "https://go.dev/dl/go1.25.6.src.tar.gz";
-      sha256 = "sha256-WMv3ceRNdt5vVtGeM7d9dFoeSJNAkih15GWFuXXCsFk=";
+      url = "https://go.dev/dl/go1.26.0.src.tar.gz";
+      sha256 = "sha256-yRMqih9r0qpKrR10uCMdlSdJUEg6SVBlfubFbm6Bd5A=";
     };
   };
   oh-my-posh = {
     pname = "oh-my-posh";
-    version = "v29.1.0";
+    version = "v29.2.2";
     src = fetchFromGitHub {
       owner = "JanDeDobbeleer";
       repo = "oh-my-posh";
-      rev = "v29.1.0";
+      rev = "v29.2.2";
       fetchSubmodules = false;
-      sha256 = "sha256-gbb/ZVd3oNABw8Hjeht//bPdLVQnWtEtAkvYudGqMTs=";
+      sha256 = "sha256-eQuSievSkX3PjzJxfxFjIJl3xiuH1C/ggpxpssd/dME=";
     };
   };
   otel-desktop-viewer = {
@@ -184,10 +184,10 @@
   };
   otel-tui-x86_64-linux = {
     pname = "otel-tui-x86_64-linux";
-    version = "0.6.3";
+    version = "0.7.1";
     src = fetchurl {
-      url = "https://github.com/ymtdzzz/otel-tui/releases/download/v0.6.3/otel-tui_Linux_x86_64.tar.gz";
-      sha256 = "sha256-MceiW11/DV6dRa5Bh1/bsj+9aiX9xYFU244Z8LAXPoc=";
+      url = "https://github.com/ymtdzzz/otel-tui/releases/download/v0.7.1/otel-tui_Linux_x86_64.tar.gz";
+      sha256 = "sha256-V929JyMB/N/QuwMWGhSP7oAnGHHG+B8zImMpbgB8UR0=";
     };
   };
   pnpm = {

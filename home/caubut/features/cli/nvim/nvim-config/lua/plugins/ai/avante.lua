@@ -22,28 +22,56 @@ if kagi_api_key then
   vim.env.KAGI_API_KEY = kagi_api_key
 end
 
+-- return {
+--   {
+--     "yetone/avante.nvim",
+--     opts = function(_, opts)
+--       return vim.tbl_deep_extend("force", opts or {}, {
+--         auto_suggestions_provider = "aihubmix",
+--         -- provider = "aihubmix",
+--         cursor_applying_provider = "aihubmix",
+--         behavior = {
+--           auto_suggestions = true,
+--           enable_cursor_planning_mode = true,
+--           max_completion_tokens = 32768,
+--         },
+--         provider = "openai",
+--         providers = {
+--           aihubmix = {
+--             model = "gpt-5.1-codex-max",
+--           },
+--           copilot = {},
+--         },
+--         web_search_engine = {
+--           provider = "kagi",
+--           proxy = nil,
+--         },
+--       })
+--     end,
+--   },
+-- }
 return {
   {
     "yetone/avante.nvim",
     opts = function(_, opts)
       return vim.tbl_deep_extend("force", opts or {}, {
-        auto_suggestions_provider = "aihubmix",
         provider = "aihubmix",
-        cursor_applying_provider = "aihubmix",
+        auto_suggestions_provider = "aihubmix",
+
         behavior = {
           auto_suggestions = true,
-          enable_cursor_planning_mode = true,
-          max_completion_tokens = 32768,
         },
+
         providers = {
           aihubmix = {
-            model = "gpt-5.1-codex-max",
+            model = "gpt-5.1-chat-latest",
+            api_key_name = "AIHUBMIX_API_KEY",
           },
           copilot = {},
-          web_search_engine = {
-            provider = "kagi",
-            proxy = nil,
-          },
+        },
+
+        web_search_engine = {
+          provider = "kagi",
         },
       })
     end,

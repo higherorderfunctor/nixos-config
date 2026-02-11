@@ -16,48 +16,30 @@ _: final: prev: let
     if lib.hasAttr "vendorHash" nv
     then nv.vendorHash
     else lib.fakeHash;
-  buildGoModule = let
-    nv = (import ./nvpkgs.nix).go;
-    go = final.go.overrideAttrs {
-      inherit (nv) version;
-      src = final.fetchurl {
-        inherit (nv.src) url sha256;
-      };
-    };
-  in
-    final.buildGoModule.override {inherit go;};
-  # final.buildGoModule.override {inherit (final) go;};
 in {
-  oh-my-posh =
-    prev.oh-my-posh.override
-    {
-      buildGoModule = orig:
-        buildGoModule (orig
-          // {
-            inherit version src vendorHash;
+  oh-my-posh = prev.oh-my-posh.overrideAttrs (_: attrs: {
+    inherit version src vendorHash;
 
-            ldflags = builtins.map replaceVersion orig.ldflags;
+    ldflags = map replaceVersion attrs.ldflags;
 
-            postPatch = ''
-              rm config/migrate_glyphs_test.go \
-                 segments/nba_test.go \
-                 segments/upgrade_test.go \
-                 cli/upgrade/notice_test.go
-            '';
-            # image/image_test.go
+    postPatch = ''
+      rm config/migrate_glyphs_test.go \
+         segments/nba_test.go \
+         segments/upgrade_test.go \
+         cli/upgrade/notice_test.go
+    '';
 
-            postInstall = ''
-              mv $out/bin/{src,oh-my-posh}
-              mkdir -p $out/share/oh-my-posh
-              cp -r $src/themes $out/share/oh-my-posh/
-            '';
+    postInstall = ''
+      mv $out/bin/{src,oh-my-posh}
+      mkdir -p $out/share/oh-my-posh
+      cp -r $src/themes $out/share/oh-my-posh/
+    '';
 
-            meta =
-              orig.meta
-              // {
-                changelog = "https://github.com/JanDeDobbeleer/oh-my-posh/releases/tag/v${nv.version}";
-                mainProgresm = "oh-my-posh";
-              };
-          });
-    };
+    meta =
+      attrs.meta
+      // {
+        changelog = "https://github.com/JanDeDobbeleer/oh-my-posh/releases/tag/v${nv.version}";
+        mainProgram = "oh-my-posh";
+      };
+  });
 }
