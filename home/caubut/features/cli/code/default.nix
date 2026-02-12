@@ -14,6 +14,11 @@
     # vscode-json-language-server
     # vscode-markdown-language-server
     vscode-langservers-extracted
-    kiro-cli
+    (kiro-cli.overrideAttrs
+      (old: {
+        src = old.src.overrideAttrs (_: {
+          hash = "sha256-q5ixEPVXL9VHtCKCpCUIAd426k7HGewpuXDWfB0q06c="; # final.lib.fakeHash;
+        });
+      }))
   ];
 }
