@@ -14,6 +14,7 @@ args: let
     ./fblog-overlay.nix
     ./firefox-nightly-overlay.nix
     ./gluetun-overlay.nix
+    ./go-overlay.nix
     ./hotfixes-overlay.nix
     ./hyprland-overlay.nix
     ./mirrors-overlay.nix

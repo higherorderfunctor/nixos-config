@@ -58,6 +58,12 @@
         flake-compat.follows = "flake-compat";
       };
     };
+    go-overlay = {
+      url = "github:purpleclay/go-overlay";
+      inputs = {
+        nixpkgs.follows = "nixpkgs";
+      };
+    };
     hercules-ci-effects = {
       url = "github:hercules-ci/hercules-ci-effects";
       inputs = {

@@ -159,13 +159,13 @@
   };
   oh-my-posh = {
     pname = "oh-my-posh";
-    version = "v29.2.2";
+    version = "v29.3.0";
     src = fetchFromGitHub {
       owner = "JanDeDobbeleer";
       repo = "oh-my-posh";
-      rev = "v29.2.2";
+      rev = "v29.3.0";
       fetchSubmodules = false;
-      sha256 = "sha256-eQuSievSkX3PjzJxfxFjIJl3xiuH1C/ggpxpssd/dME=";
+      sha256 = "sha256-E6GT6+NO27HLi4gzK681B+aaxA8OPqhRVnWXmx/v1Qo=";
     };
   };
   otel-desktop-viewer = {

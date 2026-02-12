@@ -263,13 +263,13 @@
       "name": null,
       "owner": "JanDeDobbeleer",
       "repo": "oh-my-posh",
-      "rev": "v29.2.2",
-      "sha256": "sha256-eQuSievSkX3PjzJxfxFjIJl3xiuH1C/ggpxpssd/dME=",
+      "rev": "v29.3.0",
+      "sha256": "sha256-E6GT6+NO27HLi4gzK681B+aaxA8OPqhRVnWXmx/v1Qo=",
       "sparseCheckout": [],
       "type": "github"
     },
-    "version": "v29.2.2",
-    "vendorHash": "sha256-iMIk+MKlYTSfFuIcCUrJ7Tj4bRVftERuwxzcqrI64Ok="
+    "version": "v29.3.0",
+    "vendorHash": "sha256-E051HEojgt5Ig5+7kcnLmLAG3PybPZlhDcogZmFmzgM="
   },
   "otel-desktop-viewer": {
     "cargoLock": null,

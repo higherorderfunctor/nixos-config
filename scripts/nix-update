@@ -3,6 +3,8 @@
 set -euETo pipefail
 shopt -s inherit_errexit 2>/dev/null || :
 
+set -x
+
 cd "$(dirname "$0")"/..
 
 FAKE_HASH="sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA="
@@ -65,8 +67,29 @@ yq e -iP '.oh-my-posh.vendorHash = "'"$oh_my_posh_vendor_hash"'"' overlays/.nvfe
 
 	# oh-my-posh
 	oh_my_posh="$(
-		cat <<EOF
-{ pkgs ? import <nixpkgs> { overlays = [(import ./overlays/oh-my-posh-overlay.nix {}) ]; } }:
+		cat <<'EOF'
+{ pkgs ? import <nixpkgs> {
+    overlays =
+      let
+        lock = builtins.fromJSON (builtins.readFile ./flake.lock);
+
+        # Find the node key for the input named "go-overlay"
+        goOverlayNodeKey = lock.nodes.root.inputs."go-overlay";
+        goOverlayLocked = lock.nodes.${goOverlayNodeKey}.locked;
+
+        goOverlaySrc = builtins.fetchTree {
+          type = "github";
+          owner = "purpleclay";
+          repo = "go-overlay";
+          rev = goOverlayLocked.rev;
+          narHash = goOverlayLocked.narHash;
+        };
+      in [
+        (import goOverlaySrc)
+        (import ./overlays/oh-my-posh-overlay.nix {})
+      ];
+  }
+}:
 pkgs.oh-my-posh
 EOF
 	)"
