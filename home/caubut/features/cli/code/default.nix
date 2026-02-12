@@ -14,5 +14,6 @@
     # vscode-json-language-server
     # vscode-markdown-language-server
     vscode-langservers-extracted
+    kiro-cli
   ];
 }
