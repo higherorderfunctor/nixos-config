@@ -17,6 +17,7 @@ args: let
     ./go-overlay.nix
     ./hotfixes-overlay.nix
     ./hyprland-overlay.nix
+    ./kiro-overlay.nix
     ./mirrors-overlay.nix
     ./neovim-nightly-overlay.nix
     ./nix-gl-host-overlay.nix

@@ -33,11 +33,11 @@
   };
   bruno-deb-x86_64-linux = {
     pname = "bruno-deb-x86_64-linux";
-    version = "3.0.2";
+    version = "3.1.2";
     src = fetchurl {
-      url = "https://github.com/usebruno/bruno/releases/download/v3.0.2/bruno_3.0.2_amd64_linux.deb";
+      url = "https://github.com/usebruno/bruno/releases/download/v3.1.2/bruno_3.1.2_amd64_linux.deb";
       name = "bruno-x86_64-linux.zip";
-      sha256 = "sha256-czeJe3cpsBKEwepfNlB25W8EyZN6u8dJuEdFG21WgnE=";
+      sha256 = "sha256-Z667RWipj48peQtVAIZjBPK8IQaOpXy90sG4eSNIsns=";
     };
   };
   btop = {
@@ -115,7 +115,7 @@
   };
   dns-root-hints = {
     pname = "dns-root-hints";
-    version = "20260122";
+    version = "20260219";
     src = fetchurl {
       url = "https://www.internic.net/domain/named.root";
       sha256 = "sha256-Jndwkxy2OEiYjSUfphU3NKyMYZNOMAXqR8So5ow3mUo=";
@@ -157,15 +157,23 @@
       sha256 = "sha256-yRMqih9r0qpKrR10uCMdlSdJUEg6SVBlfubFbm6Bd5A=";
     };
   };
+  kiro-cli = {
+    pname = "kiro-cli";
+    version = "1.26.2";
+    src = fetchurl {
+      url = "https://desktop-release.q.us-east-1.amazonaws.com/1.26.2/kirocli-x86_64-linux.tar.gz";
+      sha256 = "sha256-KHW2i7TvJ+3OcZKJ8TUD1Q9Z6lBCCMegg9tvjQt4+o4=";
+    };
+  };
   oh-my-posh = {
     pname = "oh-my-posh";
-    version = "v29.3.0";
+    version = "v29.4.1";
     src = fetchFromGitHub {
       owner = "JanDeDobbeleer";
       repo = "oh-my-posh";
-      rev = "v29.3.0";
+      rev = "v29.4.1";
       fetchSubmodules = false;
-      sha256 = "sha256-E6GT6+NO27HLi4gzK681B+aaxA8OPqhRVnWXmx/v1Qo=";
+      sha256 = "sha256-9eOEsCUBk3SN9BlF23+NIJli2lQiKV53bM9iKkytRyU=";
     };
   };
   otel-desktop-viewer = {
@@ -192,11 +200,11 @@
   };
   pnpm = {
     pname = "pnpm";
-    version = "11.0.0-alpha.3";
+    version = "10.30.0";
     src = fetchurl {
-      url = "https://registry.npmjs.org/pnpm/-/pnpm-11.0.0-alpha.3.tgz";
+      url = "https://registry.npmjs.org/pnpm/-/pnpm-10.30.0.tgz";
       name = "pnpm.tgz";
-      sha256 = "sha256-GefkvEnSkwoxvXveXDGa2UQNedjRH5eWkT+rf/6hGvg=";
+      sha256 = "sha256-/ePOu9TtDW0UCxmDdDv1dc3UsV5NXlsldCUVLc5bG2o=";
     };
   };
   spectral = {
