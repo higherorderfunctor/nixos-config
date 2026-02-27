@@ -19,6 +19,11 @@
 
   # TODO:
   home.packages = with pkgs; [gnome-network-displays];
+  services = {
+    ollama = {
+      enable = true;
+    };
+  };
 
   # GTK theme
   gtk = {

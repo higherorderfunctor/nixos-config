@@ -184,3 +184,9 @@ fetch.git = "https://github.com/L4ki/Vivid-Plasma-Themes.git"
 [kiro-cli]
 src.cmd = "curl -s https://desktop-release.q.us-east-1.amazonaws.com/latest/manifest.json | jq -r '.version'"
 fetch.url = "https://desktop-release.q.us-east-1.amazonaws.com/$ver/kirocli-x86_64-linux.tar.gz"
+
+[kiro-gateway]
+src.git = "https://github.com/jwadow/kiro-gateway.git"
+src.use_commit = true
+src.branch = "main"
+fetch.git = "https://github.com/jwadow/kiro-gateway.git"

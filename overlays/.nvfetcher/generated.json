@@ -49,11 +49,11 @@
     "pinned": false,
     "src": {
       "name": "bruno-x86_64-linux.zip",
-      "sha256": "sha256-Z667RWipj48peQtVAIZjBPK8IQaOpXy90sG4eSNIsns=",
+      "sha256": "sha256-NgzIOmhmPU3Y3nOFZ4zsHdynEkmoopaz0p5ncae76MM=",
       "type": "url",
-      "url": "https://github.com/usebruno/bruno/releases/download/v3.1.2/bruno_3.1.2_amd64_linux.deb"
+      "url": "https://github.com/usebruno/bruno/releases/download/v3.1.4/bruno_3.1.4_amd64_linux.deb"
     },
-    "version": "3.1.2"
+    "version": "3.1.4"
   },
   "btop": {
     "cargoLock": null,
@@ -85,11 +85,11 @@
     "pinned": false,
     "src": {
       "name": "bun-x86_64-linux.zip",
-      "sha256": "sha256-RoDoDkTjKqcYVgzq6F0i7Pvy77jzZBeC415Lfv1loao=",
+      "sha256": "sha256-9XvAGH45Yj3nFro6OJ/aVIay175xMamAulTce3M9Lgg=",
       "type": "url",
-      "url": "https://github.com/oven-sh/bun/releases/download/bun-v1.3.9/bun-linux-x64.zip"
+      "url": "https://github.com/oven-sh/bun/releases/download/bun-v1.3.10/bun-linux-x64.zip"
     },
-    "version": "1.3.9"
+    "version": "1.3.10"
   },
   "catppuccin-btop": {
     "cargoLock": null,
@@ -181,11 +181,11 @@
     "pinned": false,
     "src": {
       "name": null,
-      "sha256": "sha256-Jndwkxy2OEiYjSUfphU3NKyMYZNOMAXqR8So5ow3mUo=",
+      "sha256": "sha256-GJRsqVXCLGzAuFYjj7JapZnqrAfYD8P/hrnuFnHQAUA=",
       "type": "url",
       "url": "https://www.internic.net/domain/named.root"
     },
-    "version": "20260219"
+    "version": "20260226"
   },
   "fblog": {
     "cargoLock": {
@@ -264,6 +264,26 @@
     },
     "version": "1.26.2"
   },
+  "kiro-gateway": {
+    "cargoLock": null,
+    "date": "2026-02-12",
+    "extract": null,
+    "name": "kiro-gateway",
+    "passthru": null,
+    "pinned": false,
+    "src": {
+      "deepClone": false,
+      "fetchSubmodules": false,
+      "leaveDotGit": false,
+      "name": null,
+      "rev": "e6f23c22fc5e9aa7a22e4c31af56cdc6f859afbd",
+      "sha256": "sha256-V9sS82Jwx5y03ojNueHr+0qfp87fkACrdr7iP78Yxeo=",
+      "sparseCheckout": [],
+      "type": "git",
+      "url": "https://github.com/jwadow/kiro-gateway.git"
+    },
+    "version": "e6f23c22fc5e9aa7a22e4c31af56cdc6f859afbd"
+  },
   "oh-my-posh": {
     "cargoLock": null,
     "date": null,
@@ -278,13 +298,13 @@
       "name": null,
       "owner": "JanDeDobbeleer",
       "repo": "oh-my-posh",
-      "rev": "v29.4.1",
-      "sha256": "sha256-9eOEsCUBk3SN9BlF23+NIJli2lQiKV53bM9iKkytRyU=",
+      "rev": "v29.7.0",
+      "sha256": "sha256-hHnDa4CHAUbxb4mYS/pdFA2z6UHJIlIEsYwPq6N1gH8=",
       "sparseCheckout": [],
       "type": "github"
     },
-    "version": "v29.4.1",
-    "vendorHash": "sha256-E051HEojgt5Ig5+7kcnLmLAG3PybPZlhDcogZmFmzgM="
+    "version": "v29.7.0",
+    "vendorHash": "sha256-7dNkoW5EhNxiT9BcgD9jwaXxFcLI8ds98juA9X86juc="
   },
   "otel-desktop-viewer": {
     "cargoLock": null,
@@ -330,11 +350,11 @@
     "pinned": false,
     "src": {
       "name": "pnpm.tgz",
-      "sha256": "sha256-/ePOu9TtDW0UCxmDdDv1dc3UsV5NXlsldCUVLc5bG2o=",
+      "sha256": "sha256-/wpyFA9qbWbAsoT2yVYK/2BVGOKMKa6sJfsmK3QzFYg=",
       "type": "url",
-      "url": "https://registry.npmjs.org/pnpm/-/pnpm-10.30.0.tgz"
+      "url": "https://registry.npmjs.org/pnpm/-/pnpm-10.30.3.tgz"
     },
-    "version": "10.30.0"
+    "version": "10.30.3"
   },
   "spectral": {
     "cargoLock": null,
