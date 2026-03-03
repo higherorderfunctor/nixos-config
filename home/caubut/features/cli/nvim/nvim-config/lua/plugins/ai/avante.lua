@@ -1,6 +1,6 @@
--- local ai_hub_mix_api_key_path = vim.fn.expand("/run/user/1000/secrets/caubut-ai-hub-mix-api-key")
-local kagi_api_key_path = vim.fn.expand("/run/user/1000/secrets/caubut-ai-hub-mix-api-key")
--- local kiro_proxy_key_path = vim.fn.expand("/run/user/1000/secrets/kiro-proxy-api-key") -- Path for your kiro key
+-- local ai_hub_mix_api_key_path = "/run/user/1000/secrets/caubut-ai-hub-mix-api-key"
+-- local kiro_proxy_key_path = "/run/user/1000/secrets/kiro-proxy-api-key"
+local kagi_api_key_path = "/run/user/1000/secrets/caubut-kagi-api-key"
 
 local function read_file(path)
   local file = io.open(path, "r")
@@ -8,7 +8,7 @@ local function read_file(path)
     vim.notify("Failed to open API key file: " .. path, vim.log.levels.ERROR)
     return nil
   end
-  local content = file:read("*l") -- read first line only
+  local content = file:read("*l")
   file:close()
   return content
 end
@@ -25,12 +25,15 @@ if kagi_api_key then
   vim.env.KAGI_API_KEY = kagi_api_key
 end
 
--- Load Kiro Gateway key
--- This ensures the Prox y API Key is available for avante to send to the gateway
--- local kiro_proxy_key = read_file(kiro_proxy_key_path)
--- if kiro_proxy_key then
+-- TODO: Manage via SOPs.  Local-to-local communication only, no need to store
+-- in env vars, just pass directly to avante config.  This is only needed for
+-- the rag service, which is currently configured to use a local kiro proxy
+-- that requires an API key.
+-- Running:
+-- PROXY_API_KEY="my-super-secret-password-123" \
+--   KIRO_CLI_DB_FILE="~/.local/share/kiro-cli/data.sqlite3" \
+--   kiro-gateway
 vim.env.KIRO_API_KEY = "my-super-secret-password-123"
--- end
 
 return {
   -- {
