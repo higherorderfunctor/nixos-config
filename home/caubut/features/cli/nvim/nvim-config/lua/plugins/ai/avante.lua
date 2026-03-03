@@ -86,8 +86,8 @@ return {
     "yetone/avante.nvim",
     opts = function(_, opts)
       return vim.tbl_deep_extend("force", opts or {}, {
-        provider = "kiro", -- Set primary provider to kiro
-        auto_suggestions_provider = "kiro", -- Optional: use kiro for suggestions too
+        provider = "kiro",
+        auto_suggestions_provider = "kiro",
 
         behavior = {
           auto_suggestions = true,
@@ -98,22 +98,6 @@ return {
             command = "kiro-cli",
             args = { "acp" },
           },
-        },
-
-        providers = {
-          --- Kiro Gateway Configuration ---
-          --          kiro = {
-          --            __inherited_from = "openai", -- Inherit logic from the built-in OpenAI provider
-          --            endpoint = "http://127.0.0.1:8000/v1",
-          --            model = "claude-opus-4.6",
-          --            api_key_name = "KIRO_API_KEY",
-          --          },
-          --- Your previous providers ---
-          -- aihubmix = {
-          --   model = "gpt-5.1-chat-latest",
-          --   api_key_name = "AVANTE_AIHUBMIX_API_KEY",
-          -- },
-          copilot = {},
         },
 
         rag_service = {
