@@ -1,5 +1,6 @@
-local ai_hub_mix_api_key_path = vim.fn.expand("/run/user/1000/secrets/caubut-ai-hub-mix-api-key")
+-- local ai_hub_mix_api_key_path = vim.fn.expand("/run/user/1000/secrets/caubut-ai-hub-mix-api-key")
 local kagi_api_key_path = vim.fn.expand("/run/user/1000/secrets/caubut-ai-hub-mix-api-key")
+-- local kiro_proxy_key_path = vim.fn.expand("/run/user/1000/secrets/kiro-proxy-api-key") -- Path for your kiro key
 
 local function read_file(path)
   local file = io.open(path, "r")
@@ -12,33 +13,106 @@ local function read_file(path)
   return content
 end
 
-local ai_hub_mix_api_key = read_file(ai_hub_mix_api_key_path)
-if ai_hub_mix_api_key then
-  vim.env.AVANTE_AIHUBMIX_API_KEY = ai_hub_mix_api_key
-end
+-- -- Load AIHubMix key
+-- local ai_hub_mix_api_key = read_file(ai_hub_mix_api_key_path)
+-- if ai_hub_mix_api_key then
+--   vim.env.AVANTE_AIHUBMIX_API_KEY = ai_hub_mix_api_key
+-- end
 
+-- Load Kagi key
 local kagi_api_key = read_file(kagi_api_key_path)
 if kagi_api_key then
   vim.env.KAGI_API_KEY = kagi_api_key
 end
 
+-- Load Kiro Gateway key
+-- This ensures the Prox y API Key is available for avante to send to the gateway
+-- local kiro_proxy_key = read_file(kiro_proxy_key_path)
+-- if kiro_proxy_key then
+vim.env.KIRO_API_KEY = "my-super-secret-password-123"
+-- end
+
 return {
+  -- {
+  --   "ravitemer/mcphub.nvim",
+  --   dependencies = { "nvim-lua/plenary.nvim" },
+  --   build = "pnpm install -g mcp-hub@latest",
+  --   config = function()
+  --     require("mcphub").setup({
+  --       servers = {
+  --         filesystem = {
+  --           command = "pnpm",
+  --           args = { "dlx", "@modelcontextprotocol/server-filesystem", "." },
+  --         },
+  --         -- fetch = {
+  --         --   command = "uvx",
+  --         --   args = { "mcp-server-fetch" },
+  --         -- },
+  --         -- git = {
+  --         --   command = "uvx",
+  --         --   args = { "mcp-server-git" },
+  --         -- },
+  --         -- ["sequential-thinking"] = {
+  --         --   command = "npx",
+  --         --   args = { "-y", "@modelcontextprotocol/server-sequentialthinking" },
+  --         -- },
+  --         -- ["memory-graph"] = {
+  --         --   command = "npx",
+  --         --   args = { "-y", "memory-graph" },
+  --         --   env = {
+  --         --     NEO4J_URI = "bolt://localhost:7687",
+  --         --     NEO4J_USER = "neo4j",
+  --         --     NEO4J_PASSWORD = os.getenv("NEO4J_PASSWORD") or "changeme",
+  --         --   },
+  --         -- },
+  --         -- time = {
+  --         --   command = "npx",
+  --         --   args = { "-y", "@modelcontextprotocol/server-time" },
+  --         -- },
+  --         -- notifications = {
+  --         --   command = "npx",
+  --         --   args = { "-y", "@anthropic/mcp-server-notifications" },
+  --         -- },
+  --       },
+  --       extensions = {
+  --         avante = {
+  --           make_slash_commands = true,
+  --         },
+  --       },
+  --     })
+  --   end,
+  -- },
   {
     "yetone/avante.nvim",
     opts = function(_, opts)
       return vim.tbl_deep_extend("force", opts or {}, {
-        provider = "aihubmix",
-        auto_suggestions_provider = "aihubmix",
+        provider = "kiro", -- Set primary provider to kiro
+        auto_suggestions_provider = "kiro", -- Optional: use kiro for suggestions too
 
         behavior = {
           auto_suggestions = true,
         },
 
-        providers = {
-          aihubmix = {
-            model = "gpt-5.1-chat-latest",
-            api_key_name = "AVANTE_AIHUBMIX_API_KEY",
+        acp_providers = {
+          ["kiro"] = {
+            command = "kiro-cli",
+            args = { "acp" },
           },
+        },
+
+        providers = {
+          --- Kiro Gateway Configuration ---
+          --          kiro = {
+          --            __inherited_from = "openai", -- Inherit logic from the built-in OpenAI provider
+          --            endpoint = "http://127.0.0.1:8000/v1",
+          --            model = "claude-opus-4.6",
+          --            api_key_name = "KIRO_API_KEY",
+          --          },
+          --- Your previous providers ---
+          -- aihubmix = {
+          --   model = "gpt-5.1-chat-latest",
+          --   api_key_name = "AVANTE_AIHUBMIX_API_KEY",
+          -- },
           copilot = {},
         },
 
@@ -47,20 +121,18 @@ return {
           host_mount = os.getenv("HOME"),
           runner = "docker",
 
-          -- LLM used by the RAG service for query processing
           llm = {
             provider = "openai",
-            endpoint = "https://aihubmix.com/v1",
-            api_key = "AVANTE_AIHUBMIX_API_KEY", -- env var name, not the key itself
-            model = "gpt-4o-mini", -- cheap model for RAG internals
+            endpoint = "http://127.0.0.1:8000/",
+            api_key = "KIRO_API_KEY",
+            model = "claude-opus-4.6",
           },
 
-          -- Embedding model — local via Ollama, no API cost
           embed = {
             provider = "ollama",
             endpoint = "http://127.0.0.1:11434",
-            api_key = "", -- Ollama doesn't need a key,
-            model = "nub235/voyage-4-nano", -- code-optimized embeddings
+            api_key = "",
+            model = "nub235/voyage-4-nano",
             extra = nil,
           },
         },

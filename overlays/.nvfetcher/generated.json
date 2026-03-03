@@ -258,11 +258,11 @@
     "pinned": false,
     "src": {
       "name": null,
-      "sha256": "sha256-KHW2i7TvJ+3OcZKJ8TUD1Q9Z6lBCCMegg9tvjQt4+o4=",
+      "sha256": "sha256-UO5GARkY8nRb00WnAqqpqoSX+4+x0jTTMHv8B/FqLaQ=",
       "type": "url",
-      "url": "https://desktop-release.q.us-east-1.amazonaws.com/1.26.2/kirocli-x86_64-linux.tar.gz"
+      "url": "https://desktop-release.q.us-east-1.amazonaws.com/1.27.0/kirocli-x86_64-linux.tar.gz"
     },
-    "version": "1.26.2"
+    "version": "1.27.0"
   },
   "kiro-gateway": {
     "cargoLock": null,

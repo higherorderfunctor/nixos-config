@@ -159,10 +159,10 @@
   };
   kiro-cli = {
     pname = "kiro-cli";
-    version = "1.26.2";
+    version = "1.27.0";
     src = fetchurl {
-      url = "https://desktop-release.q.us-east-1.amazonaws.com/1.26.2/kirocli-x86_64-linux.tar.gz";
-      sha256 = "sha256-KHW2i7TvJ+3OcZKJ8TUD1Q9Z6lBCCMegg9tvjQt4+o4=";
+      url = "https://desktop-release.q.us-east-1.amazonaws.com/1.27.0/kirocli-x86_64-linux.tar.gz";
+      sha256 = "sha256-UO5GARkY8nRb00WnAqqpqoSX+4+x0jTTMHv8B/FqLaQ=";
     };
   };
   kiro-gateway = {
