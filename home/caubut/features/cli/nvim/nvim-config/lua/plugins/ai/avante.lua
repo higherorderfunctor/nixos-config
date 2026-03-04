@@ -97,32 +97,39 @@ return {
         },
 
         acp_providers = {
+          -- NOTE: can be verified working with a simple "are you Kiro?" query in the
+          -- avante chat
           ["kiro"] = {
             command = "kiro-cli",
             args = { "acp" },
           },
         },
 
-        rag_service = {
-          enabled = true,
-          host_mount = os.getenv("HOME"),
-          runner = "docker",
+        -- TODO: debug why not reusing index causing file build up
+        -- rag_service = {
+        --   enabled = true,
+        --   host_mount = os.getenv("HOME"),
+        --   runner = "docker",
 
-          llm = {
-            provider = "openai",
-            endpoint = "http://127.0.0.1:8000/",
-            api_key = "KIRO_API_KEY",
-            model = "claude-opus-4.6",
-          },
+        --   llm = {
+        --     provider = "openai",
+        --     endpoint = "http://172.17.0.1:8000", -- docker loopback
+        --     api_key = "KIRO_API_KEY",
+        --     model = "claude-opus-4.6",
+        --   },
 
-          embed = {
-            provider = "ollama",
-            endpoint = "http://127.0.0.1:11434",
-            api_key = "",
-            model = "nub235/voyage-4-nano",
-            extra = nil,
-          },
-        },
+        --   embed = {
+        --     -- NOTE: ollama is installed via nix home manager and runs via systemd.
+        --     -- Usage to pull the model: ollama pull nub235/voyage-4-nano
+        --     -- Check the logs as nvim doesn't report errors:  docker logs -f avante-rag-service
+        --     -- Should see a bunch of embed calls while indexing
+        --     provider = "ollama",
+        --     endpoint = "http://172.17.0.1:11434", -- docker loopback
+        --     api_key = "",
+        --     model = "nub235/voyage-4-nano",
+        --     extra = nil,
+        --   },
+        -- },
 
         web_search_engine = {
           provider = "kagi",
