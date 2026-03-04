@@ -7,11 +7,21 @@
   username = "${config.home.username}";
 in {
   home.packages = with pkgs; [git-branchless dprint];
+  sops.secrets = {
+    "${username}-github-api-key" = {
+      mode = "400";
+    };
+  };
   programs.git = {
     enable = true;
     package = pkgs.git;
     # signing.format = "ssh";
     settings = {
+      credential."https://github.com" = {
+        helper = ''
+          !f() { echo "username=x-access-token"; echo "password=$(cat ${config.sops.secrets."caubut-github-api-key".path})"; }; f
+        '';
+      };
       user = {
         name = "Christopher Aubut";
         email = "christopher@aubut.me";
