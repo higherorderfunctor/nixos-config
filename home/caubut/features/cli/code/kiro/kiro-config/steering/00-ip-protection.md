@@ -23,6 +23,12 @@ information across this boundary.
 - `context7` — fetches library documentation (sends library names
   to Context7 backend; safe for PUBLIC library names only, never
   send internal/unpublished package names)
+- `effect-docs` — Effect-TS documentation (sends package names to
+  effect-mcp backend; safe for public Effect packages only)
+- `nixos` — NixOS package/option search (sends package names and
+  option paths; safe — NixOS packages and options are public)
+- `aws-knowledge` — AWS documentation and best practices
+  (sends AWS service/feature queries; safe — AWS services are public)
 
 ## Rules
 

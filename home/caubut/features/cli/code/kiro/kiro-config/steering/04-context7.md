@@ -5,11 +5,23 @@ and code examples directly from source.
 
 ## When to Use
 
-- FIRST tool to try for any library or API question
+- Default tool for library/API questions not covered by a
+  domain-specific server (see below)
 - Looking up current API signatures, function parameters, return types
 - Finding version-specific usage examples
 - Checking if a library feature exists in a specific version
 - Understanding breaking changes between versions
+
+## When to Use a Domain-Specific Server Instead
+
+Some libraries and platforms have dedicated MCP servers with deeper
+coverage than Context7. Check these first:
+
+- **Effect-TS** → use `effect-docs` (covers core + ecosystem packages)
+- **NixOS/Home Manager** → use `nixos` (130K+ packages, 23K+ options)
+- **AWS services/CDK** → use `aws-knowledge` (docs + best practices)
+
+Use Context7 for libraries NOT covered by a domain-specific server.
 
 ## When NOT to Use
 

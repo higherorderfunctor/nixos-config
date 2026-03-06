@@ -220,20 +220,30 @@ When old code has no newer equivalent to compare against:
 
 When provenance analysis reveals a clear pattern:
 
-1. **Store in memory** with provenance data:
-   "Path: packages/core/src/
-    Dominant pattern: Effect.gen for pipelines
-    Evidence: 3 highest-authority authors use it consistently
-    Conflicting pattern: raw pipe chains (2 files, low-authority authors)"
+1. **Store detailed findings in memory** (temporary, not committed):
+   Include author statistics, commit counts, tenure data, and
+   specific contributors. Tag with repo + `provenance-detail`.
+   This data is for YOUR analysis only.
 
-2. **After 2+ similar findings** in the same area, propose a steering
-   file (follow promotion rules in 08-memory-lifecycle.md):
+2. **After 2+ similar findings** in the same area, propose a
+   steering file (follow promotion rules in 08-memory-lifecycle.md):
    "I've found consistent evidence that [pattern] is the established
-    convention for [path]. Authors with higher tenure and ownership
-    consistently use it. Should I draft this as a steering file?"
+    convention for [path]. Want me to draft a steering file?"
 
-3. **If the user confirms**, generate .kiro/steering/[area]-conventions.md
-   and include the provenance evidence that supports the decision.
+3. **Steering files must be ANONYMOUS.** Never include:
+   - Author names, usernames, or identifiers
+   - "Senior dev" / "junior dev" labels tied to individuals
+   - Commit hashes that identify specific people
+   - Any phrasing that could make someone feel surveilled
 
-4. **After promotion**, note the conflicting instances so the user can
-   decide whether to refactor them or leave them as-is.
+   Instead, describe evidence in aggregate:
+   - ❌ "alice (senior, 3yr tenure) uses Effect.gen consistently"
+   - ✅ "Effect.gen is used in 85% of effectful pipelines across
+     the most established files in this path"
+   - ❌ "Newer code by bob uses pipe chains"
+   - ✅ "A small number of newer files use pipe chains, but the
+     dominant convention across the codebase is Effect.gen"
+
+4. **After promotion**, note the conflicting instances so the user
+   can decide whether to refactor them or leave them as-is.
+   Reference files and directories, never people.

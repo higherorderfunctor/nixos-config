@@ -63,3 +63,30 @@ After reading the workspace structure, note:
 - What technology stack the project uses
 - What migrations are in progress
 - What conventions are already codified in steering
+
+## Dynamic Steering Discovery
+
+Personal steering files define WHAT to do (research protocol,
+memory lifecycle, IP protection). Workspace steering files define
+HOW to apply it in this specific repo (conventions, analysis rules,
+domain-specific protocols).
+
+When a task maps to a capability described in personal steering:
+
+1. Check if the workspace has steering files that extend or
+   specialize that capability for this repo
+2. If workspace steering exists for the current task domain,
+   follow it — workspace steering takes precedence for
+   repo-specific behavior
+3. If no workspace steering exists for the task, fall back to
+   personal steering defaults
+4. Never assume a workspace steering file exists by name —
+   discover what's available by reading .kiro/steering/
+
+Examples:
+
+- Personal steering says "use tiered research protocol"
+- Workspace steering may add repo-specific research rules
+  (e.g., analysis protocols, migration awareness, domain scoping)
+- Kiro reads both layers and merges: personal defines the
+  framework, workspace defines the local specialization

@@ -57,15 +57,19 @@ Use sequential thinking to:
 
 For library/API questions:
 
-1. Context7 FIRST — check if version-specific docs exist
-2. If Context7 has it → often sufficient, skip Kagi
-3. If Context7 doesn't cover it → Kagi search
-4. If Kagi finds a promising URL → Fetch for full page content
+1. Check domain-specific doc servers FIRST:
+   - Effect-TS questions → `effect-docs`
+   - NixOS/Home Manager/nix-darwin/Nixvim → `nixos`
+   - AWS services, CDK, CloudFormation → `aws-knowledge`
+   - Other libraries → `context7`
+2. If the domain server has it → often sufficient, skip Kagi
+3. If not covered → Kagi search
+4. If Kagi finds a promising URL → Fetch or Kagi summarize
 5. GitHub for source code, issues, and usage examples
 
 For non-library questions (best practices, architecture, etc.):
 
-- Skip Context7, go directly to Kagi + GitHub in parallel
+- Skip domain servers, go directly to Kagi + GitHub in parallel
 
 **Parallel Search**: When you have multiple independent questions,
 batch them. Issue Kagi and GitHub searches together rather than
@@ -88,3 +92,14 @@ Combine findings into an answer. Then:
 - Store key learnings in memory with proper tags
 - Reinforce memories that were confirmed
 - Flag memories that were contradicted
+
+### Workspace-Extended Research
+
+Some workspaces define additional steering for specialized research
+tasks (e.g., repo analysis, migration tracking, domain-specific
+investigation protocols).
+
+When performing Tier 3 research, check if workspace steering files
+provide additional guidance for the current task type. If they do,
+incorporate those rules into the research loop. Personal steering
+defines the framework; workspace steering specializes it.

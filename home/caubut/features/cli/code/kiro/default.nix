@@ -20,6 +20,27 @@
     exec ${pkgs.github-mcp-server}/bin/github-mcp-server stdio "$@"
   '';
 
+  awsMcpWrapper = pkgs.writeShellScript "aws-mcp" ''
+    # Use existing AWS_PROFILE if set, otherwise detect first available profile
+    if [ -z "$AWS_PROFILE" ]; then
+      DETECTED_PROFILE=$(${pkgs.awscli2}/bin/aws configure list-profiles 2>/dev/null | head -1)
+      if [ -z "$DETECTED_PROFILE" ]; then
+        exit 1
+      fi
+      export AWS_PROFILE="$DETECTED_PROFILE"
+    fi
+
+    # Verify credentials are actually valid (handles expired SSO sessions)
+    if ! ${pkgs.awscli2}/bin/aws sts get-caller-identity --profile "$AWS_PROFILE" >/dev/null 2>&1; then
+      echo "AWS credentials for profile $AWS_PROFILE are expired or invalid" >&2
+      echo "Run: aws sso login --profile $AWS_PROFILE" >&2
+      exit 1
+    fi
+
+    exec ${pkgs.nodejs}/bin/npx -y mcp-remote \
+      "https://mcp.us-east-1.amazonaws.com/sse" "$@"
+  '';
+
   # ── Symlink helper ────────────────────────────────────────────
   # Generates mkOutOfStoreSymlink entries for a directory of files.
   # Avoids repeating the same pattern 11 times.
@@ -89,6 +110,18 @@
       github = {
         command = "${githubWrapper}";
         args = [];
+      };
+      effect-docs = {
+        command = "npx";
+        args = ["-y" "effect-mcp@latest"];
+      };
+      nixos = {
+        command = "${pkgs.uv}/bin/uvx";
+        args = ["mcp-nixos"];
+      };
+      aws-knowledge = {
+        url = "https://knowledge-mcp.global.api.aws";
+        type = "http";
       };
     };
   };
