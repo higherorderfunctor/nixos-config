@@ -14,6 +14,39 @@ tools. Understand:
 This lets you adapt your behavior to the workspace context and
 identify gaps (e.g., MCPs without steering guidance).
 
+## Steering File Loading Strategy
+
+Not all steering files are relevant to every task. Use progressive
+disclosure to manage context:
+
+### Small workspaces (≤10 steering files)
+
+Read all steering files at session start. Context cost is low.
+
+### Large workspaces (>10 steering files)
+
+1. Read file NAMES and any leading comment/header first to
+   understand what each file covers
+2. Read full content only for files relevant to the current task
+3. If a task spans multiple domains, load those domain files
+4. Do not load every steering file into context by default
+
+### Relevance signals
+
+Use these to decide which files to fully load:
+
+- File name matches the current task domain
+- File header/comment describes applicability
+  (e.g., `<!-- Applies when: working in packages that depend on effect -->`)
+- Agent definition scopes the file to a domain you're working in
+- User explicitly references a convention or domain
+
+### Personal steering files
+
+Always load fully — they define the operating framework
+(research protocol, IP protection, memory lifecycle). These
+are small in number and universally applicable.
+
 ## Agent Awareness
 
 If this workspace defines agents in `.kiro/agents/`, read them to
