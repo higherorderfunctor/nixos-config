@@ -115,7 +115,7 @@
   };
   dns-root-hints = {
     pname = "dns-root-hints";
-    version = "20260226";
+    version = "20260305";
     src = fetchurl {
       url = "https://www.internic.net/domain/named.root";
       sha256 = "sha256-GJRsqVXCLGzAuFYjj7JapZnqrAfYD8P/hrnuFnHQAUA=";
@@ -181,13 +181,13 @@
   };
   oh-my-posh = {
     pname = "oh-my-posh";
-    version = "v29.7.0";
+    version = "v29.7.1";
     src = fetchFromGitHub {
       owner = "JanDeDobbeleer";
       repo = "oh-my-posh";
-      rev = "v29.7.0";
+      rev = "v29.7.1";
       fetchSubmodules = false;
-      sha256 = "sha256-hHnDa4CHAUbxb4mYS/pdFA2z6UHJIlIEsYwPq6N1gH8=";
+      sha256 = "sha256-5H9ci0UY5ebwY1Az9Rgk57V65/qlvOjfFsZpW1it/dA=";
     };
   };
   otel-desktop-viewer = {

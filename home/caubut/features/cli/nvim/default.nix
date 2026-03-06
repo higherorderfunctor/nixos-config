@@ -26,12 +26,12 @@ in {
     "${username}-ai-hub-mix-api-key" = {
       mode = "400";
     };
-    "${username}-kagi-api-key" = {
-      mode = "400";
-    };
   };
 
-  home.packages = [pkgs.tree-sitter];
+  home = {
+    packages = with pkgs; [tree-sitter mcp-hub];
+  };
+
   programs.neovim = {
     enable = true;
     package = pkgs.neovim;

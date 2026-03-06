@@ -1,9 +1,4 @@
-{
-  inputs,
-  pkgs,
-  ...
-}: {
-  home.packages = [pkgs.mcphub];
+{pkgs, ...}: {
   programs.neovim = {
     enable = true;
     package = pkgs.neovim;

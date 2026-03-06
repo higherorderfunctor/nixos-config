@@ -145,8 +145,8 @@
         hyprwayland-scanner.follows = "hyprland/hyprwayland-scanner";
       };
     };
-    mcphub = {
-      url = "github:ravitemer/mcphub.nvim";
+    mcp-hub = {
+      url = "github:ravitemer/mcp-hub";
       inputs.nixpkgs.follows = "nixpkgs";
     };
     systems = {

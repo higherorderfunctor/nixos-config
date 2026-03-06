@@ -9,7 +9,7 @@
     pnpm
   ];
 
-  home.sessionVariables = {
-    PNPM_HOME = "${config.xdg.dataHome}/pnpm";
-  };
+  # home.sessionVariables = {
+  #   PNPM_HOME = "${config.xdg.dataHome}/pnpm";
+  # };
 }

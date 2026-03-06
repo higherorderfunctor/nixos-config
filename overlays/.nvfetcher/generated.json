@@ -185,7 +185,7 @@
       "type": "url",
       "url": "https://www.internic.net/domain/named.root"
     },
-    "version": "20260226"
+    "version": "20260305"
   },
   "fblog": {
     "cargoLock": {
@@ -298,13 +298,13 @@
       "name": null,
       "owner": "JanDeDobbeleer",
       "repo": "oh-my-posh",
-      "rev": "v29.7.0",
-      "sha256": "sha256-hHnDa4CHAUbxb4mYS/pdFA2z6UHJIlIEsYwPq6N1gH8=",
+      "rev": "v29.7.1",
+      "sha256": "sha256-5H9ci0UY5ebwY1Az9Rgk57V65/qlvOjfFsZpW1it/dA=",
       "sparseCheckout": [],
       "type": "github"
     },
-    "version": "v29.7.0",
-    "vendorHash": "sha256-7dNkoW5EhNxiT9BcgD9jwaXxFcLI8ds98juA9X86juc="
+    "version": "v29.7.1",
+    "vendorHash": "sha256-4328SndkUxU9ioyqnk8+KEEh9mtdpIfj2lROQYOwk5U="
   },
   "otel-desktop-viewer": {
     "cargoLock": null,

@@ -36,55 +36,55 @@ end
 vim.env.KIRO_API_KEY = "my-super-secret-password-123"
 
 return {
-  -- {
-  --   "ravitemer/mcphub.nvim",
-  --   dependencies = { "nvim-lua/plenary.nvim" },
-  --   build = "pnpm install -g mcp-hub@latest",
-  --   config = function()
-  --     require("mcphub").setup({
-  --       servers = {
-  --         filesystem = {
-  --           command = "pnpm",
-  --           args = { "dlx", "@modelcontextprotocol/server-filesystem", "." },
-  --         },
-  --         -- fetch = {
-  --         --   command = "uvx",
-  --         --   args = { "mcp-server-fetch" },
-  --         -- },
-  --         -- git = {
-  --         --   command = "uvx",
-  --         --   args = { "mcp-server-git" },
-  --         -- },
-  --         -- ["sequential-thinking"] = {
-  --         --   command = "npx",
-  --         --   args = { "-y", "@modelcontextprotocol/server-sequentialthinking" },
-  --         -- },
-  --         -- ["memory-graph"] = {
-  --         --   command = "npx",
-  --         --   args = { "-y", "memory-graph" },
-  --         --   env = {
-  --         --     NEO4J_URI = "bolt://localhost:7687",
-  --         --     NEO4J_USER = "neo4j",
-  --         --     NEO4J_PASSWORD = os.getenv("NEO4J_PASSWORD") or "changeme",
-  --         --   },
-  --         -- },
-  --         -- time = {
-  --         --   command = "npx",
-  --         --   args = { "-y", "@modelcontextprotocol/server-time" },
-  --         -- },
-  --         -- notifications = {
-  --         --   command = "npx",
-  --         --   args = { "-y", "@anthropic/mcp-server-notifications" },
-  --         -- },
-  --       },
-  --       extensions = {
-  --         avante = {
-  --           make_slash_commands = true,
-  --         },
-  --       },
-  --     })
-  --   end,
-  -- },
+  {
+    "ravitemer/mcphub.nvim",
+    dependencies = { "nvim-lua/plenary.nvim" },
+    build = "pnpm install -g mcp-hub@latest",
+    config = function()
+      require("mcphub").setup({
+        servers = {
+          filesystem = {
+            command = "pnpm",
+            args = { "dlx", "@modelcontextprotocol/server-filesystem", "." },
+          },
+          -- fetch = {
+          --   command = "uvx",
+          --   args = { "mcp-server-fetch" },
+          -- },
+          -- git = {
+          --   command = "uvx",
+          --   args = { "mcp-server-git" },
+          -- },
+          -- ["sequential-thinking"] = {
+          --   command = "npx",
+          --   args = { "-y", "@modelcontextprotocol/server-sequentialthinking" },
+          -- },
+          -- ["memory-graph"] = {
+          --   command = "npx",
+          --   args = { "-y", "memory-graph" },
+          --   env = {
+          --     NEO4J_URI = "bolt://localhost:7687",
+          --     NEO4J_USER = "neo4j",
+          --     NEO4J_PASSWORD = os.getenv("NEO4J_PASSWORD") or "changeme",
+          --   },
+          -- },
+          -- time = {
+          --   command = "npx",
+          --   args = { "-y", "@modelcontextprotocol/server-time" },
+          -- },
+          -- notifications = {
+          --   command = "npx",
+          --   args = { "-y", "@anthropic/mcp-server-notifications" },
+          -- },
+        },
+        extensions = {
+          avante = {
+            make_slash_commands = true,
+          },
+        },
+      })
+    end,
+  },
   {
     "yetone/avante.nvim",
     opts = function(_, opts)
