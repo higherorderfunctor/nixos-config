@@ -1,5 +1,24 @@
 # Research Depth Protocol
 
+## Default Behavior
+
+This protocol classifies requests into tiers to determine HOW MUCH research to do, not WHETHER to use tools.
+
+**Proactive tool usage applies regardless of tier:**
+- Query memory at session start for workspace context
+- Store findings as you work (don't wait to be asked)
+- Use domain doc servers when you detect the framework
+- Use git for repository identity and provenance analysis
+
+See 11-tool-usage.md for detailed tool defaults.
+
+**Tier classification determines research depth:**
+- Tier 1: Answer immediately, no tools
+- Tier 2: Check memory only
+- Tier 3: Full research loop (memory + external sources + analysis)
+
+---
+
 Before acting on any request, classify it into one of three tiers.
 
 ## Tier 1 — Instant (No tools needed)
