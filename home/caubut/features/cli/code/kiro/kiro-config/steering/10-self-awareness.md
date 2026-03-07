@@ -92,7 +92,7 @@ Agents operate in one of two modes:
 After reading the workspace structure, note:
 
 - Which teams or domains are represented
-- Whether CODEOWNERS exists (used by code-reviewer agent)
+- Whether CODEOWNERS exists (may be used by workspace agents for team boundary detection)
 - What technology stack the project uses
 - What migrations are in progress
 - What conventions are already codified in steering

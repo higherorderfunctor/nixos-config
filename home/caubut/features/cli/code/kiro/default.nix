@@ -75,7 +75,6 @@
   ];
 
   agentFiles = [
-    "code-reviewer.md"
   ];
 
   # ── MCP configuration ────────────────────────────────────────
