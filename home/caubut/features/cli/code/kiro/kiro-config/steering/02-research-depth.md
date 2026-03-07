@@ -10,7 +10,7 @@ This protocol classifies requests into tiers to determine HOW MUCH research to d
 - Use domain doc servers when you detect the framework
 - Use git for repository identity and provenance analysis
 
-See 11-tool-usage.md for detailed tool defaults.
+See 01-tool-usage.md for detailed tool defaults.
 
 **Tier classification determines research depth:**
 - Tier 1: Answer immediately, no tools

@@ -61,15 +61,17 @@
   # ── Steering file list ────────────────────────────────────────
   steeringFiles = [
     "00-ip-protection.md"
-    "01-research-depth.md"
-    "02-sequential-thinking.md"
-    "03-git.md"
-    "04-context7.md"
-    "05-search.md"
-    "06-github.md"
-    "07-memory.md"
-    "08-memory-lifecycle.md"
-    "09-self-awareness.md"
+    "01-tool-usage.md"
+    "02-research-depth.md"
+    "03-sequential-thinking.md"
+    "04-git.md"
+    "05-context7.md"
+    "06-search.md"
+    "07-github.md"
+    "08-memory.md"
+    "09-memory-lifecycle.md"
+    "10-self-awareness.md"
+    "11-provenance-heuristics.md"
   ];
 
   agentFiles = [

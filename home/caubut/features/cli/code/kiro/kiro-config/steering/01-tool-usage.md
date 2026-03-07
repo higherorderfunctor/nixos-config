@@ -19,7 +19,7 @@ Proactive tool usage is the default behavior. Use tools without being told when 
 - Proactively sync: store any unstored findings, note any promotion candidates
 - Tell the user: "I'm storing N findings from this session"
 
-**Never skip memory** — it's the first tool to check for Tier 2+ tasks (see 01-research-depth.md)
+**Never skip memory** — it's the first tool to check for Tier 2+ tasks (see 02-research-depth.md)
 
 ### Domain Doc Servers (Auto-Detect)
 
@@ -42,7 +42,7 @@ Use automatically for:
 - Sanitizing queries before external tools
 - Resolving conflicting patterns with provenance analysis
 
-See 02-sequential-thinking.md for full criteria.
+See 03-sequential-thinking.md for full criteria.
 
 ### Git (Local History)
 
@@ -50,7 +50,7 @@ Use proactively for:
 - Understanding repository identity (for memory tagging)
 - Reading file history when debugging
 - Checking blame when evaluating patterns
-- Supporting provenance analysis (see 10-provenance-heuristics.md)
+- Supporting provenance analysis (see 11-provenance-heuristics.md)
 
 ### Search Tools (External Information)
 
@@ -59,7 +59,7 @@ Use when the answer isn't in memory or local files:
 - Fetch for full page content
 - GitHub for code examples, issues, and source reading
 
-See 01-research-depth.md for search priority order.
+See 02-research-depth.md for search priority order.
 
 ## Tool Combinations
 
@@ -87,7 +87,7 @@ Common multi-tool patterns:
 **Session bootstrap:**
 1. Git remote → determine repo identity
 2. Memory query → load workspace context
-3. File read → check .kiro/ structure (see 09-self-awareness.md)
+3. File read → check .kiro/ structure (see 10-self-awareness.md)
 
 ## Anti-Patterns (Do NOT)
 

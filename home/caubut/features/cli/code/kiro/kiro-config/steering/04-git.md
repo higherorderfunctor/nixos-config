@@ -25,4 +25,4 @@ Never assume directory name equals project name.
 - Comparing changes across branches or commits
 - Inspecting commit history and authorship
 - Determining repository identity for memory scoping
-- Supporting code provenance analysis (see code-reviewer agent)
+- Supporting code provenance analysis (see 11-provenance-heuristics.md)

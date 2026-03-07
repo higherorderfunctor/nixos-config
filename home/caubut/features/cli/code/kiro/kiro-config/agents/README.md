@@ -17,7 +17,7 @@ an available agent. Activate with:
 ## Guidelines
 
 - Agents should reference shared steering files (e.g.,
-  10-provenance-heuristics.md) rather than duplicating methodology
+  11-provenance-heuristics.md) rather than duplicating methodology
 - Keep agents focused on a single task domain
 - Workspace-specific agents belong in the workspace repo's
   `.kiro/agents/`, not here
