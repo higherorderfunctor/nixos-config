@@ -73,9 +73,11 @@
     "10-self-awareness.md"
     "11-provenance-heuristics.md"
     "12-thinking-depth.md"
+    "13-ideation-workflow.md"
   ];
 
   agentFiles = [
+    "ideation.json"
   ];
 
   # ── MCP configuration ────────────────────────────────────────
