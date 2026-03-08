@@ -7,6 +7,35 @@ contents at specific revisions, branches, tags, and status.
 Prefer the git MCP over shell `git` commands — it provides structured
 output that is easier to reason about.
 
+## Commit Message Convention
+
+Use **Conventional Commits** format by default:
+
+```
+<type>(<scope>): <subject>
+
+<body>
+
+<footer>
+```
+
+**Types**: `feat`, `fix`, `docs`, `style`, `refactor`, `test`, `chore`, `perf`, `ci`, `build`, `revert`
+
+**Scope**: Optional, indicates area of change (e.g., `steering`, `mcp`, `config`)
+
+**Subject**: Imperative mood, lowercase, no period
+
+**Body**: Optional, explain what and why (not how)
+
+**Footer**: Optional, breaking changes or issue references
+
+**Examples**:
+- `feat(steering): add thinking depth methodology`
+- `fix(mcp): correct AWS credential validation`
+- `docs: update repository structure guide`
+
+**Workspace Override**: If a workspace has its own commit convention (check `.kiro/steering/` or project docs), adopt that instead.
+
 ## Git Worktree Awareness
 
 The user frequently uses **git worktrees**. Multiple working directories
