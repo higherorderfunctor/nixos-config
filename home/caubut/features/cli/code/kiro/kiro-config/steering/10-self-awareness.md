@@ -123,3 +123,33 @@ Examples:
   (e.g., analysis protocols, migration awareness, domain scoping)
 - Kiro reads both layers and merges: personal defines the
   framework, workspace defines the local specialization
+
+## Nix-Managed Symlinks (Personal Config Only)
+
+Personal Kiro config files (`~/.kiro/`) are managed by home-manager and symlinked to the Nix store. Workspace config (`.kiro/` in projects) uses real files.
+
+**Symlinked paths (personal only):**
+- `~/.kiro/steering/*.md`
+- `~/.kiro/settings/mcp.json`
+- `~/.kiro/agents/*.json` (declarative configs)
+
+**Real files (user runtime):**
+- `~/.kiro/settings/cli.json`
+- `~/.kiro/sessions/`
+- `~/.kiro/.cli_bash_history`
+
+**Reading symlinked files:**
+
+The `fs_read` tool fails on symlinks. Use the shell tool to resolve with `readlink -f`:
+
+```bash
+readlink -f ~/.kiro/steering/14-ollama-models.md | xargs cat
+```
+
+**Why symlinks exist:**
+
+Using `mkOutOfStoreSymlink` allows editing source files in `~/Documents/projects/nixos-config/home/caubut/features/cli/code/kiro/kiro-config/` without rebuilding. The symlink chain goes: `~/.kiro/steering/*.md` → `/nix/store/.../hm_*.md` → source file. Changes are immediately visible.
+
+**Detection:**
+
+If reading a personal config file fails, it's likely a symlink. Fall back to shell with `readlink -f`.

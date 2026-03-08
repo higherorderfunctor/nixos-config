@@ -74,6 +74,7 @@
     "11-provenance-heuristics.md"
     "12-thinking-depth.md"
     "13-ideation-workflow.md"
+    "14-ollama-models.md"
   ];
 
   agentFiles = [
@@ -92,7 +93,11 @@
         args = ["-y" "openmemory-js" "mcp"];
         env = {
           OM_DB_PATH = "${config.xdg.dataHome}/openmemory/memory.sqlite";
-          OM_EMBEDDINGS = "synthetic";
+          OM_EMBEDDINGS = "ollama";
+          OM_OLLAMA_URL = "http://localhost:11434";
+          OM_OLLAMA_MODEL = "nomic-embed-text";
+          OM_VEC_DIM = "768";
+          OM_TIER = "smart";
         };
       };
       git = {

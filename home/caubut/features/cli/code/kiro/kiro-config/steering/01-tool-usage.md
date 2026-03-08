@@ -7,8 +7,10 @@ Proactive tool usage is the default behavior. Use tools without being told when 
 ### Memory (Always Active)
 
 **Session start:**
-- Query memory for workspace context (conventions, decisions, patterns)
-- Check for any `personal-steering-update` or `promotion-candidate` tags if in config mode
+1. Verify Ollama model (daily check - see 14-ollama-models.md)
+   - The check itself may query memory for state tracking (exempt from Ollama check)
+2. Query memory for workspace context (conventions, decisions, patterns)
+3. Check for any `personal-steering-update` or `promotion-candidate` tags if in config mode
 
 **During work:**
 - Store findings as you discover them (don't wait to be asked)
