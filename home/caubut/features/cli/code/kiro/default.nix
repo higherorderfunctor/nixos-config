@@ -72,6 +72,7 @@
     "09-memory-lifecycle.md"
     "10-self-awareness.md"
     "11-provenance-heuristics.md"
+    "12-thinking-depth.md"
   ];
 
   agentFiles = [
