@@ -79,6 +79,15 @@ If you discover information that contradicts a stored memory:
 - When a major version changes, old version-tagged memories are
   suspect — flag them when encountered
 
+## Content Length Guidelines
+
+**IMPORTANT**: OpenMemory defaults to truncating content at 200 characters. Your config disables this (`OM_USE_SUMMARY_ONLY=false`), but be aware:
+
+- Store complete, self-contained information
+- Don't rely on external context that might be lost
+- For very long content (>2000 chars), consider breaking into multiple focused memories
+- Each memory should be independently useful
+
 ## What NOT to Store
 
 - Trivial implementation details

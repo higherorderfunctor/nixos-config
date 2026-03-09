@@ -98,6 +98,8 @@
           OM_OLLAMA_MODEL = "nomic-embed-text";
           OM_VEC_DIM = "768";
           OM_TIER = "smart";
+          # Disable forced summarization to prevent content truncation
+          OM_USE_SUMMARY_ONLY = "false";
         };
       };
       git = {
