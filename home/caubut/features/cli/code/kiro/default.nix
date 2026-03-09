@@ -58,6 +58,11 @@
       config.lib.file.mkOutOfStoreSymlink "${kiroConfigPath}/agents/${name}";
   };
 
+  symlinkSkill = name: {
+    ".kiro/skills/${name}".source =
+      config.lib.file.mkOutOfStoreSymlink "${kiroConfigPath}/skills/${name}";
+  };
+
   # ── Steering file list ────────────────────────────────────────
   steeringFiles = [
     "00-ip-protection.md"
@@ -75,10 +80,15 @@
     "12-thinking-depth.md"
     "13-ideation-workflow.md"
     "14-ollama-models.md"
+    "15-interaction-logging.md"
   ];
 
   agentFiles = [
     "ideation.json"
+  ];
+
+  skillDirs = [
+    "interaction-analysis"
   ];
 
   # ── MCP configuration ────────────────────────────────────────
@@ -165,6 +175,8 @@ in {
       # Steering files (out-of-store symlinks — edit without rebuild)
       // builtins.foldl' (acc: name: acc // symlinkSteering name) {} steeringFiles
       # Agent files (out-of-store symlinks)
-      // builtins.foldl' (acc: name: acc // symlinkAgent name) {} agentFiles;
+      // builtins.foldl' (acc: name: acc // symlinkAgent name) {} agentFiles
+      # Skill directories (out-of-store symlinks)
+      // builtins.foldl' (acc: name: acc // symlinkSkill name) {} skillDirs;
   };
 }

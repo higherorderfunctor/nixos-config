@@ -157,6 +157,41 @@ Move to `_archive/` with metadata header documenting deprecation.
 
 Check `migrations/README.md` and `_archive/README.md` for templates and detailed guidance.
 
+## Agent Skills Lifecycle
+
+Agent skills (~/.kiro/skills/) follow the same lifecycle pattern:
+
+**Active → migrations/ → _archive/**
+
+### When to Update In Place
+
+Minor refinements to skill logic:
+- Clarifying instructions
+- Adding examples
+- Fixing bugs
+- Small improvements to output format
+
+### When to Create Migration Guide
+
+Significant changes to skill behavior:
+- Changing analysis methodology
+- Adding/removing major features
+- Modifying input/output format
+- Integration changes with other systems
+
+Create migration guide in `skills/migrations/YYYY-MM-description.md`.
+
+### When to Archive
+
+Skill is fully deprecated:
+- Replaced by better approach
+- No longer needed (3+ months unused)
+- Functionality moved elsewhere
+
+Move to `skills/_archive/` with metadata header.
+
+Skills are version controlled like steering files - edit source in nixos-config, changes propagate via symlinks.
+
 ## What NEVER Happens
 
 - Auto-modifying any steering file without user approval
