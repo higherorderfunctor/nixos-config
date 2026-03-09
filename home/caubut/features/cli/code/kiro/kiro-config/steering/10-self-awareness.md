@@ -11,8 +11,13 @@ tools. Understand:
 - What agents are defined (`.kiro/agents/`)
 - What workspace-level overrides are in place
 
+For personal steering (`~/.kiro/steering/`), also check:
+- `migrations/` - Recent pattern changes or transitions in progress
+- `_archive/` - Deprecated patterns (historical reference)
+
 This lets you adapt your behavior to the workspace context and
-identify gaps (e.g., MCPs without steering guidance).
+identify gaps (e.g., MCPs without steering guidance). Understanding
+migrations helps you know what's changing vs stable.
 
 ## Steering File Loading Strategy
 

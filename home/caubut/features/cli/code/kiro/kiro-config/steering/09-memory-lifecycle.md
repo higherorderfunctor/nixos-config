@@ -115,6 +115,48 @@ Once a fact is captured in a steering file:
 - Memories that add depth beyond what's in steering should
   be kept (e.g., the detailed rationale behind a concise rule)
 
+## Personal Steering Lifecycle
+
+Personal steering files follow the same lifecycle pattern as workspace steering:
+
+**Active → migrations/ → _archive/**
+
+### When to Update In Place
+
+Minor refinements that don't change the core pattern:
+- Clarifying existing guidance
+- Adding examples
+- Fixing typos or formatting
+- Small additions that enhance existing rules
+
+### When to Create Migration Guide
+
+Significant pattern changes that affect behavior:
+- Switching from one tool to another (e.g., different MCP)
+- Changing methodology (e.g., research protocol evolution)
+- Modifying workflow patterns (e.g., memory tagging strategy)
+- Cross-cutting behavioral changes (e.g., IP protection rules)
+
+Create migration guide in `migrations/YYYY-MM-description.md` documenting:
+- Why the change
+- Old vs new pattern
+- Migration steps
+- Timeline and status
+
+### When to Archive
+
+Pattern is fully deprecated and no longer used:
+- Old pattern completely replaced
+- Migration complete (3+ months passed)
+- No active references in current steering files
+- Pattern verified obsolete across all workspaces
+
+Move to `_archive/` with metadata header documenting deprecation.
+
+### Lifecycle Management
+
+Check `migrations/README.md` and `_archive/README.md` for templates and detailed guidance.
+
 ## What NEVER Happens
 
 - Auto-modifying any steering file without user approval
