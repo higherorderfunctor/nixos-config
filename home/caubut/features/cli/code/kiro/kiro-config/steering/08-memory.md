@@ -15,16 +15,15 @@
 
 ## Memory Types (for openmemory_store)
 
-**ONLY these three values are valid:**
+OpenMemory MCP wrapper uses a `type` parameter to distinguish between storage systems:
 
-- `contextual` — decisions, conventions, patterns, workflow preferences
-- `factual` — concrete facts: names, URLs, versions, endpoints
-- `both` — when a memory is both a fact and provides context
+- `contextual` — HSG memory system (decisions, conventions, patterns, workflow preferences)
+- `factual` — Temporal graph system (subject-predicate-object facts with validity periods)
+- `both` — Store in both HSG and temporal graph systems
 
 When in doubt, use `contextual`.
 
-**Invalid values that will cause errors:**
-- ❌ `procedural`, `semantic`, `episodic`, `emotional`, `reflective` (these are NOT valid types)
+**Note on Sectors**: OpenMemory automatically classifies memories into sectors (episodic, semantic, procedural, emotional, reflective) based on content analysis. These are internal classifications within the HSG system - you don't specify them, they're assigned automatically.
 
 ## Determining the Project Tag
 

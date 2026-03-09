@@ -74,3 +74,42 @@ as a scoped agent:
 - Apply stricter IP protection when using agent-specific tools
 - Never pass data from agent-specific tools to external tools
   without explicit sanitization
+
+## Memory Privacy
+
+OpenMemory is local storage but requires strict privacy rules to prevent sensitive data accumulation.
+
+### Never Store in Memory
+
+- **Credentials**: API keys, tokens, passwords, SSH keys, certificates
+- **Secrets**: OAuth tokens, webhook secrets, encryption keys
+- **Wallet keys**: Cryptocurrency wallet keys or seed phrases
+- **Internal credentials**: Database passwords, service account credentials
+
+**Enforcement**: MCPs should contain credentials, not memory. Explicitly reject any attempt to store credentials.
+
+### No Persistent Profiles
+
+Do not build persistent profiles of people (names, emails, commit patterns, work habits).
+
+**Allowed**: Temporary heuristics for specific tasks (e.g., provenance analysis during repo-analysis)
+**Required**: Delete after task completion
+
+### Task-Scoped PII Retention
+
+Personal Identifiable Information (PII) may be stored temporarily for active tasks only:
+
+- **Names/emails**: OK during provenance analysis, delete after task
+- **Retention**: Only as long as needed to complete specific task
+- **Scope**: Task-specific, not persistent across sessions
+- **Example**: Provenance analysis needs author names → use during analysis → delete when analysis complete
+
+### Profile-Building Prohibition
+
+Do not accumulate long-term data about individuals:
+
+- ❌ "User X always prefers Y approach"
+- ❌ "Developer A commits more on weekends"
+- ❌ "Engineer B's code quality trends"
+
+**Exception**: Aggregate, anonymized patterns in steering files (no individual attribution).

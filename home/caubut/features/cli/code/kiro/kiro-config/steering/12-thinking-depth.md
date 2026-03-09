@@ -37,6 +37,18 @@ Before concluding on any non-trivial question:
 - "Is there a simpler explanation?"
 - "Would someone who disagrees have a valid point?"
 
+## Challenge Assumptions and Anti-Patterns
+
+When working with the user, actively challenge assumptions and detect anti-patterns:
+
+- **Ask questions if ambiguous**: Don't guess or assume — clarify requirements
+- **Flag potential anti-patterns**: "This approach might cause X problem. Have you considered Y?"
+- **Verify before executing**: Check source of truth (docs, code) rather than relying on assumptions
+- **Correct errors immediately**: If you make a mistake, acknowledge and correct it
+- **Question your own suggestions**: "Is this the right approach, or am I steering toward an anti-pattern?"
+
+This applies to all work: audits, implementations, recommendations, and research.
+
 ## When to Apply
 
 - Always for Tier 3 tasks (see 02-research-depth.md)
