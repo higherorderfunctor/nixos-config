@@ -9,47 +9,87 @@ Analyze interaction logs to find patterns worth codifying in steering files.
 
 ## Process
 
-### 1. Read Index
+### 1. Query SQLite Database
 
-Load `interaction-index` from OpenMemory (tag: `interaction-index`, workspace: `global`).
+Read sessions from Kiro's database:
+- Linux: `~/.local/share/kiro-cli/data.sqlite3`
+- macOS: `~/Library/Application Support/kiro-cli/data.sqlite3`
 
-Index provides:
-- Repeated reminders with counts and log IDs
-- Correction types with counts and log IDs
-- Weekly stats
+Query `conversations_v2` table for sessions since last analysis:
+```sql
+SELECT key, conversation_id, value, created_at, updated_at
+FROM conversations_v2
+WHERE updated_at > <last_analysis_timestamp>
+ORDER BY updated_at DESC
+```
 
-### 2. Identify Patterns
+Get last analysis timestamp from OpenMemory (tag: `interaction-analysis-state`).
 
-**HIGH PRIORITY** (repeated reminders, count >= 3):
-- User teaching me the same thing multiple times
-- Strong signal for steering promotion
+### 2. Parse Transcripts
 
-**MEDIUM PRIORITY** (correction clusters, 2-3 similar):
-- Tool choice corrections
-- Interpretation misunderstandings
-- Context gaps
+For each session, parse the transcript (array of strings):
+- User messages start with "> " (prompt indicator)
+- Assistant messages have no prefix
+- Extract user messages and my responses
 
-**LOW PRIORITY** (single occurrences):
-- Note for future, not ready for promotion
+### 3. Detect Correction Signals
 
-### 3. Validate with Full Logs
+**Explicit signals:**
+- `reflect:` in user message → explicit-reflection
+- "no, " or "actually, " or "instead, " → correction-direct
+- "why did you" or "what made you" → correction-confusion
 
-For each HIGH/MEDIUM priority pattern:
-1. Read FULL LOGS from OpenMemory using log IDs
-2. Understand context:
+**Implicit signals:**
+- User provides additional context after my response → correction-context
+- User repeats similar request → repeated-reminder
+- User mentions tool choice → correction-tool
+- Multiple clarifications → correction-interpretation
+
+### 4. Build Index
+
+Store in OpenMemory (tag: `interaction-analysis-index`):
+
+```
+Interaction Index (Week of YYYY-MM-DD)
+
+Repeated Reminders (HIGH SIGNAL):
+- Pattern: "Check memory before searching"
+  Count: 3
+  Session IDs: [session-id-1, session-id-2, session-id-3]
+  
+Correction Types:
+- Tool choice: 3 (session IDs: [...])
+- Interpretation: 2 (session IDs: [...])
+
+Weekly Stats:
+- Total sessions: 47
+- Sessions with corrections: 11
+- Correction rate: 23%
+```
+
+### 5. Validate with Full Transcripts
+
+For HIGH PRIORITY patterns (count >= 3):
+
+1. Read full transcripts from SQLite using session IDs
+2. Extract specific interactions:
+   - User message
+   - My response
+   - What went wrong
+3. Understand context:
    - What was I missing?
    - What was the user teaching me?
    - Is this really a pattern or coincidence?
-3. Verify it's actionable (can be expressed as a rule)
+4. Verify it's actionable (can be expressed as a rule)
 
-**CRITICAL**: Don't rely on index alone. Full logs provide context.
+**CRITICAL**: Don't rely on index alone. Full transcripts provide context.
 
-### 4. Craft Proposals
+### 6. Craft Proposals
 
 For each validated pattern, generate:
 
 **Evidence** (cite specific interactions):
-- Date, user message, my response, outcome
+- Date, session ID, user message, my response, outcome
 - What went wrong? What should I have done?
 
 **Pattern** (what's the underlying issue):
@@ -67,14 +107,16 @@ For each validated pattern, generate:
 - Which file (01-tool-usage.md, 02-research-depth.md, etc.)
 - Which section within file
 
-### 5. Rank by Impact
+Store proposals in OpenMemory (tag: `interaction-analysis-proposal`).
+
+### 7. Rank by Impact
 
 Sort proposals by:
 1. Frequency (how many times repeated)
 2. Severity (how much friction it caused)
 3. Actionability (how clear the rule is)
 
-### 6. Present to User
+### 8. Present to User
 
 Output format:
 
@@ -88,22 +130,16 @@ HIGH PRIORITY (repeated 3+ times)
 1. Pattern: "Check memory before searching"
    Count: 5 occurrences
    
-   Evidence from full logs:
+   Evidence from full transcripts:
    
-   • 2026-03-02: User asked about Effect patterns, I searched Kagi first
+   • 2026-03-02 (session abc123): User asked about Effect patterns, I searched Kagi first
      User: "Did you check memory? We researched this last week"
      
-   • 2026-03-05: User asked about Nix config, I searched web
+   • 2026-03-05 (session def456): User asked about Nix config, I searched web
      User: "Check memory before searching external sources"
      
-   • 2026-03-08: User asked about steering lifecycle, I used Kagi
+   • 2026-03-08 (session ghi789): User asked about steering lifecycle, I used Kagi
      User: "Memory first, then search. This is the 3rd time."
-     
-   • 2026-03-09: User asked about observer pattern, I searched web
-     User: "We discussed this yesterday, check memory"
-     
-   • 2026-03-09: User asked about drift tool, I used Kagi
-     User: "Check memory - we researched this in the audit"
    
    Pattern Analysis:
    I'm not checking OpenMemory before external searches, causing
@@ -137,7 +173,7 @@ MEDIUM PRIORITY (2-3 occurrences)
 METRICS
 ───────────────────────────────────────────────────────────
 
-Correction rate: 23% (11/47 interactions)
+Correction rate: 23% (11/47 sessions)
 Baseline: Week 2 (first measurement)
 Most common: Tool choice corrections (5)
 Trend: N/A (first analysis)
@@ -145,37 +181,33 @@ Trend: N/A (first analysis)
 Next analysis: 2026-03-16 (or when 10+ new flagged interactions)
 ```
 
-## Cleanup After Audit
+## Cleanup After Analysis
 
 After user reviews proposals:
 
-### 1. Categorize Logs
+### 1. Delete from OpenMemory
 
-For each log in OpenMemory:
-- **PROMOTED**: Pattern became steering rule → DELETE
-- **SMOOTH**: No corrections, successful first-try → DELETE
-- **FRICTION (non-promoted)**: Correction but not promoted → KEEP (might repeat)
-- **RECENT**: Last 2 weeks → KEEP
+- Approved proposals (tag: `interaction-analysis-proposal`)
+- Rejected proposals (tag: `interaction-analysis-proposal`)
 
-### 2. Delete Logs
+### 2. Update in OpenMemory
 
-Use `openmemory_delete` for promoted and smooth logs.
+- Last analysis date (tag: `interaction-analysis-state`)
+- Regenerate index (remove promoted patterns)
 
-### 3. Regenerate Index
+### 3. Track Promotions
 
-Query remaining logs, rebuild index:
-- Repeated reminders (only non-promoted)
-- Correction types (only non-promoted)
-- Updated weekly stats
-
-### 4. Track Cleanup
-
-Store in memory:
+Store in OpenMemory (tag: `interaction-analysis-promoted`):
 ```
-Last interaction cleanup: YYYY-MM-DD
-Logs deleted: N promoted, M smooth
-Logs kept: X friction, Y recent
+Promoted pattern: check-memory-before-search
+Date: YYYY-MM-DD
+File: 01-tool-usage.md
+Session IDs: [...]
 ```
+
+### 4. NO SQLite Cleanup
+
+Kiro manages database lifecycle. Session transcripts remain permanent.
 
 ## Validation (Feedback Loop)
 
@@ -186,7 +218,7 @@ After promoting a pattern, track effectiveness:
 **Week N+2**: If corrections decreased → pattern works
 **Week N+2**: If corrections same/increased → pattern incomplete, refine
 
-Store validation results in memory for future reference.
+Store validation results in OpenMemory (tag: `interaction-analysis-validation`).
 
 ## Output to User
 
@@ -194,7 +226,7 @@ Present proposals in ranked order (HIGH → MEDIUM → LOW).
 
 For each proposal:
 - ✅ Approve: I add to steering file (via migrations/ or direct update)
-- ❌ Reject: Not a real pattern, delete from index
+- ❌ Reject: Not a real pattern, delete from OpenMemory
 - 🔄 Refine: Good idea, but needs better wording (iterate)
 
 After user decisions:

@@ -1,6 +1,6 @@
 # Interaction Analysis Skill
 
-Analyzes your interaction logs with Kiro to detect patterns and suggest steering file improvements.
+Analyzes your conversation sessions with Kiro to detect patterns and suggest steering file improvements.
 
 ## What It Does
 
@@ -50,9 +50,9 @@ HIGH PRIORITY (repeated 3+ times)
 1. Pattern: "Check memory before searching"
    Count: 5 occurrences
    
-   Evidence from full logs:
-   • 2026-03-02: [specific interaction]
-   • 2026-03-05: [specific interaction]
+   Evidence from full transcripts:
+   • 2026-03-02 (session abc123): [specific interaction]
+   • 2026-03-05 (session def456): [specific interaction]
    ...
    
    Proposed Rule:
@@ -74,62 +74,70 @@ Just tell Kiro your decision for each one.
 
 Kiro will:
 1. Apply approved changes to steering files
-2. Clean up interaction logs (delete promoted patterns, keep friction points)
+2. Clean up analysis metadata from OpenMemory
 3. Update the interaction index
 4. Track effectiveness (did the new rule reduce corrections?)
 
 ## Logging Interactions
 
-The skill analyzes logs created by `15-interaction-logging.md`.
+The skill analyzes sessions from Kiro's SQLite database.
 
 ### Automatic Logging
 
-Kiro automatically logs when you:
-- Correct a response ("no, do it this way")
-- Provide additional context after a response
-- Ask "why did you do X?" (confusion signal)
-- Repeat similar requests (Kiro didn't learn)
+Kiro automatically saves every conversation turn to:
+- Linux: `~/.local/share/kiro-cli/data.sqlite3`
+- macOS: `~/Library/Application Support/kiro-cli/data.sqlite3`
 
-### Manual Logging with /reflect
+No manual saving needed.
+
+### Manual Flagging with reflect:
 
 Flag important interactions explicitly:
 
 ```
-/reflect: Had to explain memory-first pattern again, consider promoting
+reflect: Had to explain memory-first pattern again, consider promoting
 ```
 
-Kiro will store this with high priority.
+Kiro will acknowledge: "Reflection noted: Had to explain memory-first pattern again"
+
+The marker is captured in the session transcript automatically.
+
+**Note:** Use `reflect:` (no slash). The CLI intercepts `/commands` before Kiro sees them.
 
 ## How It Works
 
 ### Discovery Phase (Index)
-- Lightweight index tracks patterns and counts
-- Fast pattern detection without reading all logs
+- Query SQLite for sessions since last analysis
+- Parse transcripts (user messages start with "> ")
+- Detect reflection markers and correction signals
+- Build lightweight index in OpenMemory
 
-### Validation Phase (Full Logs)
-- Reads complete interactions for context
-- Understands what you were teaching Kiro
-- Verifies it's a real pattern (not coincidence)
+### Validation Phase (Full Transcripts)
+- Read complete sessions from SQLite for HIGH PRIORITY patterns
+- Understand what you were teaching Kiro
+- Verify it's a real pattern (not coincidence)
 
 ### Promotion Phase
-- Crafts evidence-based proposals
+- Craft evidence-based proposals
 - You review and approve
 - Kiro updates steering files
 
 ### Cleanup Phase
-- Deletes promoted patterns (no longer needed)
-- Keeps friction points (might repeat)
-- Keeps last 2 weeks of logs
-- Regenerates index
+- Delete proposals from OpenMemory
+- Regenerate index (remove promoted patterns)
+- Update last analysis date
+- **NO cleanup of SQLite** (Kiro manages database)
 
 ## Memory Management
 
-Logs are kept bounded:
-- **Active**: Last 2 weeks
-- **Friction points**: Until promoted or 4 weeks
-- **Promoted patterns**: Deleted after promotion
+Analysis metadata stored in OpenMemory:
+- `interaction-analysis-state`: Last analysis date, snooze
+- `interaction-analysis-index`: Pattern counts, session IDs
+- `interaction-analysis-proposal`: Pending proposals
+- `interaction-analysis-promoted`: Promotion tracking
+- `interaction-analysis-validation`: Effectiveness metrics
 
-This prevents forever-growing memory usage.
+Session transcripts stay in SQLite permanently (Kiro manages this).
 
 ## Confidence Building
 
@@ -151,13 +159,14 @@ The goal: Fewer corrections over time as Kiro learns your patterns.
 This skill integrates with:
 - `15-interaction-logging.md` - Defines what to log
 - `09-memory-lifecycle.md` - Steering file lifecycle
-- OpenMemory - Stores logs and index
+- SQLite database - Stores session transcripts
+- OpenMemory - Stores analysis metadata
 - Personal steering files - Where patterns get promoted
 
 ## Tips
 
-1. **Use /reflect for important moments** - Don't wait for automatic detection
-2. **Run analysis weekly** - Keeps logs manageable, patterns fresh
+1. **Use reflect: for important moments** - Don't wait for automatic detection
+2. **Run analysis weekly** - Keeps patterns fresh
 3. **Be honest in reviews** - Reject false patterns, refine unclear ones
 4. **Track improvement** - Celebrate when corrections decrease
 5. **Evolve the system** - Adjust thresholds, add new correction types
@@ -166,7 +175,7 @@ This skill integrates with:
 
 **"No patterns found"**
 - You might not have enough flagged interactions yet (need 10+)
-- Try using /reflect more to flag important moments
+- Try using reflect: more to flag important moments
 
 **"Too many false positives"**
 - Adjust threshold in SKILL.md (maybe 4+ instead of 3+)
