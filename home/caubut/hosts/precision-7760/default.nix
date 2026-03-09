@@ -23,6 +23,9 @@
     ollama = {
       enable = true;
       host = "0.0.0.0";
+      package = pkgs.ollama.override {
+        acceleration = "cuda";
+      };
     };
   };
 

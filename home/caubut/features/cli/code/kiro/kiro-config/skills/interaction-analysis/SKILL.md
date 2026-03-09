@@ -9,192 +9,108 @@ Analyze interaction logs to find patterns worth codifying in steering files.
 
 ## Process
 
-### 1. Query SQLite Database
+### 1. Run Python Script
 
-Read sessions from Kiro's database:
-- Linux: `~/.local/share/kiro-cli/data.sqlite3`
-- macOS: `~/Library/Application Support/kiro-cli/data.sqlite3`
+**CRITICAL: Execute this EXACT command, do not modify:**
 
-Query `conversations_v2` table for sessions since last analysis:
-```sql
-SELECT key, conversation_id, value, created_at, updated_at
-FROM conversations_v2
-WHERE updated_at > <last_analysis_timestamp>
-ORDER BY updated_at DESC
+```bash
+~/.kiro/skills/interaction-analysis/scripts/analyze_sessions.py
 ```
 
-Get last analysis timestamp from OpenMemory (tag: `interaction-analysis-state`).
+**What this does:**
+- Queries SQLite for sessions since last analysis
+- Uses Ollama (llama3.2:3b) to classify each user message
+- Skips explicit `reflect:` markers (handled separately)
+- Outputs JSON results to stdout (for parsing)
+- Outputs progress to stderr (user sees real-time updates)
+- Returns all results (no truncation)
 
-### 2. Parse Transcripts
+**DO NOT:**
+- ❌ Add `2>&1` (merges stderr into stdout, breaks JSON parsing)
+- ❌ Add `head` or `tail` (truncates results - see reflection 3b423be5)
+- ❌ Add `tee` (unnecessary complexity)
+- ❌ Redirect output (breaks progress display)
+- ❌ Modify the command in any way
 
-For each session, parse the transcript (array of strings):
-- User messages start with "> " (prompt indicator)
-- Assistant messages have no prefix
-- Extract user messages and my responses
+**Why this matters:**
+- Script designed for clean stdout/stderr separation
+- Progress bar uses `\r` on stderr for live updates
+- JSON output must be complete for analysis
+- Truncation loses correction data
+- This command has been corrected 3+ times - follow it exactly
 
-### 3. Detect Correction Signals
-
-**Explicit signals (HIGHEST PRIORITY - already in OpenMemory):**
-- `reflect:` in user message → stored immediately in OpenMemory with tag `interaction-analysis-reflection`
-- These are HIGH PRIORITY issues that are really bugging the user
-- Query OpenMemory for these first during analysis
-
-**Required reference data when storing reflections:**
-- Conversation ID (for SQLite lookup)
-- Timestamp or approximate time
-- Surrounding context (enough to grep/search the specific portion of transcript)
-- Example: "Reflection during session abc123 at ~14:30, discussing memory storage patterns"
-
-**Direct corrections:**
-- "no, " or "actually, " or "instead, " → correction-direct
-- "why did you" or "what made you" → correction-confusion
-
-**Implicit signals:**
-- User provides additional context after my response → correction-context
-- User repeats similar request → repeated-reminder
-- User mentions tool choice → correction-tool
-- Multiple clarifications → correction-interpretation
-
-### 4. Build Index
-
-Store in OpenMemory (tag: `interaction-analysis-index`):
-
-```
-Interaction Index (Week of YYYY-MM-DD)
-
-Repeated Reminders (HIGH SIGNAL):
-- Pattern: "Check memory before searching"
-  Count: 3
-  Session IDs: [session-id-1, session-id-2, session-id-3]
-  
-Correction Types:
-- Tool choice: 3 (session IDs: [...])
-- Interpretation: 2 (session IDs: [...])
-
-Explicit Reflections (HIGHEST PRIORITY):
-- Count: 2
-- Memory IDs: [reflection-id-1, reflection-id-2]
-
-Weekly Stats:
-- Total sessions: 47
-- Sessions with corrections: 11
-- reflect: markers: 2 (stored in OpenMemory)
-- Correction rate: 23%
+**Output format:**
+```json
+{
+  "analyzed_at": "2026-03-09T...",
+  "total_sessions": 41,
+  "sessions_with_patterns": 18,
+  "results": [
+    {
+      "session_id": "abc123...",
+      "workspace": "project-name",
+      "corrections": [
+        {"message_index": 10, "user_message": "..."}
+      ]
+    }
+  ]
+}
 ```
 
-### 5. Validate with Full Transcripts
+### 2. Query Explicit Reflections
 
-For HIGH PRIORITY patterns (count >= 3):
+Query OpenMemory for explicit reflections (tag: `interaction-analysis-reflection`):
+- These are HIGH PRIORITY (user explicitly flagged)
+- Auto-accepted - skip to proposal generation
+- Already validated by user during session
 
-1. Read full transcripts from SQLite using session IDs
-2. Extract specific interactions:
-   - User message
-   - My response
-   - What went wrong
-3. Understand context:
-   - What was I missing?
-   - What was the user teaching me?
-   - Is this really a pattern or coincidence?
-4. Verify it's actionable (can be expressed as a rule)
+### 3. Analyze Implicit Corrections
 
-**CRITICAL**: Don't rely on index alone. Full transcripts provide context.
+For each correction from script output:
+1. Read transcript[message_index - 5 : message_index + 1] from SQLite
+2. Identify what I did wrong in my previous response
+3. Extract actionable behavior
+4. Formulate rule or discard if false positive
 
-### 6. Craft Proposals
+### 4. Present Implicit Patterns for Review
 
-For each validated pattern, generate:
+Show user only the implicit patterns (script-detected):
+- Pattern description
+- Evidence (session ID, message index, context)
+- Proposed actionable rule
+- User accepts/rejects each pattern
 
-**Evidence** (cite specific interactions):
-- Date, session ID, user message, my response, outcome
-- What went wrong? What should I have done?
+### 5. Merge Accepted Patterns
 
-**Pattern** (what's the underlying issue):
-- "I'm not checking memory before external searches"
-- "I'm using Kagi when Context7 would be better"
-- "I'm not reading steering files at session start"
+Combine:
+- Auto-accepted explicit reflections (from OpenMemory)
+- User-accepted implicit patterns (from script analysis)
 
-**Proposed Rule** (actionable, concise):
-- "Before any web search, query OpenMemory for prior findings"
-- "For library questions, check Context7 before Kagi"
-- "At session start, read .kiro/steering/ structure"
+### 6. Generate Proposals
 
-**Placement** (which steering file, which section):
-- Personal vs workspace
-- Which file (01-tool-usage.md, 02-research-depth.md, etc.)
-- Which section within file
+For each accepted pattern, generate:
+- Evidence (cite specific interactions)
+- Pattern analysis (underlying issue)
+- Proposed rule (actionable, concise)
+- Placement (which file, which section)
 
-Store proposals in OpenMemory (tag: `interaction-analysis-proposal`).
+### 7. Present Proposals
 
-### 7. Rank by Impact
+Show ranked proposals (HIGH → MEDIUM → LOW priority):
+- ✅ Approve: Apply to steering file
+- ❌ Reject: Delete from memory
+- 🔄 Refine: Iterate on wording
 
-Sort proposals by:
-1. Frequency (how many times repeated)
-2. Severity (how much friction it caused)
-3. Actionability (how clear the rule is)
+### 8. Apply Approved Changes
 
-### 8. Present to User
-
-Output format:
-
-```
-Interaction Analysis (Week of YYYY-MM-DD)
-
-═══════════════════════════════════════════════════════════
-HIGH PRIORITY (repeated 3+ times)
-═══════════════════════════════════════════════════════════
-
-1. Pattern: "Check memory before searching"
-   Count: 5 occurrences
-   
-   Evidence from full transcripts:
-   
-   • 2026-03-02 (session abc123): User asked about Effect patterns, I searched Kagi first
-     User: "Did you check memory? We researched this last week"
-     
-   • 2026-03-05 (session def456): User asked about Nix config, I searched web
-     User: "Check memory before searching external sources"
-     
-   • 2026-03-08 (session ghi789): User asked about steering lifecycle, I used Kagi
-     User: "Memory first, then search. This is the 3rd time."
-   
-   Pattern Analysis:
-   I'm not checking OpenMemory before external searches, causing
-   redundant research and missing prior findings.
-   
-   Proposed Rule:
-   "Before any web search or GitHub lookup, query OpenMemory for
-   prior findings. This avoids redundant searches and leverages
-   existing knowledge."
-   
-   Placement: 01-tool-usage.md, section "Memory (Always Active)"
-   
-   Draft Addition:
-   ```markdown
-   **Before external searches:**
-   - Query OpenMemory first (check for prior findings)
-   - If found: Use existing knowledge, reinforce memory
-   - If not found: Proceed with external search, store results
-   ```
-
-───────────────────────────────────────────────────────────
-MEDIUM PRIORITY (2-3 occurrences)
-───────────────────────────────────────────────────────────
-
-2. Pattern: "Use Context7 before Kagi for library questions"
-   Count: 2 occurrences
-   
-   Evidence: [similar format]...
-
-───────────────────────────────────────────────────────────
-METRICS
-───────────────────────────────────────────────────────────
-
-Correction rate: 23% (11/47 sessions)
-Baseline: Week 2 (first measurement)
-Most common: Tool choice corrections (5)
-Trend: N/A (first analysis)
-
-Next analysis: 2026-03-16 (or when 10+ new flagged interactions)
-```
+- Update steering files (or create migrations/)
+- Track promotions in OpenMemory
+- **Update reflection status** (if change addresses a reflection):
+  - Use `openmemory_reinforce` to update reflection memory
+  - Change status from `flagged` to `solution-testing`
+  - Add solution details and testing period
+- Update last analysis timestamp
+- Commit to version control
 
 ## Cleanup After Analysis
 

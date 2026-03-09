@@ -55,7 +55,7 @@
     ./oxlint.nix
     ./poetry.nix
     ./prettierd.nix
-    ./python_311.nix
+    ./python.nix
     ./rclone
     ./ripgrep.nix
     ./rust.nix

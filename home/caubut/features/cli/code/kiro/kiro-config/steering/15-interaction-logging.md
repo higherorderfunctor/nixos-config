@@ -31,6 +31,40 @@ I acknowledge: "Reflection noted: Had to explain memory-first pattern again"
 
 **Why no slash:** CLI intercepts all `/commands` before I see them. Using `reflect:` (no slash) lets me detect it in message text.
 
+## Reflection Lifecycle
+
+Track reflection status to measure effectiveness of solutions.
+
+**States:**
+1. **flagged** - Initial state when reflect: marker detected and stored
+2. **solution-proposed** - Steering file updated with proposed solution
+3. **solution-testing** - Waiting for validation (user testing the change)
+4. **verified** - Solution confirmed working (pattern no longer occurs)
+5. **closed** - Archived after verification (moved to historical record)
+
+**How to track:**
+- Store status in reflection memory content: `Status: solution-testing`
+- Update status when applying changes: `openmemory_reinforce` with updated content
+- Query reflections by status: search for `Status: solution-testing` in content
+
+**When to update:**
+- **flagged → solution-proposed**: When steering file is updated with fix
+- **solution-proposed → solution-testing**: When user begins testing the change
+- **solution-testing → verified**: When pattern stops occurring (tracked over 2+ weeks)
+- **verified → closed**: After 1+ month of no recurrence, archive to historical record
+
+**Example memory content:**
+```
+Reflection: Truncating output AGAIN - third instance
+
+Status: solution-testing
+Solution: Updated SKILL.md with explicit execution instructions (2026-03-09)
+Testing period: 2026-03-09 to 2026-03-23
+
+Pattern: REPEATED mistake - not internalizing the "don't truncate analysis output" rule
+Root cause: Habit/convenience bias - defaulting to truncation without thinking
+```
+
 ## Correction Signals
 
 **Explicit signals** (high confidence):
