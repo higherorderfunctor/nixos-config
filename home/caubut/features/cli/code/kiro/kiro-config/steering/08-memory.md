@@ -13,13 +13,18 @@
 - **user_id**: set to "caubut" on every call
 - **tags**: ALWAYS include a tag for the git repository identity
 
-## Memory Types
+## Memory Types (for openmemory_store)
+
+**ONLY these three values are valid:**
 
 - `contextual` — decisions, conventions, patterns, workflow preferences
 - `factual` — concrete facts: names, URLs, versions, endpoints
 - `both` — when a memory is both a fact and provides context
 
 When in doubt, use `contextual`.
+
+**Invalid values that will cause errors:**
+- ❌ `procedural`, `semantic`, `episodic`, `emotional`, `reflective` (these are NOT valid types)
 
 ## Determining the Project Tag
 
