@@ -19,7 +19,15 @@ reflect: Had to explain memory-first pattern again, consider promoting
 
 I acknowledge: "Reflection noted: Had to explain memory-first pattern again"
 
-Marker captured in session transcript automatically.
+**Then I immediately store in OpenMemory:**
+- Tag: `interaction-analysis-reflection`
+- Content: The reflection text + enough reference data to locate in SQLite transcript
+- Required references: conversation ID, timestamp, surrounding context for grep/search
+- Example: "Reflection during kiro-audit-2026-03-08 validation (conversation_id: abc123, ~12:13 PM, discussing reflect: marker storage)"
+
+**Why store immediately:** Explicit `reflect:` markers indicate HIGH PRIORITY issues that are really bugging the user. These need to be recorded immediately, not discovered later through weekly analysis.
+
+**Why include references:** During analysis, I need to pull up the full conversation context from SQLite to understand what led to the reflection.
 
 **Why no slash:** CLI intercepts all `/commands` before I see them. Using `reflect:` (no slash) lets me detect it in message text.
 
@@ -55,15 +63,21 @@ Correction Types:
 - Interpretation: 2 (session IDs: [...])
 - Context gaps: 1 (session IDs: [...])
 
+Explicit Reflections (HIGHEST PRIORITY):
+- Count: 2
+- Memory IDs: [reflection-id-1, reflection-id-2]
+
 Weekly Stats:
 - Total sessions analyzed: 47
 - Sessions with corrections: 11
-- reflect: markers: 2
+- reflect: markers: 2 (stored in OpenMemory)
 - Correction rate: 23% (11/47)
 ```
 
 **Index is for DISCOVERY, not promotion.**
 Always read full transcripts from SQLite before crafting promotion.
+
+**Explicit reflections are already in OpenMemory** (tag: `interaction-analysis-reflection`) and should be prioritized first during analysis.
 
 ## Analysis Workflow
 

@@ -34,8 +34,18 @@ For each session, parse the transcript (array of strings):
 
 ### 3. Detect Correction Signals
 
-**Explicit signals:**
-- `reflect:` in user message → explicit-reflection
+**Explicit signals (HIGHEST PRIORITY - already in OpenMemory):**
+- `reflect:` in user message → stored immediately in OpenMemory with tag `interaction-analysis-reflection`
+- These are HIGH PRIORITY issues that are really bugging the user
+- Query OpenMemory for these first during analysis
+
+**Required reference data when storing reflections:**
+- Conversation ID (for SQLite lookup)
+- Timestamp or approximate time
+- Surrounding context (enough to grep/search the specific portion of transcript)
+- Example: "Reflection during session abc123 at ~14:30, discussing memory storage patterns"
+
+**Direct corrections:**
 - "no, " or "actually, " or "instead, " → correction-direct
 - "why did you" or "what made you" → correction-confusion
 
@@ -61,9 +71,14 @@ Correction Types:
 - Tool choice: 3 (session IDs: [...])
 - Interpretation: 2 (session IDs: [...])
 
+Explicit Reflections (HIGHEST PRIORITY):
+- Count: 2
+- Memory IDs: [reflection-id-1, reflection-id-2]
+
 Weekly Stats:
 - Total sessions: 47
 - Sessions with corrections: 11
+- reflect: markers: 2 (stored in OpenMemory)
 - Correction rate: 23%
 ```
 
