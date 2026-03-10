@@ -7,15 +7,44 @@ Analyze interaction logs to find patterns worth codifying in steering files.
 - **Manual**: User invokes with `/skill interaction-analysis` or asks "analyze my interactions"
 - **Automatic**: Weekly reminder if 10+ flagged interactions (via 15-interaction-logging.md)
 
-## Process
+## Two-Phase Workflow
 
-### 1. Run Python Script
+**Phase 1: Analyze**
+1. User: "analyze my interactions"
+2. Run script → store raw results in memory
+3. Ask: "Ready to process these corrections?"
+4. User confirms
+5. Post-process (read context, extract patterns, reinforce reflections)
+6. Store processed suggestions in memory
+7. Done - wait for Phase 2
+
+**Phase 2: Review & Fix**
+- "show pending" → patterns awaiting accept/reject
+- "show accepted" → accepted patterns with status (flagged/solution-testing/verified)
+- "accept X" / "reject X" → update pattern status
+- "work on X" → generate proposals, apply changes to steering files
+
+## Phase 1: Analyze
+
+### 1. Check Last Analysis Timestamp
+
+Query OpenMemory for last analysis state (tag: `interaction-analysis-state`):
+```
+openmemory_query: "last analysis timestamp"
+tags: ["global", "interaction-analysis-state"]
+```
+
+If found, extract timestamp. If not found, analyze all sessions.
+
+### 2. Run Python Script
 
 **CRITICAL: Execute this EXACT command, do not modify:**
 
 ```bash
-~/.kiro/skills/interaction-analysis/scripts/analyze_sessions.py
+~/.kiro/skills/interaction-analysis/scripts/analyze_sessions.py --since "YYYY-MM-DDTHH:MM:SS"
 ```
+
+Replace `YYYY-MM-DDTHH:MM:SS` with the timestamp from step 1. If no prior timestamp exists (first run), omit the `--since` parameter to analyze last 7 days.
 
 **What this does:**
 - Queries SQLite for sessions since last analysis
@@ -57,60 +86,118 @@ Analyze interaction logs to find patterns worth codifying in steering files.
 }
 ```
 
-### 2. Query Explicit Reflections
+### 3. Store Raw Script Output
+
+**CRITICAL: Capture output from tool response, NOT from filesystem**
+
+The script outputs JSON to stdout. The execute_bash tool returns this in the response. Store that directly:
+
+```
+1. Run script (output comes back in tool response)
+2. Parse JSON from stdout field
+3. Store in OpenMemory with tag: interaction-analysis-raw
+```
+
+**DO NOT:**
+- ❌ Redirect to temp file (`> /tmp/file.json`)
+- ❌ Write to filesystem first
+- ❌ Use intermediate files
+
+**Why:** Tool response already contains the output. No filesystem needed.
+
+**State tracking:**
+- Update state: `script-complete, awaiting-post-process`
+- Enables resumability if interrupted
+
+### 4. Post-Process with Conversation History
+
+**CRITICAL: Process ALL corrections from script output, not just samples**
+
+For each correction in the script results, read SQLite context and analyze:
+
+```bash
+sqlite3 ~/.local/share/kiro-cli/data.sqlite3 \
+  "SELECT value FROM conversations_v2 WHERE conversation_id = '<session_id>' LIMIT 1" | \
+  python3 -c "
+import json, sys
+data = json.load(sys.stdin)
+transcript = data.get('transcript', [])
+# Get context: 5 messages before + correction message
+start = max(0, <message_index> - 5)
+end = <message_index> + 1
+context = transcript[start:end]
+for i, msg in enumerate(context, start=start):
+    print(f'[{i}] {msg[:200]}')
+"
+```
+
+**Then analyze each correction:**
+1. Read the context to understand what went wrong
+2. Identify the root cause (not just the symptom)
+3. Extract actionable pattern or discard if false positive
+4. Store as individual pending item (see step 6)
+
+**Example:** User says "use conventional commits" → Pattern: "Default to conventional commits unless workspace has different convention"
+
+**DO NOT skip corrections** - process all of them to ensure complete analysis.
+
+### 5. Query Explicit Reflections
 
 Query OpenMemory for explicit reflections (tag: `interaction-analysis-reflection`):
+- Filter by status: `flagged` or `solution-testing`
 - These are HIGH PRIORITY (user explicitly flagged)
-- Auto-accepted - skip to proposal generation
-- Already validated by user during session
+- If new patterns match existing reflections → reinforce reflection, don't duplicate
 
-### 3. Analyze Implicit Corrections
+### 6. Store Individual Pending Items
 
-For each correction from script output:
-1. Read transcript[message_index - 5 : message_index + 1] from SQLite
-2. Identify what I did wrong in my previous response
-3. Extract actionable behavior
-4. Formulate rule or discard if false positive
+For each actionable pattern, store in OpenMemory (tag: `interaction-analysis-pending`):
+```
+Pattern: [description]
+Evidence: session_id + message_index + context
+Priority: HIGH/MEDIUM/LOW
+Related reflection: [reflection_id or null]
+Status: pending-review
+```
 
-### 4. Present Implicit Patterns for Review
+### 7. Update Analysis State
 
-Show user only the implicit patterns (script-detected):
-- Pattern description
-- Evidence (session ID, message index, context)
-- Proposed actionable rule
-- User accepts/rejects each pattern
+Store completion timestamp in OpenMemory (tag: `interaction-analysis-state`):
+```
+Last analysis completed: YYYY-MM-DD HH:MM
+Sessions analyzed: [count]
+Corrections processed: [count]
+Pending items: [count]
+Status: ready-for-review
+```
 
-### 5. Merge Accepted Patterns
+**Phase 1 complete.** Wait for user to initiate Phase 2.
 
-Combine:
-- Auto-accepted explicit reflections (from OpenMemory)
-- User-accepted implicit patterns (from script analysis)
+---
 
-### 6. Generate Proposals
+## Phase 2: Review & Fix (User-Driven)
 
-For each accepted pattern, generate:
-- Evidence (cite specific interactions)
-- Pattern analysis (underlying issue)
-- Proposed rule (actionable, concise)
-- Placement (which file, which section)
+### Commands
 
-### 7. Present Proposals
+**"show pending"** - Display patterns awaiting accept/reject
+- Load from OpenMemory (tag: `interaction-analysis-pending`)
+- Group by priority (HIGH → MEDIUM → LOW)
+- Show evidence and proposed rule
 
-Show ranked proposals (HIGH → MEDIUM → LOW priority):
-- ✅ Approve: Apply to steering file
-- ❌ Reject: Delete from memory
-- 🔄 Refine: Iterate on wording
+**"show accepted"** - Display accepted patterns with status
+- Load from OpenMemory (tag: `interaction-analysis-accepted`)
+- Show status: flagged / solution-testing / verified
+- Include solution details if in testing
 
-### 8. Apply Approved Changes
+**"accept X"** - Accept a pending pattern
+- Move from `pending` to `accepted` tag
+- Set status: `flagged`
+- Ready for "work on X"
 
-- Update steering files (or create migrations/)
-- Track promotions in OpenMemory
-- **Update reflection status** (if change addresses a reflection):
-  - Use `openmemory_reinforce` to update reflection memory
-  - Change status from `flagged` to `solution-testing`
-  - Add solution details and testing period
-- Update last analysis timestamp
-- Commit to version control
+**"reject X"** - Reject a pending pattern
+- Delete from memory
+- Note rejection reason (helps refine detection)
+
+**"work on X"** - Generate proposal and apply changes
 
 ## Cleanup After Analysis
 

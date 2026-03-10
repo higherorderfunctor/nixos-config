@@ -4,6 +4,7 @@ Interaction Analysis - Parallel Session Analyzer
 Analyzes Kiro chat sessions for correction patterns using Ollama.
 """
 
+import argparse
 import asyncio
 import json
 import sqlite3
@@ -183,15 +184,19 @@ async def analyze_session(client, session_id, workspace, transcript, session_num
     except Exception as e:
         return None
 
-async def main_async():
+async def main_async(since_timestamp=None):
     global total_prompts
     
     # Check Ollama model
     check_ollama_model()
     
-    # Get cutoff date (7 days ago for first run)
-    cutoff_date = datetime.now() - timedelta(days=7)
-    print(f"Analyzing sessions since {cutoff_date.strftime('%Y-%m-%d')}", file=sys.stderr)
+    # Get cutoff date
+    if since_timestamp:
+        cutoff_date = datetime.fromisoformat(since_timestamp)
+        print(f"Analyzing sessions since {cutoff_date.strftime('%Y-%m-%d %H:%M:%S')}", file=sys.stderr)
+    else:
+        cutoff_date = datetime.now() - timedelta(days=7)
+        print(f"Analyzing sessions since {cutoff_date.strftime('%Y-%m-%d')} (7 days ago, first run)", file=sys.stderr)
     
     # Get sessions
     sessions = get_sessions_since(cutoff_date)
@@ -235,7 +240,15 @@ async def main_async():
     print(json.dumps(output, indent=2))
 
 def main():
-    asyncio.run(main_async())
+    parser = argparse.ArgumentParser(description="Analyze Kiro sessions for correction patterns")
+    parser.add_argument(
+        "--since",
+        type=str,
+        help="ISO 8601 timestamp to analyze sessions since (e.g., 2026-03-09T17:00:00). If not provided, analyzes last 7 days."
+    )
+    args = parser.parse_args()
+    
+    asyncio.run(main_async(since_timestamp=args.since))
 
 if __name__ == "__main__":
     main()

@@ -115,6 +115,26 @@ Always read full transcripts from SQLite before crafting promotion.
 
 ## Analysis Workflow
 
+**Phase 1: Analyze (always run first)**
+1. Query OpenMemory for last analysis timestamp (tag: `interaction-analysis-state`)
+2. **Run script with timestamp** - Script queries SQLite for sessions SINCE that timestamp only
+3. Store raw script output in OpenMemory (tag: `interaction-analysis-raw`) for resumability
+4. Post-process: For each correction, read SQLite context (message_index - 5 to message_index + 1)
+5. Extract actionable patterns, discard false positives
+6. Query explicit reflections (tag: `interaction-analysis-reflection`)
+7. Store each pattern as individual pending item (tag: `interaction-analysis-pending`)
+8. Update analysis state with NEW completion timestamp
+
+**Default behavior:** Script only processes NEW sessions since last run. Never reprocess all sessions unless this is the first run.
+
+**Phase 2: Review (can stop and resume)**
+1. "show pending" → Load pending patterns from OpenMemory
+2. "show accepted" → Load accepted patterns with status
+3. "accept X" / "reject X" → Update pattern status
+4. "work on X" → Generate proposals for accepted patterns
+5. Apply approved changes to steering files
+6. Track promotions and update reflection status
+
 **Discovery (index-based):**
 1. Query SQLite for sessions since last analysis
 2. Parse transcripts, detect correction signals
