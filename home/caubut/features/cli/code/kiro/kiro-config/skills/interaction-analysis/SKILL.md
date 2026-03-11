@@ -194,8 +194,11 @@ Status: ready-for-review
 - Ready for "work on X"
 
 **"reject X"** - Reject a pending pattern
-- Delete from memory
-- Note rejection reason (helps refine detection)
+- Prompt user for rejection reason
+- Store rejection in OpenMemory (tag: `interaction-analysis-rejected`)
+- Format: pattern description + rejection reason + evidence (session_id + message_index)
+- Used for refinement: patterns with 3+ rejections trigger prompt update
+- Delete original pending pattern from memory
 
 **"work on X"** - Generate proposal and apply changes
 
