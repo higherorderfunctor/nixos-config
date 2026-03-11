@@ -24,25 +24,20 @@ except ImportError:
 DB_PATH = Path.home() / ".local/share/kiro-cli/data.sqlite3"
 OLLAMA_MODEL = "llama3.2:3b"
 OLLAMA_URL = "http://localhost:11434"
-CLASSIFICATION_PROMPT = """Is this user message a REPEATED correction - something the user has had to tell the assistant multiple times?
+CLASSIFICATION_PROMPT = """Is this user message correcting the AI assistant's mistake or expressing frustration?
 
-CORRECTIONS (answer yes):
-- User explicitly says "I told you to..." or "again..." or "like I said..."
-- User says "no, do X instead" when contradicting assistant's action
-- User expresses frustration: "why do you keep...", "stop doing X"
-- User says "you're not listening" or similar meta-complaints
+Answer YES only if the message contains:
+- "no" or "wrong" or "incorrect" (rejecting assistant's action)
+- "again" or "I told you" or "like I said" (repetition signal)
+- "why did you" or "why do you keep" (questioning wrong behavior)
+- "stop" or "don't" (telling assistant to stop doing something)
 
-NOT CORRECTIONS (answer no):
-- User providing initial instructions (first time mentioning something)
-- User clarifying or adding details to their original request
-- User answering assistant's question
-- User saying they already did something themselves
-- User confirming understanding ("ok", "yes", "got it")
-- User exploring options or brainstorming
-- User asking clarifying questions before work starts
-- User providing feedback on a first attempt (not a repeated issue)
-
-Focus: Only flag if the message itself contains explicit repetition signals or frustration.
+Answer NO for:
+- Questions without correction ("how do I...", "what about...")
+- Providing information or context
+- Confirming or acknowledging ("ok", "yes", "thanks")
+- Giving new instructions (not correcting old ones)
+- Clarifying requirements
 
 User message: "{message}"
 
