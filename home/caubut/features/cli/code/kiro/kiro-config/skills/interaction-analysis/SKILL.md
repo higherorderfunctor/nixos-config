@@ -229,6 +229,18 @@ Status: ready-for-review
    - Example: "NOT a correction: user saying 'already did that' without error"
    - Show complete updated prompt to user
 
+**Implementation:**
+```
+1. For each approved pattern type:
+   - Extract common characteristics from rejection reasons
+   - Generate negative example description
+   - Format: "NOT a correction: [description]"
+
+2. Read current prompt from analyze_sessions.py
+3. Add negative examples to classification instructions
+4. Show full updated prompt with changes highlighted
+```
+
 3. **User approval:**
    - Display full prompt with negative examples highlighted
    - Ask: "Approve this prompt update?"
@@ -236,8 +248,35 @@ Status: ready-for-review
 
 4. **Update script:**
    - If approved: update analyze_sessions.py with new prompt
+   - Use code tool to modify CLASSIFICATION_PROMPT variable
    - Test on recent sessions to verify improvement
    - Mark refined patterns (tag: `interaction-analysis-refined`)
+
+**Implementation:**
+```
+1. Use code tool to update analyze_sessions.py:
+   - Locate CLASSIFICATION_PROMPT variable
+   - Add negative examples to prompt text
+   - Preserve existing structure
+
+2. Test updated prompt:
+   - Run script on last 3 sessions
+   - Verify no false positives for refined patterns
+   - Show results to user
+
+3. Store refinement record:
+   openmemory_store:
+     content: |
+       Prompt Refinement - [date]
+       
+       Added negative examples:
+       - [pattern type 1]: [description]
+       - [pattern type 2]: [description]
+       
+       Refined patterns: [list of pattern IDs]
+     tags: ["global", "interaction-analysis-refined", "nixos-config"]
+     type: "contextual"
+```
 
 5. **Continue to Step 1:**
    - Proceed with normal Phase 1 workflow
