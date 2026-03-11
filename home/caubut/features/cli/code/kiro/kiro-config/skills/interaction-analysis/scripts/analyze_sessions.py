@@ -275,8 +275,6 @@ async def classify_message(client, message):
 async def analyze_session(client, session_id, workspace, transcript, session_num, total_sessions, classification_counter):
     """Analyze a single session - find correction messages."""
     try:
-        corrections = []
-        
         # Extract user messages with indices
         user_messages = [(i, msg[2:]) for i, msg in enumerate(transcript) if msg.startswith("> ") and len(msg.strip()) >= 3]
         
@@ -293,33 +291,38 @@ async def analyze_session(client, session_id, workspace, transcript, session_num
         classification_counter['current'] += len(user_messages)
         progress.show("Classifying messages", classification_counter['current'], classification_counter['total'])
         
-        # Collect corrections
+        # Collect corrections (just indices for now)
         correction_indices = [(i, user_msg) for (i, user_msg), is_correction in zip(user_messages, results) if is_correction]
-        
-        if not correction_indices:
-            return None
-        
-        # Process each correction: gather context and summarize
-        for idx, (i, user_msg) in enumerate(correction_indices, 1):
-            # Gather adaptive context
-            context = await gather_adaptive_context(client, session_id, i)
-            
-            # Generate summary
-            summary = await generate_summary(client, context)
-            
-            corrections.append({
-                "message_index": i,
-                "user_message": user_msg,
-                "context_messages": len(context),
-                "summary": summary
-            })
         
         return {
             "session_id": session_id,
             "workspace": workspace,
-            "corrections": corrections
+            "correction_indices": correction_indices,
+            "transcript": transcript
         }
         
+    except Exception as e:
+        return None
+
+async def process_correction(client, session_id, message_index, user_msg, transcript, correction_counter):
+    """Process a single correction: gather context and summarize."""
+    try:
+        # Gather adaptive context
+        context = await gather_adaptive_context(client, session_id, message_index)
+        
+        # Generate summary
+        summary = await generate_summary(client, context)
+        
+        # Update progress
+        correction_counter['current'] += 1
+        progress.show("Processing corrections", correction_counter['current'], correction_counter['total'])
+        
+        return {
+            "message_index": message_index,
+            "user_message": user_msg,
+            "context_messages": len(context),
+            "summary": summary
+        }
     except Exception as e:
         return None
 
@@ -360,22 +363,70 @@ async def main_async(since_timestamp=None):
     # Shared counter for classification progress
     classification_counter = {'current': 0, 'total': total_messages}
     
-    # Analyze all sessions concurrently with async
+    # Phase 1: Classify all messages
     client = AsyncClient(host=OLLAMA_URL)
-    tasks = [
+    classify_tasks = [
         analyze_session(client, sid, ws, transcript, idx+1, len(sessions), classification_counter)
         for idx, (sid, ws, transcript) in enumerate(sessions)
     ]
     
-    # Process sessions as they complete
-    results = []
-    for coro in asyncio.as_completed(tasks):
+    # Wait for all classifications
+    classified_sessions = []
+    for coro in asyncio.as_completed(classify_tasks):
         result = await coro
-        if result and result["corrections"]:
-            results.append(result)
+        if result and result["correction_indices"]:
+            classified_sessions.append(result)
     
     # Finish classification progress
     progress.finish("Classifying messages")
+    
+    # Phase 2: Process corrections (context gathering + summarization)
+    if not classified_sessions:
+        output = {
+            "analyzed_at": datetime.now().isoformat(),
+            "cutoff_date": cutoff_date.isoformat(),
+            "total_sessions": len(sessions),
+            "sessions_with_patterns": 0,
+            "results": []
+        }
+        print(json.dumps(output, indent=2))
+        return
+    
+    # Count total corrections
+    total_corrections = sum(len(s["correction_indices"]) for s in classified_sessions)
+    correction_counter = {'current': 0, 'total': total_corrections}
+    
+    # Process all corrections
+    correction_tasks = []
+    for session in classified_sessions:
+        for i, user_msg in session["correction_indices"]:
+            correction_tasks.append(
+                process_correction(client, session["session_id"], i, user_msg, session["transcript"], correction_counter)
+            )
+    
+    # Wait for all corrections to be processed
+    all_corrections = []
+    for coro in asyncio.as_completed(correction_tasks):
+        result = await coro
+        if result:
+            all_corrections.append(result)
+    
+    # Finish correction processing progress
+    progress.finish("Processing corrections")
+    
+    # Group corrections by session
+    results = []
+    for session in classified_sessions:
+        session_corrections = [
+            c for c in all_corrections 
+            if any(c["message_index"] == idx for idx, _ in session["correction_indices"])
+        ]
+        if session_corrections:
+            results.append({
+                "session_id": session["session_id"],
+                "workspace": session["workspace"],
+                "corrections": session_corrections
+            })
     
     # Output results (stdout only)
     output = {
