@@ -100,11 +100,14 @@ class ProgressTracker:
             else:
                 elapsed_str = f"{int(elapsed/60)}m {int(elapsed%60)}s"
             
-            # Calculate ETA (skip for first few samples or when at/past 100%)
-            if current > 3 and current < total:
+            # Calculate ETA (skip for first few samples for warmup)
+            if current > 3:
                 rate = current / elapsed
                 remaining = (total - current) / rate if rate > 0 else 0
-                eta_str = f" | ETA: {int(remaining)}s" if remaining < 60 else f" | ETA: {int(remaining/60)}m"
+                if remaining < 60:
+                    eta_str = f" | ETA: {int(remaining)}s"
+                else:
+                    eta_str = f" | ETA: {int(remaining/60)}m {int(remaining%60)}s"
             else:
                 eta_str = ""
             
