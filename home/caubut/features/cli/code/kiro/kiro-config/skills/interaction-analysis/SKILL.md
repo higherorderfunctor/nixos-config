@@ -194,6 +194,35 @@ Status: ready-for-review
 
 **Phase 1 complete.** Wait for user to initiate Phase 2.
 
+### 8. Refinement Process (Optional - Triggered from Step 0)
+
+**When user confirms refinement in Step 0:**
+
+1. **Review rejection clusters:**
+   - Show each pattern type with 3+ rejections
+   - Display rejection reasons for each cluster
+   - Ask: "Add this as negative example to Ollama prompt?"
+
+2. **Generate updated prompt:**
+   - For each approved cluster, create negative example
+   - Format: "NOT a correction: [pattern description]"
+   - Example: "NOT a correction: user saying 'already did that' without error"
+   - Show complete updated prompt to user
+
+3. **User approval:**
+   - Display full prompt with negative examples highlighted
+   - Ask: "Approve this prompt update?"
+   - If rejected: iterate or skip refinement
+
+4. **Update script:**
+   - If approved: update analyze_sessions.py with new prompt
+   - Test on recent sessions to verify improvement
+   - Mark refined patterns (tag: `interaction-analysis-refined`)
+
+5. **Continue to Step 1:**
+   - Proceed with normal Phase 1 workflow
+   - Script will use updated prompt for this analysis
+
 ---
 
 ## Phase 2: Review & Fix (User-Driven)
