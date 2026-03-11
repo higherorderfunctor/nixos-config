@@ -28,9 +28,8 @@ CLASSIFICATION_PROMPT = """Is this user message a REPEATED correction - somethin
 
 CORRECTIONS (answer yes):
 - User explicitly says "I told you to..." or "again..." or "like I said..."
-- User says "no, do X instead" when assistant did Y (direct contradiction)
+- User says "no, do X instead" when contradicting assistant's action
 - User expresses frustration: "why do you keep...", "stop doing X"
-- User repeats the SAME request after assistant already attempted it
 - User says "you're not listening" or similar meta-complaints
 
 NOT CORRECTIONS (answer no):
@@ -43,7 +42,7 @@ NOT CORRECTIONS (answer no):
 - User asking clarifying questions before work starts
 - User providing feedback on a first attempt (not a repeated issue)
 
-Focus: Only flag if this seems like a REPEATED pattern or explicit correction of wrong behavior.
+Focus: Only flag if the message itself contains explicit repetition signals or frustration.
 
 User message: "{message}"
 
@@ -213,8 +212,8 @@ async def check_context_sufficiency(client, messages):
         # On error, assume we need more context
         return False
 
-async def gather_adaptive_context(client, session_id, message_index, max_messages=10):
-    """Gather context adaptively - add messages until Ollama says sufficient."""
+async def gather_adaptive_context(client, session_id, message_index, max_messages=10, chunk_size=5):
+    """Gather context adaptively - add messages in chunks until Ollama says sufficient."""
     transcript = get_transcript_for_session(session_id)
     
     if not transcript or message_index >= len(transcript):
@@ -223,19 +222,28 @@ async def gather_adaptive_context(client, session_id, message_index, max_message
     # Start with just the correction message
     context = [transcript[message_index]]
     
-    # Iteratively add previous messages
-    for i in range(1, max_messages):
-        prev_index = message_index - i
-        if prev_index < 0:
-            break
-        
+    # Add messages in chunks
+    messages_added = 0
+    while messages_added < max_messages:
         # Check if current context is sufficient
         is_sufficient = await check_context_sufficiency(client, context)
         if is_sufficient:
             break
         
-        # Add previous message to beginning of context
-        context.insert(0, transcript[prev_index])
+        # Add next chunk of messages (up to chunk_size)
+        chunk_end = message_index - messages_added - 1
+        chunk_start = max(0, chunk_end - chunk_size + 1)
+        
+        if chunk_start < 0 or chunk_end < 0:
+            break
+        
+        # Add chunk to beginning of context
+        for i in range(chunk_end, chunk_start - 1, -1):
+            if i >= 0:
+                context.insert(0, transcript[i])
+                messages_added += 1
+                if messages_added >= max_messages:
+                    break
     
     return context
 
