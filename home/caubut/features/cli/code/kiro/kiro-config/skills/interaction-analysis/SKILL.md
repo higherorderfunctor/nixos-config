@@ -68,6 +68,30 @@ user_id: "caubut"
 **If no patterns meet threshold:**
 - Continue silently to Step 1
 
+### False Positive Pattern Types
+
+When rejecting a pattern, classify it using this taxonomy:
+
+**Common False Positive Types:**
+- `false-positive-clarification` - User providing additional context or clarifying requirements (not correcting an error)
+- `false-positive-question` - User asking a follow-up question (not pointing out a mistake)
+- `false-positive-already-done` - User stating they already completed something (not correcting your action)
+- `false-positive-acknowledgment` - User confirming understanding or saying "yes/no/ok" (not fixing anything)
+- `false-positive-preference` - User expressing a preference or opinion (not correcting wrong behavior)
+- `false-positive-context` - User providing background information (not identifying an error)
+- `false-positive-exploration` - User exploring options or brainstorming (not steering away from mistake)
+
+**How to classify:**
+1. Read the rejection reason
+2. Identify why it's not a real correction
+3. Match to closest pattern type above
+4. If unclear, use `false-positive-other` and note the reason
+
+**Example:**
+- Rejection reason: "User was just answering my question about their preference"
+- Pattern Type: `false-positive-preference`
+
+
 ### 1. Check Last Analysis Timestamp
 
 Query OpenMemory for last analysis state (tag: `interaction-analysis-state`):
@@ -76,7 +100,11 @@ openmemory_query: "last analysis timestamp"
 tags: ["global", "interaction-analysis-state"]
 ```
 
-If found, extract timestamp. If not found, analyze all sessions.
+If found, extract timestamp and display trend summary:
+- "Last analysis: [date], [N] corrections, [X]% false positive rate"
+- "Trend: Corrections [up/down/stable], FP rate [up/down/stable]"
+
+If not found, analyze all sessions.
 
 ### 2. Run Python Script
 
@@ -176,10 +204,15 @@ for i, msg in enumerate(context, start=start):
 **Then analyze each correction:**
 1. Read the context to understand what went wrong
 2. Identify the root cause (not just the symptom)
-3. Extract actionable pattern or discard if false positive
-4. Store as individual pending item (see step 6)
+3. Determine if this is a real correction or false positive:
+   - Real correction: Extract actionable pattern
+   - False positive: Note the false positive type (for future reference)
+4. Store as individual pending item (see step 6) if actionable
+5. If false positive: skip storage, but note the pattern type for analysis
 
-**Example:** User says "use conventional commits" → Pattern: "Default to conventional commits unless workspace has different convention"
+**Example:** 
+- Real correction: User says "use conventional commits" → Pattern: "Default to conventional commits unless workspace has different convention"
+- False positive: User says "I already ran that command" → Type: false-positive-already-done, skip storage
 
 **DO NOT skip corrections** - process all of them to ensure complete analysis.
 
@@ -203,12 +236,28 @@ Status: pending-review
 
 ### 7. Update Analysis State
 
-Store completion timestamp in OpenMemory (tag: `interaction-analysis-state`):
+Store completion timestamp and metrics in OpenMemory (tag: `interaction-analysis-state`):
 ```
 Last analysis completed: YYYY-MM-DD HH:MM
 Sessions analyzed: [count]
 Corrections processed: [count]
 Pending items: [count]
+Status: ready-for-review
+
+Metrics:
+- Total corrections detected: [count]
+- Corrections accepted: [count from previous analyses]
+- Corrections rejected (false positives): [count from previous analyses]
+- Acceptance rate: [accepted / total * 100]%
+- False positive rate: [rejected / total * 100]%
+- Refinements applied: [count]
+- Last refinement date: [date or null]
+- Refined pattern types: [list or empty]
+
+Trend (compare to previous analysis):
+- Correction count: [increased/decreased/stable]
+- False positive rate: [increased/decreased/stable]
+```
 Status: ready-for-review
 ```
 
@@ -254,17 +303,36 @@ Status: ready-for-review
 
 **Implementation:**
 ```
-1. Use code tool to update analyze_sessions.py:
+1. Store current prompt version (before updating):
+   openmemory_store:
+     content: |
+       Prompt Version - [date]
+       
+       Refinement ID: [unique ID]
+       Refined patterns: [list of pattern IDs]
+       
+       Prompt text:
+       [full CLASSIFICATION_PROMPT content]
+     tags: ["global", "interaction-analysis-prompt-history", "nixos-config"]
+     type: "contextual"
+
+2. Use code tool to update analyze_sessions.py:
    - Locate CLASSIFICATION_PROMPT variable
    - Add negative examples to prompt text
    - Preserve existing structure
 
-2. Test updated prompt:
-   - Run script on last 3 sessions
-   - Verify no false positives for refined patterns
-   - Show results to user
+3. Test updated prompt:
+   - Run script on last 10 sessions (or all from last 7 days if fewer)
+   - Compare: corrections detected with old vs new prompt
+   - Review each detection: any false positives for refined patterns?
+   - Success criteria:
+     * Zero false positives for refined pattern types
+     * No new false positive types introduced
+     * Similar or lower total correction count (not higher)
+   - If criteria not met: iterate on negative examples or revert
+   - Show comparison: "Old: 25 corrections (5 FP), New: 22 corrections (0 FP for refined types)"
 
-3. Store refinement record:
+4. Store refinement record:
    openmemory_store:
      content: |
        Prompt Refinement - [date]
@@ -301,7 +369,22 @@ Status: ready-for-review
 **"accept X"** - Accept a pending pattern
 - Move from `pending` to `accepted` tag
 - Set status: `flagged`
+- Track acceptance for metrics
 - Ready for "work on X"
+
+**Implementation:**
+```
+1. Load pending pattern by ID or index
+2. Move to accepted:
+   openmemory_store:
+     content: [original pattern content]
+     tags: ["global", "interaction-analysis-accepted", "nixos-config"]
+     status: "flagged"
+3. Delete original pending pattern
+4. Update metrics: increment acceptance count
+5. Confirm: "Pattern accepted and ready for implementation"
+```
+
 
 **"reject X"** - Reject a pending pattern
 - Prompt user for rejection reason
@@ -315,7 +398,11 @@ Status: ready-for-review
 1. Load pending pattern by ID or index
 2. Prompt: "Why are you rejecting this pattern? (helps improve detection)"
 3. User provides reason
-4. Store rejection:
+4. Classify false positive type:
+   - Review rejection reason
+   - Match to taxonomy (see "False Positive Pattern Types" section)
+   - If unclear, prompt: "Which false positive type? (clarification/question/already-done/...)"
+5. Store rejection:
    openmemory_store:
      content: |
        Rejected Pattern: [pattern description]
@@ -327,12 +414,23 @@ Status: ready-for-review
        - Message Index: [message_index]
        - Context: [brief context from original pattern]
        
-       Pattern Type: [classification - e.g., "false-positive-clarification"]
+       Pattern Type: [classification from taxonomy]
      tags: ["global", "interaction-analysis-rejected", "nixos-config"]
      type: "contextual"
-5. Delete original pending pattern (openmemory_delete)
-6. Confirm: "Pattern rejected and stored for refinement analysis"
+6. Delete original pending pattern (openmemory_delete)
+7. Confirm: "Pattern rejected as [type] and stored for refinement analysis"
 ```
+
+**"rollback refinement X"** - Revert a prompt refinement
+- Query prompt history for refinement ID X
+- Restore previous prompt to analyze_sessions.py
+- Mark refinement as reverted
+- Test on recent sessions to verify restoration
+
+**When to use:**
+- Refinement increased false positive rate
+- Refinement introduced new false positive types
+- Refinement reduced true positive detection
 
 **"work on X"** - Generate proposal and apply changes
 
