@@ -72,54 +72,47 @@ CONTEXT: Any other relevant details?
 
 Use the markers exactly as shown above."""
 
-# Progress tracking
-total_prompts_analyzed = 0
-total_prompts = 0
-start_time = None
-last_update = 0
-
-def update_progress():
-    """Update progress display - throttled to avoid flooding."""
-    global total_prompts_analyzed, total_prompts, start_time, last_update
+# Progress tracking - DRY implementation
+class ProgressTracker:
+    """Reusable progress tracker for different stages."""
+    def __init__(self):
+        self.start_time = None
+        self.last_update = 0
     
-    now = time.time()
-    # Only update every 0.5 seconds to avoid flooding
-    if now - last_update < 0.5:
-        return
-    last_update = now
+    def show(self, task_name, current, total):
+        """Show progress for a specific task."""
+        now = time.time()
+        # Throttle updates to every 0.5 seconds
+        if now - self.last_update < 0.5 and current < total:
+            return
+        self.last_update = now
+        
+        if self.start_time is None:
+            self.start_time = now
+        
+        if total > 0:
+            pct = (current / total) * 100
+            elapsed = now - self.start_time
+            
+            # Calculate ETA (skip for first few samples)
+            if current > 3:
+                rate = current / elapsed
+                remaining = (total - current) / rate if rate > 0 else 0
+                eta_str = f" | ETA: {int(remaining)}s" if remaining < 60 else f" | ETA: {int(remaining/60)}m"
+            else:
+                eta_str = ""
+            
+            sys.stderr.write(f"\r{task_name}: {current}/{total} ({pct:.1f}%){eta_str}    ")
+            sys.stderr.flush()
     
-    # Calculate progress
-    if total_prompts > 0:
-        pct = (total_prompts_analyzed / total_prompts) * 100
-        elapsed = now - start_time
-        
-        # Calculate ETA with simple moving average (ignore first 10 samples for warmup)
-        if total_prompts_analyzed > 10:
-            rate = total_prompts_analyzed / elapsed
-            remaining = (total_prompts - total_prompts_analyzed) / rate if rate > 0 else 0
-        else:
-            remaining = 0
-        
-        # Format elapsed time
-        elapsed_mins = int(elapsed / 60)
-        elapsed_secs = int(elapsed % 60)
-        elapsed_str = f"{elapsed_mins}m {elapsed_secs}s" if elapsed_mins > 0 else f"{elapsed_secs}s"
-        
-        # Format ETA
-        if remaining < 60:
-            eta_str = f"{int(remaining)}s"
-        elif remaining < 3600:
-            eta_str = f"{int(remaining/60)}m {int(remaining%60)}s"
-        else:
-            eta_str = f"{int(remaining/3600)}h {int((remaining%3600)/60)}m"
-        
-        sys.stderr.write(f"\rProgress: {total_prompts_analyzed}/{total_prompts} ({pct:.1f}%) | Elapsed: {elapsed_str} | ETA: {eta_str}")
+    def finish(self, task_name):
+        """Mark task as complete and move to new line."""
+        sys.stderr.write(f"\r{task_name}: Complete\n")
         sys.stderr.flush()
+        self.start_time = None  # Reset for next stage
 
-def init_progress_display():
-    """Initialize progress display."""
-    global start_time
-    start_time = time.time()
+# Global progress tracker
+progress = ProgressTracker()
 
 def check_ollama_model():
     """Check if Ollama model exists, pull if needed."""
@@ -244,8 +237,6 @@ async def generate_summary(client, messages):
 
 async def classify_message(client, message):
     """Ask Ollama if a message is a correction (yes/no) using async."""
-    global total_prompts_analyzed
-    
     try:
         # Skip explicit reflect: markers (handled separately in OpenMemory)
         if message.strip().lower().startswith("reflect:"):
@@ -258,20 +249,12 @@ async def classify_message(client, message):
             options={"temperature": 0}  # Deterministic for classification
         )
         
-        result = "yes" in response['response'].lower()
-        
-        # Update progress after each classification
-        total_prompts_analyzed += 1
-        update_progress()
-        
-        return result
+        return "yes" in response['response'].lower()
         
     except Exception:
-        total_prompts_analyzed += 1
-        update_progress()
         return False
 
-async def analyze_session(client, session_id, workspace, transcript, session_num, total_sessions):
+async def analyze_session(client, session_id, workspace, transcript, session_num, total_sessions, classification_counter):
     """Analyze a single session - find correction messages."""
     try:
         corrections = []
@@ -288,24 +271,30 @@ async def analyze_session(client, session_id, workspace, transcript, session_num
         # Wait for all classifications for this session
         results = await asyncio.gather(*tasks)
         
-        # Process results - gather context and summarize
-        for (i, user_msg), is_correction in zip(user_messages, results):
-            if is_correction:
-                # Gather adaptive context
-                context = await gather_adaptive_context(client, session_id, i)
-                
-                # Generate summary
-                summary = await generate_summary(client, context)
-                
-                corrections.append({
-                    "message_index": i,
-                    "user_message": user_msg,
-                    "context_messages": len(context),
-                    "summary": summary
-                })
+        # Update classification progress
+        classification_counter['current'] += len(user_messages)
+        progress.show("Classifying messages", classification_counter['current'], classification_counter['total'])
         
-        if not corrections:
+        # Collect corrections
+        correction_indices = [(i, user_msg) for (i, user_msg), is_correction in zip(user_messages, results) if is_correction]
+        
+        if not correction_indices:
             return None
+        
+        # Process each correction: gather context and summarize
+        for idx, (i, user_msg) in enumerate(correction_indices, 1):
+            # Gather adaptive context
+            context = await gather_adaptive_context(client, session_id, i)
+            
+            # Generate summary
+            summary = await generate_summary(client, context)
+            
+            corrections.append({
+                "message_index": i,
+                "user_message": user_msg,
+                "context_messages": len(context),
+                "summary": summary
+            })
         
         return {
             "session_id": session_id,
@@ -317,8 +306,6 @@ async def analyze_session(client, session_id, workspace, transcript, session_num
         return None
 
 async def main_async(since_timestamp=None):
-    global total_prompts
-    
     # Check Ollama model
     check_ollama_model()
     
@@ -332,21 +319,33 @@ async def main_async(since_timestamp=None):
     
     # Get sessions
     sessions = get_sessions_since(cutoff_date)
-    print(f"Found {len(sessions)} sessions", file=sys.stderr)
+    print(f"Found {len(sessions)} sessions\n", file=sys.stderr)
     
-    # Count total prompts
-    for _, _, transcript in sessions:
-        total_prompts += sum(1 for msg in transcript if msg.startswith("> ") and len(msg.strip()) > 5)
+    if not sessions:
+        print("No sessions to analyze", file=sys.stderr)
+        output = {
+            "analyzed_at": datetime.now().isoformat(),
+            "cutoff_date": cutoff_date.isoformat(),
+            "total_sessions": 0,
+            "sessions_with_patterns": 0,
+            "results": []
+        }
+        print(json.dumps(output, indent=2))
+        return
     
-    print(f"Total prompts to analyze: {total_prompts}\n", file=sys.stderr)
+    # Count total messages for classification
+    total_messages = sum(
+        sum(1 for msg in transcript if msg.startswith("> ") and len(msg.strip()) >= 3)
+        for _, _, transcript in sessions
+    )
     
-    # Initialize progress display
-    init_progress_display()
+    # Shared counter for classification progress
+    classification_counter = {'current': 0, 'total': total_messages}
     
     # Analyze all sessions concurrently with async
     client = AsyncClient(host=OLLAMA_URL)
     tasks = [
-        analyze_session(client, sid, ws, transcript, idx+1, len(sessions))
+        analyze_session(client, sid, ws, transcript, idx+1, len(sessions), classification_counter)
         for idx, (sid, ws, transcript) in enumerate(sessions)
     ]
     
@@ -357,8 +356,8 @@ async def main_async(since_timestamp=None):
         if result and result["corrections"]:
             results.append(result)
     
-    # Final newline after progress display
-    sys.stderr.write("\n\n")
+    # Finish classification progress
+    progress.finish("Classifying messages")
     
     # Output results (stdout only)
     output = {
