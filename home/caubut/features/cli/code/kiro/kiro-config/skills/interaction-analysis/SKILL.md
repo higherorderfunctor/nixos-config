@@ -26,6 +26,28 @@ Analyze interaction logs to find patterns worth codifying in steering files.
 
 ## Phase 1: Analyze
 
+### 0. Check for Refinement Candidates (Before Script Run)
+
+**Query rejections:**
+```
+openmemory_query: "rejection patterns"
+tags: ["global", "interaction-analysis-rejected"]
+```
+
+**Group and filter:**
+- Group rejections by pattern type
+- Filter: only patterns with 3+ rejections
+- Count occurrences per pattern type
+
+**If any patterns have 3+ rejections:**
+- Prompt: "Found [N] rejection patterns (3+ occurrences each). Want to refine detection before analysis?"
+- Show grouped patterns with counts and rejection reasons
+- If yes → proceed to refinement (see Phase 1 Step 8)
+- If no → continue to Step 1
+
+**If no patterns meet threshold:**
+- Continue silently to Step 1
+
 ### 1. Check Last Analysis Timestamp
 
 Query OpenMemory for last analysis state (tag: `interaction-analysis-state`):
