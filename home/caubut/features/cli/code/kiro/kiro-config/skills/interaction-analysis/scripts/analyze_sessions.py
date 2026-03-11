@@ -83,7 +83,7 @@ class ProgressTracker:
         """Show progress for a specific task."""
         now = time.time()
         # Throttle updates to every 0.5 seconds
-        if now - self.last_update < 0.5 and current < total:
+        if now - self.last_update < 0.5:
             return
         self.last_update = now
         
