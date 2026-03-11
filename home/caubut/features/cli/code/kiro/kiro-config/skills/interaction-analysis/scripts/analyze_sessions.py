@@ -189,7 +189,7 @@ async def check_context_sufficiency(client, messages):
         response = await client.generate(
             model=OLLAMA_MODEL,
             prompt=prompt,
-            options={"temperature": 0}
+            options={"temperature": 0, "num_ctx": 8192}  # Increased context window for 10-message contexts
         )
         
         return "SUFFICIENT" in response['response'].upper()
@@ -234,7 +234,7 @@ async def generate_summary(client, messages):
         response = await client.generate(
             model=OLLAMA_MODEL,
             prompt=prompt,
-            options={"temperature": 0}
+            options={"temperature": 0, "num_ctx": 8192}  # Increased context window for 10-message contexts
         )
         
         return response['response'].strip()
