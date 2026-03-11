@@ -94,20 +94,35 @@ class ProgressTracker:
             pct = (current / total) * 100
             elapsed = now - self.start_time
             
+            # Format elapsed time
+            if elapsed < 60:
+                elapsed_str = f"{int(elapsed)}s"
+            else:
+                elapsed_str = f"{int(elapsed/60)}m {int(elapsed%60)}s"
+            
             # Calculate ETA (skip for first few samples)
-            if current > 3:
+            if current > 3 and current < total:
                 rate = current / elapsed
                 remaining = (total - current) / rate if rate > 0 else 0
                 eta_str = f" | ETA: {int(remaining)}s" if remaining < 60 else f" | ETA: {int(remaining/60)}m"
             else:
                 eta_str = ""
             
-            sys.stderr.write(f"\r{task_name}: {current}/{total} ({pct:.1f}%){eta_str}    ")
+            sys.stderr.write(f"\r{task_name}: {current}/{total} ({pct:.1f}%) | Elapsed: {elapsed_str}{eta_str}    ")
             sys.stderr.flush()
     
     def finish(self, task_name):
         """Mark task as complete and move to new line."""
-        sys.stderr.write(f"\r{task_name}: Complete\n")
+        now = time.time()
+        if self.start_time:
+            elapsed = now - self.start_time
+            if elapsed < 60:
+                elapsed_str = f"{int(elapsed)}s"
+            else:
+                elapsed_str = f"{int(elapsed/60)}m {int(elapsed%60)}s"
+            sys.stderr.write(f"\r{task_name}: Complete (Elapsed: {elapsed_str})\n")
+        else:
+            sys.stderr.write(f"\r{task_name}: Complete\n")
         sys.stderr.flush()
         self.start_time = None  # Reset for next stage
 
