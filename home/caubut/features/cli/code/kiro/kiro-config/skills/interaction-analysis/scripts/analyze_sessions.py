@@ -26,6 +26,21 @@ OLLAMA_MODEL = "llama3.2:3b"
 OLLAMA_URL = "http://localhost:11434"
 CLASSIFICATION_PROMPT = """Is this user message a correction or expression of frustration with the AI assistant?
 
+CORRECTIONS (answer yes):
+- User says "no, do X instead" or "that's wrong"
+- User asks "why did you do X?" (implying X was wrong)
+- User repeats a request (implying first attempt failed)
+- User provides additional context AFTER a failed attempt
+- User expresses frustration with assistant behavior
+
+NOT CORRECTIONS (answer no):
+- User providing initial context or requirements
+- User answering assistant's question
+- User saying they already did something
+- User confirming understanding ("ok", "yes", "got it")
+- User exploring options or brainstorming
+- User asking clarifying questions before work starts
+
 User message: "{message}"
 
 Answer only: yes or no"""
