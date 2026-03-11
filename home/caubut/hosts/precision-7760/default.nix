@@ -29,6 +29,15 @@
     };
   };
 
+  systemd.user.services.ollama = {
+    Service = {
+      Environment = lib.mkForce [
+        "PATH=${lib.makeBinPath [pkgs.nix-gl-host]}:${config.services.ollama.package}/bin"
+      ];
+      ExecStart = lib.mkForce "${pkgs.nix-gl-host}/bin/nixglhost ${config.services.ollama.package}/bin/ollama serve";
+    };
+  };
+
   # GTK theme
   gtk = {
     enable = true;

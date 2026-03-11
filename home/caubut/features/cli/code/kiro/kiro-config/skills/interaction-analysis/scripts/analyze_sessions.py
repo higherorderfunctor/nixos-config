@@ -45,6 +45,18 @@ User message: "{message}"
 
 Answer only: yes or no"""
 
+SUFFICIENCY_PROMPT = """You are analyzing a correction from a user to an AI assistant.
+
+Context so far (most recent last):
+{messages}
+
+Question: Do you have enough information to understand:
+1. What the assistant did wrong?
+2. Why the assistant did it?
+3. What the user wants instead?
+
+Answer ONLY with one word: SUFFICIENT or NEED_MORE"""
+
 # Progress tracking
 total_prompts_analyzed = 0
 total_prompts = 0
@@ -132,6 +144,70 @@ def get_sessions_since(cutoff_date):
     
     conn.close()
     return sessions
+
+def get_transcript_for_session(session_id):
+    """Get full transcript for a specific session."""
+    conn = sqlite3.connect(DB_PATH)
+    cursor = conn.cursor()
+    
+    cursor.execute("""
+        SELECT value FROM conversations_v2
+        WHERE conversation_id = ?
+        LIMIT 1
+    """, (session_id,))
+    
+    row = cursor.fetchone()
+    conn.close()
+    
+    if row:
+        value = json.loads(row[0])
+        return value.get("transcript", [])
+    return []
+
+async def check_context_sufficiency(client, messages):
+    """Ask Ollama if context is sufficient to understand the correction."""
+    try:
+        # Format messages for display
+        formatted = "\n".join([f"[{i}] {msg[:200]}" for i, msg in enumerate(messages)])
+        
+        prompt = SUFFICIENCY_PROMPT.format(messages=formatted)
+        response = await client.generate(
+            model=OLLAMA_MODEL,
+            prompt=prompt,
+            options={"temperature": 0}
+        )
+        
+        return "SUFFICIENT" in response['response'].upper()
+        
+    except Exception:
+        # On error, assume we need more context
+        return False
+
+async def gather_adaptive_context(client, session_id, message_index, max_messages=10):
+    """Gather context adaptively - add messages until Ollama says sufficient."""
+    transcript = get_transcript_for_session(session_id)
+    
+    if not transcript or message_index >= len(transcript):
+        return []
+    
+    # Start with just the correction message
+    context = [transcript[message_index]]
+    
+    # Iteratively add previous messages
+    for i in range(1, max_messages):
+        prev_index = message_index - i
+        if prev_index < 0:
+            break
+        
+        # Check if current context is sufficient
+        is_sufficient = await check_context_sufficiency(client, context)
+        if is_sufficient:
+            break
+        
+        # Add previous message to beginning of context
+        context.insert(0, transcript[prev_index])
+    
+    return context
 
 async def classify_message(client, message):
     """Ask Ollama if a message is a correction (yes/no) using async."""
