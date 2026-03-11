@@ -32,16 +32,36 @@ Analyze interaction logs to find patterns worth codifying in steering files.
 ```
 openmemory_query: "rejection patterns"
 tags: ["global", "interaction-analysis-rejected"]
+user_id: "caubut"
 ```
 
 **Group and filter:**
-- Group rejections by pattern type
+- Group rejections by pattern type (extract from content)
 - Filter: only patterns with 3+ rejections
 - Count occurrences per pattern type
+
+**Implementation:**
+```
+1. Query all rejections from memory
+2. Parse each rejection to extract "Pattern Type" field
+3. Group by pattern type, count occurrences
+4. Filter groups where count >= 3
+5. For each qualifying group:
+   - Extract pattern descriptions
+   - Extract rejection reasons
+   - Prepare summary for user
+```
 
 **If any patterns have 3+ rejections:**
 - Prompt: "Found [N] rejection patterns (3+ occurrences each). Want to refine detection before analysis?"
 - Show grouped patterns with counts and rejection reasons
+- Example output:
+  ```
+  Pattern Type: false-positive-clarification (5 occurrences)
+  - "User providing context, not correcting error"
+  - "User answering my question, not fixing mistake"
+  - "User clarifying requirements, not pointing out bug"
+  ```
 - If yes → proceed to refinement (see Phase 1 Step 8)
 - If no → continue to Step 1
 
