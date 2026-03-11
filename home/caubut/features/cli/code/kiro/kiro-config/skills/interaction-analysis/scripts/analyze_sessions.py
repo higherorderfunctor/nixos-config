@@ -123,9 +123,9 @@ class ProgressTracker:
                 elapsed_str = f"{int(elapsed)}s"
             else:
                 elapsed_str = f"{int(elapsed/60)}m {int(elapsed%60)}s"
-            sys.stderr.write(f"\r{task_name}: Complete (Elapsed: {elapsed_str})\n")
+            sys.stderr.write(f"\n{task_name}: Complete (Elapsed: {elapsed_str})\n")
         else:
-            sys.stderr.write(f"\r{task_name}: Complete\n")
+            sys.stderr.write(f"\n{task_name}: Complete\n")
         sys.stderr.flush()
         self.start_time = None  # Reset for next stage
 
