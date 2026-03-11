@@ -82,8 +82,8 @@ class ProgressTracker:
     def show(self, task_name, current, total):
         """Show progress for a specific task."""
         now = time.time()
-        # Throttle updates to every 0.5 seconds
-        if now - self.last_update < 0.5:
+        # Throttle updates to every 0.5 seconds (but always show 100% and beyond)
+        if now - self.last_update < 0.5 and current != total:
             return
         self.last_update = now
         
@@ -100,7 +100,7 @@ class ProgressTracker:
             else:
                 elapsed_str = f"{int(elapsed/60)}m {int(elapsed%60)}s"
             
-            # Calculate ETA (skip for first few samples)
+            # Calculate ETA (skip for first few samples or when at/past 100%)
             if current > 3 and current < total:
                 rate = current / elapsed
                 remaining = (total - current) / rate if rate > 0 else 0
