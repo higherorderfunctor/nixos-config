@@ -179,31 +179,38 @@ The script outputs JSON to stdout. The execute_bash tool returns this in the res
 - Update state: `script-complete, awaiting-post-process`
 - Enables resumability if interrupted
 
-### 4. Post-Process with Conversation History
+### 4. Post-Process with Summaries
 
 **CRITICAL: Process ALL corrections from script output, not just samples**
 
-For each correction in the script results, read SQLite context and analyze:
+The script now generates marker-based summaries for each correction. Read and analyze these summaries:
 
-```bash
-sqlite3 ~/.local/share/kiro-cli/data.sqlite3 \
-  "SELECT value FROM conversations_v2 WHERE conversation_id = '<session_id>' LIMIT 1" | \
-  python3 -c "
-import json, sys
-data = json.load(sys.stdin)
-transcript = data.get('transcript', [])
-# Get context: 5 messages before + correction message
-start = max(0, <message_index> - 5)
-end = <message_index> + 1
-context = transcript[start:end]
-for i, msg in enumerate(context, start=start):
-    print(f'[{i}] {msg[:200]}')
-"
+**Script Output Format:**
+```json
+{
+  "corrections": [
+    {
+      "session_id": "abc123...",
+      "message_index": 10,
+      "user_message": "...",
+      "context_messages": 7,
+      "summary": "ERROR: ...\nCAUSE: ...\nCORRECTION: ...\nPATTERN: ...\nCONTEXT: ..."
+    }
+  ]
+}
 ```
 
-**Then analyze each correction:**
-1. Read the context to understand what went wrong
-2. Identify the root cause (not just the symptom)
+**Summary Format:**
+Each summary uses text markers (not JSON):
+- `ERROR:` What I did wrong
+- `CAUSE:` Why I did it / what I misunderstood
+- `CORRECTION:` What user said to do instead
+- `PATTERN:` Is this recurring? Related to what?
+- `CONTEXT:` Other relevant details
+
+**Analysis Process:**
+1. Read all summaries from script output
+2. Parse marker-based format (split on markers)
 3. Determine if this is a real correction or false positive:
    - Real correction: Extract actionable pattern
    - False positive: Note the false positive type (for future reference)
@@ -211,8 +218,11 @@ for i, msg in enumerate(context, start=start):
 5. If false positive: skip storage, but note the pattern type for analysis
 
 **Example:** 
-- Real correction: User says "use conventional commits" → Pattern: "Default to conventional commits unless workspace has different convention"
-- False positive: User says "I already ran that command" → Type: false-positive-already-done, skip storage
+- Real correction: Summary shows repeated truncation assumption → Pattern: "Don't assume output needs truncation without checking script design"
+- False positive: Summary shows user clarifying requirements → Type: false-positive-clarification, skip storage
+
+**Context Gathering:**
+The script uses adaptive context gathering (max 10 messages). Ollama determines when sufficient context is gathered to understand the correction.
 
 **DO NOT skip corrections** - process all of them to ensure complete analysis.
 
