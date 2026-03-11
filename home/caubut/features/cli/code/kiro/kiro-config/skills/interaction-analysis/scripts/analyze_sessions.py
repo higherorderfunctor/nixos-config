@@ -57,6 +57,21 @@ Question: Do you have enough information to understand:
 
 Answer ONLY with one word: SUFFICIENT or NEED_MORE"""
 
+SUMMARY_PROMPT = """Analyze this correction from a user to an AI assistant.
+
+Conversation context (most recent last):
+{messages}
+
+Provide a summary using these exact markers:
+
+ERROR: What did the assistant do wrong?
+CAUSE: Why did the assistant do it (what was misunderstood)?
+CORRECTION: What did the user say to do instead?
+PATTERN: Is this a recurring issue? Related to what?
+CONTEXT: Any other relevant details?
+
+Use the markers exactly as shown above."""
+
 # Progress tracking
 total_prompts_analyzed = 0
 total_prompts = 0
@@ -209,6 +224,24 @@ async def gather_adaptive_context(client, session_id, message_index, max_message
     
     return context
 
+async def generate_summary(client, messages):
+    """Generate marker-based summary of the correction."""
+    try:
+        # Format messages for display
+        formatted = "\n".join([f"[{i}] {msg[:500]}" for i, msg in enumerate(messages)])
+        
+        prompt = SUMMARY_PROMPT.format(messages=formatted)
+        response = await client.generate(
+            model=OLLAMA_MODEL,
+            prompt=prompt,
+            options={"temperature": 0}
+        )
+        
+        return response['response'].strip()
+        
+    except Exception as e:
+        return f"ERROR: Failed to generate summary\nCAUSE: {str(e)}\nCORRECTION: Unknown\nPATTERN: Unknown\nCONTEXT: Summary generation failed"
+
 async def classify_message(client, message):
     """Ask Ollama if a message is a correction (yes/no) using async."""
     global total_prompts_analyzed
@@ -255,12 +288,20 @@ async def analyze_session(client, session_id, workspace, transcript, session_num
         # Wait for all classifications for this session
         results = await asyncio.gather(*tasks)
         
-        # Process results
+        # Process results - gather context and summarize
         for (i, user_msg), is_correction in zip(user_messages, results):
             if is_correction:
+                # Gather adaptive context
+                context = await gather_adaptive_context(client, session_id, i)
+                
+                # Generate summary
+                summary = await generate_summary(client, context)
+                
                 corrections.append({
                     "message_index": i,
-                    "user_message": user_msg
+                    "user_message": user_msg,
+                    "context_messages": len(context),
+                    "summary": summary
                 })
         
         if not corrections:
