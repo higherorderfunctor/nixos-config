@@ -30,7 +30,6 @@ Answer YES only if the message contains:
 - "no" or "wrong" or "incorrect" (rejecting assistant's action)
 - "again" or "I told you" or "like I said" (repetition signal)
 - "why did you" or "why do you keep" (questioning wrong behavior)
-- "stop" or "don't" (telling assistant to stop doing something)
 
 Answer NO for:
 - Questions without correction ("how do I...", "what about...")
@@ -38,6 +37,7 @@ Answer NO for:
 - Confirming or acknowledging ("ok", "yes", "thanks")
 - Giving new instructions (not correcting old ones)
 - Clarifying requirements
+- Negative requirements ("don't include X", "stop at Y")
 
 User message: "{message}"
 
