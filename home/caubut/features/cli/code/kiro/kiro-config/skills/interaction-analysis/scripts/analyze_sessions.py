@@ -24,22 +24,26 @@ except ImportError:
 DB_PATH = Path.home() / ".local/share/kiro-cli/data.sqlite3"
 OLLAMA_MODEL = "llama3.2:3b"
 OLLAMA_URL = "http://localhost:11434"
-CLASSIFICATION_PROMPT = """Is this user message a correction or expression of frustration with the AI assistant?
+CLASSIFICATION_PROMPT = """Is this user message a REPEATED correction - something the user has had to tell the assistant multiple times?
 
 CORRECTIONS (answer yes):
-- User says "no, do X instead" or "that's wrong"
-- User asks "why did you do X?" (implying X was wrong)
-- User repeats a request (implying first attempt failed)
-- User provides additional context AFTER a failed attempt
-- User expresses frustration with assistant behavior
+- User explicitly says "I told you to..." or "again..." or "like I said..."
+- User says "no, do X instead" when assistant did Y (direct contradiction)
+- User expresses frustration: "why do you keep...", "stop doing X"
+- User repeats the SAME request after assistant already attempted it
+- User says "you're not listening" or similar meta-complaints
 
 NOT CORRECTIONS (answer no):
-- User providing initial context or requirements
+- User providing initial instructions (first time mentioning something)
+- User clarifying or adding details to their original request
 - User answering assistant's question
-- User saying they already did something
+- User saying they already did something themselves
 - User confirming understanding ("ok", "yes", "got it")
 - User exploring options or brainstorming
 - User asking clarifying questions before work starts
+- User providing feedback on a first attempt (not a repeated issue)
+
+Focus: Only flag if this seems like a REPEATED pattern or explicit correction of wrong behavior.
 
 User message: "{message}"
 
@@ -378,7 +382,8 @@ async def main_async(since_timestamp=None):
             classified_sessions.append(result)
     
     # Finish classification progress
-    progress.finish("Classifying messages")
+    total_corrections = sum(len(s["correction_indices"]) for s in classified_sessions)
+    progress.finish(f"Classifying messages ({total_corrections} corrections found)")
     
     # Phase 2: Process corrections (context gathering + summarization)
     if not classified_sessions:
