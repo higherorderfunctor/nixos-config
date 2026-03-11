@@ -251,6 +251,30 @@ Status: ready-for-review
 - Used for refinement: patterns with 3+ rejections trigger prompt update
 - Delete original pending pattern from memory
 
+**Implementation:**
+```
+1. Load pending pattern by ID or index
+2. Prompt: "Why are you rejecting this pattern? (helps improve detection)"
+3. User provides reason
+4. Store rejection:
+   openmemory_store:
+     content: |
+       Rejected Pattern: [pattern description]
+       
+       Rejection Reason: [user's reason]
+       
+       Evidence:
+       - Session: [session_id]
+       - Message Index: [message_index]
+       - Context: [brief context from original pattern]
+       
+       Pattern Type: [classification - e.g., "false-positive-clarification"]
+     tags: ["global", "interaction-analysis-rejected", "nixos-config"]
+     type: "contextual"
+5. Delete original pending pattern (openmemory_delete)
+6. Confirm: "Pattern rejected and stored for refinement analysis"
+```
+
 **"work on X"** - Generate proposal and apply changes
 
 ## Cleanup After Analysis
