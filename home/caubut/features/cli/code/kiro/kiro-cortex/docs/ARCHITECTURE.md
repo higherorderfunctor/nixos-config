@@ -247,14 +247,15 @@ Build the core retrieval pipeline with real data:
 - Context assembly with token budgets (chars/4)
 - `/context` endpoint replacing `/test`
 
-### Phase 4: Workflow Engine + Policy Layer
-- Production workflow definitions (analysis, debugging, research) using seed data
+### Phase 4: Workflow Engine (repo-analysis)
+- Build a real workflow (repo-analysis) end-to-end using seed data
 - Per-step OPA consultation pattern
 - OPA-driven instruction filtering (Rego policies generate SQL WHERE criteria)
 - Kiro headless integration
 - PostgreSQL checkpointer for persistent workflow state
 - Conditional routing (MCP → return context, web/slack → full execution)
-- Conflict detection/resolution in Rego
+- Test and iterate until the workflow engine works reliably
+- repo-analysis goal TBD — user will define
 
 ### Phase 5: Content Migration
 - Ingestion pipeline: parse steering markdown → extract rules → tag metadata → embed → insert
