@@ -247,19 +247,20 @@ Build the core retrieval pipeline with real data:
 - Context assembly with token budgets (chars/4)
 - `/context` endpoint replacing `/test`
 
-### Phase 4: Content Migration
-- Ingestion pipeline: parse steering markdown → extract rules → tag metadata → embed → insert
-- Bulk classification via Ollama (domain, task_type tagging)
-- Production seed data from real steering files
-
-### Phase 5: Workflow Engine + Policy Layer
-- OPA-driven instruction filtering (Rego policies generate SQL WHERE criteria)
+### Phase 4: Workflow Engine + Policy Layer
+- Production workflow definitions (analysis, debugging, research) using seed data
 - Per-step OPA consultation pattern
-- Production workflow definitions (analysis, debugging, research)
+- OPA-driven instruction filtering (Rego policies generate SQL WHERE criteria)
 - Kiro headless integration
 - PostgreSQL checkpointer for persistent workflow state
 - Conditional routing (MCP → return context, web/slack → full execution)
 - Conflict detection/resolution in Rego
+
+### Phase 5: Content Migration
+- Ingestion pipeline: parse steering markdown → extract rules → tag metadata → embed → insert
+- Bulk classification via Ollama (domain, task_type tagging)
+- Migrate personal steering files first, workspace steering later
+- Production OPA policies for real content
 
 ### Phase 6: Triggers + Discovery
 - MCP stdio wrapper for kiro-cli
