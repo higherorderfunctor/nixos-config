@@ -106,13 +106,19 @@
         command = "npx";
         args = ["-y" "openmemory-js" "mcp"];
         env = {
-          OM_DB_PATH = "${config.xdg.dataHome}/openmemory/memory.sqlite";
+          OM_METADATA_BACKEND = "postgres";
+          OM_VECTOR_BACKEND = "postgres";
+          OM_PG_HOST = "localhost";
+          OM_PG_PORT = "5435";
+          OM_PG_DB = "openmemory";
+          OM_PG_USER = "${username}";
+          OM_PG_PASSWORD = "";
+          OM_PG_SSL = "disable";
           OM_EMBEDDINGS = "ollama";
           OM_OLLAMA_URL = "http://localhost:11434";
           OM_OLLAMA_MODEL = "nomic-embed-text";
           OM_VEC_DIM = "768";
-          OM_TIER = "smart";
-          # Disable forced summarization to prevent content truncation
+          OM_TIER = "deep";
           OM_USE_SUMMARY_ONLY = "false";
         };
       };
@@ -205,6 +211,26 @@ in {
         fi
       '';
       ExecStart = "${pgWithExtensions}/bin/postgres -D ${pgDataDir} -k /tmp -h localhost -p 5435";
+      ExecStartPost = pkgs.writeShellScript "db-init" ''
+        for i in $(seq 1 30); do
+          ${pgWithExtensions}/bin/pg_isready -h localhost -p 5435 -q && break
+          sleep 1
+        done
+        ${pgWithExtensions}/bin/createdb -h localhost -p 5435 kiro_cortex 2>/dev/null || true
+        ${pgWithExtensions}/bin/createdb -h localhost -p 5435 openmemory 2>/dev/null || true
+
+        # Pre-create pgvector extension and vectors table with explicit dimension.
+        # OpenMemory db.ts creates "v vector" (no dimension) then tries HNSW index
+        # which requires fixed dimensions — upstream bug workaround.
+        ${pgWithExtensions}/bin/psql -h localhost -p 5435 -d openmemory -c "
+          CREATE EXTENSION IF NOT EXISTS vector;
+          CREATE TABLE IF NOT EXISTS openmemory_vectors(
+            id uuid, sector text, user_id text,
+            v vector(768), dim integer NOT NULL,
+            PRIMARY KEY(id, sector)
+          );
+        "
+      '';
       Restart = "on-failure";
     };
     Install.WantedBy = ["default.target"];
