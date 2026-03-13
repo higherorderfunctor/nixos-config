@@ -23,10 +23,11 @@ All components are open source, self-hosted, and managed via NixOS/Home Manager.
 - ✅ MCP operations validated (query, list, get, store, reinforce)
 - ✅ Embedding search functional (nomic-embed-text, 768-dim vectors)
 
-**Next Phase: OPA Policy Layer**
-- Define Rego policies for IP protection
-- Integrate OPA with query pipeline
-- Test policy enforcement
+**Next Phase: Infrastructure Wiring (Phase 2)**
+- Wire up OPA service and basic policy evaluation
+- Integrate LangGraph.js orchestration layer
+- Build end-to-end test pattern (query → OPA → pgvector → LangGraph)
+- Validate full stack works before content migration
 
 ## Quick Start
 

@@ -134,7 +134,7 @@ Agent workflows with managed state
 
 **Time:** ~8 hours
 
-### Phase 1: Instruction Data Layer ✅ COMPLETE (2026-03-13)
+### Phase 1: Data Migration ✅ COMPLETE (commit 33f656f, 2026-03-13)
 
 **Goal:** Migrate OpenMemory from SQLite to PostgreSQL
 
@@ -158,23 +158,24 @@ Agent workflows with managed state
 
 **Time:** ~12 hours
 
-### Phase 2: OPA Policy Layer (NEXT)
+### Phase 2: Infrastructure Wiring (NEXT)
 
-**Goal:** Integrate policy enforcement into query pipeline
+**Goal:** Wire up full stack (OPA + LangGraph) with minimal test policies
 
 **Deliverables:**
 - OPA service in Nix configuration
-- Rego policies for IP protection
-- Query sanitization before external tools
-- User/workspace scoping policies
-- Policy violation logging
+- Minimal test policy (allow/deny pattern)
+- LangGraph.js service setup
+- End-to-end test: query → OPA → pgvector → Context Engineering → LangGraph
+- Validate full stack integration
 
 **Key Decisions:**
-- Policy storage: Git-tracked Rego files in kiro-cortex/policies/
-- Evaluation point: Before vector search (fail-fast)
-- Policy testing: Unit tests for each policy rule
+- **Infrastructure first:** Get all layers communicating before migrating steering content
+- **Minimal policies:** Simple allow/deny rules for testing, not production IP protection yet
+- **Test pattern:** Single workflow that exercises all 4 layers
+- **Defer content migration:** Steering files → OPA policies happens in Phase 4
 
-**Estimated Time:** ~8 hours
+**Estimated Time:** ~6 hours
 
 ### Phase 3: Context Engineering (PLANNED)
 
@@ -194,15 +195,35 @@ Agent workflows with managed state
 
 **Estimated Time:** ~10 hours
 
-### Phase 4: LangGraph.js Integration (PLANNED)
+### Phase 4: Content Migration & Enhancement (PLANNED)
 
-**Goal:** Add agent orchestration and workflow management
+**Goal:** Migrate steering files to OPA policies and add production features
 
 **Deliverables:**
-- LangGraph.js service
-- Workflow definitions for common patterns
-- State persistence
+- Convert IP protection steering (00-ip-protection.md) to Rego policies
+- User/workspace scoping policies
+- Query sanitization policies
+- Policy violation logging
+- Steering file migration guide
+- Production-ready policy test suite
+
+**Key Decisions:**
+- Steering → Rego mapping strategy
+- Policy versioning approach
+- Rollback mechanism for policy changes
+- Policy testing framework
+
+**Estimated Time:** ~12 hours
+
+### Phase 5: LangGraph Workflows (PLANNED)
+
+**Goal:** Define production workflows for common agent patterns
+
+**Deliverables:**
+- Research workflow (Tier 3 from steering)
+- Multi-step analysis workflow
 - Human-in-the-loop checkpoints
+- State persistence patterns
 - Workflow visualization
 
 **Key Decisions:**
@@ -210,9 +231,9 @@ Agent workflows with managed state
 - Workflow definition: TypeScript (type-safe)
 - Integration: LangGraph calls Context Engineering layer
 
-**Estimated Time:** ~12 hours
+**Estimated Time:** ~10 hours
 
-**Total Estimated Time:** 50 hours (23-34 hours original estimate was optimistic)
+**Total Estimated Time:** 58 hours (revised from 50 hours)
 
 ## Design Rationale
 
