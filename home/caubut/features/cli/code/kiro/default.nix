@@ -5,6 +5,10 @@
 }: let
   username = "${config.home.username}";
 
+  # ── kiro-cortex: PostgreSQL 18 + pgvector ─────────────────────
+  pgWithExtensions = pkgs.postgresql_18.withPackages (p: [p.pgvector]);
+  pgDataDir = "${config.xdg.dataHome}/kiro-cortex/postgresql";
+
   # ── Sops wrapper scripts ──────────────────────────────────────
   # These read API keys from sops-decrypted files at runtime,
   # export them as env vars, then exec the real MCP server.
@@ -160,12 +164,17 @@ in {
       kiro-gateway
       github-mcp-server
       open-policy-agent
-      postgresql_18
+      pgWithExtensions
     ];
 
     # ── Ensure openmemory directory exists ────────────────────────
     activation.createOpenMemoryDir = config.lib.dag.entryAfter ["writeBoundary"] ''
       mkdir -p ${config.xdg.dataHome}/openmemory
+    '';
+
+    # ── Ensure kiro-cortex PostgreSQL data dir exists ─────────────
+    activation.createCortexPgDir = config.lib.dag.entryAfter ["writeBoundary"] ''
+      mkdir -p ${pgDataDir}
     '';
 
     # ── File declarations ─────────────────────────────────────────
@@ -180,5 +189,24 @@ in {
       // builtins.foldl' (acc: name: acc // symlinkAgent name) {} agentFiles
       # Skill directories (out-of-store symlinks)
       // builtins.foldl' (acc: name: acc // symlinkSkill name) {} skillDirs;
+  };
+
+  # ── kiro-cortex: PostgreSQL user service ────────────────────────
+  systemd.user.services.kiro-cortex-postgresql = {
+    Unit = {
+      Description = "kiro-cortex PostgreSQL 18";
+      After = ["default.target"];
+    };
+    Service = {
+      Type = "simple";
+      ExecStartPre = pkgs.writeShellScript "pg-init" ''
+        if [ ! -f "${pgDataDir}/PG_VERSION" ]; then
+          ${pgWithExtensions}/bin/initdb -D "${pgDataDir}" --no-locale --encoding=UTF8
+        fi
+      '';
+      ExecStart = "${pgWithExtensions}/bin/postgres -D ${pgDataDir} -k /tmp -h localhost -p 5435";
+      Restart = "on-failure";
+    };
+    Install.WantedBy = ["default.target"];
   };
 }

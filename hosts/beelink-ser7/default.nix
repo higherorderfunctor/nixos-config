@@ -11,13 +11,6 @@
   # hostname
   networking.hostName = "beelink-ser7";
 
-  # kiro-cortex: PostgreSQL 18 + pgvector
-  services.postgresql = {
-    enable = true;
-    package = pkgs.postgresql_18;
-    extraPlugins = with pkgs.postgresql_18.pkgs; [pgvector];
-  };
-
   # TODO: linking with btop
   environment.systemPackages = with pkgs; [
     rocmPackages.rocm-smi
