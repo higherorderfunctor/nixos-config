@@ -2,186 +2,264 @@
 
 ## Problem
 
-Steering files don't scale. As repos, agents, and policies grow, context windows fill with irrelevant instructions. The LLM forgets or misapplies rules buried in noise.
+Steering files don't scale. As repos, agents, and policies grow, context windows fill with irrelevant instructions. 35+ files across personal + one work repo = ~31K tokens loaded every session. Most are irrelevant to the current task. The LLM forgets or misapplies rules buried in noise.
 
-## Vision
+## Solution — In One Sentence
 
-kiro-cortex is a **workflow orchestration platform** that solves context dilution. Instead of dumping all instructions into context, each workflow step gets only the rules relevant to THAT agent doing THAT task.
+RAG over steering files, with policy governance and workflow orchestration layered on top.
 
-All codified knowledge — steering rules, coding standards, repo conventions, workflow definitions, skill definitions, MCP usage patterns — stored as structured instructions. LangGraph orchestrates multi-step workflows where each step consults OPA for its specific rule set.
+All codified knowledge — steering rules, coding standards, repo conventions — gets parsed into structured rows in a PostgreSQL table (`instructions`), each tagged with metadata and an embedding vector. When a task arrives, kiro-cortex searches for semantically relevant instructions, filters by metadata, trims to a token budget, and returns only what the agent needs.
 
-## Architecture
+## Layered Design
+
+The system is built in layers. Each layer adds capability on top of the previous one. Phase 3 builds the core. Later phases add policy and workflow layers.
+
+### Layer 1: Core RAG Loop (Phase 3)
+
+The foundation. A query comes in, relevant instructions come out.
 
 ```
-Triggers: kiro-cli (MCP/skills) | Web UI (future) | Slack (future)
-    │
-    ▼
-┌─ kiro-cortex (LangGraph Orchestration) ──────────────────────┐
-│                                                               │
-│  Workflow Step 1:                                             │
-│    OPA: "agent=X, task=analyze, domain=Y"                     │
-│    → returns relevant instruction IDs                         │
-│    pgvector: semantic search within allowed set                │
-│    → top N instructions by relevance                          │
-│    Assemble: fit to token budget                              │
-│    → Kiro headless executes with scoped context               │
-│                                                               │
-│  Workflow Step 2:                                             │
-│    OPA: different agent/task → different rules                │
-│    → ... same pattern, different context                      │
-│                                                               │
-│  Persistent state across steps (PG checkpointer)              │
-└───────────────────────────────────────────────────────────────┘
-
-┌─ INSTRUCTION DATA LAYER ─────────────────────────────────────┐
-│  PostgreSQL: instruction metadata + embeddings (single DB)    │
-│  All codified knowledge: steering rules, coding standards,    │
-│  repo conventions, workflow defs, skill defs, MCP patterns    │
-│  Rich metadata for OPA filtering                              │
-└───────────────────────────────────────────────────────────────┘
-
-┌─ OPA (Policy Engine) ────────────────────────────────────────┐
-│  Rego policies filter instructions by:                        │
-│  agent role, task type, domain, tier, permissions             │
-│  Consulted PER WORKFLOW STEP, not once per query              │
-│  Conflict resolution, IP protection                           │
-└───────────────────────────────────────────────────────────────┘
+                         kiro-cortex (Effect-TS server, port 3100)
+                         ═══════════════════════════════════════
+                                        │
+  ┌─────────────────────────────────────┼──────────────────────────────────┐
+  │                                     │                                  │
+  │  1. Request arrives                 ▼                                  │
+  │     {query, agent_role,    ┌────────────────┐                          │
+  │      task_type, domain,    │  Embed query    │──→ Ollama (localhost)    │
+  │      token_budget}         │  via Ollama     │←── embedding vector      │
+  │                            └───────┬────────┘                          │
+  │                                    │                                   │
+  │  2. Search instructions            ▼                                   │
+  │                            ┌────────────────┐                          │
+  │                            │  PostgreSQL     │  SELECT * FROM           │
+  │                            │  (kiro_cortex)  │  instructions            │
+  │                            │                 │  WHERE domain = ...      │
+  │                            │  pgvector HNSW  │  AND agent_roles @> ...  │
+  │                            │  cosine search  │  ORDER BY embedding      │
+  │                            └───────┬────────┘  <=> query_vec           │
+  │                                    │           LIMIT N                  │
+  │  3. Assemble context               ▼                                   │
+  │                            ┌────────────────┐                          │
+  │                            │  Rank by        │                          │
+  │                            │  priority,      │                          │
+  │                            │  trim to token  │                          │
+  │                            │  budget         │                          │
+  │                            └───────┬────────┘                          │
+  │                                    │                                   │
+  │  4. Return                         ▼                                   │
+  │                            {instructions, metadata, token_count}        │
+  └────────────────────────────────────────────────────────────────────────┘
 ```
 
-## LLM Roles
+**Who does what:**
+- **kiro-cortex** manages the instructions table (CRUD, search, assembly). It is the only thing that talks to PostgreSQL.
+- **Ollama** (nomic-embed-text) converts text to 768-dim vectors. Stateless. Called via HTTP on localhost:11434.
+- **PostgreSQL** (kiro_cortex DB) stores instructions with metadata + embeddings. pgvector extension provides HNSW cosine search.
 
-| LLM | Role | When |
-|-----|------|------|
-| Kiro (Claude, headless/API) | Complex reasoning, tool use, code generation | Workflow steps that need smart execution |
-| Ollama (nomic-embed-text) | Embeddings for vector search | Every query — turning text into vectors |
-| Ollama (llama3.2 etc) | Classification, tagging of bulk data | Preprocessing before Kiro — simple/cheap tasks |
+### Layer 2: Policy Governance (Phase 5)
 
-Kiro is always the smart executor. Ollama handles embeddings and bulk classification. No Ollama for generation in workflows.
+OPA sits in front of the search step. Instead of hardcoded SQL WHERE clauses, OPA evaluates declarative Rego policies and returns filtering criteria.
 
-## Trigger Surfaces
+```
+  Request context                         Filtering criteria
+  {agent_role, task_type,     ┌─────┐    {allowed_domains: [...],
+   domain, tier}         ──→  │ OPA │──→  max_tier: 2,
+                              └─────┘     excluded_groups: [...]}
+                                │
+                    kiro-cortex applies criteria
+                    as SQL WHERE on instructions table
+```
 
-**kiro-cli (MCP):**
-- MCP server exposes `list_workflows`, `run_workflow` tools
-- kiro-cli discovers available workflows, user triggers them in chat
-- For common workflows: generate SKILL.md files to help steer kiro-cli toward using them
-- MCP is a thin stdio wrapper → HTTP calls to kiro-cortex
+**OPA does NOT talk to PostgreSQL.** OPA is a stateless policy engine. kiro-cortex sends it request context, OPA evaluates Rego rules, returns filtering criteria. kiro-cortex translates those criteria into SQL WHERE clauses.
 
-**Web UI (future):**
-- Direct HTTP to kiro-cortex API
-- LangGraph Studio for workflow visualization
-- Trigger and monitor workflows
+**OPA does NOT hold instructions.** OPA holds policies (Rego files). Instructions live in PostgreSQL.
 
-**Slack (future):**
-- Webhook → kiro-cortex API
-- Trigger workflows from Slack messages
+**Why OPA instead of just SQL WHERE?**
+- Declarative policies separate from application code
+- Complex rules hard to express in SQL (e.g., "if agent=X AND task=Y, allow domain=Z UNLESS conflict_group=W")
+- Policy versioning and testing (`opa test`)
+- Audit trail of policy decisions
+- Reusable across entry points
 
-All triggers share the same HTTP API, same pipeline, same state.
+**In Phase 3**, OPA handles access control only (allow/deny the request). Instruction filtering uses SQL WHERE directly. OPA-driven filtering is added in Phase 5 when policy complexity justifies it.
+
+### Layer 3: Workflow Orchestration (Phase 5)
+
+LangGraph orchestrates multi-step workflows where each step runs the core loop with different context.
+
+```
+  ┌─ LangGraph Workflow ──────────────────────────────────────┐
+  │                                                            │
+  │  Step 1: Analyze                                           │
+  │    OPA input: {agent=analyst, task=analyze, domain=repo}   │
+  │    → core loop → instructions about analysis patterns      │
+  │    → Kiro headless executes analysis                       │
+  │                                                            │
+  │  Step 2: Code                                              │
+  │    OPA input: {agent=developer, task=code, domain=effect}  │
+  │    → core loop → instructions about coding standards       │
+  │    → Kiro headless writes code                             │
+  │                                                            │
+  │  Step 3: Review                                            │
+  │    OPA input: {agent=reviewer, task=review, domain=repo}   │
+  │    → core loop → instructions about review criteria        │
+  │    → Kiro headless reviews the code                        │
+  │                                                            │
+  │  Persistent state across steps (PG checkpointer)           │
+  └────────────────────────────────────────────────────────────┘
+```
+
+Each step gets DIFFERENT instructions because the OPA input is different. This is the "per-step OPA consultation" pattern — the whole point of kiro-cortex being a workflow orchestration platform, not just a context provider.
+
+## Component Responsibilities
+
+| Component | Manages | Talks to | Stateful? |
+|-----------|---------|----------|-----------|
+| **kiro-cortex** | Instructions table, context assembly, workflow orchestration | PostgreSQL, OPA, Ollama, Kiro headless | Yes (PG) |
+| **PostgreSQL** | Data storage (instructions + embeddings + workflow state) | Only responds to kiro-cortex | Yes |
+| **OPA** | Policy rules (Rego files) | Only responds to kiro-cortex | No (stateless) |
+| **Ollama** | Embedding models | Only responds to kiro-cortex | No (stateless) |
+| **Kiro headless** | Task execution with scoped context | Called by kiro-cortex | No |
+| **LangGraph** | Workflow graph definition and step sequencing | Embedded in kiro-cortex | State in PG |
+
+kiro-cortex is the **sole mediator**. No component talks directly to another. All data flows through kiro-cortex.
+
+## Database Landscape
+
+Two databases on the same PostgreSQL server (port 5435), different purposes:
+
+```
+  PostgreSQL (port 5435)
+  ├── openmemory          ← Personal working memory (managed by OpenMemory MCP)
+  │   ├── memories            Volatile, exploratory, per-user
+  │   ├── vectors             89 memories, 435 vectors
+  │   ├── waypoints           Managed by OpenMemory, not kiro-cortex
+  │   ├── temporal_facts
+  │   └── ...
+  │
+  └── kiro_cortex         ← Codified knowledge (managed by kiro-cortex)
+      ├── instructions        Structured steering content with metadata + embeddings
+      └── (future)            Workflow state, audit logs, etc.
+```
+
+**Why separate?** Different lifecycles. Memories are personal and volatile (created/deleted frequently). Instructions are shared, versioned, and stable. Different access patterns, different management, clean separation.
+
+**OpenMemory and kiro-cortex are independent systems.** They share a PG server for convenience but have no data dependencies. kiro-cortex never reads from `openmemory`. OpenMemory never reads from `kiro_cortex`.
+
+## How Instructions Get Into the Table
+
+**Phase 3 (now):** Hand-written test seed data. 5-10 instructions inserted via SQL migration with pre-computed embeddings. Validates the retrieval pipeline without building an ingestion system.
+
+**Phase 4 (later):** Ingestion pipeline.
+```
+  Steering file (markdown)
+    → parse into individual rules/conventions
+    → tag with metadata (domain, agent_roles, task_types, priority, ...)
+    → embed text via Ollama (nomic-embed-text, 768-dim)
+    → INSERT into instructions table
+```
+
+This is a batch process, not real-time. Run it when steering files change. Ollama handles classification/tagging for bulk data (cheap, fast, local).
 
 ## Execution Modes
 
 The pipeline is identical regardless of trigger. What differs is what happens after context assembly:
 
 - **MCP trigger** (kiro-cli): Return assembled context + metadata. kiro-cli injects into Claude's prompt. Workflow stops after assembly.
-- **Direct trigger** (web/Slack): No external LLM in the loop. LangGraph routes to Kiro headless for execution. Returns complete response.
+- **Direct trigger** (web/Slack, future): LangGraph routes to Kiro headless for full execution. Returns complete response.
 
-Context size is configurable per-call. The trigger specifies a token budget based on task complexity (e.g., simple question → 2000 tokens, complex debugging → 8000).
-
-## DB Split Strategy
-
-Single PostgreSQL instance now. Instruction metadata and embeddings share the same DB (`kiro_cortex`). When scaling demands it, split is mechanical:
-
-- Put instruction access behind its own Effect Service (`InstructionRepo`)
-- Currently provided with the shared `SqlLive` layer
-- To split: provide with a separate `VectorSqlLive` pointing to a dedicated DB
-- Service interface unchanged, callers unaffected — one layer swap
+Context size is configurable per-call via `token_budget` parameter.
 
 ## Instruction Metadata Schema
 
-Each piece of codified knowledge becomes a structured instruction:
-
-```json
-{
-  "instruction_id": "project-a-effect-patterns-001",
-  "text": "Use Effect.gen for all effectful pipelines...",
-  "source": "steering/coding-standards/effect-patterns.md",
-  "domain": "coding-standards",
-  "subdomain": "effect-patterns",
-  "repo": "org/project-a",
-  "tier_access": [1, 2],
-  "agent_roles": ["developer", "reviewer"],
-  "task_types": ["coding", "review", "debugging"],
-  "priority": "high",
-  "version": "1.0",
-  "effective_date": "2026-03-08",
-  "expiry_date": null,
-  "dependencies": [],
-  "conflict_group": "effect-style",
-  "embedding": [0.023, -0.118, ...]
-}
+```sql
+CREATE TABLE instructions (
+  id              UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  text            TEXT NOT NULL,           -- the actual instruction content
+  source          VARCHAR(255),            -- origin file path
+  domain          VARCHAR(100),            -- e.g., "coding-standards", "policy", "global"
+  subdomain       VARCHAR(100),            -- e.g., "effect-patterns", "ip-protection"
+  repo            VARCHAR(255),            -- e.g., "org/project-a" or NULL for global
+  tier_access     INTEGER[],              -- which tiers can see this [1, 2, 3]
+  agent_roles     TEXT[],                 -- which roles can see this ["developer", "reviewer"]
+  task_types      TEXT[],                 -- relevant for which tasks ["coding", "debugging"]
+  priority        VARCHAR(20),            -- "critical", "high", "medium", "low"
+  version         VARCHAR(20),
+  effective_date  TIMESTAMP,
+  expiry_date     TIMESTAMP,
+  dependencies    UUID[],                 -- other instructions this depends on
+  conflict_group  VARCHAR(100),           -- instructions that conflict with each other
+  embedding       vector(768),            -- nomic-embed-text via Ollama
+  created_at      TIMESTAMP DEFAULT NOW(),
+  updated_at      TIMESTAMP DEFAULT NOW()
+);
 ```
 
-Maps directly to existing steering structure:
+Maps to existing steering structure:
+- `~/.kiro/steering/00-ip-protection.md` → domain="global", priority="critical"
 - `policies/` → domain="policy", agent_roles=["all"]
-- `<agent-context>/<domain>/` → domain="<domain>", agent_roles=["developer"]
-- `~/.kiro/steering/*.md` → domain="global", task_types=["all"]
+- `<workspace>/.kiro/steering/` → domain=repo-specific, repo="org/repo"
 
 ## Key Design Decisions
 
 | Decision | Choice | Rationale |
 |----------|--------|-----------|
-| Platform role | Workflow orchestration (not just context prep) | Each step needs different rules, not one-shot context |
+| Core abstraction | RAG over steering files | Solves context dilution directly |
+| Platform role | Workflow orchestration (not just context prep) | Each step needs different rules |
 | Smart executor | Kiro headless (not Ollama) | Kiro has tools, reasoning, quality |
 | Ollama role | Embeddings + classification only | Cheap/fast for bulk preprocessing |
-| OPA consultation | Per workflow step | Different steps need different rule sets |
-| Single DB | PostgreSQL (metadata + vectors together) | Split to separate instances when scaling demands it |
-| Trigger discovery | MCP tools + generated skills | Discoverable by default, skills for steering if needed |
-| Vector index | HNSW over IVFFlat | Better accuracy, configurable speed tradeoff |
-| Hosting | Self-hosted, NixOS/Home Manager | Full control, privacy, no vendor lock-in |
-| Embeddings | nomic-embed-text 768-dim (Ollama) | Local, no API costs |
-| Runtime | Bun + pnpm, Effect-TS | User preference, type safety |
+| OPA in Phase 3 | Access control only (allow/deny) | SQL WHERE sufficient for filtering until policy complexity grows |
+| OPA in Phase 5 | Generates filtering criteria per step | Complex policies need declarative rules |
+| Single DB | PostgreSQL (metadata + vectors together) | Split via Effect Service boundary when scaling demands it |
+| Vector index | HNSW over IVFFlat | Better accuracy, no training needed, works at any scale |
 | Token estimation | chars/4 approximation | Upgrade to tiktoken when accuracy matters |
 | Context budget | Caller-specified per request | Task complexity determines budget |
-| DB split strategy | Effect Service boundary (InstructionRepo) | Layer swap when scaling demands it |
+| Hosting | Self-hosted, NixOS/Home Manager | Full control, privacy, no vendor lock-in |
+| Runtime | Bun + pnpm, Effect-TS | User preference, type safety |
 
 ## Phase Plan
 
 ### Phase 0: Database Layer ✅ (commit 75d246a)
-- PostgreSQL 18 + pgvector on port 5435
-- Effect-TS HttpApi server with migrations
-- Schema: memories, vectors, waypoints, temporal_facts, stats, users
+- PostgreSQL 18 + pgvector on port 5435 (home-manager user service)
+- Effect-TS HttpApi server on port 3100
+- `kiro_cortex` database with instructions table + HNSW index
 
-### Phase 1: Data Migration ✅ (commit 33f656f)
-- OpenMemory SQLite → PostgreSQL (89 memories, 435 vectors)
+### Phase 1: OpenMemory Migration ✅ (commit 33f656f)
+- OpenMemory SQLite → PostgreSQL (`openmemory` database, separate from `kiro_cortex`)
 - OM_TIER: smart (896-dim) → deep (768-dim pure Ollama)
 - MCP operations validated end-to-end
 
 ### Phase 2: Infrastructure Wiring ✅ (commit ab33b12)
-- OPA systemd service (port 8181, out-of-store symlink to policies)
-- OpaService: Effect.Service + NodeHttpClient.layer + tagged OpaError
-- LangGraph StateGraph: policy → vector → assemble → generate nodes
-- HttpApi /test endpoint wiring all layers
-- Tagged errors (TestError, OpaError) registered on endpoint schemas
+- OPA systemd service (port 8181, out-of-store symlink to policies/)
+- OpaService: Effect.Service with self-contained HTTP client
+- LangGraph StateGraph with stub nodes (policy → vector → assemble → generate)
+- HttpApi /test endpoint wiring OPA + LangGraph end-to-end
 
-### Phase 3: Instruction Data Layer + Retrieval (NEXT)
-- Instruction metadata schema (PostgreSQL migration)
-- Test seed data (hand-written instructions, not migrated steering)
-- Real vector retrieval (embed query via Ollama, HNSW search)
-- Real OPA pre-filtering (Rego policies on instruction metadata)
-- Context assembly with token budgets
-- `/context` endpoint for testing the pipeline with curl
+### Phase 3: Core RAG Loop (NEXT)
+Build the core retrieval pipeline with real data:
+- Add missing columns to instructions table (source, repo, effective_date, expiry_date)
+- EmbeddingService: Effect Service wrapping Ollama /api/embed
+- InstructionRepo: Effect Service for instruction search (the future DB-split boundary)
+- Test seed data: 5-10 hand-written instructions with real embeddings
+- Wire workflow nodes to real services (replace stubs)
+- OPA for access control only (allow/deny) — SQL WHERE for instruction filtering
+- Context assembly with token budgets (chars/4)
+- `/context` endpoint replacing `/test`
 
 ### Phase 4: Content Migration
-- Convert steering files → structured instructions
-- Ingestion pipeline (parse markdown → extract rules → tag metadata → embed)
-- Production OPA policies
-- Conflict detection/resolution in Rego
+- Ingestion pipeline: parse steering markdown → extract rules → tag metadata → embed → insert
+- Bulk classification via Ollama (domain, task_type tagging)
+- Production seed data from real steering files
 
-### Phase 5: Workflow Engine
-- Production workflow definitions (analysis, debugging, research)
+### Phase 5: Workflow Engine + Policy Layer
+- OPA-driven instruction filtering (Rego policies generate SQL WHERE criteria)
 - Per-step OPA consultation pattern
+- Production workflow definitions (analysis, debugging, research)
 - Kiro headless integration
-- PostgreSQL checkpointer for persistent state
+- PostgreSQL checkpointer for persistent workflow state
 - Conditional routing (MCP → return context, web/slack → full execution)
+- Conflict detection/resolution in Rego
 
 ### Phase 6: Triggers + Discovery
 - MCP stdio wrapper for kiro-cli
