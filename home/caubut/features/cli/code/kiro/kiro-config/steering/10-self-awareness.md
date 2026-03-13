@@ -63,6 +63,22 @@ relevant to that domain's agent definition.
 If no agents are defined, use all steering files as general guidance
 and self-select the most relevant ones based on the current task.
 
+## Agent Capability Reference
+
+| Capability | Default | Ideation | Planner |
+|------------|---------|----------|---------|
+| File modifications | ✅ | ❌ | ❌ |
+| Execute commands | ✅ | ❌ | ❌ |
+| Research/exploration | ✅ | ✅ | ✅ |
+| Task breakdown | ✅ | ❌ | ✅ |
+| Memory access | ✅ | ✅ | ✅ |
+| MCP tools | All | All | All |
+
+**Tool inheritance:**
+- Global MCPs: Available to all agents
+- Agent-specific MCPs: Only that agent
+- Check agent definition for scoped tools
+
 ## Agent Tool Scoping
 
 Some agents define additional MCP tools in their agent-level config.

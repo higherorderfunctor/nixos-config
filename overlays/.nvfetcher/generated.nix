@@ -151,18 +151,18 @@
   };
   go = {
     pname = "go";
-    version = "1.26.0";
+    version = "1.26.1";
     src = fetchurl {
-      url = "https://go.dev/dl/go1.26.0.src.tar.gz";
-      sha256 = "sha256-yRMqih9r0qpKrR10uCMdlSdJUEg6SVBlfubFbm6Bd5A=";
+      url = "https://go.dev/dl/go1.26.1.src.tar.gz";
+      sha256 = "sha256-MXIpPQSyCdwRRGmOe6E/BHf2uoxf/QvmbCD9vJeF37s=";
     };
   };
   kiro-cli = {
     pname = "kiro-cli";
-    version = "1.27.0";
+    version = "1.27.2";
     src = fetchurl {
-      url = "https://desktop-release.q.us-east-1.amazonaws.com/1.27.0/kirocli-x86_64-linux.tar.gz";
-      sha256 = "sha256-UO5GARkY8nRb00WnAqqpqoSX+4+x0jTTMHv8B/FqLaQ=";
+      url = "https://desktop-release.q.us-east-1.amazonaws.com/1.27.2/kirocli-x86_64-linux.tar.gz";
+      sha256 = "sha256-yFmEMuGOiE0Jp8qPYvxbIx8kJ7KlxgN0tN0m3kn3ykE=";
     };
   };
   kiro-gateway = {
@@ -181,13 +181,13 @@
   };
   oh-my-posh = {
     pname = "oh-my-posh";
-    version = "v29.7.1";
+    version = "v29.8.0";
     src = fetchFromGitHub {
       owner = "JanDeDobbeleer";
       repo = "oh-my-posh";
-      rev = "v29.7.1";
+      rev = "v29.8.0";
       fetchSubmodules = false;
-      sha256 = "sha256-5H9ci0UY5ebwY1Az9Rgk57V65/qlvOjfFsZpW1it/dA=";
+      sha256 = "sha256-BTCATtZ8pTIf0qwDPOUFHS++K+k0oJVtaNEEY2JEGAY=";
     };
   };
   otel-desktop-viewer = {
@@ -214,11 +214,11 @@
   };
   pnpm = {
     pname = "pnpm";
-    version = "10.30.3";
+    version = "10.32.1";
     src = fetchurl {
-      url = "https://registry.npmjs.org/pnpm/-/pnpm-10.30.3.tgz";
+      url = "https://registry.npmjs.org/pnpm/-/pnpm-10.32.1.tgz";
       name = "pnpm.tgz";
-      sha256 = "sha256-/wpyFA9qbWbAsoT2yVYK/2BVGOKMKa6sJfsmK3QzFYg=";
+      sha256 = "sha256-m5Q7lLyPVe+5k6rY5EtTjmsJHmCp5KlE3N6GmFXyM+M=";
     };
   };
   spectral = {

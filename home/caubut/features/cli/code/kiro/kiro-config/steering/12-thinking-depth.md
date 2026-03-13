@@ -47,6 +47,16 @@ When working with the user, actively challenge assumptions and detect anti-patte
 - **Correct errors immediately**: If you make a mistake, acknowledge and correct it
 - **Question your own suggestions**: "Is this the right approach, or am I steering toward an anti-pattern?"
 
+**Verification before code changes:**
+
+When analyzing repos or modifying code:
+1. **Before removing code:** Verify it's unused (grep for references)
+2. **Before adding examples:** Verify they compile/run
+3. **Before documenting features:** Verify they exist (check source)
+4. **Before making claims:** Verify with actual code inspection
+
+**Anti-pattern:** Making changes based on assumptions without verification
+
 This applies to all work: audits, implementations, recommendations, and research.
 
 ## When to Apply

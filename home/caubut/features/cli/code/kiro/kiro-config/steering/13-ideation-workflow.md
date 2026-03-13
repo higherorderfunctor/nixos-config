@@ -43,12 +43,48 @@ When users ask questions that suggest ideation needs, prompt them to switch:
 - File modifications and command execution
 - Use when approach is already clear
 
+## When to Use Which Agent
+
+**Ideation** (`Ctrl+Shift+I`):
+- "I don't know what approach to take"
+- "What are my options?"
+- Research and exploration
+- Read-only (no file modifications)
+
+**Planner** (`Shift+Tab`):
+- "I know what to build, need breakdown"
+- Structured task planning
+- Requirements gathering
+
+**Default**:
+- "Just do this specific thing"
+- Clear execution instructions
+- Direct file modifications
+
+**If user asks open-ended question → suggest Ideation**
+
 ## Workflow Pattern
 
 1. **Ideation** (`Ctrl+Shift+I`) → Explore, research, generate prompt
 2. **Review** → Human quality gate (you decide if ready)
 3. **Planning** (`Shift+Tab`) → Structured breakdown (if needed)
 4. **Execution** → Implement the plan
+
+## Context Handoff Between Agents
+
+When switching agents, preserve:
+- Current task objective
+- Decisions made so far
+- Files modified/created
+- Next steps planned
+
+**Handoff format:**
+```
+Context: [what we're doing]
+Progress: [what's complete]
+Next: [what needs doing]
+Files: [list of relevant files]
+```
 
 ## Model Selection
 

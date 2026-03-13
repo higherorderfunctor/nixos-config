@@ -149,82 +149,139 @@ Replace `YYYY-MM-DDTHH:MM:SS` with the timestamp from step 1. If no prior timest
       "session_id": "abc123...",
       "workspace": "project-name",
       "corrections": [
-        {"message_index": 10, "user_message": "..."}
+        {
+          "message_index": 10,
+          "user_message": "...",
+          "context_messages": 7,
+          "summary": "ERROR: ...\nCAUSE: ...\nCORRECTION: ...\nPATTERN: ...\nCONTEXT: ..."
+        }
       ]
     }
   ]
 }
 ```
 
-### 3. Store Raw Script Output
+### 3. Store Corrections to Memory (Automatic - No Prompt)
 
-**CRITICAL: Capture output from tool response, NOT from filesystem**
+**CRITICAL: Script output is in tool response stdout, NOT temp files**
 
-The script outputs JSON to stdout. The execute_bash tool returns this in the response. Store that directly:
+**Storage Strategy:**
 
+**For small datasets (<100 corrections):**
+Store each correction individually:
 ```
-1. Run script (output comes back in tool response)
-2. Parse JSON from stdout field
-3. Store in OpenMemory with tag: interaction-analysis-raw
+openmemory_store:
+  content: |
+    Correction from session [session_id]
+    Workspace: [workspace]
+    Message Index: [message_index]
+    
+    User Message: [user_message]
+    
+    Summary:
+    [full summary with ERROR/CAUSE/CORRECTION/PATTERN/CONTEXT markers]
+  tags: ["global", "interaction-analysis-unreviewed", "workspace-tag"]
+  type: "contextual"
+  user_id: "caubut"
 ```
+
+**For large datasets (100+ corrections):**
+Store in compressed batches (50-100 per entry):
+```
+openmemory_store:
+  content: |
+    Interaction Analysis - Corrections Batch N (Corrections X-Y)
+    
+    Session: [session_id]
+    Workspace: [workspace]
+    
+    Corrections:
+    1. [msg N] User: "..." - ERROR: ... PATTERN: ...
+    2. [msg N] User: "..." - ERROR: ... PATTERN: ...
+    [... 50-100 corrections per batch]
+  tags: ["global", "interaction-analysis-unreviewed", "workspace-tag", "batch-N"]
+  type: "contextual"
+  user_id: "caubut"
+```
+
+**Implementation:**
+- Parse JSON from tool response (already in context)
+- Choose strategy based on correction count
+- Show progress: "Storing corrections: X/Y"
+- Store metadata summary at end (total counts, timestamp)
 
 **DO NOT:**
-- ❌ Redirect to temp file (`> /tmp/file.json`)
-- ❌ Write to filesystem first
-- ❌ Use intermediate files
+- ❌ Look for temp files (output is in tool response)
+- ❌ Redirect to filesystem
+- ❌ Use subagents (they don't have access to tool response)
 
-**Why:** Tool response already contains the output. No filesystem needed.
+### 4. Extract Patterns and Filter (Automatic - Reduce 500+ to 20-30)
 
-**State tracking:**
-- Update state: `script-complete, awaiting-post-process`
-- Enables resumability if interrupted
+**GOAL:** Transform raw corrections into actionable patterns. User reviews PATTERNS, not individual corrections.
 
-### 4. Post-Process with Summaries
+**Process:**
 
-**CRITICAL: Process ALL corrections from script output, not just samples**
+1. **Load all corrections** from memory (tag: `interaction-analysis-unreviewed`)
 
-The script now generates marker-based summaries for each correction. Read and analyze these summaries:
+2. **Extract patterns** - Parse PATTERN field from each correction summary
 
-**Script Output Format:**
-```json
-{
-  "corrections": [
-    {
-      "session_id": "abc123...",
-      "message_index": 10,
-      "user_message": "...",
-      "context_messages": 7,
-      "summary": "ERROR: ...\nCAUSE: ...\nCORRECTION: ...\nPATTERN: ...\nCONTEXT: ..."
-    }
-  ]
-}
-```
+3. **Group by similarity** - Cluster corrections with similar patterns together
 
-**Summary Format:**
-Each summary uses text markers (not JSON):
-- `ERROR:` What I did wrong
-- `CAUSE:` Why I did it / what I misunderstood
-- `CORRECTION:` What user said to do instead
-- `PATTERN:` Is this recurring? Related to what?
-- `CONTEXT:` Other relevant details
+4. **Check existing coverage:**
+   ```
+   openmemory_query: "explicit reflections and accepted patterns"
+   tags: ["global", "interaction-analysis-reflection"]
+   user_id: "caubut"
+   ```
+   ```
+   openmemory_query: "accepted patterns"
+   tags: ["global", "interaction-analysis-accepted"]
+   user_id: "caubut"
+   ```
+   - If pattern already exists, merge evidence (don't duplicate)
+   - Reinforce existing memory with new evidence count
 
-**Analysis Process:**
-1. Read all summaries from script output
-2. Parse marker-based format (split on markers)
-3. Determine if this is a real correction or false positive:
-   - Real correction: Extract actionable pattern
-   - False positive: Note the false positive type (for future reference)
-4. Store as individual pending item (see step 6) if actionable
-5. If false positive: skip storage, but note the pattern type for analysis
+5. **Classify pattern type:**
+   - `missing-instruction` - Gap in steering files
+   - `context-dilution` - Architectural issue needing rearchitecture
+   - `false-positive` - Not actually a correction
 
-**Example:** 
-- Real correction: Summary shows repeated truncation assumption → Pattern: "Don't assume output needs truncation without checking script design"
-- False positive: Summary shows user clarifying requirements → Type: false-positive-clarification, skip storage
+6. **Rank by ROI:**
+   - **HIGH**: 3+ instances + (missing-instruction OR context-dilution) + not in steering
+   - **MEDIUM**: 2 instances + actionable + not covered
+   - **LOW**: Single instance OR already covered OR false positive
 
-**Context Gathering:**
-The script uses adaptive context gathering (max 10 messages). Ollama determines when sufficient context is gathered to understand the correction.
+7. **Store HIGH/MEDIUM patterns only:**
+   ```
+   openmemory_store:
+     content: |
+       Pattern: [description]
+       Type: missing-instruction | context-dilution
+       Evidence: [count] occurrences
+       Sessions: [id1, id2, id3, ...]
+       Message indices: [10, 25, 8, ...]
+       Priority: HIGH | MEDIUM
+       Status: pending-review
+     tags: ["global", "interaction-analysis-pattern", "nixos-config", "priority-high"]
+     type: "contextual"
+   ```
 
-**DO NOT skip corrections** - process all of them to ensure complete analysis.
+8. **Delete LOW ROI items** - Remove from memory, track count for metrics
+
+9. **Track rejection reasons** - For Ollama tuning feedback loop
+
+**Lean storage approach:**
+- Store pattern summary + evidence count
+- Store session IDs + message indices for lookup
+- Don't pack every detail - user can drill in when reviewing
+- Keep memory lean with references, not full facts
+
+**Show progress:**
+- "Extracting patterns: Found X unique patterns from Y corrections"
+- "Filtered to Z high-ROI patterns (HIGH: A, MEDIUM: B)"
+- "Removed W low-ROI items"
+
+**Expected outcome:** 500+ corrections → 20-30 actionable patterns
 
 ### 5. Query Explicit Reflections
 
@@ -233,33 +290,25 @@ Query OpenMemory for explicit reflections (tag: `interaction-analysis-reflection
 - These are HIGH PRIORITY (user explicitly flagged)
 - If new patterns match existing reflections → reinforce reflection, don't duplicate
 
-### 6. Store Individual Pending Items
-
-For each actionable pattern, store in OpenMemory (tag: `interaction-analysis-pending`):
-```
-Pattern: [description]
-Evidence: session_id + message_index + context
-Priority: HIGH/MEDIUM/LOW
-Related reflection: [reflection_id or null]
-Status: pending-review
-```
-
-### 7. Update Analysis State
+### 6. Update Analysis State
 
 Store completion timestamp and metrics in OpenMemory (tag: `interaction-analysis-state`):
 ```
 Last analysis completed: YYYY-MM-DD HH:MM
 Sessions analyzed: [count]
-Corrections processed: [count]
+Corrections detected: [count]
+Corrections stored (after filtering): [count]
+False positives removed: [count]
 Pending items: [count]
 Status: ready-for-review
 
 Metrics:
 - Total corrections detected: [count]
+- False positives this run: [count]
 - Corrections accepted: [count from previous analyses]
-- Corrections rejected (false positives): [count from previous analyses]
-- Acceptance rate: [accepted / total * 100]%
-- False positive rate: [rejected / total * 100]%
+- Corrections rejected: [count from previous analyses]
+- Acceptance rate: [accepted / (accepted + rejected) * 100]%
+- False positive rate: [(FP this run + rejected) / total * 100]%
 - Refinements applied: [count]
 - Last refinement date: [date or null]
 - Refined pattern types: [list or empty]
@@ -268,12 +317,10 @@ Trend (compare to previous analysis):
 - Correction count: [increased/decreased/stable]
 - False positive rate: [increased/decreased/stable]
 ```
-Status: ready-for-review
-```
 
 **Phase 1 complete.** Wait for user to initiate Phase 2.
 
-### 8. Refinement Process (Optional - Triggered from Step 0)
+### 7. Refinement Process (Optional - Triggered from Step 0)
 
 **When user confirms refinement in Step 0:**
 
@@ -360,6 +407,39 @@ Status: ready-for-review
    - Proceed with normal Phase 1 workflow
    - Script will use updated prompt for this analysis
 
+### 8. Ollama Tuning Feedback Loop (Automatic)
+
+**Triggered during Step 4 pattern extraction:**
+
+When LOW ROI patterns are identified (single instance, false positives, already covered):
+
+1. **Track rejection reasons** - Store why pattern was rejected
+2. **Group by pattern type** - Cluster similar rejections
+3. **Store for future refinement:**
+   ```
+   openmemory_store:
+     content: |
+       Auto-Rejected Pattern: [description]
+       
+       Rejection Reason: [why it's low ROI]
+       Pattern Type: [classification]
+       
+       Evidence:
+       - Session: [session_id]
+       - Message Index: [message_index]
+     tags: ["global", "interaction-analysis-rejected", "nixos-config"]
+     type: "contextual"
+   ```
+
+4. **Next run Step 0** - These rejections feed refinement candidates
+
+**This creates a feedback loop:**
+- Ollama detects too many false positives
+- Step 4 filters them out
+- Rejections accumulate in memory
+- Step 0 (next run) offers to refine Ollama prompt
+- Fewer false positives in future runs
+
 ---
 
 ## Phase 2: Review & Fix (User-Driven)
@@ -367,9 +447,10 @@ Status: ready-for-review
 ### Commands
 
 **"show pending"** - Display patterns awaiting accept/reject
-- Load from OpenMemory (tag: `interaction-analysis-pending`)
-- Group by priority (HIGH → MEDIUM → LOW)
-- Show evidence and proposed rule
+- Load from OpenMemory (tag: `interaction-analysis-pattern`)
+- Group by priority (HIGH → MEDIUM)
+- Show pattern summary with evidence count
+- User can drill into specific sessions/messages for details
 
 **"show accepted"** - Display accepted patterns with status
 - Load from OpenMemory (tag: `interaction-analysis-accepted`)
@@ -443,6 +524,28 @@ Status: ready-for-review
 - Refinement reduced true positive detection
 
 **"work on X"** - Generate proposal and apply changes
+
+**Query both datasets:**
+```
+# Accepted patterns from analysis
+openmemory_query: "accepted patterns"
+tags: ["global", "interaction-analysis-accepted"]
+user_id: "caubut"
+
+# Flagged reflections
+openmemory_query: "flagged reflections"
+tags: ["global", "interaction-analysis-reflection"]
+user_id: "caubut"
+filter: status = "flagged"
+```
+
+**For each item:**
+1. Read full context (pattern description, evidence, root cause)
+2. Identify target steering file(s)
+3. Generate specific proposal (what to add/change/remove)
+4. Present to user for approval
+5. If approved: apply changes, update status to "solution-proposed"
+6. Track promotion in memory
 
 ## Cleanup After Analysis
 

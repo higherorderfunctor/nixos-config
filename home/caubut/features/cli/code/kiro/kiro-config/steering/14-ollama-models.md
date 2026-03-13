@@ -12,7 +12,7 @@ Before using OpenMemory (openmemory_store, openmemory_query, etc.), verify the r
 
 ## Daily Check Workflow
 
-**Before first OpenMemory use in a session:**
+Before first OpenMemory use in a session:
 
 1. Query memory for today's check status (STATE query - exempt from Ollama check):
    ```
@@ -37,6 +37,24 @@ Before using OpenMemory (openmemory_store, openmemory_query, etc.), verify the r
 
 4. If model was pulled/updated:
    - Prompt user: "Ollama model updated. Please restart Kiro to activate: quit this session and restart kiro-cli"
+
+**When Ollama is already running:**
+- Don't suggest starting it
+- Check model status with `ollama list`
+- Only pull if model missing
+
+## Ollama API Usage
+
+**Common operations:**
+- List models: `ollama list`
+- Pull model: `ollama pull <model-name>`
+- Check running: `systemctl --user status ollama`
+- API version: `curl http://localhost:11434/api/version`
+
+**Don't:**
+- Invent API endpoints
+- Assume Ollama skill exists (it doesn't)
+- Use HTTP API directly (use CLI commands)
 
 ## When to Check
 

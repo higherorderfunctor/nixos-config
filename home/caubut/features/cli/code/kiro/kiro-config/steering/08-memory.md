@@ -25,6 +25,22 @@ When in doubt, use `contextual`.
 
 **Note on Sectors**: OpenMemory automatically classifies memories into sectors (episodic, semantic, procedural, emotional, reflective) based on content analysis. These are internal classifications within the HSG system - you don't specify them, they're assigned automatically.
 
+## Parameter Validation
+
+**type parameter (openmemory_store):**
+- ✅ Valid: "contextual", "factual", "both"
+- ❌ Invalid: "procedural", "semantic", "episodic" (these are auto-assigned sectors, not types)
+
+**Common mistakes:**
+- ❌ `type="procedural"` → ✅ `type="contextual"` (sector assigned automatically)
+- ❌ Mixing query parameters → ✅ Use `k` for limit, `query` for search text
+- ❌ Missing user_id → ✅ Always set `user_id="caubut"`
+
+**Before storing, verify:**
+- type is one of three valid values
+- tags include repo/workspace identifier
+- user_id is set
+
 ## Determining the Project Tag
 
 1. Use the `git` MCP to get the remote origin URL
