@@ -52,6 +52,8 @@
   kiroConfigPath = "${config.xdg.userDirs.documents}/projects/nixos-config/home/${username}/features/cli/code/kiro/kiro-config";
   # ↑ IMPORTANT: adjust this to the actual absolute path to your module
 
+  kiroCortexPath = "${config.xdg.userDirs.documents}/projects/nixos-config/home/${username}/features/cli/code/kiro/kiro-cortex";
+
   symlinkSteering = name: {
     ".kiro/steering/${name}".source =
       config.lib.file.mkOutOfStoreSymlink "${kiroConfigPath}/steering/${name}";
@@ -195,6 +197,20 @@ in {
       // builtins.foldl' (acc: name: acc // symlinkAgent name) {} agentFiles
       # Skill directories (out-of-store symlinks)
       // builtins.foldl' (acc: name: acc // symlinkSkill name) {} skillDirs;
+  };
+
+  # ── kiro-cortex: OPA user service ────────────────────────
+  systemd.user.services.kiro-cortex-opa = {
+    Unit = {
+      Description = "kiro-cortex Open Policy Agent";
+      After = ["default.target"];
+    };
+    Service = {
+      Type = "simple";
+      ExecStart = "${pkgs.open-policy-agent}/bin/opa run --server --addr localhost:8181 --bundle ${kiroCortexPath}/policies";
+      Restart = "on-failure";
+    };
+    Install.WantedBy = ["default.target"];
   };
 
   # ── kiro-cortex: PostgreSQL user service ────────────────────────
