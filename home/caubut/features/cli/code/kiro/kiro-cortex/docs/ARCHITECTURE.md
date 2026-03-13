@@ -1,89 +1,126 @@
 # Kiro Cortex Architecture
 
+## Problem
+
+Steering files don't scale. As repos, agents, and policies grow, context windows fill with irrelevant instructions. The LLM forgets or misapplies rules buried in noise.
+
 ## Vision
 
-Scale to millions of instructions across tiered multi-agent workflows. Solve context dilution by filtering millions down to an optimally dense context window per agent execution. Triggerable from kiro-cli, web, or Slack.
+kiro-cortex is a **workflow orchestration platform** that solves context dilution. Instead of dumping all instructions into context, each workflow step gets only the rules relevant to THAT agent doing THAT task.
 
-## Funnel Architecture
+All codified knowledge — steering rules, coding standards, repo conventions, workflow definitions, skill definitions, MCP usage patterns — stored as structured instructions. LangGraph orchestrates multi-step workflows where each step consults OPA for its specific rule set.
+
+## Architecture
 
 ```
-Triggers: kiro-cli (MCP) | Web UI | Slack bot
+Triggers: kiro-cli (MCP/skills) | Web UI (future) | Slack (future)
     │
     ▼
-┌─ ORCHESTRATION (LangGraph.js) ──────────────┐
-│  Workflow graphs, persistent state (PG),      │
-│  agent lifecycle, handoffs, conditional routing│
-│  Human-in-the-loop checkpoints                │
-└──────────────┬───────────────────────────────┘
-               ▼
-┌─ OPA GOVERNANCE ─────────────────────────────┐
-│  Rego policies filter by: agent role, tier,   │
-│  domain, task type, permissions, compliance   │
-│  Conflict resolution, IP protection           │
-│  Millions → Thousands                         │
-└──────────────┬───────────────────────────────┘
-               ▼
-┌─ SEMANTIC RETRIEVAL (pgvector) ──────────────┐
-│  HNSW indexing, hybrid search (dense+sparse)  │
-│  Task-aware instruction embeddings            │
-│  Two-database isolation for queries           │
-│  Thousands → Dozens                           │
-└──────────────┬───────────────────────────────┘
-               ▼
-┌─ CONTEXT ENGINEERING ────────────────────────┐
-│  Compression, summarization, windowing        │
-│  Memory tiers: working / short-term / long    │
-│  Token budget management                      │
-│  Dozens → Optimized context                   │
-└──────────────┬───────────────────────────────┘
-               ▼
-┌─ AGENT EXECUTION ────────────────────────────┐
-│  Receives precise, minimal, relevant context  │
-└──────────────────────────────────────────────┘
+┌─ kiro-cortex (LangGraph Orchestration) ──────────────────────┐
+│                                                               │
+│  Workflow Step 1:                                             │
+│    OPA: "agent=X, task=analyze, domain=Y"                     │
+│    → returns relevant instruction IDs                         │
+│    pgvector: semantic search within allowed set                │
+│    → top N instructions by relevance                          │
+│    Assemble: fit to token budget                              │
+│    → Kiro headless executes with scoped context               │
+│                                                               │
+│  Workflow Step 2:                                             │
+│    OPA: different agent/task → different rules                │
+│    → ... same pattern, different context                      │
+│                                                               │
+│  Persistent state across steps (PG checkpointer)              │
+└───────────────────────────────────────────────────────────────┘
 
-┌─ INSTRUCTION DATA LAYER ─────────────────────┐
-│  Metadata DB + Vector DB (two DBs, isolated)  │
-│  Versioning, ingestion pipeline, auto-tagging │
-│  Feeds both OPA (metadata) and pgvector       │
-└──────────────────────────────────────────────┘
+┌─ INSTRUCTION DATA LAYER ─────────────────────────────────────┐
+│  PostgreSQL: instruction metadata + embeddings (single DB)    │
+│  All codified knowledge: steering rules, coding standards,    │
+│  repo conventions, workflow defs, skill defs, MCP patterns    │
+│  Rich metadata for OPA filtering                              │
+└───────────────────────────────────────────────────────────────┘
+
+┌─ OPA (Policy Engine) ────────────────────────────────────────┐
+│  Rego policies filter instructions by:                        │
+│  agent role, task type, domain, tier, permissions             │
+│  Consulted PER WORKFLOW STEP, not once per query              │
+│  Conflict resolution, IP protection                           │
+└───────────────────────────────────────────────────────────────┘
 ```
+
+## LLM Roles
+
+| LLM | Role | When |
+|-----|------|------|
+| Kiro (Claude, headless/API) | Complex reasoning, tool use, code generation | Workflow steps that need smart execution |
+| Ollama (nomic-embed-text) | Embeddings for vector search | Every query — turning text into vectors |
+| Ollama (llama3.2 etc) | Classification, tagging of bulk data | Preprocessing before Kiro — simple/cheap tasks |
+
+Kiro is always the smart executor. Ollama handles embeddings and bulk classification. No Ollama for generation in workflows.
+
+## Trigger Surfaces
+
+**kiro-cli (MCP):**
+- MCP server exposes `list_workflows`, `run_workflow` tools
+- kiro-cli discovers available workflows, user triggers them in chat
+- For common workflows: generate SKILL.md files to help steer kiro-cli toward using them
+- MCP is a thin stdio wrapper → HTTP calls to kiro-cortex
+
+**Web UI (future):**
+- Direct HTTP to kiro-cortex API
+- LangGraph Studio for workflow visualization
+- Trigger and monitor workflows
+
+**Slack (future):**
+- Webhook → kiro-cortex API
+- Trigger workflows from Slack messages
+
+All triggers share the same HTTP API, same pipeline, same state.
 
 ## Instruction Metadata Schema
 
-Each instruction needs rich metadata for OPA filtering:
+Each piece of codified knowledge becomes a structured instruction:
 
 ```json
 {
-  "instruction_id": "fin-compliance-2847",
-  "text": "When processing wire transfers over $10,000...",
-  "domain": "finance",
-  "subdomain": "compliance",
+  "instruction_id": "project-a-effect-patterns-001",
+  "text": "Use Effect.gen for all effectful pipelines...",
+  "source": "steering/coding-standards/effect-patterns.md",
+  "domain": "coding-standards",
+  "subdomain": "effect-patterns",
+  "repo": "org/project-a",
   "tier_access": [1, 2],
-  "agent_roles": ["compliance_reviewer"],
-  "task_types": ["wire_transfer", "aml_screening"],
-  "priority": "critical",
-  "version": "3.2",
-  "effective_date": "2025-01-15",
+  "agent_roles": ["developer", "reviewer"],
+  "task_types": ["coding", "review", "debugging"],
+  "priority": "high",
+  "version": "1.0",
+  "effective_date": "2026-03-08",
   "expiry_date": null,
-  "dependencies": ["fin-compliance-2201"],
-  "conflict_group": "wire_transfer_rules",
-  "embedding_vector": [0.023, -0.118, ...]
+  "dependencies": [],
+  "conflict_group": "effect-style",
+  "embedding": [0.023, -0.118, ...]
 }
 ```
+
+Maps directly to existing steering structure:
+- `policies/` → domain="policy", agent_roles=["all"]
+- `<agent-context>/<domain>/` → domain="<domain>", agent_roles=["developer"]
+- `~/.kiro/steering/*.md` → domain="global", task_types=["all"]
 
 ## Key Design Decisions
 
 | Decision | Choice | Rationale |
 |----------|--------|-----------|
-| Language | TypeScript (Effect-TS) | User preference, type safety, Bun runtime |
+| Platform role | Workflow orchestration (not just context prep) | Each step needs different rules, not one-shot context |
+| Smart executor | Kiro headless (not Ollama) | Kiro has tools, reasoning, quality |
+| Ollama role | Embeddings + classification only | Cheap/fast for bulk preprocessing |
+| OPA consultation | Per workflow step | Different steps need different rule sets |
+| Single DB | PostgreSQL (metadata + vectors together) | Split to separate instances when scaling demands it |
+| Trigger discovery | MCP tools + generated skills | Discoverable by default, skills for steering if needed |
 | Vector index | HNSW over IVFFlat | Better accuracy, configurable speed tradeoff |
-| DB isolation | Two separate databases | Query isolation, independent scaling |
-| Policy engine | OPA + Rego v1 | Industry standard, sub-ms evaluation, CNCF graduated |
-| Orchestration | LangGraph.js | Persistent state, graph workflows, multi-agent, TS native |
-| Triggers | Multi-surface | kiro-cli (MCP), web UI, Slack bot |
-| Hosting | Self-hosted, NixOS/HM | Full control, no vendor lock-in, privacy |
-| Embeddings | nomic-embed-text 768-dim | Local Ollama, no API costs |
-| Runtime | Bun + pnpm | Fast, user preference |
+| Hosting | Self-hosted, NixOS/Home Manager | Full control, privacy, no vendor lock-in |
+| Embeddings | nomic-embed-text 768-dim (Ollama) | Local, no API costs |
+| Runtime | Bun + pnpm, Effect-TS | User preference, type safety |
 
 ## Phase Plan
 
@@ -103,30 +140,33 @@ Each instruction needs rich metadata for OPA filtering:
 - LangGraph StateGraph: policy → vector → assemble → generate nodes
 - HttpApi /test endpoint wiring all layers
 - Tagged errors (TestError, OpaError) registered on endpoint schemas
-- Layer composition: HttpApiBuilder.api(Api).pipe(Layer.provide(groups))
 
-### Phase 3: Context Engineering (NEXT)
-- Retrieval strategies (semantic, temporal, hybrid)
-- Token budget management
-- Context assembly pipeline
-- Instruction data layer (metadata schema, versioning, ingestion)
+### Phase 3: Instruction Data Layer + Retrieval (NEXT)
+- Instruction metadata schema (PostgreSQL migration)
+- Test seed data (hand-written instructions, not migrated steering)
+- Real vector retrieval (embed query via Ollama, HNSW search)
+- Real OPA pre-filtering (Rego policies on instruction metadata)
+- Context assembly with token budgets
+- `/context` endpoint for testing the pipeline with curl
 
 ### Phase 4: Content Migration
-- Steering files → OPA Rego policies
-- Instruction metadata population
-- Production policy test suite
+- Convert steering files → structured instructions
+- Ingestion pipeline (parse markdown → extract rules → tag metadata → embed)
+- Production OPA policies
 - Conflict detection/resolution in Rego
 
-### Phase 5: LangGraph Workflows
-- Production workflow definitions
+### Phase 5: Workflow Engine
+- Production workflow definitions (analysis, debugging, research)
+- Per-step OPA consultation pattern
+- Kiro headless integration
 - PostgreSQL checkpointer for persistent state
-- Multi-trigger support (web, Slack)
-- Human-in-the-loop checkpoints
+- Conditional routing (MCP → return context, web/slack → full execution)
 
-### Phase 6: UI (LAST)
-- LangGraph Studio for workflow visualization
-- OPA policy management
-- Knowledge graph visualization (if needed)
+### Phase 6: Triggers + Discovery
+- MCP stdio wrapper for kiro-cli
+- Register in default.nix mcp.json
+- Generated SKILL.md files for common workflows
+- Web UI (LangGraph Studio or custom)
 
 ## Effect-TS Patterns
 
