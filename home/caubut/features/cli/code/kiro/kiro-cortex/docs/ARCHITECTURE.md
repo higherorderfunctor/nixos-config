@@ -77,6 +77,24 @@ Kiro is always the smart executor. Ollama handles embeddings and bulk classifica
 
 All triggers share the same HTTP API, same pipeline, same state.
 
+## Execution Modes
+
+The pipeline is identical regardless of trigger. What differs is what happens after context assembly:
+
+- **MCP trigger** (kiro-cli): Return assembled context + metadata. kiro-cli injects into Claude's prompt. Workflow stops after assembly.
+- **Direct trigger** (web/Slack): No external LLM in the loop. LangGraph routes to Kiro headless for execution. Returns complete response.
+
+Context size is configurable per-call. The trigger specifies a token budget based on task complexity (e.g., simple question → 2000 tokens, complex debugging → 8000).
+
+## DB Split Strategy
+
+Single PostgreSQL instance now. Instruction metadata and embeddings share the same DB (`kiro_cortex`). When scaling demands it, split is mechanical:
+
+- Put instruction access behind its own Effect Service (`InstructionRepo`)
+- Currently provided with the shared `SqlLive` layer
+- To split: provide with a separate `VectorSqlLive` pointing to a dedicated DB
+- Service interface unchanged, callers unaffected — one layer swap
+
 ## Instruction Metadata Schema
 
 Each piece of codified knowledge becomes a structured instruction:
@@ -121,6 +139,9 @@ Maps directly to existing steering structure:
 | Hosting | Self-hosted, NixOS/Home Manager | Full control, privacy, no vendor lock-in |
 | Embeddings | nomic-embed-text 768-dim (Ollama) | Local, no API costs |
 | Runtime | Bun + pnpm, Effect-TS | User preference, type safety |
+| Token estimation | chars/4 approximation | Upgrade to tiktoken when accuracy matters |
+| Context budget | Caller-specified per request | Task complexity determines budget |
+| DB split strategy | Effect Service boundary (InstructionRepo) | Layer swap when scaling demands it |
 
 ## Phase Plan
 
