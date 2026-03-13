@@ -1,33 +1,32 @@
-import { HttpApi, HttpApiBuilder, HttpApiEndpoint, HttpApiGroup } from "@effect/platform";
-import * as BunPlatform from "@effect/platform-bun";
-import { Effect, Layer, Schema } from "effect";
+import { HttpApi, HttpApiBuilder, HttpApiEndpoint, HttpApiGroup, HttpMiddleware, HttpServer } from "@effect/platform"
+import * as BunPlatform from "@effect/platform-bun"
+import { Effect, Layer, Schema } from "effect"
+import { SqlLive } from "./Sql.js"
 
-const HealthResponse = Schema.Struct({ status: Schema.Literal("ok") });
+const HealthResponse = Schema.Struct({ status: Schema.Literal("ok") })
 
-class HealthApi extends HttpApiGroup.make("health").pipe(
-  HttpApiGroup.add(
-    HttpApiEndpoint.get("check", "/health").pipe(
-      HttpApiEndpoint.setSuccess(HealthResponse),
-    ),
-  ),
-) {}
+const HealthEndpoint = HttpApiEndpoint.make("GET")("check", "/health")
+  .addSuccess(HealthResponse)
 
-class CortexApi extends HttpApi.make("cortex").pipe(HttpApi.addGroup(HealthApi)) {}
+class HealthGroup extends HttpApiGroup.make("health")
+  .add(HealthEndpoint)
+{}
+
+class CortexApi extends HttpApi.make("cortex")
+  .add(HealthGroup)
+{}
 
 const HealthApiLive = HttpApiBuilder.group(CortexApi, "health", (handlers) =>
-  handlers.pipe(
-    HttpApiBuilder.handle("check", () => Effect.succeed({ status: "ok" as const })),
-  ),
-);
+  handlers.handle("check", () => Effect.succeed({ status: "ok" as const })),
+)
 
-const ApiLive = HttpApiBuilder.api(CortexApi).pipe(Layer.provide(HealthApiLive));
+const ApiLive = Layer.provide(HttpApiBuilder.api(CortexApi), HealthApiLive)
 
-const ServerLive = HttpApiBuilder.serve().pipe(
+const HttpLive = HttpApiBuilder.serve(HttpMiddleware.logger).pipe(
   Layer.provide(ApiLive),
+  Layer.provide(SqlLive),
+  HttpServer.withLogAddress,
   Layer.provide(BunPlatform.BunHttpServer.layer({ port: 3100 })),
-);
+)
 
-Layer.launch(ServerLive).pipe(
-  Effect.tapErrorCause(Effect.logError),
-  BunPlatform.BunRuntime.runMain,
-);
+HttpLive.pipe(Layer.launch, BunPlatform.BunRuntime.runMain)
