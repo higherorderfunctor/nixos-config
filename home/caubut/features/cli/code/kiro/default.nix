@@ -159,6 +159,8 @@ in {
       kiro-cli
       kiro-gateway
       github-mcp-server
+      open-policy-agent
+      postgresql_18
     ];
 
     # ── Ensure openmemory directory exists ────────────────────────

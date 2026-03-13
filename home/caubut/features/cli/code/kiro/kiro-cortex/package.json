@@ -1,0 +1,33 @@
+{
+  "name": "kiro-cortex",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "packageManager": "pnpm@10.32.1",
+  "engines": {
+    "bun": "1.3.10"
+  },
+  "scripts": {
+    "dev": "bun --watch src/index.ts",
+    "start": "bun src/index.ts",
+    "build": "tsc",
+    "check": "tsc --noEmit"
+  },
+  "dependencies": {
+    "effect": "3.19.19",
+    "@effect/platform": "0.94.5",
+    "@effect/platform-bun": "0.87.1",
+    "@effect/sql": "0.49.0",
+    "@effect/sql-pg": "0.50.3",
+    "@effect/schema": "0.75.5",
+    "@langchain/langgraph": "1.2.2",
+    "@langchain/langgraph-checkpoint-postgres": "1.0.1",
+    "pg": "8.20.0"
+  },
+  "devDependencies": {
+    "@effect/language-service": "0.80.0",
+    "@types/bun": "1.3.10",
+    "@types/pg": "8.18.0",
+    "typescript": "5.9.3"
+  }
+}
