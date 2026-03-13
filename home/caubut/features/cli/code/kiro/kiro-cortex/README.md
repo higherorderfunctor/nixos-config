@@ -1,124 +1,78 @@
 # Kiro Cortex
 
-Intelligent context management system for Kiro CLI, providing policy-governed semantic retrieval with pgvector and LangGraph.js orchestration.
+Intelligent context management system for Kiro CLI. Scales millions of instructions down to optimally dense context windows via policy-governed semantic retrieval and LangGraph.js orchestration.
 
 ## Overview
 
-Kiro Cortex is a 4-layer architecture designed to manage millions of potential context items down to dozens of optimized, policy-compliant results for LLM consumption.
+Kiro Cortex solves context dilution: when you have millions of instructions/rules/policies, you can't shove them all into an LLM's context window. The system uses a funnel architecture where each layer progressively filters:
 
-**Architecture Layers:**
-1. **OPA (Policy Engine)** - Governance and compliance (millions → thousands)
-2. **pgvector (Vector Store)** - Semantic retrieval (thousands → dozens)
-3. **Context Engineering** - Query optimization and assembly (dozens → optimized)
-4. **LangGraph.js (Orchestration)** - Agent workflow and state management
+1. **OPA (Policy Engine)** — Millions → Thousands (deterministic Rego filtering by role, tier, domain)
+2. **pgvector (Semantic Retrieval)** — Thousands → Dozens (HNSW vector similarity + hybrid search)
+3. **Context Engineering** — Dozens → Optimized (compression, windowing, memory tiers)
+4. **LangGraph.js (Orchestration)** — Workflow graphs with persistent state, multi-trigger entry
 
-All components are open source, self-hosted, and managed via NixOS/Home Manager.
+All open source, self-hosted, managed via Home Manager (Ubuntu).
+
+## Triggers
+
+Workflows can be triggered from multiple surfaces:
+- **kiro-cli** — Chat-based invocation via MCP
+- **Web UI** — Future thin React UI or LangGraph Studio
+- **Slack bot** — Future webhook-triggered workflows
 
 ## Current Status
 
-**Phase 1: COMPLETE** (2026-03-13)
-- ✅ PostgreSQL with pgvector extension (port 5435)
-- ✅ Effect-TS HttpApi server with database migrations
-- ✅ OpenMemory SQLite → PostgreSQL migration (89 memories, 435 vectors)
-- ✅ MCP operations validated (query, list, get, store, reinforce)
-- ✅ Embedding search functional (nomic-embed-text, 768-dim vectors)
-
-**Next Phase: Infrastructure Wiring (Phase 2)**
-- Wire up OPA service and basic policy evaluation
-- Integrate LangGraph.js orchestration layer
-- Build end-to-end test pattern (query → OPA → pgvector → LangGraph)
-- Validate full stack works before content migration
+- Phase 0: Database Layer ✅ (PostgreSQL + pgvector, port 5435)
+- Phase 1: Data Migration ✅ (OpenMemory SQLite → PG, 89 memories, 435 vectors)
+- Phase 2: Infrastructure Wiring ✅ (OPA + LangGraph + HttpApi end-to-end)
+- Phase 3: Context Engineering — NEXT
+- Phase 4: Content Migration — Steering files → OPA policies + instruction metadata
 
 ## Quick Start
 
-### Prerequisites
-
-- NixOS or Home Manager
-- PostgreSQL 16+ with pgvector extension
-- Ollama with nomic-embed-text model
-- Node.js 20+ (via Nix)
-
-### Setup
-
-The system is configured via Home Manager in `home/caubut/features/cli/code/kiro/default.nix`:
-
-```nix
-# PostgreSQL service with pgvector
-systemd.user.services.kiro-postgres = {
-  # ... service configuration
-};
-
-# Environment variables for OpenMemory
-OM_POSTGRES_HOST = "localhost";
-OM_POSTGRES_PORT = "5435";
-OM_POSTGRES_DB = "openmemory";
-OM_TIER = "deep";  # 768-dim Ollama embeddings
-```
-
-Apply with:
 ```bash
+# Apply Nix config (PostgreSQL + OPA services)
 home-manager switch
-```
 
-### Database Initialization
+# Install dependencies
+cd kiro-cortex && pnpm install
 
-Database schema is initialized automatically via `ExecStartPost` in the systemd service:
+# Start server
+bun run src/index.ts
 
-```bash
-kiro-cortex-db-init  # Runs migrations on service start
+# Test
+curl http://localhost:3100/health
+curl -X POST http://localhost:3100/test \
+  -H 'Content-Type: application/json' \
+  -d '{"query":"hello","user_id":"test"}'
 ```
 
 ## Architecture
 
-See [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) for detailed design decisions, phase plan, and implementation notes.
+See [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) for full design, phase plan, and rationale.
 
-## Development
+## Tech Stack
 
-**Tech Stack:**
-- Effect-TS for type-safe functional programming
-- effect-sql for database operations
-- HttpApi for server layer
-- pnpm for package management
-- bun for runtime
+- Effect-TS + HttpApi (server, typed errors, layer composition)
+- Bun runtime, pnpm package manager
+- PostgreSQL 18 + pgvector (HNSW indexing)
+- OPA with Rego v1 policies
+- LangGraph.js (TypeScript) with PG checkpointer
+- @effect/platform-node for HTTP client (NodeHttpClient.layer)
 
-**Key Files:**
-- `src/index.ts` - HttpApi server entry point
-- `src/Sql.ts` - Database schema and migrations
-- `default.nix` (parent) - NixOS service configuration
+## Key Files
 
-**Run locally:**
-```bash
-pnpm install
-bun run src/index.ts
-```
-
-## Migration Notes
-
-### SQLite → PostgreSQL (Phase 1)
-
-- **Data migrated:** 89 memories, 84 waypoints, 197 embed_logs, 9 temporal_facts
-- **SQLite backup:** `~/.local/share/openmemory/memory.sqlite.bak`
-- **Re-embedding:** 87 memories re-embedded (435 vectors = 87 × 5 sectors)
-- **Empty content:** 2 memories (e0236682, d74388e4) have no vectors - harmless
-- **Dimension fix:** Changed OM_TIER from "smart" (896-dim) to "deep" (768-dim) to match pgvector column
-
-### Validation Results
-
-- ✅ Row counts match across all 8 tables
-- ✅ Content integrity verified (MD5 checks on 10 memories)
-- ✅ Temporal facts preserved (9 facts, 4 with user_id)
-- ✅ Vector search working (relevance scoring functional)
-- ✅ MCP operations tested end-to-end
+- `src/index.ts` — HttpApi server (/health, /test endpoints)
+- `src/Opa.ts` — OPA client service (Effect.Service + NodeHttpClient)
+- `src/Workflow.ts` — LangGraph StateGraph test workflow
+- `src/Sql.ts` — Database layer (effect-sql migrations)
+- `src/KiroContextError.ts` — Tagged error schemas
+- `policies/test.rego` — Rego v1 test policy
 
 ## User Preferences
 
-- pnpm not npm, bun not node
-- Effect-TS for all TypeScript code
-- Pinned exact versions (no ^ or ~)
+- pnpm not npm, bun not node, Effect-TS for all TypeScript
+- Pinned exact versions (no ^ or ~), renovate for updates
 - All writes require user approval
-- No one-off commands - declarative setup only (Nix or app-level migrations)
+- Declarative setup only (Nix or app-level migrations)
 - Home Manager only (Ubuntu, not NixOS)
-
-## License
-
-MIT
