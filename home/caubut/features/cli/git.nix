@@ -6,7 +6,7 @@
 }: let
   username = "${config.home.username}";
 in {
-  home.packages = with pkgs; [git-branchless dprint];
+  home.packages = with pkgs; [git-absorb git-branchless git-revise dprint];
   sops.secrets = {
     "${username}-github-api-key" = {
       mode = "400";
