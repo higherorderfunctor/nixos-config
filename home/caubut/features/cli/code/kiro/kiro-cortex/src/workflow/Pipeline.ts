@@ -14,7 +14,7 @@
 import { StateGraph, type Annotation, START, END, type CompiledStateGraph } from "@langchain/langgraph"
 import { PostgresSaver } from "@langchain/langgraph-checkpoint-postgres"
 import type { BlockDef, PipelineDef } from "./Block.js"
-import { executeBlock, type BlockExecutorServices } from "./BlockExecutor.js"
+import { executeBlock, type BlockExecutorServices } from "./Executor.js"
 
 const CONN_STRING = "postgresql://localhost:5435/kiro_cortex"
 

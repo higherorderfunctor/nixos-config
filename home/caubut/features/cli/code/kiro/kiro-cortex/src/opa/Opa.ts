@@ -21,7 +21,7 @@ import {
   HttpApiGroup,
 } from "@effect/platform"
 import { NodeHttpClient } from "@effect/platform-node"
-import { OpaError } from "./KiroContextError.js"
+import { OpaError } from "../KiroContextError.js"
 
 // ---------------------------------------------------------------------------
 // Schemas — model the real OPA API shapes honestly

@@ -12,7 +12,7 @@
 
 import { Effect } from "effect"
 import { SqlClient } from "@effect/sql"
-import { InstructionError } from "./KiroContextError.js"
+import { InstructionError } from "../KiroContextError.js"
 
 // ---------------------------------------------------------------------------
 // Types

@@ -13,8 +13,8 @@
  */
 
 import type { BlockDef } from "./Block.js"
-import type { ScopingInput, ScopingFilters } from "./Opa.js"
-import type { Instruction, SearchFilters } from "./InstructionRepo.js"
+import type { ScopingInput, ScopingFilters } from "../opa/index.js"
+import type { Instruction, SearchFilters } from "../instruction/index.js"
 
 /**
  * Service interface for the block executor. Plain async functions that

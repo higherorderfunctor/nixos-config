@@ -18,7 +18,7 @@ import {
   HttpApiGroup,
 } from "@effect/platform"
 import { NodeHttpClient } from "@effect/platform-node"
-import { EmbeddingError } from "./KiroContextError.js"
+import { EmbeddingError } from "../KiroContextError.js"
 
 // ---------------------------------------------------------------------------
 // Schemas — model the real Ollama API shapes honestly

@@ -18,9 +18,9 @@ import { readdir, readFile } from "node:fs/promises"
 import { join } from "node:path"
 import { createHash } from "node:crypto"
 import { parse } from "yaml"
-import { EmbeddingService } from "./Embedding.js"
-import { InstructionRepo, type UpsertInput } from "./InstructionRepo.js"
-import { LoaderError } from "./KiroContextError.js"
+import { EmbeddingService } from "../embedding/index.js"
+import { InstructionRepo, type UpsertInput } from "./Repo.js"
+import { LoaderError } from "../KiroContextError.js"
 
 // ---------------------------------------------------------------------------
 // Helpers
