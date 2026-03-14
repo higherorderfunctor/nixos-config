@@ -235,7 +235,8 @@ Building workflows by hand doesn't scale. Each workflow needs decomposition into
 - **UC-MW-13**: Manual audit trigger — "optimize all workflows in this repo." Standalone user-initiated entry point. Scans all workflows for instruction bloat, spaghetti, and DRY violations. Separate from per-workflow optimization during create/update.
 - **UC-MW-14**: Workflows that call meta-workflow (like repo-analysis producing coding workflows) can re-optimize their FULL parent workflow scope but NOT all workflows in the repo. Meta-workflow bakes this scoped optimization into the calling workflow at design time.
 - **UC-MW-15**: Git commit strategy — when meta-workflow produces file changes, use small reviewable stacked commits (git-branchless style). Each commit is one logical change, reviewable in isolation. Think Graphite stacked PRs without the PRs — just the commit discipline. This applies to all meta-workflow outputs: instructions, pipeline definitions, trigger artifacts.
-- **UC-MW-16**: Import/export workflows to filesystem for Nix reproducibility. Every workflow must be reconstructable from files on disk — a fresh `home-manager switch` on a new system should be able to load all workflows into a fresh DB. Meta-workflow must update these files whenever a workflow is created or updated. **Open question: do we need to export vector embeddings, or can we re-embed from instruction text at load time?** Embeddings are deterministic (same model + text = same vector), so re-embedding is likely sufficient, but: (a) model version changes could shift vectors, (b) re-embedding many instructions on first boot could be slow, (c) vector similarity may drift if model updates. Needs investigation.
+- **UC-MW-16**: Import/export workflows to filesystem for Nix reproducibility. Every workflow must be reconstructable from files on disk — a fresh `home-manager switch` on a new system should be able to load all workflows into a fresh DB. Meta-workflow must update these files whenever a workflow is created or updated — including when updating itself. **Decision: re-embed at load time, don't export vectors.** Vectors are derived data (deterministic given same model + text). Export only instruction text + OPA metadata + content_hash as YAML. On load, compare content_hash — only re-embed what changed. Pin nomic-embed-text model version to prevent drift. At our scale (~1K instructions), full re-embed takes ~8 seconds via local Ollama.
+- **UC-MW-17**: Self-updating filesystem export — when meta-workflow updates itself (adding blocks, refining instructions), it must also update its own YAML export files in the repo so the init/seed files stay in sync with the DB state. This is the dogfooding case: meta-workflow's author/wire blocks write to DB AND export to `workflows/meta-workflow/`.
 - _(Add more use cases here as they emerge)_
 
 ### Description
@@ -602,18 +603,35 @@ Built the core retrieval pipeline:
 - No research, no optimize, no decompose, no promote — added incrementally
 - All file changes use small reviewable stacked commits (UC-MW-15)
 
-#### Filesystem Export Format (UC-MW-16)
-Workflows must be reconstructable from files on disk for Nix reproducibility. A fresh system runs `home-manager switch` → kiro-cortex starts → loads workflow definitions from disk → seeds DB.
+#### Filesystem Export Format (UC-MW-16, UC-MW-17)
+Workflows are reconstructable from YAML files on disk for Nix reproducibility. A fresh system runs `home-manager switch` → kiro-cortex starts → reads YAML → re-embeds via Ollama → seeds DB.
 
-Export includes per workflow:
-- Instructions (text + OPA metadata) — file on disk, re-embedded at load time
-- Pipeline definition (block order, conditions, routing) — file on disk
-- OPA policies (Rego rules) — already files in `policies/`
-- Block registrations — code in `src/blocks/`, no export needed
+**Decision: re-embed, don't export vectors.** Vectors are derived data (same model + text = same vector). Export only source data:
 
-**Open question**: Vector embeddings — export or re-embed? Embeddings are deterministic (same model + text = same vector), so re-embedding is likely sufficient. But model version drift and first-boot latency need investigation. Track as a decision to make during 4.2 when we understand the embedding pipeline better.
+```
+workflows/
+  meta-workflow/
+    pipeline.yaml              # block order, conditions, routing
+    instructions/
+      route.yaml               # text + OPA metadata + content_hash
+      interview.yaml
+      author.yaml
+      wire.yaml
+  # future workflows added here by meta-workflow
+```
 
-**File format**: TBD — likely YAML or JSON with instruction text + metadata. Investigate during 4.4.
+Each instruction YAML: `id`, `text`, `metadata` (agent_role, task_type, domain, repo), `content_hash` (MD5 of text).
+
+**Load sequence** (kiro-cortex startup):
+1. Read all workflow YAML from `workflows/` directory
+2. For each instruction: check DB for matching `content_hash`
+3. Match → skip. No match → embed via Ollama → insert/update DB
+4. Pipeline definitions: upsert from `pipeline.yaml`
+5. OPA policies: already files in `policies/`, loaded by OPA directly
+
+**Model version pinning**: Pin `nomic-embed-text` to specific tag (not `:latest`). Track `model_version` in DB. On model upgrade, re-embed everything (~8 sec at 1K instructions).
+
+**Self-updating** (UC-MW-17): When meta-workflow updates itself, author/wire blocks write to DB AND update `workflows/meta-workflow/` YAML files. User commits changes to git.
 
 #### 4.5+: Incremental via Meta-Workflow
 Each is a sub-phase added by using meta-workflow's update capability (UC-MW-2). User relaunches kiro between each. Order flexible based on what's most useful:
