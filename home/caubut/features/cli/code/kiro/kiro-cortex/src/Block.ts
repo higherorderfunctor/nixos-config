@@ -1,59 +1,138 @@
-// --- OPA Context ---
+/**
+ * @module Block
+ * Core type definitions for the block/pipeline model.
+ *
+ * ARCH: Blocks are typed functions, NOT Effect.Services. Services are for
+ * infrastructure (DB, OPA, Embedding). Blocks are domain logic that may use
+ * services internally via Effect.runPromise.
+ *
+ * ARCH: All types are generic over pipeline state `S`. Each pipeline defines
+ * its own state shape, and blocks are typed to their pipeline's state.
+ */
 
+// ---------------------------------------------------------------------------
+// OPA Context — declares what instructions a block needs
+// ---------------------------------------------------------------------------
+
+/**
+ * OPA context declaration for a block. Sent to OPA scoping endpoint to
+ * determine which instructions this block is allowed to see.
+ *
+ * @example
+ * ```ts
+ * { agent_role: "workflow-builder", task_type: "authoring", domain: "meta" }
+ * ```
+ */
 export interface OpaContext {
+  /** Role the block operates as (e.g., "workflow-builder", "analyst"). */
   readonly agent_role: string
+  /** Type of task the block performs (e.g., "routing", "authoring", "analysis"). */
   readonly task_type: string
+  /** Knowledge domain the block operates in (e.g., "meta", "effect", "repo"). */
   readonly domain: string
 }
 
-// --- Block Definition ---
+// ---------------------------------------------------------------------------
+// Block Definition — a single executable step in a pipeline
+// ---------------------------------------------------------------------------
 
+/**
+ * A block is a named, tagged, OPA-scoped function that transforms pipeline state.
+ * Generic over `S` — the pipeline's state type.
+ *
+ * ARCH: Blocks are LangGraph node functions. The block executor wraps them to
+ * inject OPA-scoped instructions into state as `_context` before execution.
+ *
+ * @typeParam S - Pipeline state type. Each pipeline defines its own shape.
+ */
 export interface BlockDef<S> {
+  /** Unique identifier, used as LangGraph node name and YAML filename. */
   readonly id: string
+  /** Human-readable name for display and search. */
   readonly name: string
+  /** What this block does — also used as the embedding query for instruction search. */
   readonly description: string
+  /** Searchable tags for BlockRegistry discovery. */
   readonly tags: ReadonlyArray<string>
+  /** OPA context — determines which instructions this block receives. */
   readonly opa: OpaContext
+  /** Execute the block, returning partial state updates. */
   readonly execute: (state: S) => Promise<Partial<S>>
 }
 
-// --- Pipeline Definition ---
+// ---------------------------------------------------------------------------
+// Pipeline Definition — ordered sequence of blocks
+// ---------------------------------------------------------------------------
 
+/** Conditional routing target for branching pipelines. */
 export interface ConditionalNext {
+  /** Condition expression evaluated against state. */
   readonly condition: string
+  /** Block to route to if condition is true. */
   readonly block_id: string
 }
 
+/** A single step in a pipeline — references a block by ID with optional routing. */
 export interface PipelineStep {
+  /** ID of the block to execute at this step. */
   readonly block_id: string
+  /** Optional condition for whether this step executes. */
   readonly condition?: string
+  /** Next step: string for linear, array for conditional branching. */
   readonly next?: string | ReadonlyArray<ConditionalNext>
 }
 
+/**
+ * A pipeline is an ordered sequence of blocks with routing logic.
+ * Generic over `S` — all blocks in the pipeline share this state type.
+ *
+ * ARCH: PipelineDef is the declarative description. PipelineExecutor builds
+ * a LangGraph StateGraph from it at runtime.
+ */
 export interface PipelineDef<S> {
+  /** Unique identifier for this pipeline. */
   readonly id: string
+  /** Human-readable name. */
   readonly name: string
+  /** What this pipeline does. */
   readonly description: string
+  /** Ordered steps — each references a block by ID. */
   readonly steps: ReadonlyArray<PipelineStep>
+  /** Default state values before first block executes. */
   readonly initial_state: Partial<S>
 }
 
-// --- Export Types (YAML shapes for UC-MW-16) ---
+// ---------------------------------------------------------------------------
+// Export Types — YAML shapes for Nix reproducibility (UC-MW-16)
+// ---------------------------------------------------------------------------
 
+/**
+ * YAML export shape for a single instruction.
+ * ARCH: Vectors are NOT exported — they're re-embedded at load time from the
+ * same model, ensuring consistency. Only source data is persisted to disk.
+ */
 export interface InstructionExport {
+  /** Instruction identifier (maps to deterministic UUID in DB). */
   readonly id: string
+  /** The instruction text that gets injected into block context. */
   readonly text: string
+  /** OPA metadata — determines which blocks can see this instruction. */
   readonly metadata: {
     readonly agent_role: string
     readonly task_type: string
     readonly domain: string
     readonly repo: string | null
   }
+  /** MD5 of text field — used for change detection during YAML → DB loading. */
   readonly content_hash: string
 }
 
+/** YAML export shape for a pipeline definition. */
 export interface PipelineExport {
+  /** Pipeline identifier. */
   readonly id: string
+  /** Human-readable name. */
   readonly name: string
+  /** Ordered steps with routing. */
   readonly steps: ReadonlyArray<PipelineStep>
 }
