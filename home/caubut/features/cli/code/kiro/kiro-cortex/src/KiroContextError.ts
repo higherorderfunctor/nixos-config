@@ -19,3 +19,8 @@ export class InstructionError extends Schema.TaggedError<InstructionError>()(
   "InstructionError",
   { message: Schema.String },
 ) {}
+
+export class LoaderError extends Schema.TaggedError<LoaderError>()(
+  "LoaderError",
+  { message: Schema.String },
+) {}

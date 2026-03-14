@@ -9,6 +9,7 @@ import { BlockRegistry } from "./BlockRegistry.js"
 import { createContextWorkflow, type ContextState } from "./Workflow.js"
 import { TestError } from "./KiroContextError.js"
 import { buildMetaWorkflow } from "./meta-workflow/graph.js"
+import { loadInstructions } from "./InstructionLoader.js"
 import { Command } from "@langchain/langgraph"
 
 // --- Schemas ---
@@ -240,4 +241,14 @@ const HttpLive = HttpApiBuilder.serve(HttpMiddleware.logger).pipe(
   Layer.provide(BunPlatform.BunHttpServer.layer({ port: 3100 })),
 )
 
-HttpLive.pipe(Layer.launch, BunPlatform.BunRuntime.runMain)
+const LoaderDeps = Layer.mergeAll(
+  EmbeddingService.Default,
+  InstructionRepo.Default,
+).pipe(Layer.provide(SqlLive))
+
+const main = loadInstructions.pipe(
+  Effect.provide(LoaderDeps),
+  Effect.andThen(Layer.launch(HttpLive)),
+)
+
+BunPlatform.BunRuntime.runMain(main)
