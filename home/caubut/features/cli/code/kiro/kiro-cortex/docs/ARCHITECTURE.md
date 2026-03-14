@@ -737,6 +737,7 @@ Each is a sub-phase added by using meta-workflow's update capability (UC-MW-2). 
 - **programmatic** mode in route — UC-MW-4/12 short-circuit path
 - OPA per-block injection (infrastructure upgrade)
 - Kiro headless service (when autonomous execution needed)
+- Explore replacing zod with Effect Schema → JSON Schema for MCP tool definitions (remove zod dependency)
 
 ### Phase 5: Repo-Analysis (Built by Meta-Workflow)
 - Use meta-workflow to build repo-analysis as first generated workflow

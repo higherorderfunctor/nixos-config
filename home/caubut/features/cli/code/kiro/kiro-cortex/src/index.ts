@@ -5,6 +5,7 @@ import { SqlLive } from "./Sql.js"
 import { OpaService } from "./Opa.js"
 import { EmbeddingService } from "./Embedding.js"
 import { InstructionRepo } from "./InstructionRepo.js"
+import { BlockRegistry } from "./BlockRegistry.js"
 import { createContextWorkflow, type ContextState } from "./Workflow.js"
 import { TestError } from "./KiroContextError.js"
 
@@ -46,6 +47,19 @@ const ContextEndpoint = HttpApiEndpoint.make("POST")("context", "/context")
   .setPayload(ContextRequest)
   .addError(TestError, { status: 500 })
 
+// --- Workflow Endpoints ---
+
+const WorkflowItem = Schema.Struct({
+  id: Schema.String,
+  name: Schema.String,
+  description: Schema.String,
+})
+
+const WorkflowListResponse = Schema.Array(WorkflowItem)
+
+const WorkflowListEndpoint = HttpApiEndpoint.make("GET")("list", "/workflows")
+  .addSuccess(WorkflowListResponse)
+
 // --- Groups ---
 
 class HealthGroup extends HttpApiGroup.make("health")
@@ -56,9 +70,14 @@ class ContextGroup extends HttpApiGroup.make("context")
   .add(ContextEndpoint)
 {}
 
+class WorkflowGroup extends HttpApiGroup.make("workflows")
+  .add(WorkflowListEndpoint)
+{}
+
 class CortexApi extends HttpApi.make("cortex")
   .add(HealthGroup)
   .add(ContextGroup)
+  .add(WorkflowGroup)
 {}
 
 // --- Handlers ---
@@ -146,8 +165,19 @@ const ContextApiLive = HttpApiBuilder.group(CortexApi, "context", (handlers) =>
 
 // --- Server ---
 
+const WorkflowApiLive = HttpApiBuilder.group(CortexApi, "workflows", (handlers) =>
+  handlers.handle("list", () =>
+    Effect.gen(function* () {
+      const registry = yield* BlockRegistry
+      // Return pipelines (none registered yet — populated in 4.4)
+      void registry
+      return [] as ReadonlyArray<{ id: string; name: string; description: string }>
+    }),
+  ),
+)
+
 const ApiLive = HttpApiBuilder.api(CortexApi).pipe(
-  Layer.provide(Layer.mergeAll(HealthApiLive, ContextApiLive)),
+  Layer.provide(Layer.mergeAll(HealthApiLive, ContextApiLive, WorkflowApiLive)),
 )
 
 const HttpLive = HttpApiBuilder.serve(HttpMiddleware.logger).pipe(
@@ -155,6 +185,7 @@ const HttpLive = HttpApiBuilder.serve(HttpMiddleware.logger).pipe(
   Layer.provide(OpaService.Default),
   Layer.provide(EmbeddingService.Default),
   Layer.provide(InstructionRepo.Default),
+  Layer.provide(BlockRegistry.Default),
   Layer.provide(SqlLive),
   HttpServer.withLogAddress,
   Layer.provide(BunPlatform.BunHttpServer.layer({ port: 3100 })),
