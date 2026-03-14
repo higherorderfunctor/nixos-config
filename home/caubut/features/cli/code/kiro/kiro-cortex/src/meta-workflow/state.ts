@@ -9,28 +9,57 @@
 
 import { Annotation } from "@langchain/langgraph"
 
+// ---------------------------------------------------------------------------
+// Supporting types
+// ---------------------------------------------------------------------------
+
 /** Specification for a single block within a workflow being designed. */
 export interface BlockSpec {
   readonly id: string
   readonly name: string
   readonly description: string
+  /**
+   * Execution environment recommendation (UC-MW-19).
+   * - inline: simple transforms, no LLM reasoning needed
+   * - subagent: autonomous LLM work with fresh context
+   * - ai-orchestrated: interactive, judgment-based sequencing
+   */
+  readonly execution_env?: "inline" | "subagent" | "ai-orchestrated"
 }
+
+/**
+ * Structured input for programmatic calls (UC-MW-4, UC-MW-12).
+ * Skips interview — caller provides all required context directly.
+ *
+ * CONSTRAINT: Must include problem_statement AND use_cases or the
+ * meta-workflow will fail (UC-MW-12).
+ */
+export interface StructuredInput {
+  readonly problem_statement: string
+  readonly use_cases: ReadonlyArray<string>
+  readonly proposed_blocks: ReadonlyArray<BlockSpec>
+}
+
+// ---------------------------------------------------------------------------
+// State annotation
+// ---------------------------------------------------------------------------
 
 /**
  * LangGraph state annotation for the meta-workflow.
  *
- * ARCH: This state flows through all 4 blocks (route → interview → author → wire).
- * The `instructions` field holds authored instruction text per block ID — this is
- * the OUTPUT of the author block, not the OPA-injected `_context`.
+ * ARCH: This state flows through all blocks. Fields are accumulated as the
+ * pipeline progresses — each block reads what it needs and writes its outputs.
  */
 export const MetaWorkflowState = Annotation.Root({
-  /** Workflow operation mode: build new, update existing, or refine instructions. */
-  mode: Annotation<"build" | "update" | "refine">,
+  // --- Core fields (from 4.4) ---
+
+  /** Workflow operation mode. */
+  mode: Annotation<"build" | "update" | "refine" | "audit" | "programmatic">,
   /** Name of the workflow being designed (used as directory name). */
   workflow_name: Annotation<string>,
   /** Human-readable description of the workflow's purpose. */
   workflow_description: Annotation<string>,
-  /** Block specifications gathered during interview. */
+  /** Block specifications — set by interview (manual) or decompose (proposed). */
   blocks: Annotation<ReadonlyArray<BlockSpec>>,
   /** Authored instruction text per block ID (output of author block). */
   instructions: Annotation<Record<string, string>>,
@@ -38,6 +67,30 @@ export const MetaWorkflowState = Annotation.Root({
   pipeline_yaml: Annotation<string>,
   /** Error message if any block fails. */
   error: Annotation<string | null>,
+
+  // --- Research fields (4.5) ---
+
+  /** Accumulated research findings from external search. */
+  research_findings: Annotation<string>,
+  /** Whether interview wants research before proceeding. */
+  needs_research: Annotation<boolean>,
+
+  // --- Decompose / optimize fields (4.5) ---
+
+  /** Optimization report — issues found by optimize block. */
+  optimization_report: Annotation<string>,
+  /** Whether optimize recommends redesign (loops back to decompose). */
+  needs_redesign: Annotation<boolean>,
+
+  // --- Promote fields (4.5) ---
+
+  /** File paths of generated trigger artifacts (SKILL.md, agent config). */
+  promoted_artifacts: Annotation<ReadonlyArray<string>>,
+
+  // --- Programmatic mode (UC-MW-4/12) ---
+
+  /** Structured input for programmatic calls — skips interview. */
+  structured_input: Annotation<StructuredInput | null>,
 })
 
 /** TypeScript type for the meta-workflow state. */
