@@ -237,6 +237,7 @@ Building workflows by hand doesn't scale. Each workflow needs decomposition into
 - **UC-MW-15**: Git commit strategy — stacked commits are a **reusable sub-workflow**, not just a convention. Any workflow that produces file changes (meta-workflow, repo-analysis, future workflows) composes in the stacked-commit sub-workflow. It handles: stage changes → create one logical commit per change → reviewable in isolation (git-branchless/Graphite style). Meta-workflow should produce this as a reusable block/sub-workflow early, since it's needed by meta-workflow itself, repo-analysis, and any future workflow that writes files.
 - **UC-MW-16**: Import/export workflows to filesystem for Nix reproducibility. Every workflow must be reconstructable from files on disk — a fresh `home-manager switch` on a new system should be able to load all workflows into a fresh DB. Meta-workflow must update these files whenever a workflow is created or updated — including when updating itself. **Decision: re-embed at load time, don't export vectors.** Vectors are derived data (deterministic given same model + text). Export only instruction text + OPA metadata + content_hash as YAML. On load, compare content_hash — only re-embed what changed. Pin nomic-embed-text model version to prevent drift. At our scale (~1K instructions), full re-embed takes ~8 seconds via local Ollama.
 - **UC-MW-17**: Self-updating filesystem export — when meta-workflow updates itself (adding blocks, refining instructions), it must also update its own YAML export files in the repo so the init/seed files stay in sync with the DB state. This is the dogfooding case: meta-workflow's author/wire blocks write to DB AND export to `workflows/meta-workflow/`.
+- **UC-MW-18**: Reusable sub-workflows are first-class on disk. Blocks/sub-workflows designed for cross-workflow reuse (stacked-commits, historical-tracking, etc.) live in a dedicated `shared/` directory — separate from any specific workflow. This makes reusable patterns visually distinct from workflow-specific blocks. In code, reusable blocks get their own files under `src/shared/`, not nested inside the workflow that first uses them. On the YAML export side, `workflows/shared/` holds their instructions and pipeline definitions. Any workflow can compose them in.
 - _(Add more use cases here as they emerge)_
 
 ### Description
@@ -255,7 +256,7 @@ The meta-workflow is a hand-built collection of tools for the workflow lifecycle
 
 ### Reusable Patterns (Functional Composition)
 
-The meta-workflow composes generic patterns into workflows. These are abstract, configurable capabilities — not workflow-specific logic.
+The meta-workflow composes generic patterns into workflows. These are abstract, configurable capabilities — not workflow-specific logic. Reusable patterns are first-class on disk (UC-MW-18): they live in `src/shared/` in code and `workflows/shared/` in YAML exports, visually distinct from workflow-specific blocks.
 
 **Historical Tracking** — for any workflow whose context drifts over time. Tracks where instructions came from and how they evolved. The specific strategy (version, migrate, deprecate, or combination) is configured per-workflow during the interview. Examples:
 - repo-analysis: track convention changes so old code patterns are understood in context
@@ -672,7 +673,7 @@ Built the core retrieval pipeline:
 - `OpaContext` — agent_role, task_type, domain
 - `InstructionExport` / `PipelineExport` — YAML export shapes with content_hash
 - `BlockRegistry` — Effect.Service, in-memory Map, search by tag/name/description
-- `src/blocks/{name}.ts` convention
+- Code convention: `src/{workflow-name}/` for workflow-specific blocks, `src/shared/` for reusable sub-workflows (UC-MW-18)
 - Migration: add `content_hash` + `model_version` columns to instructions table
 - No execution yet — just the type system, registry, and migration
 
@@ -696,6 +697,8 @@ Built the core retrieval pipeline:
 - Supports: build (basic), update (basic), refine
 - No research, no optimize, no decompose, no promote — added incrementally
 - All file changes use small reviewable stacked commits (UC-MW-15)
+- Hand-wired StateGraph (not via `buildPipeline` — this is the bootstrap)
+- Code structure: `src/meta-workflow/` for workflow-specific blocks, `src/shared/` for reusable sub-workflows (UC-MW-18)
 
 #### Filesystem Export Format (UC-MW-16, UC-MW-17)
 Workflows are reconstructable from YAML files on disk for Nix reproducibility. A fresh system runs `home-manager switch` → kiro-cortex starts → reads YAML → re-embeds via Ollama → seeds DB.
@@ -704,6 +707,13 @@ Workflows are reconstructable from YAML files on disk for Nix reproducibility. A
 
 ```
 workflows/
+  shared/                        # reusable sub-workflows (UC-MW-18)
+    stacked-commits/             # any workflow that writes files
+      pipeline.yaml
+      instructions/
+        stage.yaml
+        commit.yaml
+    # historical-tracking/, etc. added as patterns emerge
   meta-workflow/
     pipeline.yaml              # block order, conditions, routing
     instructions/
