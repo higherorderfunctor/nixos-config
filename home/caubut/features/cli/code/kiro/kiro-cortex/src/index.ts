@@ -17,7 +17,7 @@ import * as BunPlatform from "@effect/platform-bun"
 import { Effect, Layer, Schema } from "effect"
 import { SqlLive } from "./Sql.js"
 import { OpaClient, OpaApiError, layer as opaLayer } from "./opa/index.js"
-import { EmbeddingService } from "./embedding/index.js"
+import { embed as embedText, layer as embeddingLayer } from "./embedding/index.js"
 import { InstructionRepo } from "./instruction/index.js"
 import { BlockRegistry } from "./workflow/index.js"
 import { createContextWorkflow, type ContextState } from "./workflow/index.js"
@@ -149,9 +149,8 @@ const ContextApiLive = HttpApiBuilder.group(CortexApi, "context", (handlers) =>
       }
 
       // --- Step 2: Embed query via Ollama ---
-      const embedding = yield* EmbeddingService
-      const queryVec = yield* embedding.embed(payload.query).pipe(
-        Effect.mapError((e) => new TestError({ message: e.message })),
+      const queryVec = yield* embedText(payload.query).pipe(
+        Effect.mapError((e) => new TestError({ message: String(e) })),
       )
 
       // --- Step 3: Search pgvector for relevant instructions ---
@@ -256,7 +255,7 @@ const ApiLive = HttpApiBuilder.api(CortexApi).pipe(
 const HttpLive = HttpApiBuilder.serve(HttpMiddleware.logger).pipe(
   Layer.provide(ApiLive),
   Layer.provide(opaLayer),
-  Layer.provide(EmbeddingService.Default),
+  Layer.provide(embeddingLayer),
   Layer.provide(InstructionRepo.Default),
   Layer.provide(BlockRegistry.Default),
   Layer.provide(SqlLive),
@@ -267,7 +266,7 @@ const HttpLive = HttpApiBuilder.serve(HttpMiddleware.logger).pipe(
 // ARCH: Loader runs before server — reads seed YAML, embeds, upserts to pgvector.
 // Uses separate service instances (acceptable for one-time startup task).
 const LoaderDeps = Layer.mergeAll(
-  EmbeddingService.Default,
+  embeddingLayer,
   InstructionRepo.Default,
 ).pipe(Layer.provide(SqlLive))
 

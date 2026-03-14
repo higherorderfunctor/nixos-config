@@ -18,7 +18,7 @@ import { readdir, readFile } from "node:fs/promises"
 import { join } from "node:path"
 import { createHash } from "node:crypto"
 import { parse } from "yaml"
-import { EmbeddingService } from "../embedding/index.js"
+import { embed as embedText } from "../embedding/index.js"
 import { InstructionRepo, type UpsertInput } from "./Repo.js"
 import { LoaderError } from "../KiroContextError.js"
 
@@ -104,11 +104,10 @@ const parseYaml = (path: string) =>
  * 4. Embed text via Ollama (nomic-embed-text, 768-dim)
  * 5. Upsert into pgvector (skips if content_hash unchanged)
  *
- * ARCH: Requires EmbeddingService and InstructionRepo in the Effect context.
+ * ARCH: Requires EmbeddingClient and InstructionRepo in the Effect context.
  * Called from index.ts before server launch.
  */
 export const loadInstructions = Effect.gen(function* () {
-  const embedding = yield* EmbeddingService
   const repo = yield* InstructionRepo
 
   const workflowsDir = join(import.meta.dir, "..", "workflows")
@@ -120,8 +119,8 @@ export const loadInstructions = Effect.gen(function* () {
     const contentHash = md5(doc.text)
     const id = toUuid(doc.id)
 
-    const vec = yield* embedding.embed(doc.text).pipe(
-      Effect.mapError((e) => new LoaderError({ message: e.message })),
+    const vec = yield* embedText(doc.text).pipe(
+      Effect.mapError((e) => new LoaderError({ message: String(e) })),
     )
 
     // CONSTRAINT: YAML metadata uses singular (agent_role, task_type) but DB

@@ -3,16 +3,19 @@
  * Text-to-vector embedding via Ollama for pgvector similarity search.
  *
  * Provides a typed HTTP client for Ollama's /api/embed endpoint with
- * HttpApi + Schema validation. Converts instruction text into 768-dimensional
- * vectors (nomic-embed-text model) for storage and retrieval.
+ * HttpApi + Schema validation. Schema.transform unwraps Ollama's batch response
+ * to a single 768-dimensional vector (nomic-embed-text model).
  *
  * Public API:
- * - {@link EmbeddingService} — Effect.Service wrapping the HttpApi client
+ * - {@link EmbeddingClient} — Context.Tag for the HttpApi-derived client
+ * - {@link layer} — Layer providing EmbeddingClient with NodeHttpClient
+ * - {@link embed} — convenience function encapsulating model name
+ * - {@link EmbeddingApiError} — TaggedError for Ollama error responses
  *
- * Used by: instruction/Loader (embedding at ingest time)
+ * Used by: instruction/Loader (embedding at ingest time), index.ts (query embedding)
  *
  * EXTERNAL: Ollama server expected on localhost:11434
  * CONSTRAINT: Vector dimension 768 (nomic-embed-text). Changing model requires re-embedding.
  */
 
-export { EmbeddingService } from "./Embedding.js"
+export { EmbeddingClient, EmbeddingApiError, layer, embed } from "./Embedding.js"
