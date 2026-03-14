@@ -1009,20 +1009,29 @@ Each instruction YAML: `id`, `text`, `metadata` (agent_role, task_type, domain, 
 - ✅ Build block executor wrapper (OPA scoping query → pgvector search → inject → execute)
 - Blocks consume their seed instructions at runtime — closes the OPA loop
 
-#### 4.5+: Incremental via Meta-Workflow
-Each is a sub-phase added by using meta-workflow's update capability (UC-MW-2). User relaunches kiro between each. Order flexible based on what's most useful:
-- **decompose** block — propose block structure (currently user provides manually)
-- **promote** block — generate SKILL.md + trigger artifacts (currently manual)
-- **research** block — external search during design
-- **optimize** block — instruction bloat, spaghetti, DRY checks
-- **audit** mode in route — UC-MW-13 manual trigger
-- **programmatic** mode in route — UC-MW-4/12 short-circuit path
+#### 4.5: Meta-Workflow Completion ✅
+Added remaining blocks to make meta-workflow fully functional:
+- **decompose** — registry search for reuse, block proposal via interrupt, programmatic mode (UC-MW-4/12), execution_env recommendation (UC-MW-19)
+- **research** — interrupt-based external knowledge gathering (UC-MW-7), pass-through when not needed, feeds back into interview loop
+- **optimize** — rule-based bloat (UC-MW-8), spaghetti (UC-MW-9), DRY (UC-MW-10) checks with HITL approval, needs_redesign loop
+- **promote** — generates SKILL.md + agent config JSON (UC-MW-20) with HITL artifact selection
+- Updated route with audit (UC-MW-13) and programmatic (UC-MW-4) modes
+- Updated interview with research loop support and audit mode
+- Full graph wiring: interview↔research loop, decompose→optimize→author with redesign loop
+
+#### 4.5+: Incremental Enhancements
+Remaining items to add incrementally as needed:
+- **decompose** block — ✅ (4.5)
+- **promote** block — ✅ (4.5)
+- **research** block — ✅ (4.5)
+- **optimize** block — ✅ (4.5)
+- **audit** mode in route — ✅ (4.5)
+- **programmatic** mode in route — ✅ (4.5)
 - `policies/isolation.rego` — repo boundary enforcement
 - Subagent integration — custom agent configs per workflow (UC-MW-20), cortex-worker patterns
 - Hooks integration — AgentSpawn (OPA user profile injection), PreToolUse (access control gate) (UC-MW-23)
 - AI-orchestrated block convention — structured output format (UC-MW-21)
 - Agent config generation — meta-workflow produces `.kiro/agents/*.json` for workflow-specific agents
-- Explore replacing zod 4 with Effect Schema → JSON Schema for MCP tool definitions
 
 ### Phase 5: Repo-Analysis (Built by Meta-Workflow)
 - Use meta-workflow to build repo-analysis as first generated workflow
@@ -1038,6 +1047,7 @@ Each is a sub-phase added by using meta-workflow's update capability (UC-MW-2). 
 - OPA policy viewer
 - Knowledge graph visualization
 - No HITL interactions — all workflow interaction via kiro-cli
+- Explore replacing zod 4 with Effect Schema → JSON Schema for MCP tool definitions
 
 ## Effect-TS Patterns
 
