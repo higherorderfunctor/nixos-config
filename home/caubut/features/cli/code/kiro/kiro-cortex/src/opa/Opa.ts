@@ -1,19 +1,21 @@
 /**
  * @module Opa
- * OPA (Open Policy Agent) service for access control and per-block instruction scoping.
+ * OPA (Open Policy Agent) typed HTTP client for access control and instruction scoping.
  *
  * ARCH: Uses HttpApi + Schema to define the OPA REST API shape, then derives a
- * fully typed client via HttpApiClient.make(). This eliminates `as any` casts and
- * gives compile-time + runtime validation on both request and response bodies.
+ * fully typed client via HttpApiClient.make(). Schema.transform unwraps OPA's
+ * `{ result: T }` envelope at the schema level — callers get domain types directly.
  *
- * EXTERNAL: OPA wraps all query results in `{ result: T }`. Our response schemas
- * model this wrapper honestly — the service methods unwrap `.result` for callers.
+ * ARCH: Uses Context.Tag + Layer.effect (not Effect.Service) because this is a
+ * pure HTTP client derived from HttpApiClient.make — no custom logic needed.
  *
- * EXTERNAL: OPA expects input as `{ input: T }` in the request body. Our payload
- * schemas model this wrapper so the client sends the correct shape.
+ * EXTERNAL: OPA wraps all query results in `{ result: T }` and expects input as
+ * `{ input: T }`. Error responses follow `{ code, message, errors? }` shape.
+ *
+ * EXTERNAL: OPA server expected on localhost:8181.
  */
 
-import { Effect, Schema } from "effect"
+import { Context, Effect, Layer, Schema } from "effect"
 import {
   HttpApi,
   HttpApiClient,
@@ -21,40 +23,56 @@ import {
   HttpApiGroup,
 } from "@effect/platform"
 import { NodeHttpClient } from "@effect/platform-node"
-import { OpaError } from "../KiroContextError.js"
 
 // ---------------------------------------------------------------------------
-// Schemas — model the real OPA API shapes honestly
+// Error schema — models OPA's documented error response shape
 // ---------------------------------------------------------------------------
 
-/** Access control query sent to OPA. Wrapped in `{ input: ... }` per OPA convention. */
-const OpaQueryInput = Schema.Struct({
-  input: Schema.Struct({
-    user_id: Schema.String,
-    query: Schema.String,
-  }),
+/** EXTERNAL: OPA error detail with optional source location. */
+const OpaErrorDetail = Schema.Struct({
+  code: Schema.String,
+  message: Schema.String,
+  location: Schema.optional(Schema.Struct({
+    file: Schema.String,
+    row: Schema.Number,
+    col: Schema.Number,
+  })),
 })
+
+/**
+ * OPA API error with `_tag` for union discrimination in Effect's error channel.
+ *
+ * EXTERNAL: OPA returns `{ code, message, errors? }` on 400/500 status codes.
+ */
+export class OpaApiError extends Schema.TaggedError<OpaApiError>()("OpaApiError", {
+  code: Schema.String,
+  message: Schema.String,
+  errors: Schema.optional(Schema.Array(OpaErrorDetail)),
+}) {}
+
+/** EXTERNAL: Transform OPA's raw error JSON (no _tag) → OpaApiError (with _tag). */
+const OpaApiErrorFromWire = Schema.transform(
+  Schema.Struct({
+    code: Schema.String,
+    message: Schema.String,
+    errors: Schema.optional(Schema.Array(OpaErrorDetail)),
+  }),
+  Schema.typeSchema(OpaApiError),
+  {
+    decode: (wire) => new OpaApiError(wire),
+    encode: ({ code, message, errors }) => ({ code, message, errors }),
+  },
+)
+
+// ---------------------------------------------------------------------------
+// Success schemas — model OPA responses with envelope unwrapping
+// ---------------------------------------------------------------------------
 
 /** OPA access decision — allow/deny with reason. */
 export const OpaDecisionSchema = Schema.Struct({
   allowed: Schema.Boolean,
   denied: Schema.Boolean,
   reason: Schema.String,
-})
-
-/** OPA wraps results: `{ result: OpaDecision }`. */
-const OpaAccessResponse = Schema.Struct({
-  result: OpaDecisionSchema,
-})
-
-/** Per-block scoping query sent to OPA. Determines which instructions a block can see. */
-const ScopingPayload = Schema.Struct({
-  input: Schema.Struct({
-    agent_role: Schema.String,
-    task_type: Schema.String,
-    domain: Schema.String,
-    repo: Schema.NullOr(Schema.String),
-  }),
 })
 
 /** OPA scoping filters — translated to SQL WHERE clauses by the block executor. */
@@ -65,10 +83,28 @@ export const ScopingFiltersSchema = Schema.Struct({
   max_results: Schema.Number,
 })
 
-/** OPA wraps results: `{ result: ScopingFilters }`. */
-const OpaScopingResponse = Schema.Struct({
-  result: ScopingFiltersSchema,
-})
+/**
+ * EXTERNAL: Schema.transform unwraps OPA's `{ result: OpaDecision }` → `OpaDecision`.
+ * The HttpApiClient decodes the wire format and returns the domain type directly.
+ */
+const OpaAccessSuccess = Schema.transform(
+  Schema.Struct({ result: OpaDecisionSchema }),
+  OpaDecisionSchema,
+  {
+    decode: (wire) => wire.result,
+    encode: (domain) => ({ result: domain }),
+  },
+)
+
+/** EXTERNAL: Schema.transform unwraps `{ result: ScopingFilters }` → `ScopingFilters`. */
+const OpaScopingSuccess = Schema.transform(
+  Schema.Struct({ result: ScopingFiltersSchema }),
+  ScopingFiltersSchema,
+  {
+    decode: (wire) => wire.result,
+    encode: (domain) => ({ result: domain }),
+  },
+)
 
 // ---------------------------------------------------------------------------
 // Derived types — exported for use by callers
@@ -95,19 +131,39 @@ export type ScopingInput = {
 export type ScopingFilters = typeof ScopingFiltersSchema.Type
 
 // ---------------------------------------------------------------------------
-// HttpApi definition — describes the OPA REST API shape for client derivation
+// HttpApi definition
 // ---------------------------------------------------------------------------
 
 // CONSTRAINT: Endpoint paths must match OPA's data API convention:
 // /v1/data/{package_path}/{rule_name}
 
+const OpaQueryInput = Schema.Struct({
+  input: Schema.Struct({
+    user_id: Schema.String,
+    query: Schema.String,
+  }),
+})
+
+const ScopingPayload = Schema.Struct({
+  input: Schema.Struct({
+    agent_role: Schema.String,
+    task_type: Schema.String,
+    domain: Schema.String,
+    repo: Schema.NullOr(Schema.String),
+  }),
+})
+
 const AccessEndpoint = HttpApiEndpoint.post("evaluate")`/v1/data/cortex/access/decision`
   .setPayload(OpaQueryInput)
-  .addSuccess(OpaAccessResponse)
+  .addSuccess(OpaAccessSuccess)
+  .addError(OpaApiErrorFromWire, { status: 400 })
+  .addError(OpaApiErrorFromWire, { status: 500 })
 
 const ScopingEndpoint = HttpApiEndpoint.post("scope")`/v1/data/cortex/scoping/filters`
   .setPayload(ScopingPayload)
-  .addSuccess(OpaScopingResponse)
+  .addSuccess(OpaScopingSuccess)
+  .addError(OpaApiErrorFromWire, { status: 400 })
+  .addError(OpaApiErrorFromWire, { status: 500 })
 
 class OpaGroup extends HttpApiGroup.make("opa")
   .add(AccessEndpoint)
@@ -117,47 +173,29 @@ class OpaGroup extends HttpApiGroup.make("opa")
 class OpaApi extends HttpApi.make("opaApi").add(OpaGroup) {}
 
 // ---------------------------------------------------------------------------
-// Service — typed OPA client with unwrapped results
+// Context.Tag + Layer — typed OPA client
 // ---------------------------------------------------------------------------
 
 /**
- * OPA service providing access control and per-block instruction scoping.
- *
- * ARCH: Implemented as an Effect.Service so it can be provided via Layer
- * composition. The HttpApi client is created once during service construction
- * and reused for all queries.
+ * ARCH: HttpApiClient.make derives a fully typed client from the API definition.
+ * Schema.transform handles envelope unwrapping, .addError() handles error typing.
  */
-export class OpaService extends Effect.Service<OpaService>()("OpaService", {
-  dependencies: [NodeHttpClient.layer],
-  effect: Effect.gen(function* () {
-    // ARCH: HttpApiClient.make derives a fully typed client from the API definition.
-    // All request payloads are Schema-encoded, all responses are Schema-validated.
-    const client = yield* HttpApiClient.make(OpaApi, {
-      baseUrl: "http://localhost:8181",
-    })
+const make = HttpApiClient.make(OpaApi, {
+  baseUrl: "http://localhost:8181",
+})
 
-    /**
-     * Evaluate an access control query against OPA.
-     * @returns The access decision (allowed/denied/reason), unwrapped from OPA's result envelope.
-     */
-    const evaluate = (query: OpaQuery): Effect.Effect<OpaDecision, OpaError> =>
-      client.opa.evaluate({ payload: { input: query } }).pipe(
-        // EXTERNAL: OPA wraps in { result: ... }, unwrap for callers
-        Effect.map((response) => response.result),
-        Effect.mapError((error) => new OpaError({ message: String(error) })),
-      )
+/**
+ * OPA client tag for dependency injection.
+ *
+ * ARCH: Uses Context.Tag + Layer.effect (not Effect.Service) because this is a
+ * pure HTTP client derived from HttpApiClient.make — no custom logic needed.
+ */
+export class OpaClient extends Context.Tag("OpaClient")<
+  OpaClient,
+  Effect.Effect.Success<typeof make>
+>() {}
 
-    /**
-     * Query OPA for per-block instruction scoping filters.
-     * @returns Filtering criteria (allowed_domains, allowed_task_types, repo_filter, max_results).
-     */
-    const scope = (input: ScopingInput): Effect.Effect<ScopingFilters, OpaError> =>
-      client.opa.scope({ payload: { input } }).pipe(
-        // EXTERNAL: OPA wraps in { result: ... }, unwrap for callers
-        Effect.map((response) => response.result),
-        Effect.mapError((error) => new OpaError({ message: String(error) })),
-      )
-
-    return { evaluate, scope } as const
-  }),
-}) {}
+/** OPA client layer. Provides OpaClient with NodeHttpClient. */
+export const layer = Layer.effect(OpaClient, make).pipe(
+  Layer.provide(NodeHttpClient.layer),
+)

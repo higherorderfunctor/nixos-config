@@ -16,7 +16,7 @@ import { HttpApi, HttpApiBuilder, HttpApiEndpoint, HttpApiGroup, HttpMiddleware,
 import * as BunPlatform from "@effect/platform-bun"
 import { Effect, Layer, Schema } from "effect"
 import { SqlLive } from "./Sql.js"
-import { OpaService } from "./opa/index.js"
+import { OpaClient, OpaApiError, layer as opaLayer } from "./opa/index.js"
 import { EmbeddingService } from "./embedding/index.js"
 import { InstructionRepo } from "./instruction/index.js"
 import { BlockRegistry } from "./workflow/index.js"
@@ -133,11 +133,10 @@ const ContextApiLive = HttpApiBuilder.group(CortexApi, "context", (handlers) =>
   handlers.handle("context", ({ payload }) =>
     Effect.gen(function* () {
       // --- Step 1: OPA access control ---
-      const opa = yield* OpaService
-      const opaDecision = yield* opa.evaluate({
-        user_id: payload.user_id,
-        query: payload.query,
-      }).pipe(Effect.mapError((e) => new TestError({ message: e.message })))
+      const opa = yield* OpaClient
+      const opaDecision = yield* opa.opa.evaluate({
+        payload: { input: { user_id: payload.user_id, query: payload.query } },
+      }).pipe(Effect.mapError((e) => new TestError({ message: e instanceof OpaApiError ? e.message : String(e) })))
 
       if (!opaDecision.allowed) {
         return {
@@ -256,7 +255,7 @@ const ApiLive = HttpApiBuilder.api(CortexApi).pipe(
 
 const HttpLive = HttpApiBuilder.serve(HttpMiddleware.logger).pipe(
   Layer.provide(ApiLive),
-  Layer.provide(OpaService.Default),
+  Layer.provide(opaLayer),
   Layer.provide(EmbeddingService.Default),
   Layer.provide(InstructionRepo.Default),
   Layer.provide(BlockRegistry.Default),
