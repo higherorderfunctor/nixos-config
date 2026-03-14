@@ -47,3 +47,6 @@ export class BlockRegistry extends Effect.Service<BlockRegistry>()("BlockRegistr
     return { register, get, list, search } as const
   }),
 }) {}
+
+/** BlockRegistry layer alias for consistent `export const layer` convention. */
+export const layer = BlockRegistry.Default

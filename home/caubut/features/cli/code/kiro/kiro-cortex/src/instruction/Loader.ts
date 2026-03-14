@@ -20,7 +20,7 @@ import { createHash } from "node:crypto"
 import { parse } from "yaml"
 import { embed as embedText } from "../embedding/index.js"
 import { InstructionRepo, type UpsertInput } from "./Repo.js"
-import { LoaderError } from "../KiroContextError.js"
+import { LoaderError } from "./Error.js"
 
 // ---------------------------------------------------------------------------
 // Helpers

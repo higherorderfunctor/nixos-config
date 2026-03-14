@@ -18,13 +18,22 @@ import { Effect, Layer, Schema } from "effect"
 import { SqlLive } from "./Sql.js"
 import { OpaClient, OpaApiError, layer as opaLayer } from "./opa/index.js"
 import { embed as embedText, layer as embeddingLayer } from "./embedding/index.js"
-import { InstructionRepo } from "./instruction/index.js"
-import { BlockRegistry } from "./workflow/index.js"
+import { InstructionRepo, layer as instructionLayer } from "./instruction/index.js"
+import { BlockRegistry, registryLayer } from "./workflow/index.js"
 import { createContextWorkflow, type ContextState } from "./workflow/index.js"
-import { TestError } from "./KiroContextError.js"
 import { buildMetaWorkflow } from "./meta-workflow/graph.js"
 import { loadInstructions } from "./instruction/index.js"
 import { Command } from "@langchain/langgraph"
+
+// ---------------------------------------------------------------------------
+// Errors — co-located with the HTTP server that uses them
+// ---------------------------------------------------------------------------
+
+/** HTTP API handler errors (used by endpoint handlers). */
+class TestError extends Schema.TaggedError<TestError>()(
+  "TestError",
+  { message: Schema.String },
+) {}
 
 // ---------------------------------------------------------------------------
 // Schemas — request/response types for HTTP endpoints
@@ -256,8 +265,8 @@ const HttpLive = HttpApiBuilder.serve(HttpMiddleware.logger).pipe(
   Layer.provide(ApiLive),
   Layer.provide(opaLayer),
   Layer.provide(embeddingLayer),
-  Layer.provide(InstructionRepo.Default),
-  Layer.provide(BlockRegistry.Default),
+  Layer.provide(instructionLayer),
+  Layer.provide(registryLayer),
   Layer.provide(SqlLive),
   HttpServer.withLogAddress,
   Layer.provide(BunPlatform.BunHttpServer.layer({ port: 3100 })),
@@ -267,7 +276,7 @@ const HttpLive = HttpApiBuilder.serve(HttpMiddleware.logger).pipe(
 // Uses separate service instances (acceptable for one-time startup task).
 const LoaderDeps = Layer.mergeAll(
   embeddingLayer,
-  InstructionRepo.Default,
+  instructionLayer,
 ).pipe(Layer.provide(SqlLive))
 
 const main = loadInstructions.pipe(

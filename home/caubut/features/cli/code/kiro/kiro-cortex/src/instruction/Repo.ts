@@ -12,7 +12,7 @@
 
 import { Effect } from "effect"
 import { SqlClient } from "@effect/sql"
-import { InstructionError } from "../KiroContextError.js"
+import { InstructionError } from "./Error.js"
 
 // ---------------------------------------------------------------------------
 // Types
@@ -160,3 +160,6 @@ export class InstructionRepo extends Effect.Service<InstructionRepo>()("Instruct
     return { search, upsert } as const
   }),
 }) {}
+
+/** InstructionRepo layer alias for consistent `export const layer` convention. */
+export const layer = InstructionRepo.Default

@@ -10,13 +10,16 @@
  *
  * Public API:
  * - {@link InstructionRepo} — Effect.Service for pgvector CRUD and search
+ * - {@link layer} — InstructionRepo layer alias
  * - {@link loadInstructions} — startup Effect that reads YAML and upserts
+ * - {@link InstructionError} / {@link LoaderError} — domain error types
  * - Type exports for instruction shapes and search filters
  *
  * Used by: workflow/Executor (search at block execution), index.ts (startup load)
  * Depends on: embedding (vector generation), Sql (PostgreSQL connection)
  */
 
-export { InstructionRepo } from "./Repo.js"
+export { InstructionRepo, layer } from "./Repo.js"
 export type { Instruction, SearchFilters, UpsertInput } from "./Repo.js"
 export { loadInstructions } from "./Loader.js"
+export { InstructionError, LoaderError } from "./Error.js"
