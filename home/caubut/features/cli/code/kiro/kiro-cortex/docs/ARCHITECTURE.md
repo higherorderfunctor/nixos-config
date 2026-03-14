@@ -446,6 +446,8 @@ Goal: up to 1,000,000 instructions across frameworks, conventions, and patterns.
 CREATE TABLE instructions (
   id              UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   text            TEXT NOT NULL,           -- the actual instruction content
+  content_hash    VARCHAR(32),            -- MD5 of text, for incremental re-embedding (UC-MW-16)
+  model_version   VARCHAR(100),           -- embedding model tag (e.g., "nomic-embed-text:v1.5")
   source          VARCHAR(255),            -- origin file path
   domain          VARCHAR(100),            -- e.g., "coding-standards", "policy", "global"
   subdomain       VARCHAR(100),            -- e.g., "effect-patterns", "ip-protection"
@@ -491,17 +493,77 @@ Maps to existing steering structure:
 
 ### Block Definition Format
 
-Blocks are typed functions, NOT Effect.Services. Services are for infrastructure (DB, OPA, Embedding). Blocks are domain logic that uses services.
+Blocks are LangGraph node functions, NOT Effect.Services. Services are for infrastructure (DB, OPA, Embedding). Blocks are domain logic that uses services via Effect internally.
 
-Each block is a TypeScript module in `src/blocks/{name}.ts` exporting a `BlockDef` with metadata + an execute function that returns an Effect.
+Each block is a TypeScript module in `src/blocks/{name}.ts` exporting a `BlockDef<S>` with metadata + an execute function. `BlockDef` is generic over the pipeline state type `S` — each pipeline defines its own state shape, and blocks are typed to their pipeline's state.
+
+**Execution model**: Blocks are LangGraph node functions. They use Effect internally via `Effect.runPromise` for service access. No `async`/`await` — just return the Promise from `runPromise`.
+
+```typescript
+// Non-HITL block
+const authorNode = (state: MetaWorkflowState) =>
+  Effect.runPromise(writeInstructions(state).pipe(Effect.provide(services)))
+
+// HITL block — interrupt() is a LangGraph primitive (throws on first call, returns value on resume)
+function interviewNode(state: MetaWorkflowState) {
+  const answer = interrupt({ question: "What problem does this solve?" })
+  return Effect.runPromise(processAnswer(answer, state).pipe(Effect.provide(services)))
+}
+```
+
+**Why LangGraph nodes, not pure Effect**: LangGraph `interrupt()` re-executes the entire node from the beginning on resume. Effect pipelines are not re-entrant. HITL blocks must call `interrupt()` directly as a LangGraph primitive, then use Effect for the work after.
+
+### Block Metadata
+
+```typescript
+interface BlockDef<S> {
+  readonly id: string
+  readonly name: string
+  readonly description: string
+  readonly tags: ReadonlyArray<string>
+  readonly opa: OpaContext               // declares what instructions this block needs
+  readonly execute: (state: S) => Promise<Partial<S>>
+}
+
+interface OpaContext {
+  readonly agent_role: string
+  readonly task_type: string
+  readonly domain: string
+}
+```
+
+### Pipeline Definition Format
+
+Pipelines wire blocks into sequences. Each pipeline defines its own state type.
+
+```typescript
+interface PipelineDef<S> {
+  readonly id: string
+  readonly name: string
+  readonly description: string
+  readonly steps: ReadonlyArray<PipelineStep>
+  readonly initial_state: Partial<S>     // defaults for state fields
+}
+
+interface PipelineStep {
+  readonly block_id: string
+  readonly condition?: string            // when to execute (e.g., "state.mode === 'build'")
+  readonly next?: string | ReadonlyArray<ConditionalNext>  // routing
+}
+
+interface ConditionalNext {
+  readonly condition: string
+  readonly block_id: string
+}
+```
 
 ### Block Registry
 
-Explicit registration at startup. Registry provides:
+Explicit registration at startup. Registry is an Effect.Service (infrastructure):
 - List all blocks
-- Search by capability (for meta-workflow reuse check)
+- Search by capability (for meta-workflow reuse check) — simple tag/name/description match for now
 - Get block by ID
-- In-memory, populated from block modules at startup
+- In-memory Map, populated from block modules at startup
 
 ### Block Executor
 
@@ -510,7 +572,7 @@ The generic execution engine that runs any block:
 2. Calls OPA with that context → gets filtering criteria
 3. Runs core RAG loop (embed query → pgvector search with OPA filters → assemble context)
 4. Injects retrieved instructions into block's execution context
-5. Calls block's execute function with inputs + instructions
+5. Calls block's execute function with state
 6. For blocks needing smart execution: routes to Kiro headless
 
 This is the Phase 3 core loop applied per-block automatically.
@@ -518,11 +580,37 @@ This is the Phase 3 core loop applied per-block automatically.
 ### Pipeline Executor
 
 Dynamic LangGraph StateGraph construction from pipeline definitions:
-- Given a Pipeline definition, builds a StateGraph at runtime
+- Given a PipelineDef, builds a StateGraph at runtime
 - Each node = block execution via the block executor
-- State flows via LangGraph state object, shaped by pipeline's `state_schema`
-- PG checkpointer for persistent state across steps
+- State flows via LangGraph Annotation, shaped by pipeline's state type
+- PG checkpointer for persistent state across steps (enables interrupt/resume)
 - Current `Workflow.ts` gets refactored into this generic executor
+
+### Export Types
+
+YAML export format for Nix reproducibility (UC-MW-16, UC-MW-17):
+
+```typescript
+interface InstructionExport {
+  readonly id: string
+  readonly text: string
+  readonly metadata: {
+    readonly agent_role: string
+    readonly task_type: string
+    readonly domain: string
+    readonly repo: string | null
+  }
+  readonly content_hash: string          // MD5 of text field
+}
+
+interface PipelineExport {
+  readonly id: string
+  readonly name: string
+  readonly steps: ReadonlyArray<PipelineStep>
+}
+```
+
+On-disk layout: `workflows/{name}/pipeline.yaml` + `workflows/{name}/instructions/{block}.yaml`
 
 ### MCP Server Wrapper
 
@@ -577,10 +665,14 @@ Built the core retrieval pipeline:
 - OPA per-block injection — can hardcode instructions at first, add OPA integration incrementally.
 
 #### 4.1: Block Model + Registry
-- Block definition format (typed functions + metadata schema)
-- Block registry (explicit registration, search for reuse)
+- `BlockDef<S>` — generic over pipeline state, LangGraph node signature, OPA context declaration
+- `PipelineDef<S>` — steps, conditions, routing, initial state
+- `OpaContext` — agent_role, task_type, domain
+- `InstructionExport` / `PipelineExport` — YAML export shapes with content_hash
+- `BlockRegistry` — Effect.Service, in-memory Map, search by tag/name/description
 - `src/blocks/{name}.ts` convention
-- No execution yet — just the type system and registration
+- Migration: add `content_hash` + `model_version` columns to instructions table
+- No execution yet — just the type system, registry, and migration
 
 #### 4.2: Pipeline Executor + HITL
 - Refactor Workflow.ts into dynamic StateGraph builder from pipeline definitions
