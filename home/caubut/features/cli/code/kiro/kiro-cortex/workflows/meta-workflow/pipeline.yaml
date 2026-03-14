@@ -1,0 +1,8 @@
+id: "meta-workflow"
+name: "meta-workflow"
+description: "Build, update, and refine workflows"
+steps:
+  - block_id: "route"
+  - block_id: "interview"
+  - block_id: "author"
+  - block_id: "wire"

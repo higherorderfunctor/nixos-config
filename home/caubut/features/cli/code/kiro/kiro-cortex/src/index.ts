@@ -8,6 +8,8 @@ import { InstructionRepo } from "./InstructionRepo.js"
 import { BlockRegistry } from "./BlockRegistry.js"
 import { createContextWorkflow, type ContextState } from "./Workflow.js"
 import { TestError } from "./KiroContextError.js"
+import { buildMetaWorkflow } from "./meta-workflow/graph.js"
+import { Command } from "@langchain/langgraph"
 
 // --- Schemas ---
 
@@ -60,6 +62,23 @@ const WorkflowListResponse = Schema.Array(WorkflowItem)
 const WorkflowListEndpoint = HttpApiEndpoint.make("GET")("list", "/workflows")
   .addSuccess(WorkflowListResponse)
 
+const WorkflowInvokeRequest = Schema.Struct({
+  input: Schema.optionalWith(Schema.Record({ key: Schema.String, value: Schema.Unknown }), { default: () => ({}) }),
+  thread_id: Schema.optionalWith(Schema.String, { default: () => crypto.randomUUID() }),
+  resume: Schema.optionalWith(Schema.Unknown, { default: () => undefined }),
+})
+
+const WorkflowInvokeResponse = Schema.Struct({
+  thread_id: Schema.String,
+  state: Schema.Record({ key: Schema.String, value: Schema.Unknown }),
+})
+
+const WorkflowInvokeEndpoint = HttpApiEndpoint.make("POST")("invoke", "/workflows/:id/invoke")
+  .setPath(Schema.Struct({ id: Schema.String }))
+  .setPayload(WorkflowInvokeRequest)
+  .addSuccess(WorkflowInvokeResponse)
+  .addError(TestError, { status: 500 })
+
 // --- Groups ---
 
 class HealthGroup extends HttpApiGroup.make("health")
@@ -72,6 +91,7 @@ class ContextGroup extends HttpApiGroup.make("context")
 
 class WorkflowGroup extends HttpApiGroup.make("workflows")
   .add(WorkflowListEndpoint)
+  .add(WorkflowInvokeEndpoint)
 {}
 
 class CortexApi extends HttpApi.make("cortex")
@@ -165,15 +185,44 @@ const ContextApiLive = HttpApiBuilder.group(CortexApi, "context", (handlers) =>
 
 // --- Server ---
 
+// --- Lazy graph singleton ---
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- CompiledStateGraph generic params are dynamic
+let _metaGraph: any = null
+const getMetaGraph = async () => {
+  if (!_metaGraph) _metaGraph = await buildMetaWorkflow()
+  return _metaGraph
+}
+
 const WorkflowApiLive = HttpApiBuilder.group(CortexApi, "workflows", (handlers) =>
-  handlers.handle("list", () =>
-    Effect.gen(function* () {
-      const registry = yield* BlockRegistry
-      // Return pipelines (none registered yet — populated in 4.4)
-      void registry
-      return [] as ReadonlyArray<{ id: string; name: string; description: string }>
-    }),
-  ),
+  handlers
+    .handle("list", () =>
+      Effect.gen(function* () {
+        const registry = yield* BlockRegistry
+        void registry
+        return [{
+          id: "meta-workflow",
+          name: "meta-workflow",
+          description: "Build, update, and refine workflows",
+        }] as ReadonlyArray<{ id: string; name: string; description: string }>
+      }),
+    )
+    .handle("invoke", ({ path, payload }) =>
+      Effect.tryPromise({
+        try: async () => {
+          if (path.id !== "meta-workflow") throw new Error(`Unknown workflow: ${path.id}`)
+          const graph = await getMetaGraph()
+          const config = { configurable: { thread_id: payload.thread_id } }
+          const result = payload.resume !== undefined
+            ? await graph.invoke(new Command({ resume: payload.resume }), config)
+            : await graph.invoke(payload.input, config)
+          return {
+            thread_id: payload.thread_id,
+            state: result as Record<string, unknown>,
+          }
+        },
+        catch: (e) => new TestError({ message: String(e) }),
+      }),
+    ),
 )
 
 const ApiLive = HttpApiBuilder.api(CortexApi).pipe(
