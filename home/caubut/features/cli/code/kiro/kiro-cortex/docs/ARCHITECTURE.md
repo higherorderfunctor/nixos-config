@@ -233,19 +233,19 @@ Maps to existing steering structure:
 ### Phase 2: Infrastructure Wiring ✅ (commit ab33b12)
 - OPA systemd service (port 8181, out-of-store symlink to policies/)
 - OpaService: Effect.Service with self-contained HTTP client
-- LangGraph StateGraph with stub nodes (policy → vector → assemble → generate)
+- LangGraph StateGraph with initial nodes (policy → vector → assemble → generate)
 - HttpApi /test endpoint wiring OPA + LangGraph end-to-end
 
-### Phase 3: Core RAG Loop (NEXT)
-Build the core retrieval pipeline with real data:
-- Add missing columns to instructions table (source, repo, effective_date, expiry_date)
-- EmbeddingService: Effect Service wrapping Ollama /api/embed
-- InstructionRepo: Effect Service for instruction search (the future DB-split boundary)
-- Test seed data: 5-10 hand-written instructions with real embeddings
-- Wire workflow nodes to real services (replace stubs)
-- OPA for access control only (allow/deny) — SQL WHERE for instruction filtering
-- Context assembly with token budgets (chars/4)
+### Phase 3: Core RAG Loop ✅
+Built the core retrieval pipeline:
+- Migration 0002: added missing columns (source, repo, effective_date, expiry_date)
+- EmbeddingService: Effect Service wrapping Ollama /api/embed (nomic-embed-text, 768-dim)
+- InstructionRepo: Effect Service for pgvector cosine search with metadata filters (the DB-split boundary)
+- Workflow nodes wired to real services (OPA → embed → search → assemble)
+- OPA for access control (allow/deny), SQL WHERE for instruction filtering
+- Context assembly with token budgets (chars/4 approximation)
 - `/context` endpoint replacing `/test`
+- Validated end-to-end with inline psql test data (no persistent seed data)
 
 ### Phase 4: Workflow Engine (repo-analysis)
 - Build a real workflow (repo-analysis) end-to-end using seed data
@@ -271,7 +271,7 @@ Build the core retrieval pipeline with real data:
 
 ## Effect-TS Patterns
 
-Established patterns from Phase 2:
+Established patterns:
 
 - `Effect.Service` with `dependencies` array for layer provision
 - `NodeHttpClient.layer` in dependencies (self-contained, no agent leak)
@@ -279,6 +279,9 @@ Established patterns from Phase 2:
 - `HttpApiBuilder.api(Api).pipe(Layer.provide(groups))` — api needs groups, not reverse
 - `HttpLive.pipe(Layer.launch, BunRuntime.runMain)` for server startup
 - `effect-language-service diagnostics --project tsconfig.json` for Effect-specific checks
+- `sql.and([...conditions])` for dynamic WHERE clause construction
+- `sql.unsafe()` for pgvector literal interpolation (vector strings)
+- `Schema.optionalWith(Schema.String, { default: () => "value" })` for optional request fields with defaults
 
 ## References
 

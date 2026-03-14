@@ -15,7 +15,8 @@ All codified knowledge (steering rules, coding standards, repo conventions, work
 - Phase 0: Database Layer ✅
 - Phase 1: Data Migration ✅
 - Phase 2: Infrastructure Wiring ✅
-- Phase 3: Instruction Data Layer + Retrieval — NEXT
+- Phase 3: Core RAG Loop ✅
+- Phase 4: Workflow Engine (repo-analysis) — NEXT
 
 ## Quick Start
 
@@ -25,9 +26,9 @@ cd kiro-cortex && pnpm install
 bun run src/index.ts         # Start server on port 3100
 
 curl http://localhost:3100/health
-curl -X POST http://localhost:3100/test \
+curl -X POST http://localhost:3100/context \
   -H 'Content-Type: application/json' \
-  -d '{"query":"hello","user_id":"test"}'
+  -d '{"query":"how should I write Effect code","user_id":"caubut"}'
 ```
 
 ## Architecture

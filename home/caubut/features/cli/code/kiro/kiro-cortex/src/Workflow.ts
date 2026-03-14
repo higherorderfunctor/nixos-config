@@ -3,41 +3,51 @@ import { StateGraph, Annotation, START, END } from "@langchain/langgraph"
 const GraphState = Annotation.Root({
   query: Annotation<string>,
   user_id: Annotation<string>,
+  agent_role: Annotation<string>,
+  task_type: Annotation<string>,
+  domain: Annotation<string>,
+  token_budget: Annotation<number>,
   policy_decision: Annotation<{ allowed: boolean; reason: string } | null>,
-  vector_results: Annotation<any[] | null>,
-  context: Annotation<string | null>,
-  response: Annotation<string | null>,
+  instructions: Annotation<Array<{ id: string; text: string; priority: string | null; distance: number }> | null>,
+  assembled_context: Annotation<string | null>,
+  token_count: Annotation<number>,
 })
 
-export const checkPolicy = async (state: typeof GraphState.State) => ({
+export type ContextState = typeof GraphState.State
+
+export const checkPolicy = async (state: ContextState) => ({
   policy_decision: {
     allowed: state.user_id !== "",
     reason: state.user_id ? "allowed" : "missing user_id",
   },
 })
 
-export const vectorSearch = async (state: typeof GraphState.State) => ({
-  vector_results: state.policy_decision?.allowed
-    ? [
-        { id: "test-1", content: "Test memory 1", score: 0.9 },
-        { id: "test-2", content: "Test memory 2", score: 0.8 },
-      ]
-    : [],
-})
+export const vectorSearch = async (_state: ContextState) => ({})
 
-export const assembleContext = async (state: typeof GraphState.State) => ({
-  context: state.vector_results?.length
-    ? state.vector_results.map((r) => `[${r.score}] ${r.content}`).join("\n")
-    : null,
-})
+export const assembleContext = async (state: ContextState) => {
+  if (!state.instructions?.length) return { assembled_context: null, token_count: 0 }
 
-export const generateResponse = async (state: typeof GraphState.State) => ({
-  response: state.policy_decision?.allowed
-    ? `Query: ${state.query}\nContext:\n${state.context}\n\nResponse: Test workflow complete`
-    : `Policy denied: ${state.policy_decision?.reason || "unknown"}`,
-})
+  const budget = state.token_budget || 4000
+  const charBudget = budget * 4
+  let assembled = ""
+  let included = 0
 
-export function createTestWorkflow() {
+  for (const inst of state.instructions) {
+    const entry = `[${inst.priority || "medium"}] ${inst.text}\n\n`
+    if (assembled.length + entry.length > charBudget) break
+    assembled += entry
+    included++
+  }
+
+  return {
+    assembled_context: assembled || null,
+    token_count: Math.ceil(assembled.length / 4),
+  }
+}
+
+export const generateResponse = async (_state: ContextState) => ({})
+
+export function createContextWorkflow() {
   return new StateGraph(GraphState)
     .addNode("policy", checkPolicy)
     .addNode("vector", vectorSearch)

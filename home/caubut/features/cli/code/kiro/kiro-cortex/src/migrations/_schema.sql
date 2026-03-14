@@ -1,4 +1,4 @@
-\restrict MO5yfxQ67OenmKyFvxFagpv70ZYvDwcT6UZjSo8iXjIOoJDu5A8SbPP2vWKbqg1
+\restrict igkgvAFujQw5pXRGaXkKbSFcu9vStb3UBW5HYiuYAkNtyHOlBpFfQCFJHURfrs5
 
 CREATE EXTENSION IF NOT EXISTS vector WITH SCHEMA public;
 
@@ -24,7 +24,11 @@ CREATE TABLE public.instructions (
     conflict_group character varying(100),
     embedding public.vector(768),
     created_at timestamp without time zone DEFAULT now(),
-    updated_at timestamp without time zone DEFAULT now()
+    updated_at timestamp without time zone DEFAULT now(),
+    source character varying(255),
+    repo character varying(255),
+    effective_date timestamp without time zone,
+    expiry_date timestamp without time zone
 );
 
 ALTER TABLE ONLY public.effect_sql_migrations
@@ -41,10 +45,11 @@ CREATE INDEX instructions_embedding_idx ON public.instructions USING hnsw (embed
 
 CREATE INDEX instructions_task_types_idx ON public.instructions USING gin (task_types);
 
-\unrestrict MO5yfxQ67OenmKyFvxFagpv70ZYvDwcT6UZjSo8iXjIOoJDu5A8SbPP2vWKbqg1
+\unrestrict igkgvAFujQw5pXRGaXkKbSFcu9vStb3UBW5HYiuYAkNtyHOlBpFfQCFJHURfrs5
 
-\restrict aVMNU086Nspbrgyo0Q6hy9YODxl11jeKZhMRIcpxCmEZqKmao9bwHqeYDsyQg60
+\restrict cdOYGlCTLcU8ccCtRyQpdFvQB1AqjYfZcWkesjuwda4gPU9gy3rEXhWzbqD47rC
 
 INSERT INTO public.effect_sql_migrations (migration_id, created_at, name) VALUES (1, '2026-03-13 13:36:44.80845-06', 'init');
+INSERT INTO public.effect_sql_migrations (migration_id, created_at, name) VALUES (2, '2026-03-13 17:59:25.690662-06', 'add_instruction_columns');
 
-\unrestrict aVMNU086Nspbrgyo0Q6hy9YODxl11jeKZhMRIcpxCmEZqKmao9bwHqeYDsyQg60
+\unrestrict cdOYGlCTLcU8ccCtRyQpdFvQB1AqjYfZcWkesjuwda4gPU9gy3rEXhWzbqD47rC
