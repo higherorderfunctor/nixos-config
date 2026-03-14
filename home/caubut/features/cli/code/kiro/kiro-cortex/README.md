@@ -16,8 +16,12 @@ All codified knowledge (steering rules, coding standards, repo conventions, work
 - Phase 1: Data Migration ✅
 - Phase 2: Infrastructure Wiring ✅
 - Phase 3: Core RAG Loop ✅
-- Phase 4a: Block Engine Infrastructure — NEXT
-- Phase 4b: Meta-Workflow (Bootstrap)
+- Phase 4: MVP-Incremental Build — NEXT
+  - 4.1: Block Model + Registry
+  - 4.2: Pipeline Executor + HITL
+  - 4.3: MCP Stdio Wrapper
+  - 4.4: MVP Meta-Workflow (route, interview, author, wire)
+  - 4.5+: Incremental features via meta-workflow itself
 - Phase 5: Repo-Analysis (Built by Meta-Workflow)
 - Phase 6: Web UI
 

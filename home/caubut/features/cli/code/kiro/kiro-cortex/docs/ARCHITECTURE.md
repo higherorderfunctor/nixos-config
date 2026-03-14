@@ -565,22 +565,50 @@ Built the core retrieval pipeline:
 - `/context` endpoint replacing `/test`
 - Validated end-to-end with inline psql test data (no persistent seed data)
 
-### Phase 4a: Block Engine Infrastructure
-- Block definition format (typed functions + metadata schema)
-- Block registry (discover/list/search available blocks)
-- Block executor (run block with inputs, inject OPA-scoped instructions, get outputs)
-- Pipeline executor (dynamic LangGraph StateGraph from pipeline definitions)
-- MCP stdio server wrapper for kiro-cli triggering
-- Kiro headless service (Effect.Service wrapping headless API)
-- Refactor Workflow.ts into generic pipeline executor
+### Phase 4: MVP-Incremental Build
 
-### Phase 4b: Meta-Workflow (Bootstrap)
-- Hand-build the workflow lifecycle tools (interview, research, build, update, refine)
-- First instructions in DB = "how to build workflows" (hand-written)
-- Reusable patterns: historical tracking (generic, configurable per-workflow)
-- End step: suggest triggers + generate SKILL.md + promote trigger blocks
-- Validates the full OPA/LangGraph pipeline with real instructions
-- Human-in-the-loop: interviews user, proposes decomposition, user approves
+**Strategy**: Build minimal infrastructure, then MVP meta-workflow, then use meta-workflow to iteratively add features to itself. Each sub-phase is small, git-trackable, and the user relaunches kiro between sub-phases. Repo-analysis is NOT touched until meta-workflow is fully functional.
+
+**Deferred until needed:**
+- Kiro headless service — not needed when user is always in the loop via kiro-cli. Required later for autonomous workflows.
+- OPA per-block injection — can hardcode instructions at first, add OPA integration incrementally.
+
+#### 4.1: Block Model + Registry
+- Block definition format (typed functions + metadata schema)
+- Block registry (explicit registration, search for reuse)
+- `src/blocks/{name}.ts` convention
+- No execution yet — just the type system and registration
+
+#### 4.2: Pipeline Executor + HITL
+- Refactor Workflow.ts into dynamic StateGraph builder from pipeline definitions
+- PG checkpointer for `interrupt()`/`Command({ resume })` HITL support
+- Block executor: run block with inputs, get outputs (OPA injection deferred)
+- Validate: can define a pipeline, run it, pause/resume via interrupt
+
+#### 4.3: MCP Stdio Wrapper
+- Thin MCP server calling HTTP API
+- Exposes `list_workflows` + `run_workflow` tools
+- Registered in mcp.json for kiro-cli discovery
+
+#### 4.4: MVP Meta-Workflow (4 blocks)
+- **route**: classify intent (build/update/refine only — audit deferred)
+- **interview**: basic HITL via `interrupt()` — user describes what they want, provides block breakdown manually
+- **author**: write instructions to DB with OPA metadata
+- **wire**: create pipeline definition, store in DB
+- First instructions in DB = "how to build workflows" (hand-written seed)
+- Supports: build (basic), update (basic), refine
+- No research, no optimize, no decompose, no promote — added incrementally
+
+#### 4.5+: Incremental via Meta-Workflow
+Each is a sub-phase added by using meta-workflow's update capability (UC-MW-2). User relaunches kiro between each. Order flexible based on what's most useful:
+- **decompose** block — propose block structure (currently user provides manually)
+- **promote** block — generate SKILL.md + trigger artifacts (currently manual)
+- **research** block — external search during design
+- **optimize** block — instruction bloat, spaghetti, DRY checks
+- **audit** mode in route — UC-MW-13 manual trigger
+- **programmatic** mode in route — UC-MW-4/12 short-circuit path
+- OPA per-block injection (infrastructure upgrade)
+- Kiro headless service (when autonomous execution needed)
 
 ### Phase 5: Repo-Analysis (Built by Meta-Workflow)
 - Use meta-workflow to build repo-analysis as first generated workflow
