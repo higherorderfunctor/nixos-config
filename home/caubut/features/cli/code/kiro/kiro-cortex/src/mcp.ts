@@ -25,7 +25,7 @@ server.registerTool(
     description: "Run a kiro-cortex workflow by ID",
     inputSchema: z.object({
       id: z.string().describe("Workflow ID"),
-      input: z.record(z.unknown()).describe("Workflow input state").optional(),
+      input: z.record(z.string(), z.unknown()).describe("Workflow input state").optional(),
       thread_id: z.string().describe("Thread ID for HITL resume").optional(),
     }),
   },

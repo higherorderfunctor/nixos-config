@@ -11,13 +11,14 @@
     "dev": "bun --watch src/index.ts",
     "start": "bun src/index.ts",
     "build": "tsc",
-    "check": "tsc --noEmit"
+    "check": "pnpm run --reporter=append-only --reporter-hide-prefix '/^check:.*$/'",
+    "check:tsc": "tsc --noEmit",
+    "check:els": "effect-language-service diagnostics --project tsconfig.json"
   },
   "dependencies": {
     "@effect/platform": "0.94.5",
     "@effect/platform-bun": "0.87.1",
     "@effect/platform-node": "0.104.1",
-    "@effect/schema": "0.75.5",
     "@effect/sql": "0.49.0",
     "@effect/sql-pg": "0.50.3",
     "@langchain/langgraph": "1.2.2",
@@ -26,7 +27,7 @@
     "effect": "3.19.19",
     "pg": "8.20.0",
     "yaml": "2.8.2",
-    "zod": "3.25.67"
+    "zod": "4.3.6"
   },
   "devDependencies": {
     "@effect/language-service": "0.80.0",
