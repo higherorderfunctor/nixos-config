@@ -216,19 +216,27 @@ Instructions have scope enforced by OPA:
 
 The meta-workflow is a hand-built collection of tools for the workflow lifecycle. It is the first real customer of the OPA pipeline — its instructions ("how to build workflows") are the first content in the instructions table.
 
+**Human-in-the-loop by design.** The meta-workflow interviews the user on goals, proposes a decomposition into blocks, and iterates until the user approves. This HITL pattern must work across interfaces (kiro-cli chat now, web UI and Slack later).
+
 ### Capabilities
 
-- **Build**: "Kiro, help me build a workflow to do X" → decompose into blocks → find existing blocks → create new if needed → wire pipeline → store instructions in DB → suggest triggers
+- **Interview**: Understand user goals for the workflow — what problem it solves, what triggers it, what it outputs. Propose blocks and pipeline structure. User approves/refines.
+- **Build**: Decompose into blocks → find existing blocks → create new if needed → wire pipeline → store instructions in DB → suggest triggers
 - **Update**: "Kiro, help me update workflow X to do Y" → find existing instructions → modify/add/deprecate
 - **Refine**: "Kiro, the instructions in workflow X step Y need better instructions" → targeted improvement of specific step instructions
 
 ### How It Works
 
 1. User requests a new workflow via kiro-cli (MCP/skill/agent discovery)
-2. Meta-workflow tools query OPA/pgvector for instructions about workflow building
-3. Kiro uses those instructions (not steering files) to guide the conversation
-4. Output: new instructions in DB + pipeline definition + thin trigger artifacts (skill/agent files for kiro-cli)
-5. End step: suggest trigger options (skill file, agent, MCP tool, future web UI/Slack)
+2. Meta-workflow interviews user on goals and use cases
+3. Meta-workflow tools query OPA/pgvector for instructions about workflow building
+4. Kiro proposes block decomposition, user approves/refines
+5. Output: new instructions in DB + pipeline definition + thin trigger artifacts
+6. End step: suggest trigger options (skill file, agent, MCP tool, future web UI/Slack) and promote trigger blocks so kiro-cli can discover them
+
+### Trigger Blocks
+
+The first block in a workflow — the entry point that kiro-cli or web UI executes. These get promoted to skills or agents so they're discoverable. The meta-workflow's end step handles this promotion.
 
 ### Why Hand-Built
 
@@ -239,8 +247,8 @@ The meta-workflow is the bootstrap — it can't build itself. It's the one workf
 Built using the meta-workflow. Analyzes repos and produces:
 
 1. **Instructions** — patterns, conventions, anti-patterns stored in DB (scoped to the analyzed repo)
-2. **Knowledge source suggestions** — detects major frameworks and suggests repo-agnostic knowledge sources (Effect → EffectPatterns + effect-solutions, Vue → Vue docs, etc.)
-3. **Output workflows** — uses the meta-workflow to generate repo-specific workflows (code-reviewer, code-assist, generate-code — exact list TBD, ideate later)
+2. **Knowledge source suggestions** — detects major frameworks and suggests repo-agnostic knowledge sources (Effect → EffectPatterns + effect-solutions, Vue → Vue docs, etc.). **Human-in-the-loop**: user approves which sources to ingest.
+3. **Output workflows** — uses the meta-workflow to generate repo-specific workflows. Exact workflows TBD — the meta-workflow interviews the user on what workflows would be useful based on the analysis findings. User proposes use cases, system proposes block decompositions.
 
 ### Iterative by Design
 
