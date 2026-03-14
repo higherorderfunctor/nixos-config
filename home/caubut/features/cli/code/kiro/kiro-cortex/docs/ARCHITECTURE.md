@@ -224,6 +224,13 @@ Building workflows by hand doesn't scale. Each workflow needs decomposition into
 - **UC-MW-2**: "Kiro, help me update workflow X to do Y" → find existing instructions, modify/add/deprecate, re-wire if needed
 - **UC-MW-3**: "Kiro, the instructions in workflow X step Y need better instructions, here is the problem" → targeted refinement of specific step instructions
 - **UC-MW-4**: A workflow (like repo-analysis) needs to generate sub-workflows as part of its output → calls meta-workflow programmatically to produce them
+- **UC-MW-5**: User has a vague idea but can't articulate the problem → meta-workflow helps discover and refine the problem statement through structured interview
+- **UC-MW-6**: User knows the problem but not the use cases → meta-workflow helps identify concrete use cases through examples, edge cases, and "what about X?" prompts
+- **UC-MW-7**: During design, meta-workflow does external research (best practices, similar systems, prior art) to inform block decomposition. Note: repo-analysis is more "one and done" post-design — its research happens at analysis time, not workflow-design time. Refine this boundary as needed.
+- **UC-MW-8**: When run, meta-workflow checks if any block's instruction set has grown too large → suggests splitting the block. This is on-demand (when meta-workflow runs), not a background/cron process.
+- **UC-MW-9**: Don't produce spaghetti blocks — splitting alone isn't the answer. When a split is needed, optimize the whole pipeline holistically (reorder, merge, restructure) rather than just adding more blocks.
+- **UC-MW-10**: Keep all workflows DRY — actively look for common patterns across workflows that can be abstracted into reusable blocks configurable via inputs alone. If two workflows do similar things differently, unify them.
+- **UC-MW-11**: Apply the generic historical tracking pattern to workflows whose instructions evolve over time (e.g., repo-analysis where past analysis context matters for understanding convention drift).
 - _(Add more use cases here as they emerge)_
 
 ### Description
@@ -234,10 +241,10 @@ The meta-workflow is a hand-built collection of tools for the workflow lifecycle
 
 ### Capabilities
 
-- **Interview**: Understand user goals — what problem the workflow solves, what triggers it, what it outputs. Propose blocks and pipeline structure. User approves/refines.
-- **Research**: Proactively discover ideas and suggest use cases the user may not have thought of. Query knowledge base for similar workflows, patterns, and best practices.
-- **Build**: Decompose into blocks → find existing blocks → create new if needed → compose reusable patterns (e.g., historical tracking) → wire pipeline → store instructions in DB → suggest triggers
-- **Update**: "Kiro, help me update workflow X to do Y" → find existing instructions → modify/add/deprecate
+- **Interview**: Understand user goals — what problem the workflow solves, what triggers it, what it outputs. Help the user discover and articulate the problem statement if they have a vague idea. Help identify concrete use cases through examples, edge cases, and probing questions. Propose blocks and pipeline structure. User approves/refines.
+- **Research**: Proactively discover ideas and suggest use cases the user may not have thought of. Do external research during design (best practices, similar systems, prior art) to inform decomposition. Query knowledge base for similar workflows, patterns, and best practices.
+- **Build**: Decompose into blocks → find existing blocks → create new if needed → compose reusable patterns (e.g., historical tracking) → wire pipeline → store instructions in DB → suggest triggers. When building or updating, check for DRY violations across all workflows — abstract common patterns into reusable blocks configurable via inputs.
+- **Update**: "Kiro, help me update workflow X to do Y" → find existing instructions → modify/add/deprecate. Check if any block's instruction set has grown too large and suggest splitting — but optimize the whole flow holistically, don't just keep adding blocks (no spaghetti).
 - **Refine**: "Kiro, the instructions in workflow X step Y need better instructions" → targeted improvement of specific step instructions
 
 ### Reusable Patterns (Functional Composition)
@@ -277,9 +284,11 @@ Developers join repos, conventions drift, and steering files go stale. Manually 
 
 - **UC-RA-1**: First run on a new repo → discover domains, tech stack, team boundaries, extract patterns, produce repo-scoped instructions
 - **UC-RA-2**: Detect Effect-TS as a major framework → suggest ingesting EffectPatterns and effect-solutions as repo-agnostic knowledge sources (HITL approval)
-- **UC-RA-3**: Re-run after repo evolution → diff against previous analysis, track convention changes (e.g., "pipe chains → Effect.gen"), produce historical migration instructions
+- **UC-RA-3**: Re-run after repo evolution → diff against previous analysis, track convention changes (e.g., "pipe chains → Effect.gen"), produce historical migration instructions. Updates to existing workflows should be straightforward and mostly automated — minimize HITL for redrafting historical workflow updates.
 - **UC-RA-4**: Post-analysis → use meta-workflow to interview user on what output workflows would be useful based on findings (TBD: code-reviewer, code-assist, etc.)
 - **UC-RA-5**: Multiple worktrees for same repo → share instructions, identify repo by remote origin not directory path
+- **UC-RA-6**: Never add new external knowledge sources without asking. Edge case: analysis discovers best practices from a new external repo — always ask before ingesting, don't silently expand the knowledge base.
+- **UC-RA-7**: When encountering ambiguous patterns or unclear conventions, ask the user rather than guessing. Uncertainty is a signal to pause, not to infer.
 - _(Add more use cases here as they emerge)_
 
 ### Description
