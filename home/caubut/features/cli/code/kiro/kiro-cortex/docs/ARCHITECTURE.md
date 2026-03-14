@@ -149,9 +149,15 @@ Two databases on the same PostgreSQL server (port 5435), different purposes:
 
 ## Composable Workflow Blocks
 
-kiro-cortex is a registry of composable blocks, not one monolithic workflow. Each block is a self-contained unit that can run standalone or as part of a pipeline.
+### Core Principle
 
-### Block Model
+**Workflows ARE instructions in the DB.** Not files on disk. Skill/agent files are thin triggers — entry points that tell kiro-cli "this workflow exists." The real knowledge lives in OPA/pgvector, queryable at scale (up to 1M instructions). This replaces steering files, which cause context dilution.
+
+**Context discipline via LangGraph.** Each step (block) in a pipeline gets ONLY its scoped instructions via OPA. This is how 1M instructions stay focused — per-step OPA consultation, not one giant prompt.
+
+### Block Model (Lego Pieces)
+
+Blocks are reusable, focused units. A block used in repo-analysis (e.g., `pattern-extract`) can be reused in a future `code-reviewer` workflow without duplication.
 
 ```
 Block {
@@ -166,7 +172,9 @@ Block {
 }
 ```
 
-### Pipeline Model
+### Pipeline Model (Wired Blocks)
+
+LangGraph wires blocks into sequences. Each step gets tight, focused instructions — no context pollution across steps.
 
 ```
 Pipeline {
@@ -180,88 +188,107 @@ Pipeline {
 ### Execution Model
 
 A block can be triggered via:
-- **HTTP API** — direct POST to `/blocks/{id}/run`
-- **MCP tool** — from kiro-cli (MCP stdio wrapper)
-- **Pipeline step** — from LangGraph orchestration
+- **MCP tool** — from kiro-cli (MCP stdio wrapper). Returns assembled context + metadata.
+- **HTTP API** — direct POST to `/blocks/{id}/run`. Can chain into pipeline steps.
+- **Pipeline step** — from LangGraph orchestration. Output feeds next step's state.
+- **Direct trigger** (web/Slack, future) — LangGraph routes to Kiro headless for full execution.
 
-All share the same block implementation. Each block gets OPA-scoped instructions injected via the core RAG loop.
+All share the same block implementation. Each block gets OPA-scoped instructions injected via the core RAG loop. Context size is configurable per-call via `token_budget` parameter.
 
-### Block Taxonomy
+### Block Reuse
 
-Identified blocks (to be built incrementally):
+When building a new workflow, the system searches existing blocks first:
+1. Decompose the task into focused steps
+2. Search block registry for blocks that already satisfy each step
+3. Reuse existing blocks where possible
+4. Create new blocks only when no existing block fits
+5. Wire blocks together into a new pipeline
 
-| Block | Purpose | Mode |
-|-------|---------|------|
-| repo-discover | Scan repo structure, identify domains/teams/tech clusters | both |
-| provenance-analyze | Git history heuristics for pattern authority | both |
-| pattern-extract | Extract code patterns from a codebase | both |
-| anti-pattern-detect | Identify anti-patterns against known good patterns | both |
-| steering-verify | Check existing steering files against codebase | both |
-| steering-generate | Generate steering files (7-section framework) | both |
-| knowledge-ingest | Digest patterns from external repos into instructions DB | standalone |
-| knowledge-suggest | Suggest repos/sources to build knowledge base from | standalone |
-| workflow-generate | Meta: generate new workflow/pipeline definitions | standalone |
-| workflow-validate | Test/validate generated workflows | standalone |
+### Instruction Scoping
 
-### Pipelines (composed from blocks)
+Instructions have scope enforced by OPA:
+- **General framework knowledge** (e.g., Effect patterns from EffectPatterns repo): `repo: null`, `domain: "effect"` — available to any workflow needing Effect context
+- **Repo-specific patterns** (e.g., "this repo uses Effect.gen exclusively"): `repo: "org/my-repo"` — only surfaces when working in that repo
+- **No bleed-through** — work repo patterns never leak into personal repo context
+- **Git worktree aware** — repo identified by remote origin, not directory path. Multiple worktrees for the same repo share instructions.
 
-| Pipeline | Steps | Purpose |
-|----------|-------|---------|
-| repo-analysis | discover → provenance → extract → detect → verify → generate | Analyze repo, produce steering files |
-| knowledge-build | suggest → ingest → validate | Grow the instructions knowledge base |
-| workflow-build | generate → validate | Create new workflows via Kiro |
+## Meta-Workflow (Bootstrap)
 
-### Steering File Output Framework
+The meta-workflow is a hand-built collection of tools for the workflow lifecycle. It is the first real customer of the OPA pipeline — its instructions ("how to build workflows") are the first content in the instructions table.
 
-Repo-analysis generates steering files per domain using a 7-section framework:
+### Capabilities
 
-1. Architecture Overview
-2. Tech Stack and Versions
-3. Curated Knowledge Sources
-4. Project Structure
-5. Naming Conventions
-6. Code Examples (required: concrete, runnable)
-7. Anti-patterns
+- **Build**: "Kiro, help me build a workflow to do X" → decompose into blocks → find existing blocks → create new if needed → wire pipeline → store instructions in DB → suggest triggers
+- **Update**: "Kiro, help me update workflow X to do Y" → find existing instructions → modify/add/deprecate
+- **Refine**: "Kiro, the instructions in workflow X step Y need better instructions" → targeted improvement of specific step instructions
 
-Output structure per domain:
-```
-repo-analysis/{domain}/
-├── overview.md          # Architecture, stack, structure
-├── patterns.md          # Framework-specific patterns with examples
-├── anti-patterns.md     # What NOT to do
-├── testing.md           # Test conventions (if applicable)
-└── migrations/          # Pattern transition guides
-```
+### How It Works
+
+1. User requests a new workflow via kiro-cli (MCP/skill/agent discovery)
+2. Meta-workflow tools query OPA/pgvector for instructions about workflow building
+3. Kiro uses those instructions (not steering files) to guide the conversation
+4. Output: new instructions in DB + pipeline definition + thin trigger artifacts (skill/agent files for kiro-cli)
+5. End step: suggest trigger options (skill file, agent, MCP tool, future web UI/Slack)
+
+### Why Hand-Built
+
+The meta-workflow is the bootstrap — it can't build itself. It's the one workflow we code manually. Everything after it is produced BY it.
+
+## Repo-Analysis (First Generated Workflow)
+
+Built using the meta-workflow. Analyzes repos and produces:
+
+1. **Instructions** — patterns, conventions, anti-patterns stored in DB (scoped to the analyzed repo)
+2. **Knowledge source suggestions** — detects major frameworks and suggests repo-agnostic knowledge sources (Effect → EffectPatterns + effect-solutions, Vue → Vue docs, etc.)
+3. **Output workflows** — uses the meta-workflow to generate repo-specific workflows (code-reviewer, code-assist, generate-code — exact list TBD, ideate later)
+
+### Iterative by Design
+
+repo-analysis runs repeatedly as the repo evolves:
+- **Update step**: diff against previous analysis, detect what changed
+- **Historical step**: old conventions tracked as migration instructions ("replace X with Y"), not deleted
+- **Knowledge tracking**: post-analysis record of "these sources should be ingested" persists across runs
+
+### Knowledge Seeding
+
+Knowledge seeding is NOT a separate phase — it's a step within repo-analysis. When repo-analysis detects a major framework, it suggests ingesting framework-specific knowledge sources as repo-agnostic instructions. User-requested sources (EffectPatterns, effect-solutions) are tracked for ingestion post-analysis.
+
+### Block Taxonomy (TBD — built incrementally via meta-workflow)
+
+Initial blocks identified for repo-analysis pipeline:
+
+| Block | Purpose |
+|-------|---------|
+| repo-discover | Scan repo structure, identify domains/teams/tech clusters |
+| provenance-analyze | Git history heuristics for pattern authority |
+| pattern-extract | Extract code patterns from a codebase |
+| anti-pattern-detect | Identify anti-patterns against known good patterns |
+| knowledge-suggest | Suggest framework-specific knowledge sources for ingestion |
+| knowledge-ingest | Digest patterns from external repos into instructions DB |
+| steering-generate | Generate instructions using 7-section framework |
+| workflow-suggest | Use meta-workflow to generate repo-specific workflows |
+
+Additional blocks and pipelines will be identified and built as needed. The meta-workflow handles creation of new blocks.
 
 ## How Instructions Get Into the Table
 
 **Phase 3 (done):** Validated pipeline with inline psql test data (inserted and deleted).
 
-**Phase 4 (knowledge-ingest block):** Parse external repos and steering files into instructions.
+**Phase 4b (meta-workflow bootstrap):** First real instructions = "how to build workflows." Hand-written, seeded into DB as part of building the meta-workflow.
+
+**Phase 4c+ (repo-analysis and beyond):** All subsequent instructions produced by workflows:
 ```
-  Source (markdown/MDX from public repos or local steering files)
-    → parse into individual rules/patterns
-    → tag with metadata (domain, agent_roles, task_types, priority, ...)
-    → embed text via Ollama (nomic-embed-text, 768-dim)
-    → INSERT into instructions table
+  repo-analysis discovers patterns in a repo
+    → stores repo-scoped instructions (patterns, conventions, anti-patterns)
+    → suggests framework knowledge sources (e.g., EffectPatterns)
+    → knowledge-ingest block parses sources → tags → embeds → inserts repo-agnostic instructions
 ```
 
-**Initial knowledge sources** (public, MIT-licensed):
+**Known knowledge sources** (public, MIT-licensed, user-requested):
 - [PaulJPhilp/EffectPatterns](https://github.com/PaulJPhilp/EffectPatterns) — 300+ Effect-TS patterns by category
 - [kitlangton/effect-solutions](https://github.com/kitlangton/effect-solutions) — Curated Effect best practices with tested examples
 
-Goal: 10,000s of instructions across frameworks, conventions, and patterns.
-
-## Execution Modes
-
-A block's execution mode depends on its trigger:
-
-- **MCP trigger** (kiro-cli): Return assembled context + metadata. kiro-cli injects into Claude's prompt.
-- **HTTP API trigger**: Return results directly. Can chain into pipeline steps.
-- **Pipeline trigger** (LangGraph): Block runs as a step, output feeds next step's state.
-- **Direct trigger** (web/Slack, future): LangGraph routes to Kiro headless for full execution.
-
-Context size is configurable per-call via `token_budget` parameter.
+Goal: up to 1,000,000 instructions across frameworks, conventions, and patterns.
 
 ## Instruction Metadata Schema
 
@@ -341,26 +368,30 @@ Built the core retrieval pipeline:
 
 ### Phase 4a: Block Engine Infrastructure
 - Block definition format (TypeScript modules + metadata schema)
-- Block registry (discover/list available blocks)
-- Block execution engine (run block with inputs, inject OPA context, get outputs)
+- Block registry (discover/list available blocks, search for reuse)
+- Block execution engine (run block with inputs, inject OPA-scoped instructions, get outputs)
 - Pipeline definition format and executor (LangGraph composes blocks)
 - MCP stdio server wrapper for kiro-cli triggering
 
-### Phase 4b: First Blocks + Knowledge Seeding
-- knowledge-ingest block (parse external repos → instructions)
-- pattern-extract block
-- steering-generate block
-- Ingest EffectPatterns (300+ patterns) and effect-solutions (10+ topics)
-- Validate retrieval quality against ingested knowledge
+### Phase 4b: Meta-Workflow (Bootstrap)
+- Hand-build the workflow lifecycle tools (build, update, refine workflows)
+- First instructions in DB = "how to build workflows" (hand-written, like Phase 3 test data)
+- End step pattern: suggest trigger options (skill, agent, MCP tool, future web UI/Slack)
+- Validates the full OPA/LangGraph pipeline with real instructions
 
-### Phase 4c: Repo-Analysis Pipeline
-- Compose blocks into repo-analysis pipeline (discover → provenance → extract → detect → verify → generate)
-- Test end-to-end with a public repo
-- Validate against known anti-patterns using ingested knowledge base
+### Phase 4c: Repo-Analysis Workflow (Built by Meta-Workflow)
+- Use meta-workflow to build repo-analysis as first generated workflow
+- Steps: discover → provenance → extract → detect → knowledge-suggest → knowledge-ingest → generate → workflow-suggest
+- Git worktree aware (repo identity by remote origin)
+- Instruction scoping (repo-specific vs framework-agnostic)
+- Iterative: update step (diff previous), historical step (old → new migration instructions)
+- Knowledge seeding as a step (detect frameworks → suggest sources → ingest)
+- Output: repo-scoped instructions + suggested knowledge sources + generated workflows (TBD: code-reviewer, code-assist, etc.)
 
-### Phase 4d: Meta-Workflow
-- workflow-generate block (Kiro headless writes new workflows)
-- workflow-validate block (test generated workflows)
+### Phase 4d: Repo-Analysis Output Workflows
+- repo-analysis uses meta-workflow to generate repo-specific workflows
+- Exact workflows TBD (ideate: generate-code, code-reviewer, code-assist, etc.)
+- Each generated workflow reuses existing blocks where possible
 
 ### Phase 5: Content Migration
 - Ingestion pipeline: parse steering markdown → extract rules → tag metadata → embed → insert
