@@ -234,6 +234,8 @@ Building workflows by hand doesn't scale. Each workflow needs decomposition into
 - **UC-MW-12**: When designing a workflow that calls meta-workflow programmatically (e.g., repo-analysis generating coding workflows), meta-workflow must ensure the calling workflow provides sufficient structured input (problem statement, use cases, proposed blocks) for the short-circuit path. Programmatic calls skip interview and go directly to decompose. If the structured input is insufficient (missing problem statement or use cases), meta-workflow should FAIL — the calling workflow wasn't designed properly.
 - **UC-MW-13**: Manual audit trigger — "optimize all workflows in this repo." Standalone user-initiated entry point. Scans all workflows for instruction bloat, spaghetti, and DRY violations. Separate from per-workflow optimization during create/update.
 - **UC-MW-14**: Workflows that call meta-workflow (like repo-analysis producing coding workflows) can re-optimize their FULL parent workflow scope but NOT all workflows in the repo. Meta-workflow bakes this scoped optimization into the calling workflow at design time.
+- **UC-MW-15**: Git commit strategy — when meta-workflow produces file changes, use small reviewable stacked commits (git-branchless style). Each commit is one logical change, reviewable in isolation. Think Graphite stacked PRs without the PRs — just the commit discipline. This applies to all meta-workflow outputs: instructions, pipeline definitions, trigger artifacts.
+- **UC-MW-16**: Import/export workflows to filesystem for Nix reproducibility. Every workflow must be reconstructable from files on disk — a fresh `home-manager switch` on a new system should be able to load all workflows into a fresh DB. Meta-workflow must update these files whenever a workflow is created or updated. **Open question: do we need to export vector embeddings, or can we re-embed from instruction text at load time?** Embeddings are deterministic (same model + text = same vector), so re-embedding is likely sufficient, but: (a) model version changes could shift vectors, (b) re-embedding many instructions on first boot could be slow, (c) vector similarity may drift if model updates. Needs investigation.
 - _(Add more use cases here as they emerge)_
 
 ### Description
@@ -593,11 +595,25 @@ Built the core retrieval pipeline:
 #### 4.4: MVP Meta-Workflow (4 blocks)
 - **route**: classify intent (build/update/refine only — audit deferred)
 - **interview**: basic HITL via `interrupt()` — user describes what they want, provides block breakdown manually
-- **author**: write instructions to DB with OPA metadata
-- **wire**: create pipeline definition, store in DB
+- **author**: write instructions to DB with OPA metadata + export to filesystem (UC-MW-16)
+- **wire**: create pipeline definition, store in DB + export to filesystem (UC-MW-16)
 - First instructions in DB = "how to build workflows" (hand-written seed)
 - Supports: build (basic), update (basic), refine
 - No research, no optimize, no decompose, no promote — added incrementally
+- All file changes use small reviewable stacked commits (UC-MW-15)
+
+#### Filesystem Export Format (UC-MW-16)
+Workflows must be reconstructable from files on disk for Nix reproducibility. A fresh system runs `home-manager switch` → kiro-cortex starts → loads workflow definitions from disk → seeds DB.
+
+Export includes per workflow:
+- Instructions (text + OPA metadata) — file on disk, re-embedded at load time
+- Pipeline definition (block order, conditions, routing) — file on disk
+- OPA policies (Rego rules) — already files in `policies/`
+- Block registrations — code in `src/blocks/`, no export needed
+
+**Open question**: Vector embeddings — export or re-embed? Embeddings are deterministic (same model + text = same vector), so re-embedding is likely sufficient. But model version drift and first-boot latency need investigation. Track as a decision to make during 4.2 when we understand the embedding pipeline better.
+
+**File format**: TBD — likely YAML or JSON with instruction text + metadata. Investigate during 4.4.
 
 #### 4.5+: Incremental via Meta-Workflow
 Each is a sub-phase added by using meta-workflow's update capability (UC-MW-2). User relaunches kiro between each. Order flexible based on what's most useful:
