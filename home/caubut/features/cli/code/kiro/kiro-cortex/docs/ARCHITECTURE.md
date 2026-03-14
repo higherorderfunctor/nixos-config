@@ -177,7 +177,7 @@ The block executor (not yet built) does:
 **Phasing:**
 - Phase 3 (done): `access.rego` only (allow/deny). Instruction filtering via hardcoded SQL WHERE.
 - Phase 4.4 (done): Blocks declare OPA context but don't query it yet (hardcoded logic).
-- Pre-4.5 (next): Rename test.rego → access.rego. Add scoping.rego. Build block executor wrapper. Wire YAML loader.
+- Pre-4.5 (done): Rename test.rego → access.rego. Add scoping.rego. Build block executor wrapper. Wire YAML loader.
 - 4.5+: isolation.rego, complex cross-domain rules, per-repo policies.
 
 ### Layer 3: Workflow Orchestration (Phase 4)
@@ -748,7 +748,7 @@ The generic execution engine that runs any block:
 
 This is the Phase 3 core loop applied per-block automatically. The block executor is what makes "scale to millions" work — each block only sees its OPA-scoped slice of instructions.
 
-**Not yet built.** Currently blocks have hardcoded logic. The block executor wrapper is the pre-4.5 prerequisite that connects blocks to OPA/pgvector.
+**Built.** `BlockExecutor.ts` wraps each block: OPA scoping → pgvector search → inject `_context` into state → execute. `PipelineExecutor` routes all nodes through the block executor. `InstructionLoader.ts` reads seed YAML at startup, embeds via Ollama, upserts with content_hash idempotency.
 
 ### Pipeline Executor
 
@@ -843,11 +843,11 @@ Built the core retrieval pipeline:
 **Deferred until needed:**
 - Hooks integration (AgentSpawn + PreToolUse for supplementary OPA) — not needed until workflows are running end-to-end
 
-**Required before 4.5 (OPA per-block injection):**
-- Rename `policies/test.rego` → `policies/access.rego`, update package + OPA query path
-- Add `policies/scoping.rego` — per-block instruction filtering
-- Build YAML → pgvector startup loader (read `workflows/*/instructions/*.yaml` → embed → upsert)
-- Build block executor wrapper (query OPA scoping → pgvector search → inject instructions → execute block)
+**Required before 4.5 (OPA per-block injection) — DONE:**
+- ✅ Rename `policies/test.rego` → `policies/access.rego`, update package + OPA query path
+- ✅ Add `policies/scoping.rego` — per-block instruction filtering
+- ✅ Build YAML → pgvector startup loader (read `workflows/*/instructions/*.yaml` → embed → upsert)
+- ✅ Build block executor wrapper (query OPA scoping → pgvector search → inject instructions → execute block)
 - This closes the loop: blocks consume their seed instructions via OPA at runtime
 
 #### 4.1: Block Model + Registry
@@ -920,11 +920,11 @@ Each instruction YAML: `id`, `text`, `metadata` (agent_role, task_type, domain, 
 
 **Self-updating** (UC-MW-17): When meta-workflow updates itself, author/wire blocks write to DB AND update `workflows/meta-workflow/` YAML files. User commits changes to git.
 
-#### Pre-4.5: OPA Per-Block Injection (required before meta-workflow self-improves)
-- Rename `policies/test.rego` → `policies/access.rego` (update package + query path)
-- Add `policies/scoping.rego` — per-block instruction filtering via OPA
-- Build YAML → pgvector startup loader (read seed YAMLs → embed → upsert DB)
-- Build block executor wrapper (OPA scoping query → pgvector search → inject → execute)
+#### Pre-4.5: OPA Per-Block Injection ✅
+- ✅ Rename `policies/test.rego` → `policies/access.rego` (update package + query path)
+- ✅ Add `policies/scoping.rego` — per-block instruction filtering via OPA
+- ✅ Build YAML → pgvector startup loader (read seed YAMLs → embed → upsert DB)
+- ✅ Build block executor wrapper (OPA scoping query → pgvector search → inject → execute)
 - Blocks consume their seed instructions at runtime — closes the OPA loop
 
 #### 4.5+: Incremental via Meta-Workflow
@@ -940,7 +940,7 @@ Each is a sub-phase added by using meta-workflow's update capability (UC-MW-2). 
 - Hooks integration — AgentSpawn (OPA user profile injection), PreToolUse (access control gate) (UC-MW-23)
 - AI-orchestrated block convention — structured output format (UC-MW-21)
 - Agent config generation — meta-workflow produces `.kiro/agents/*.json` for workflow-specific agents
-- Explore replacing zod with Effect Schema → JSON Schema for MCP tool definitions (remove zod dependency)
+- Explore replacing zod 4 with Effect Schema → JSON Schema for MCP tool definitions
 
 ### Phase 5: Repo-Analysis (Built by Meta-Workflow)
 - Use meta-workflow to build repo-analysis as first generated workflow

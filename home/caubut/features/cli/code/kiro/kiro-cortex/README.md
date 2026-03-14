@@ -16,11 +16,12 @@ All codified knowledge (steering rules, coding standards, repo conventions, work
 - Phase 1: Data Migration ✅
 - Phase 2: Infrastructure Wiring ✅
 - Phase 3: Core RAG Loop ✅
-- Phase 4: MVP-Incremental Build — NEXT
-  - 4.1: Block Model + Registry (BlockDef, PipelineDef, export types, content_hash migration)
-  - 4.2: Pipeline Executor + HITL (LangGraph interrupt/resume, PG checkpointer)
-  - 4.3: MCP Stdio Wrapper
-  - 4.4: MVP Meta-Workflow (route, interview, author, wire)
+- Phase 4: MVP-Incremental Build
+  - 4.1: Block Model + Registry ✅
+  - 4.2: Pipeline Executor + HITL ✅
+  - 4.3: MCP Stdio Wrapper ✅
+  - 4.4: MVP Meta-Workflow ✅
+  - Pre-4.5: OPA per-block injection ✅ (access.rego, scoping.rego, YAML loader, block executor)
   - 4.5+: Incremental features via meta-workflow itself
 - Phase 5: Repo-Analysis (Built by Meta-Workflow)
 - Phase 6: Web Dashboard (read-only)
