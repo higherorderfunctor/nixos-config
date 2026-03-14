@@ -21,7 +21,7 @@ export class OpaService extends Effect.Service<OpaService>()("OpaService", {
 
     const evaluate = (query: OpaQuery): Effect.Effect<OpaDecision, OpaError> =>
       Effect.gen(function* () {
-        const request = HttpClientRequest.post("http://localhost:8181/v1/data/cortex/test/decision")
+        const request = HttpClientRequest.post("http://localhost:8181/v1/data/cortex/access/decision")
         const requestWithBody = yield* HttpClientRequest.bodyJson({ input: query })(request)
         const response = yield* client.execute(requestWithBody)
         const data: any = yield* response.json
