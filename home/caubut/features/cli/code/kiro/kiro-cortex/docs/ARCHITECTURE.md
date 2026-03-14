@@ -657,7 +657,44 @@ Maps to existing steering structure:
 | Context budget | Caller-specified per request | Task complexity determines budget |
 | Hosting | Self-hosted, NixOS/Home Manager | Full control, privacy, no vendor lock-in |
 | Runtime | Bun + pnpm, Effect-TS | User preference, type safety |
+| HTTP clients | HttpApi + Schema (not raw HttpClient) | Full type safety on request/response; Schema validates at runtime, no `as any` casts |
 | Web UI | Read-only dashboard (afterthought) | Local CLI is primary interface; local-first development experience preferred |
+
+## Code Conventions
+
+### HTTP Clients via HttpApi + Schema
+
+All HTTP calls to external services (OPA, Ollama, etc.) use `HttpApi` + `HttpApiClient.make()` with Effect `Schema` types for request and response bodies. This gives compile-time AND runtime type safety — no `as any` casts, no manual JSON parsing.
+
+**Pattern:**
+1. Define the external API's shape using `HttpApiEndpoint` + `HttpApiGroup` + `HttpApi`
+2. Define request/response `Schema` types that match the real API (keep schemas honest — model what the API actually returns)
+3. Derive a typed client via `HttpApiClient.make(api, { baseUrl })`
+4. Client calls are fully typed: payload in, validated response out
+
+**Why not raw HttpClient:** Raw `HttpClient` requires manual JSON parsing and `as any` casts. `HttpClientResponse.schemaBodyJson` validates responses but doesn't type-check request payloads. `HttpApi` + `HttpApiClient` covers both directions.
+
+**Exception:** `src/mcp.ts` uses plain `fetch` because it runs as a standalone MCP stdio process outside the Effect runtime. Zod is allowed only in this file for MCP SDK compatibility.
+
+### Commenting Standards
+
+All TypeScript files use consistent documentation for both human and AI readers:
+
+**TSDoc comments (required on every export):**
+- Interfaces, types, classes, functions, constants
+- Describe WHAT it is and WHY it exists
+- Include `@param`, `@returns`, `@example` where useful
+
+**Inline comments (required for non-trivial code):**
+- Explain the reasoning, not the syntax
+- Flag non-obvious constraints: "OPA wraps results in { result: ... }"
+- Mark architectural boundaries: "--- OPA scoping ---"
+
+**AI-readable annotations:**
+- `// ARCH: ...` — architectural context (why this design choice)
+- `// CONSTRAINT: ...` — non-obvious constraint that must be preserved
+- `// EXTERNAL: ...` — documents external API behavior/quirks
+- These help AI assistants understand intent when modifying code
 
 ## Phase 4a Infrastructure Detail
 
