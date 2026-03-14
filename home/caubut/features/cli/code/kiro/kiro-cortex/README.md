@@ -18,8 +18,8 @@ All codified knowledge (steering rules, coding standards, repo conventions, work
 - Phase 3: Core RAG Loop ✅
 - Phase 4a: Block Engine Infrastructure — NEXT
 - Phase 4b: Meta-Workflow (Bootstrap)
-- Phase 4c: Repo-Analysis Workflow (Built by Meta-Workflow)
-- Phase 4d: Repo-Analysis Output Workflows
+- Phase 5: Repo-Analysis (Built by Meta-Workflow)
+- Phase 6: Web UI
 
 ## Quick Start
 

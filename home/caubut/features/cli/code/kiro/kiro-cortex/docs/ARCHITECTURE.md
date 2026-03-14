@@ -57,7 +57,7 @@ The foundation. A query comes in, relevant instructions come out.
 - **Ollama** (nomic-embed-text) converts text to 768-dim vectors. Stateless. Called via HTTP on localhost:11434.
 - **PostgreSQL** (kiro_cortex DB) stores instructions with metadata + embeddings. pgvector extension provides HNSW cosine search.
 
-### Layer 2: Policy Governance (Phase 5)
+### Layer 2: Policy Governance (Phase 4)
 
 OPA sits in front of the search step. Instead of hardcoded SQL WHERE clauses, OPA evaluates declarative Rego policies and returns filtering criteria.
 
@@ -82,9 +82,9 @@ OPA sits in front of the search step. Instead of hardcoded SQL WHERE clauses, OP
 - Audit trail of policy decisions
 - Reusable across entry points
 
-**In Phase 3**, OPA handles access control only (allow/deny the request). Instruction filtering uses SQL WHERE directly. OPA-driven filtering is added in Phase 5 when policy complexity justifies it.
+**In Phase 3**, OPA handles access control only (allow/deny the request). Instruction filtering uses SQL WHERE directly. OPA-driven filtering is added when policy complexity justifies it.
 
-### Layer 3: Workflow Orchestration (Phase 5)
+### Layer 3: Workflow Orchestration (Phase 4)
 
 LangGraph orchestrates multi-step workflows where each step runs the core loop with different context.
 
@@ -358,6 +358,58 @@ Maps to existing steering structure:
 | Hosting | Self-hosted, NixOS/Home Manager | Full control, privacy, no vendor lock-in |
 | Runtime | Bun + pnpm, Effect-TS | User preference, type safety |
 
+## Phase 4a Infrastructure Detail
+
+### Block Definition Format
+
+Blocks are typed functions, NOT Effect.Services. Services are for infrastructure (DB, OPA, Embedding). Blocks are domain logic that uses services.
+
+Each block is a TypeScript module in `src/blocks/{name}.ts` exporting a `BlockDef` with metadata + an execute function that returns an Effect.
+
+### Block Registry
+
+Explicit registration at startup. Registry provides:
+- List all blocks
+- Search by capability (for meta-workflow reuse check)
+- Get block by ID
+- In-memory, populated from block modules at startup
+
+### Block Executor
+
+The generic execution engine that runs any block:
+1. Takes block's `opa_context` declaration
+2. Calls OPA with that context → gets filtering criteria
+3. Runs core RAG loop (embed query → pgvector search with OPA filters → assemble context)
+4. Injects retrieved instructions into block's execution context
+5. Calls block's execute function with inputs + instructions
+6. For blocks needing smart execution: routes to Kiro headless
+
+This is the Phase 3 core loop applied per-block automatically.
+
+### Pipeline Executor
+
+Dynamic LangGraph StateGraph construction from pipeline definitions:
+- Given a Pipeline definition, builds a StateGraph at runtime
+- Each node = block execution via the block executor
+- State flows via LangGraph state object, shaped by pipeline's `state_schema`
+- PG checkpointer for persistent state across steps
+- Current `Workflow.ts` gets refactored into this generic executor
+
+### MCP Server Wrapper
+
+Thin MCP stdio server, separate process. kiro-cli launches it via mcp.json config.
+- Exposes tools: `list_blocks`, `run_block`, `list_pipelines`, `run_pipeline`
+- Calls kiro-cortex HTTP API internally (keeps processes separate)
+- Registered in default.nix mcp.json alongside other MCP servers
+- Meta-workflow end step generates SKILL.md files that reference these MCP tools
+
+### Kiro Headless Service
+
+New Effect.Service wrapping Kiro headless API:
+- Sends scoped instructions + task to Kiro for smart execution
+- Blocks that need reasoning/generation (steering-generate, workflow-suggest) call this
+- Interface TBD — need to research Kiro headless API (HTTP? CLI subprocess?)
+
 ## Phase Plan
 
 ### Phase 0: Database Layer ✅ (commit 75d246a)
@@ -388,43 +440,36 @@ Built the core retrieval pipeline:
 - Validated end-to-end with inline psql test data (no persistent seed data)
 
 ### Phase 4a: Block Engine Infrastructure
-- Block definition format (TypeScript modules + metadata schema)
-- Block registry (discover/list available blocks, search for reuse)
-- Block execution engine (run block with inputs, inject OPA-scoped instructions, get outputs)
-- Pipeline definition format and executor (LangGraph composes blocks)
+- Block definition format (typed functions + metadata schema)
+- Block registry (discover/list/search available blocks)
+- Block executor (run block with inputs, inject OPA-scoped instructions, get outputs)
+- Pipeline executor (dynamic LangGraph StateGraph from pipeline definitions)
 - MCP stdio server wrapper for kiro-cli triggering
+- Kiro headless service (Effect.Service wrapping headless API)
+- Refactor Workflow.ts into generic pipeline executor
 
 ### Phase 4b: Meta-Workflow (Bootstrap)
-- Hand-build the workflow lifecycle tools (build, update, refine workflows)
-- First instructions in DB = "how to build workflows" (hand-written, like Phase 3 test data)
-- End step pattern: suggest trigger options (skill, agent, MCP tool, future web UI/Slack)
+- Hand-build the workflow lifecycle tools (interview, research, build, update, refine)
+- First instructions in DB = "how to build workflows" (hand-written)
+- Reusable patterns: historical tracking (generic, configurable per-workflow)
+- End step: suggest triggers + generate SKILL.md + promote trigger blocks
 - Validates the full OPA/LangGraph pipeline with real instructions
+- Human-in-the-loop: interviews user, proposes decomposition, user approves
 
-### Phase 4c: Repo-Analysis Workflow (Built by Meta-Workflow)
+### Phase 5: Repo-Analysis (Built by Meta-Workflow)
 - Use meta-workflow to build repo-analysis as first generated workflow
-- Steps: discover → provenance → extract → detect → knowledge-suggest → knowledge-ingest → generate → workflow-suggest
 - Git worktree aware (repo identity by remote origin)
-- Instruction scoping (repo-specific vs framework-agnostic)
-- Iterative: update step (diff previous), historical step (old → new migration instructions)
-- Knowledge seeding as a step (detect frameworks → suggest sources → ingest)
-- Output: repo-scoped instructions + suggested knowledge sources + generated workflows (TBD: code-reviewer, code-assist, etc.)
+- Instruction scoping (repo-specific vs framework-agnostic, OPA enforced)
+- Iterative: uses historical tracking pattern for convention evolution
+- Knowledge seeding as a step (detect frameworks → suggest sources → HITL approval → ingest)
+- Output workflows TBD (meta-workflow interviews user on what's useful)
+- Known knowledge sources: EffectPatterns (300+), effect-solutions (10+)
 
-### Phase 4d: Repo-Analysis Output Workflows
-- repo-analysis uses meta-workflow to generate repo-specific workflows
-- Exact workflows TBD (ideate: generate-code, code-reviewer, code-assist, etc.)
-- Each generated workflow reuses existing blocks where possible
-
-### Phase 5: Content Migration
-- Ingestion pipeline: parse steering markdown → extract rules → tag metadata → embed → insert
-- Bulk classification via Ollama (domain, task_type tagging)
-- Migrate personal steering files first, workspace steering later
-- Production OPA policies for real content
-
-### Phase 6: Triggers + Discovery
-- MCP stdio wrapper for kiro-cli
-- Register in default.nix mcp.json
-- Generated SKILL.md files for common workflows
-- Web UI (LangGraph Studio or custom)
+### Phase 6: Web UI
+- LangGraph Studio or custom dashboard
+- OPA management interface
+- Knowledge graph visualization
+- HITL workflow interactions via web (same pattern as kiro-cli chat)
 
 ## Effect-TS Patterns
 
