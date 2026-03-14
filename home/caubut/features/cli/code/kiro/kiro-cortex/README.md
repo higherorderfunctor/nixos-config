@@ -16,7 +16,10 @@ All codified knowledge (steering rules, coding standards, repo conventions, work
 - Phase 1: Data Migration ✅
 - Phase 2: Infrastructure Wiring ✅
 - Phase 3: Core RAG Loop ✅
-- Phase 4: Workflow Engine (repo-analysis) — NEXT
+- Phase 4a: Block Engine Infrastructure — NEXT
+- Phase 4b: First Blocks + Knowledge Seeding
+- Phase 4c: Repo-Analysis Pipeline
+- Phase 4d: Meta-Workflow
 
 ## Quick Start
 

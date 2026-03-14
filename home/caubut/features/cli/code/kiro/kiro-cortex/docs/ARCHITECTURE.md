@@ -147,27 +147,119 @@ Two databases on the same PostgreSQL server (port 5435), different purposes:
 
 **OpenMemory and kiro-cortex are independent systems.** They share a PG server for convenience but have no data dependencies. kiro-cortex never reads from `openmemory`. OpenMemory never reads from `kiro_cortex`.
 
+## Composable Workflow Blocks
+
+kiro-cortex is a registry of composable blocks, not one monolithic workflow. Each block is a self-contained unit that can run standalone or as part of a pipeline.
+
+### Block Model
+
+```
+Block {
+  id: string              // unique identifier
+  name: string            // human-readable name
+  inputs: Schema          // what it needs
+  outputs: Schema         // what it produces
+  opa_context: {          // declares what instructions this block needs
+    agent_role, task_type, domain
+  }
+  mode: "standalone" | "pipeline" | "both"
+}
+```
+
+### Pipeline Model
+
+```
+Pipeline {
+  id: string
+  name: string
+  steps: Array<{block_id, condition?, routing?}>
+  state_schema: Schema    // shared state across steps
+}
+```
+
+### Execution Model
+
+A block can be triggered via:
+- **HTTP API** — direct POST to `/blocks/{id}/run`
+- **MCP tool** — from kiro-cli (MCP stdio wrapper)
+- **Pipeline step** — from LangGraph orchestration
+
+All share the same block implementation. Each block gets OPA-scoped instructions injected via the core RAG loop.
+
+### Block Taxonomy
+
+Identified blocks (to be built incrementally):
+
+| Block | Purpose | Mode |
+|-------|---------|------|
+| repo-discover | Scan repo structure, identify domains/teams/tech clusters | both |
+| provenance-analyze | Git history heuristics for pattern authority | both |
+| pattern-extract | Extract code patterns from a codebase | both |
+| anti-pattern-detect | Identify anti-patterns against known good patterns | both |
+| steering-verify | Check existing steering files against codebase | both |
+| steering-generate | Generate steering files (7-section framework) | both |
+| knowledge-ingest | Digest patterns from external repos into instructions DB | standalone |
+| knowledge-suggest | Suggest repos/sources to build knowledge base from | standalone |
+| workflow-generate | Meta: generate new workflow/pipeline definitions | standalone |
+| workflow-validate | Test/validate generated workflows | standalone |
+
+### Pipelines (composed from blocks)
+
+| Pipeline | Steps | Purpose |
+|----------|-------|---------|
+| repo-analysis | discover → provenance → extract → detect → verify → generate | Analyze repo, produce steering files |
+| knowledge-build | suggest → ingest → validate | Grow the instructions knowledge base |
+| workflow-build | generate → validate | Create new workflows via Kiro |
+
+### Steering File Output Framework
+
+Repo-analysis generates steering files per domain using a 7-section framework:
+
+1. Architecture Overview
+2. Tech Stack and Versions
+3. Curated Knowledge Sources
+4. Project Structure
+5. Naming Conventions
+6. Code Examples (required: concrete, runnable)
+7. Anti-patterns
+
+Output structure per domain:
+```
+repo-analysis/{domain}/
+├── overview.md          # Architecture, stack, structure
+├── patterns.md          # Framework-specific patterns with examples
+├── anti-patterns.md     # What NOT to do
+├── testing.md           # Test conventions (if applicable)
+└── migrations/          # Pattern transition guides
+```
+
 ## How Instructions Get Into the Table
 
-**Phase 3 (now):** Hand-written test seed data. 5-10 instructions inserted via SQL migration with pre-computed embeddings. Validates the retrieval pipeline without building an ingestion system.
+**Phase 3 (done):** Validated pipeline with inline psql test data (inserted and deleted).
 
-**Phase 4 (later):** Ingestion pipeline.
+**Phase 4 (knowledge-ingest block):** Parse external repos and steering files into instructions.
 ```
-  Steering file (markdown)
-    → parse into individual rules/conventions
+  Source (markdown/MDX from public repos or local steering files)
+    → parse into individual rules/patterns
     → tag with metadata (domain, agent_roles, task_types, priority, ...)
     → embed text via Ollama (nomic-embed-text, 768-dim)
     → INSERT into instructions table
 ```
 
-This is a batch process, not real-time. Run it when steering files change. Ollama handles classification/tagging for bulk data (cheap, fast, local).
+**Initial knowledge sources** (public, MIT-licensed):
+- [PaulJPhilp/EffectPatterns](https://github.com/PaulJPhilp/EffectPatterns) — 300+ Effect-TS patterns by category
+- [kitlangton/effect-solutions](https://github.com/kitlangton/effect-solutions) — Curated Effect best practices with tested examples
+
+Goal: 10,000s of instructions across frameworks, conventions, and patterns.
 
 ## Execution Modes
 
-The pipeline is identical regardless of trigger. What differs is what happens after context assembly:
+A block's execution mode depends on its trigger:
 
-- **MCP trigger** (kiro-cli): Return assembled context + metadata. kiro-cli injects into Claude's prompt. Workflow stops after assembly.
-- **Direct trigger** (web/Slack, future): LangGraph routes to Kiro headless for full execution. Returns complete response.
+- **MCP trigger** (kiro-cli): Return assembled context + metadata. kiro-cli injects into Claude's prompt.
+- **HTTP API trigger**: Return results directly. Can chain into pipeline steps.
+- **Pipeline trigger** (LangGraph): Block runs as a step, output feeds next step's state.
+- **Direct trigger** (web/Slack, future): LangGraph routes to Kiro headless for full execution.
 
 Context size is configurable per-call via `token_budget` parameter.
 
@@ -247,15 +339,28 @@ Built the core retrieval pipeline:
 - `/context` endpoint replacing `/test`
 - Validated end-to-end with inline psql test data (no persistent seed data)
 
-### Phase 4: Workflow Engine (repo-analysis)
-- Build a real workflow (repo-analysis) end-to-end using seed data
-- Per-step OPA consultation pattern
-- OPA-driven instruction filtering (Rego policies generate SQL WHERE criteria)
-- Kiro headless integration
-- PostgreSQL checkpointer for persistent workflow state
-- Conditional routing (MCP → return context, web/slack → full execution)
-- Test and iterate until the workflow engine works reliably
-- repo-analysis goal TBD — user will define
+### Phase 4a: Block Engine Infrastructure
+- Block definition format (TypeScript modules + metadata schema)
+- Block registry (discover/list available blocks)
+- Block execution engine (run block with inputs, inject OPA context, get outputs)
+- Pipeline definition format and executor (LangGraph composes blocks)
+- MCP stdio server wrapper for kiro-cli triggering
+
+### Phase 4b: First Blocks + Knowledge Seeding
+- knowledge-ingest block (parse external repos → instructions)
+- pattern-extract block
+- steering-generate block
+- Ingest EffectPatterns (300+ patterns) and effect-solutions (10+ topics)
+- Validate retrieval quality against ingested knowledge
+
+### Phase 4c: Repo-Analysis Pipeline
+- Compose blocks into repo-analysis pipeline (discover → provenance → extract → detect → verify → generate)
+- Test end-to-end with a public repo
+- Validate against known anti-patterns using ingested knowledge base
+
+### Phase 4d: Meta-Workflow
+- workflow-generate block (Kiro headless writes new workflows)
+- workflow-validate block (test generated workflows)
 
 ### Phase 5: Content Migration
 - Ingestion pipeline: parse steering markdown → extract rules → tag metadata → embed → insert
