@@ -82,7 +82,103 @@ OPA sits in front of the search step. Instead of hardcoded SQL WHERE clauses, OP
 - Audit trail of policy decisions
 - Reusable across entry points
 
-**In Phase 3**, OPA handles access control only (allow/deny the request). Instruction filtering uses SQL WHERE directly. OPA-driven filtering is added when policy complexity justifies it.
+#### OPA Policy Design
+
+**Policy file structure** (replaces `test.rego`):
+
+```
+policies/
+  access.rego          # request-level allow/deny (was test.rego)
+  scoping.rego         # per-block instruction filtering
+  isolation.rego       # repo isolation rules
+```
+
+**access.rego** — request-level access control:
+```rego
+package cortex.access
+
+# Allow any authenticated request
+default allow = false
+allow if { input.user_id != "" }
+
+# Deny patterns (content filtering, rate limiting, etc.)
+default deny = false
+deny if { contains(lower(input.query), "forbidden") }
+
+decision := { "allowed": allow, "denied": deny, "reason": reason }
+```
+
+**scoping.rego** — per-block instruction filtering (the core of scale):
+```rego
+package cortex.scoping
+
+# Input: { agent_role, task_type, domain, repo }
+# Output: SQL WHERE criteria for instruction search
+
+# Default: return all matching domain instructions
+filters := {
+  "allowed_domains": allowed_domains,
+  "allowed_task_types": allowed_task_types,
+  "repo_filter": repo_filter,
+  "max_results": max_results,
+}
+
+# Domain scoping: block only sees instructions in its domain
+allowed_domains contains input.domain if { input.domain != "" }
+allowed_domains contains "global" # always include global instructions
+
+# Task type scoping: block only sees instructions for its task type
+allowed_task_types contains input.task_type
+
+# Repo isolation: repo-specific instructions only for that repo
+repo_filter := input.repo if { input.repo != null }
+repo_filter := null if { input.repo == null } # null = framework-agnostic only
+
+# Result limits per block type
+max_results := 50 if { input.task_type == "analysis" }
+max_results := 20 if { input.task_type != "analysis" }
+```
+
+**isolation.rego** — repo boundary enforcement:
+```rego
+package cortex.isolation
+
+# Prevent cross-repo instruction leakage
+deny_instruction if {
+  input.instruction.repo != null
+  input.instruction.repo != input.request.repo
+}
+```
+
+**How it connects to blocks:**
+
+Each `BlockDef<S>` declares its OPA context:
+```typescript
+{
+  opa: { agent_role: "workflow-builder", task_type: "authoring", domain: "meta" }
+}
+```
+
+The block executor (not yet built) does:
+1. Send `block.opa` context to OPA `/v1/data/cortex/scoping/filters`
+2. OPA returns filtering criteria: `{ allowed_domains, allowed_task_types, repo_filter, max_results }`
+3. kiro-cortex translates to SQL WHERE: `domain IN (...) AND task_type IN (...) AND (repo = ... OR repo IS NULL)`
+4. pgvector search with those filters → scoped instructions for this block
+5. Inject instructions into block execution context
+6. Block executes with only its relevant instructions
+
+**Migration from test.rego:**
+- Rename `policies/test.rego` → `policies/access.rego`
+- Update `package cortex.test` → `package cortex.access`
+- Update OPA query path in `Opa.ts`: `/v1/data/cortex/test/decision` → `/v1/data/cortex/access/decision`
+- Add `policies/scoping.rego` and `policies/isolation.rego`
+- OPA loads all `.rego` files from `policies/` directory automatically
+
+**Phasing:**
+- Phase 3 (done): `access.rego` only (allow/deny). Instruction filtering via hardcoded SQL WHERE.
+- Phase 4.4 (done): Blocks declare OPA context but don't query it yet (hardcoded logic).
+- Pre-4.5 (next): Rename test.rego → access.rego. Add scoping.rego. Build block executor wrapper. Wire YAML loader.
+- 4.5+: isolation.rego, complex cross-domain rules, per-repo policies.
 
 ### Layer 3: Workflow Orchestration (Phase 4)
 
@@ -571,14 +667,17 @@ Explicit registration at startup. Registry is an Effect.Service (infrastructure)
 ### Block Executor
 
 The generic execution engine that runs any block:
-1. Takes block's `opa_context` declaration
-2. Calls OPA with that context → gets filtering criteria
-3. Runs core RAG loop (embed query → pgvector search with OPA filters → assemble context)
-4. Injects retrieved instructions into block's execution context
-5. Calls block's execute function with state
-6. For blocks needing smart execution: routes to Kiro headless
+1. Takes block's `opa` context declaration (`{ agent_role, task_type, domain }`)
+2. Calls OPA scoping endpoint → gets filtering criteria (`allowed_domains`, `allowed_task_types`, `repo_filter`, `max_results`)
+3. Translates OPA criteria to SQL WHERE clauses
+4. Runs core RAG loop (embed query → pgvector search with OPA-derived filters → assemble context)
+5. Injects retrieved instructions into block's execution context (via state)
+6. Calls block's execute function with enriched state
+7. For blocks needing smart execution: routes to Kiro headless
 
-This is the Phase 3 core loop applied per-block automatically.
+This is the Phase 3 core loop applied per-block automatically. The block executor is what makes "scale to millions" work — each block only sees its OPA-scoped slice of instructions.
+
+**Not yet built.** Currently blocks have hardcoded logic. The block executor wrapper is the pre-4.5 prerequisite that connects blocks to OPA/pgvector.
 
 ### Pipeline Executor
 
@@ -665,7 +764,13 @@ Built the core retrieval pipeline:
 
 **Deferred until needed:**
 - Kiro headless service — not needed when user is always in the loop via kiro-cli. Required later for autonomous workflows.
-- OPA per-block injection — can hardcode instructions at first, add OPA integration incrementally.
+
+**Required before 4.5 (OPA per-block injection):**
+- Rename `policies/test.rego` → `policies/access.rego`, update package + OPA query path
+- Add `policies/scoping.rego` — per-block instruction filtering
+- Build YAML → pgvector startup loader (read `workflows/*/instructions/*.yaml` → embed → upsert)
+- Build block executor wrapper (query OPA scoping → pgvector search → inject instructions → execute block)
+- This closes the loop: blocks consume their seed instructions via OPA at runtime
 
 #### 4.1: Block Model + Registry
 - `BlockDef<S>` — generic over pipeline state, LangGraph node signature, OPA context declaration
@@ -737,6 +842,13 @@ Each instruction YAML: `id`, `text`, `metadata` (agent_role, task_type, domain, 
 
 **Self-updating** (UC-MW-17): When meta-workflow updates itself, author/wire blocks write to DB AND update `workflows/meta-workflow/` YAML files. User commits changes to git.
 
+#### Pre-4.5: OPA Per-Block Injection (required before meta-workflow self-improves)
+- Rename `policies/test.rego` → `policies/access.rego` (update package + query path)
+- Add `policies/scoping.rego` — per-block instruction filtering via OPA
+- Build YAML → pgvector startup loader (read seed YAMLs → embed → upsert DB)
+- Build block executor wrapper (OPA scoping query → pgvector search → inject → execute)
+- Blocks consume their seed instructions at runtime — closes the OPA loop
+
 #### 4.5+: Incremental via Meta-Workflow
 Each is a sub-phase added by using meta-workflow's update capability (UC-MW-2). User relaunches kiro between each. Order flexible based on what's most useful:
 - **decompose** block — propose block structure (currently user provides manually)
@@ -745,7 +857,7 @@ Each is a sub-phase added by using meta-workflow's update capability (UC-MW-2). 
 - **optimize** block — instruction bloat, spaghetti, DRY checks
 - **audit** mode in route — UC-MW-13 manual trigger
 - **programmatic** mode in route — UC-MW-4/12 short-circuit path
-- OPA per-block injection (infrastructure upgrade)
+- `policies/isolation.rego` — repo boundary enforcement
 - Kiro headless service (when autonomous execution needed)
 - Explore replacing zod with Effect Schema → JSON Schema for MCP tool definitions (remove zod dependency)
 
