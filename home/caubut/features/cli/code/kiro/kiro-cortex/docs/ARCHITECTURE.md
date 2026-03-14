@@ -214,6 +214,20 @@ Instructions have scope enforced by OPA:
 
 ## Meta-Workflow (Bootstrap)
 
+### Problem Statement
+
+Building workflows by hand doesn't scale. Each workflow needs decomposition into focused blocks, OPA context declarations, instruction authoring, pipeline wiring, and trigger setup. Without tooling, this is error-prone and inconsistent. The meta-workflow solves this by codifying "how to build workflows" as instructions in the DB, then using those instructions to guide workflow creation — dogfooding the entire OPA/LangGraph system.
+
+### Use Cases
+
+- **UC-MW-1**: "Kiro, help me build a workflow to do X" → interview on goals, decompose into blocks, wire pipeline, store instructions, suggest triggers
+- **UC-MW-2**: "Kiro, help me update workflow X to do Y" → find existing instructions, modify/add/deprecate, re-wire if needed
+- **UC-MW-3**: "Kiro, the instructions in workflow X step Y need better instructions, here is the problem" → targeted refinement of specific step instructions
+- **UC-MW-4**: A workflow (like repo-analysis) needs to generate sub-workflows as part of its output → calls meta-workflow programmatically to produce them
+- _(Add more use cases here as they emerge)_
+
+### Description
+
 The meta-workflow is a hand-built collection of tools for the workflow lifecycle. It is the first real customer of the OPA pipeline — its instructions ("how to build workflows") are the first content in the instructions table.
 
 **Human-in-the-loop by design.** The meta-workflow interviews the user on goals, proposes a decomposition into blocks, and iterates until the user approves. This HITL pattern must work across interfaces (kiro-cli chat now, web UI and Slack later).
@@ -254,6 +268,21 @@ The first block in a workflow — the entry point that kiro-cli or web UI execut
 The meta-workflow is the bootstrap — it can't build itself. It's the one workflow we code manually. Everything after it is produced BY it.
 
 ## Repo-Analysis (First Generated Workflow)
+
+### Problem Statement
+
+Developers join repos, conventions drift, and steering files go stale. Manually writing and maintaining per-repo coding standards doesn't scale across repos or over time. Repo-analysis solves this by automatically discovering patterns, conventions, and anti-patterns from the codebase itself, storing them as scoped instructions in the DB, and suggesting framework-specific knowledge sources to enhance context quality. It runs iteratively as the repo evolves, tracking convention changes so old code is understood in context.
+
+### Use Cases
+
+- **UC-RA-1**: First run on a new repo → discover domains, tech stack, team boundaries, extract patterns, produce repo-scoped instructions
+- **UC-RA-2**: Detect Effect-TS as a major framework → suggest ingesting EffectPatterns and effect-solutions as repo-agnostic knowledge sources (HITL approval)
+- **UC-RA-3**: Re-run after repo evolution → diff against previous analysis, track convention changes (e.g., "pipe chains → Effect.gen"), produce historical migration instructions
+- **UC-RA-4**: Post-analysis → use meta-workflow to interview user on what output workflows would be useful based on findings (TBD: code-reviewer, code-assist, etc.)
+- **UC-RA-5**: Multiple worktrees for same repo → share instructions, identify repo by remote origin not directory path
+- _(Add more use cases here as they emerge)_
+
+### Description
 
 Built using the meta-workflow. Analyzes repos and produces:
 
