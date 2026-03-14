@@ -220,10 +220,21 @@ The meta-workflow is a hand-built collection of tools for the workflow lifecycle
 
 ### Capabilities
 
-- **Interview**: Understand user goals for the workflow — what problem it solves, what triggers it, what it outputs. Propose blocks and pipeline structure. User approves/refines.
-- **Build**: Decompose into blocks → find existing blocks → create new if needed → wire pipeline → store instructions in DB → suggest triggers
+- **Interview**: Understand user goals — what problem the workflow solves, what triggers it, what it outputs. Propose blocks and pipeline structure. User approves/refines.
+- **Research**: Proactively discover ideas and suggest use cases the user may not have thought of. Query knowledge base for similar workflows, patterns, and best practices.
+- **Build**: Decompose into blocks → find existing blocks → create new if needed → compose reusable patterns (e.g., historical tracking) → wire pipeline → store instructions in DB → suggest triggers
 - **Update**: "Kiro, help me update workflow X to do Y" → find existing instructions → modify/add/deprecate
 - **Refine**: "Kiro, the instructions in workflow X step Y need better instructions" → targeted improvement of specific step instructions
+
+### Reusable Patterns (Functional Composition)
+
+The meta-workflow composes generic patterns into workflows. These are abstract, configurable capabilities — not workflow-specific logic.
+
+**Historical Tracking** — for any workflow whose context drifts over time. Tracks where instructions came from and how they evolved. The specific strategy (version, migrate, deprecate, or combination) is configured per-workflow during the interview. Examples:
+- repo-analysis: track convention changes so old code patterns are understood in context
+- knowledge-ingest: track source versions so stale knowledge can be refreshed
+
+More reusable patterns will emerge as workflows are built. The meta-workflow should identify when a new workflow needs a pattern that already exists and compose it in.
 
 ### How It Works
 
@@ -252,10 +263,12 @@ Built using the meta-workflow. Analyzes repos and produces:
 
 ### Iterative by Design
 
-repo-analysis runs repeatedly as the repo evolves:
-- **Update step**: diff against previous analysis, detect what changed
-- **Historical step**: old conventions tracked as migration instructions ("replace X with Y"), not deleted
-- **Knowledge tracking**: post-analysis record of "these sources should be ingested" persists across runs
+repo-analysis runs repeatedly as the repo evolves. Uses the generic **historical tracking** pattern (configured during interview) to:
+- Diff against previous analysis, detect what changed
+- Track convention evolution so old code patterns are understood in context
+- Maintain knowledge source ingestion state across runs
+
+Specific historical tracking behavior (e.g., how to handle old conventions, what migration instructions to generate) is determined during the meta-workflow interview when building repo-analysis.
 
 ### Knowledge Seeding
 
