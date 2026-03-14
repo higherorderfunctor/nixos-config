@@ -1,5 +1,18 @@
+/**
+ * @module Workflow
+ * Phase 3 context assembly workflow — the original RAG pipeline.
+ *
+ * ARCH: This is the core RAG loop from Phase 3: policy check → vector search →
+ * context assembly → response generation. It predates the block/pipeline model
+ * (Phase 4) and is used by the /context endpoint directly.
+ *
+ * ARCH: Will eventually be refactored into a pipeline definition using the
+ * block model, but currently serves as the working context assembly engine.
+ */
+
 import { StateGraph, Annotation, START, END } from "@langchain/langgraph"
 
+/** LangGraph state annotation for the context assembly workflow. */
 const GraphState = Annotation.Root({
   query: Annotation<string>,
   user_id: Annotation<string>,
@@ -13,8 +26,10 @@ const GraphState = Annotation.Root({
   token_count: Annotation<number>,
 })
 
+/** TypeScript type for the context workflow state. */
 export type ContextState = typeof GraphState.State
 
+/** Check if the user is allowed to query (basic user_id presence check). */
 export const checkPolicy = async (state: ContextState) => ({
   policy_decision: {
     allowed: state.user_id !== "",
@@ -22,11 +37,19 @@ export const checkPolicy = async (state: ContextState) => ({
   },
 })
 
+/** Placeholder for vector search — actual search happens in the /context handler. */
 export const vectorSearch = async (_state: ContextState) => ({})
 
+/**
+ * Assemble retrieved instructions into a context string within the token budget.
+ *
+ * ARCH: Uses chars/4 approximation for token estimation. Instructions are included
+ * in priority order (as returned by pgvector distance sort) until the budget is exhausted.
+ */
 export const assembleContext = async (state: ContextState) => {
   if (!state.instructions?.length) return { assembled_context: null, token_count: 0 }
 
+  // CONSTRAINT: chars/4 is a rough approximation. Upgrade to tiktoken when accuracy matters.
   const budget = state.token_budget || 4000
   const charBudget = budget * 4
   let assembled = ""
@@ -45,8 +68,13 @@ export const assembleContext = async (state: ContextState) => {
   }
 }
 
+/** Placeholder for response generation — context is returned to the caller as-is. */
 export const generateResponse = async (_state: ContextState) => ({})
 
+/**
+ * Create the Phase 3 context assembly workflow.
+ * Linear pipeline: policy → vector search → assemble → generate.
+ */
 export function createContextWorkflow() {
   return new StateGraph(GraphState)
     .addNode("policy", checkPolicy)

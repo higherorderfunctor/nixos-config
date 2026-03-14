@@ -1,3 +1,17 @@
+/**
+ * @module index
+ * HTTP API server for kiro-cortex — the main entry point.
+ *
+ * ARCH: Uses @effect/platform HttpApi for type-safe endpoint definitions with
+ * Schema validation on request/response bodies. The server provides three groups:
+ * - health: liveness check
+ * - context: Phase 3 RAG loop (OPA → embed → pgvector → assemble)
+ * - workflows: list and invoke registered workflows (meta-workflow)
+ *
+ * ARCH: At startup, the YAML instruction loader runs before the HTTP server
+ * begins accepting requests, ensuring seed instructions are in pgvector.
+ */
+
 import { HttpApi, HttpApiBuilder, HttpApiEndpoint, HttpApiGroup, HttpMiddleware, HttpServer } from "@effect/platform"
 import * as BunPlatform from "@effect/platform-bun"
 import { Effect, Layer, Schema } from "effect"
@@ -12,7 +26,9 @@ import { buildMetaWorkflow } from "./meta-workflow/graph.js"
 import { loadInstructions } from "./InstructionLoader.js"
 import { Command } from "@langchain/langgraph"
 
-// --- Schemas ---
+// ---------------------------------------------------------------------------
+// Schemas — request/response types for HTTP endpoints
+// ---------------------------------------------------------------------------
 
 const HealthResponse = Schema.Struct({ status: Schema.Literal("ok") })
 
@@ -40,7 +56,9 @@ const ContextResponse = Schema.Struct({
   token_count: Schema.Number,
 })
 
-// --- Endpoints ---
+// ---------------------------------------------------------------------------
+// Endpoints
+// ---------------------------------------------------------------------------
 
 const HealthEndpoint = HttpApiEndpoint.make("GET")("check", "/health")
   .addSuccess(HealthResponse)
@@ -80,7 +98,9 @@ const WorkflowInvokeEndpoint = HttpApiEndpoint.make("POST")("invoke", "/workflow
   .addSuccess(WorkflowInvokeResponse)
   .addError(TestError, { status: 500 })
 
-// --- Groups ---
+// ---------------------------------------------------------------------------
+// Groups + API
+// ---------------------------------------------------------------------------
 
 class HealthGroup extends HttpApiGroup.make("health")
   .add(HealthEndpoint)
@@ -101,7 +121,9 @@ class CortexApi extends HttpApi.make("cortex")
   .add(WorkflowGroup)
 {}
 
-// --- Handlers ---
+// ---------------------------------------------------------------------------
+// Handlers — implement the API endpoints
+// ---------------------------------------------------------------------------
 
 const HealthApiLive = HttpApiBuilder.group(CortexApi, "health", (handlers) =>
   handlers.handle("check", () => Effect.succeed({ status: "ok" as const })),
@@ -110,7 +132,7 @@ const HealthApiLive = HttpApiBuilder.group(CortexApi, "health", (handlers) =>
 const ContextApiLive = HttpApiBuilder.group(CortexApi, "context", (handlers) =>
   handlers.handle("context", ({ payload }) =>
     Effect.gen(function* () {
-      // 1. OPA access control
+      // --- Step 1: OPA access control ---
       const opa = yield* OpaService
       const opaDecision = yield* opa.evaluate({
         user_id: payload.user_id,
@@ -127,13 +149,13 @@ const ContextApiLive = HttpApiBuilder.group(CortexApi, "context", (handlers) =>
         }
       }
 
-      // 2. Embed query
+      // --- Step 2: Embed query via Ollama ---
       const embedding = yield* EmbeddingService
       const queryVec = yield* embedding.embed(payload.query).pipe(
         Effect.mapError((e) => new TestError({ message: e.message })),
       )
 
-      // 3. Search instructions
+      // --- Step 3: Search pgvector for relevant instructions ---
       const repo = yield* InstructionRepo
       const instructions = yield* repo.search(
         queryVec,
@@ -145,7 +167,7 @@ const ContextApiLive = HttpApiBuilder.group(CortexApi, "context", (handlers) =>
         20,
       ).pipe(Effect.mapError((e) => new TestError({ message: e.message })))
 
-      // 4. Assemble context via workflow
+      // --- Step 4: Assemble context via LangGraph workflow ---
       const workflow = createContextWorkflow()
       const result = yield* Effect.tryPromise({
         try: () => workflow.invoke({
@@ -184,9 +206,11 @@ const ContextApiLive = HttpApiBuilder.group(CortexApi, "context", (handlers) =>
   ),
 )
 
-// --- Server ---
+// ---------------------------------------------------------------------------
+// Server — layer composition and startup
+// ---------------------------------------------------------------------------
 
-// --- Lazy graph singleton ---
+// ARCH: Lazy singleton — meta-workflow graph is built once on first invoke.
 // eslint-disable-next-line @typescript-eslint/no-explicit-any -- CompiledStateGraph generic params are dynamic
 let _metaGraph: any = null
 const getMetaGraph = async () => {
@@ -241,6 +265,8 @@ const HttpLive = HttpApiBuilder.serve(HttpMiddleware.logger).pipe(
   Layer.provide(BunPlatform.BunHttpServer.layer({ port: 3100 })),
 )
 
+// ARCH: Loader runs before server — reads seed YAML, embeds, upserts to pgvector.
+// Uses separate service instances (acceptable for one-time startup task).
 const LoaderDeps = Layer.mergeAll(
   EmbeddingService.Default,
   InstructionRepo.Default,
