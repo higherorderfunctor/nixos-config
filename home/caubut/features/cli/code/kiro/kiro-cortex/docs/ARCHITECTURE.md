@@ -223,14 +223,17 @@ Building workflows by hand doesn't scale. Each workflow needs decomposition into
 - **UC-MW-1**: "Kiro, help me build a workflow to do X" → interview on goals, decompose into blocks, wire pipeline, store instructions, suggest triggers
 - **UC-MW-2**: "Kiro, help me update workflow X to do Y" → find existing instructions, modify/add/deprecate, re-wire if needed
 - **UC-MW-3**: "Kiro, the instructions in workflow X step Y need better instructions, here is the problem" → targeted refinement of specific step instructions
-- **UC-MW-4**: A workflow (like repo-analysis) needs to generate sub-workflows as part of its output → calls meta-workflow programmatically to produce them
+- **UC-MW-4**: A workflow (like repo-analysis) needs to generate sub-workflows as part of its output → calls meta-workflow programmatically. Short-circuits interview by providing structured input (problem statement, use cases, proposed blocks) directly to decompose. See UC-MW-12 for validation requirements.
 - **UC-MW-5**: User has a vague idea but can't articulate the problem → meta-workflow helps discover and refine the problem statement through structured interview
 - **UC-MW-6**: User knows the problem but not the use cases → meta-workflow helps identify concrete use cases through examples, edge cases, and "what about X?" prompts
 - **UC-MW-7**: During design, meta-workflow does external research (best practices, similar systems, prior art) to inform block decomposition. Note: repo-analysis is more "one and done" post-design — its research happens at analysis time, not workflow-design time. Refine this boundary as needed.
 - **UC-MW-8**: When run, meta-workflow checks if any block's instruction set has grown too large → suggests splitting the block. This is on-demand (when meta-workflow runs), not a background/cron process.
-- **UC-MW-9**: Don't produce spaghetti blocks — splitting alone isn't the answer. When a split is needed, optimize the whole pipeline holistically (reorder, merge, restructure) rather than just adding more blocks.
+- **UC-MW-9**: Don't produce spaghetti blocks — splitting alone isn't the answer. When a split is needed, optimize the workflow holistically (reorder, merge, restructure) rather than just adding more blocks. Optimization during create/update is scoped LOCAL to the workflow being worked on — not all workflows.
 - **UC-MW-10**: Keep all workflows DRY — actively look for common patterns across workflows that can be abstracted into reusable blocks configurable via inputs alone. If two workflows do similar things differently, unify them.
 - **UC-MW-11**: Apply the generic historical tracking pattern to workflows whose instructions evolve over time (e.g., repo-analysis where past analysis context matters for understanding convention drift).
+- **UC-MW-12**: When designing a workflow that calls meta-workflow programmatically (e.g., repo-analysis generating coding workflows), meta-workflow must ensure the calling workflow provides sufficient structured input (problem statement, use cases, proposed blocks) for the short-circuit path. Programmatic calls skip interview and go directly to decompose. If the structured input is insufficient (missing problem statement or use cases), meta-workflow should FAIL — the calling workflow wasn't designed properly.
+- **UC-MW-13**: Manual audit trigger — "optimize all workflows in this repo." Standalone user-initiated entry point. Scans all workflows for instruction bloat, spaghetti, and DRY violations. Separate from per-workflow optimization during create/update.
+- **UC-MW-14**: Workflows that call meta-workflow (like repo-analysis producing coding workflows) can re-optimize their FULL parent workflow scope but NOT all workflows in the repo. Meta-workflow bakes this scoped optimization into the calling workflow at design time.
 - _(Add more use cases here as they emerge)_
 
 ### Description
@@ -257,14 +260,99 @@ The meta-workflow composes generic patterns into workflows. These are abstract, 
 
 More reusable patterns will emerge as workflows are built. The meta-workflow should identify when a new workflow needs a pattern that already exists and compose it in.
 
-### How It Works
+### Block Breakdown
 
-1. User requests a new workflow via kiro-cli (MCP/skill/agent discovery)
-2. Meta-workflow interviews user on goals and use cases
-3. Meta-workflow tools query OPA/pgvector for instructions about workflow building
-4. Kiro proposes block decomposition, user approves/refines
-5. Output: new instructions in DB + pipeline definition + thin trigger artifacts
-6. End step: suggest trigger options (skill file, agent, MCP tool, future web UI/Slack) and promote trigger blocks so kiro-cli can discover them
+| Block | Purpose | HITL | Reusable |
+|-------|---------|------|----------|
+| **route** | Entry point. Classify intent (build/update/refine/audit). Load existing workflow state if update/refine. Validate structured input for programmatic calls (UC-MW-12). | No | No |
+| **interview** | Multi-turn conversation via LangGraph `interrupt()`. Adapts questions based on mode. Loops with research when needed. | Yes | Potentially |
+| **research** | External search for best practices, similar systems, prior art. Also searches block registry for reuse candidates. Generic — usable by any workflow. | No | Yes |
+| **decompose** | Takes interview output → proposes block structure. Searches existing blocks for reuse. Applies reusable patterns (historical tracking, etc.). Calls optimize before presenting proposal. | Yes (approve/refine) | No |
+| **optimize** | Reviews structure for instruction bloat (UC-MW-8), spaghetti (UC-MW-9), DRY violations (UC-MW-10). Returns recommendations — doesn't act on them. Scope: local to the workflow being worked on during create/update. Full repo scan only via manual audit trigger (UC-MW-13). | No (feeds into interview/decompose) | Yes |
+| **author** | Writes/updates instructions for each block. Stores in DB with OPA metadata (agent_role, task_type, domain). | No | No |
+| **wire** | Creates/updates pipeline definition (block order, conditions, routing). Stores in DB. | No | No |
+| **promote** | Generates trigger artifacts (SKILL.md, agent config, MCP tool). Presents options for user to choose. | Yes | No |
+
+### Flow Diagram
+
+```
+                              ┌───────┐
+                              │ START │
+                              └───┬───┘
+                                  │
+                              ┌───▼───┐
+                              │ route │
+                              └───┬───┘
+                                  │
+               ┌──────────┬───────┼───────────┬──────────┐
+               │          │       │           │          │
+           build/update  refine  audit    programmatic   │
+               │          │       │       (UC-MW-4)      │
+               │          │       │           │          │
+               ▼          │       ▼           │     (invalid input)
+          ┌─────────┐     │  ┌──────────┐    │          │
+          │interview│     │  │ optimize │    │          ▼
+          └────┬────┘     │  │(all wfs) │    │        FAIL
+            ▲  │          │  └────┬─────┘    │    (UC-MW-12)
+            │  ▼          │       │          │
+          ┌──────────┐    │  ┌────▼─────┐    │
+          │ research │    │  │interview │    │
+          └──────────┘    │  │(findings)│    │
+               │          │  └────┬─────┘    │
+               ▼          │       │          │
+          ┌─────────┐     │       ▼          │
+          │decompose│◄────────────────────────┘
+          └────┬────┘     │
+            ▲  │          │
+            │  ▼          │
+          ┌──────────┐    │
+          │ optimize │    │
+          │ (local)  │    │
+          └──────────┘    │
+               │          │
+               ▼          ▼
+          ┌────────┐ ┌────────┐
+          │ author │ │ author │
+          └────┬───┘ └────┬───┘
+               │          │
+          ┌────▼──┐       ▼
+          │ wire  │      END
+          └────┬──┘
+               │
+          ┌────▼────┐
+          │ promote │
+          └────┬────┘
+               │
+              END
+```
+
+**Key loops (dynamic routing via LangGraph `Command`):**
+- `interview ↔ research` — research informs interview, interview may trigger more research
+- `decompose ↔ optimize` — optimize may reject, send back for restructuring
+- `decompose → interview` — user may want to refine goals after seeing proposed decomposition
+
+### Mode Paths
+
+**BUILD** (UC-MW-1, 5, 6): route → interview ↔ research → decompose ↔ optimize → author → wire → promote → END
+
+**UPDATE** (UC-MW-2): route (load existing) → interview ↔ research → decompose (modify) ↔ optimize → author → wire → promote → END
+
+**REFINE** (UC-MW-3): route (load block) → interview (what's wrong) → author (rewrite) → END
+
+**AUDIT** (UC-MW-13): route → optimize (all workflows in repo) → interview (present findings) → decompose (restructure approved items) → author → wire → promote → END
+
+**PROGRAMMATIC** (UC-MW-4, 12): route (validate structured input) → decompose (skip interview) ↔ optimize → author → wire → promote → END. Fails if input lacks problem statement or use cases.
+
+**SCOPED RE-OPTIMIZE** (UC-MW-14): A calling workflow (e.g., repo-analysis) triggers meta-workflow to re-optimize its full workflow scope. Scoped to the calling workflow, not all workflows. Baked into the calling workflow at design time.
+
+### HITL Implementation
+
+Using LangGraph `interrupt()` + PG checkpointer for pause/resume across sessions and interfaces:
+- **interview**: Multi-turn `interrupt()` for each question/response cycle
+- **decompose**: Single `interrupt()` presenting proposed block structure for approve/refine
+- **promote**: Single `interrupt()` presenting trigger options for selection
+
+All other blocks are autonomous. Optimize feeds recommendations into interview or decompose for human approval rather than acting independently.
 
 ### Trigger Blocks
 
