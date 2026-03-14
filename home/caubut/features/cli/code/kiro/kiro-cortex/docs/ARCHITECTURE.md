@@ -6,9 +6,9 @@ Steering files don't scale. As repos, agents, and policies grow, context windows
 
 ## Solution — In One Sentence
 
-RAG over steering files, with policy governance and workflow orchestration layered on top.
+RAG over steering files, with policy governance and hybrid workflow orchestration layered on top.
 
-All codified knowledge — steering rules, coding standards, repo conventions — gets parsed into structured rows in a PostgreSQL table (`instructions`), each tagged with metadata and an embedding vector. When a task arrives, kiro-cortex searches for semantically relevant instructions, filters by metadata, trims to a token budget, and returns only what the agent needs.
+All codified knowledge — steering rules, coding standards, repo conventions — gets parsed into structured rows in a PostgreSQL table (`instructions`), each tagged with metadata and an embedding vector. When a task arrives, kiro-cortex searches for semantically relevant instructions, filters by metadata, trims to a token budget, and returns only what the agent needs. Orchestration is hybrid: LangGraph for deterministic pipelines, Claude via MCP tool loops for AI-orchestrated workflows, and Kiro CLI subagents for autonomous block execution.
 
 ## Layered Design
 
@@ -182,42 +182,89 @@ The block executor (not yet built) does:
 
 ### Layer 3: Workflow Orchestration (Phase 4)
 
-LangGraph orchestrates multi-step workflows where each step runs the core loop with different context.
+Hybrid orchestration — three patterns, chosen per-workflow based on characteristics:
+
+#### Deterministic (LangGraph)
+
+For data pipelines with strict ordering, persistent state, and reproducible execution.
 
 ```
-  ┌─ LangGraph Workflow ──────────────────────────────────────┐
+  ┌─ LangGraph Pipeline ─────────────────────────────────────┐
   │                                                            │
   │  Step 1: Analyze                                           │
   │    OPA input: {agent=analyst, task=analyze, domain=repo}   │
   │    → core loop → instructions about analysis patterns      │
-  │    → Kiro headless executes analysis                       │
   │                                                            │
   │  Step 2: Code                                              │
   │    OPA input: {agent=developer, task=code, domain=effect}  │
   │    → core loop → instructions about coding standards       │
-  │    → Kiro headless writes code                             │
-  │                                                            │
-  │  Step 3: Review                                            │
-  │    OPA input: {agent=reviewer, task=review, domain=repo}   │
-  │    → core loop → instructions about review criteria        │
-  │    → Kiro headless reviews the code                        │
   │                                                            │
   │  Persistent state across steps (PG checkpointer)           │
   └────────────────────────────────────────────────────────────┘
 ```
 
-Each step gets DIFFERENT instructions because the OPA input is different. This is the "per-step OPA consultation" pattern — the whole point of kiro-cortex being a workflow orchestration platform, not just a context provider.
+#### AI-Orchestrated (MCP Tool Loop)
+
+For interactive and judgment-based workflows. Claude calls block MCP tools in a loop (similar to Sequential Thinking MCP pattern). Each block returns structured output; Claude decides the next step.
+
+```
+  Claude (in Kiro CLI)
+    │
+    ├─ calls block_A MCP tool → structured output
+    │   (what was done, result, suggested next step, decisions needing human input)
+    │
+    ├─ reasons about output, asks user if needed
+    │
+    ├─ calls block_B MCP tool → structured output
+    │
+    └─ continues until workflow complete
+```
+
+#### Subagent Execution
+
+For autonomous blocks needing LLM reasoning with fresh context. Kiro spawns a subagent with a custom agent config and kiro-cortex MCP access. Results auto-return to parent.
+
+```
+  Parent Claude (main conversation)
+    │
+    ├─ handles interactive steps (interview, approval)
+    │
+    ├─ spawns subagent: "Generate instruction YAML for blocks: [spec]"
+    │   └─ Subagent (fresh context, kiro-cortex MCP + OpenMemory MCP)
+    │       ├─ calls kiro-cortex for OPA-scoped instructions
+    │       ├─ generates output autonomously
+    │       └─ returns results to parent
+    │
+    └─ presents results to user for approval
+```
+
+**Subagent constraints** (meta-workflow must know these when designing workflows):
+- ✅ read, write, shell, code, MCP tools
+- ❌ interactive tasks (no back-and-forth with user)
+- ❌ web_search, web_fetch, grep, glob, use_aws
+
+#### Pattern Selection
+
+| Pattern | Use When | State | Ordering |
+|---------|----------|-------|----------|
+| Deterministic | Data pipelines, reproducible, strict ordering | PG checkpointer | Guaranteed |
+| AI-orchestrated | Interactive, exploratory, judgment adds value | Conversation context or OpenMemory | Flexible |
+| Hybrid | Interactive interview then autonomous pipeline | Both | Mixed |
+
+Meta-workflow codifies this knowledge in its instructions so it can recommend the right pattern when designing new workflows.
 
 ## Component Responsibilities
 
 | Component | Manages | Talks to | Stateful? |
 |-----------|---------|----------|-----------|
-| **kiro-cortex** | Instructions table, context assembly, workflow orchestration | PostgreSQL, OPA, Ollama, Kiro headless | Yes (PG) |
+| **kiro-cortex** | Instructions table, context assembly, workflow orchestration | PostgreSQL, OPA, Ollama | Yes (PG) |
 | **PostgreSQL** | Data storage (instructions + embeddings + workflow state) | Only responds to kiro-cortex | Yes |
 | **OPA** | Policy rules (Rego files) | Only responds to kiro-cortex | No (stateless) |
 | **Ollama** | Embedding models | Only responds to kiro-cortex | No (stateless) |
-| **Kiro headless** | Task execution with scoped context | Called by kiro-cortex | No |
-| **LangGraph** | Workflow graph definition and step sequencing | Embedded in kiro-cortex | State in PG |
+| **Kiro CLI** | User interaction, subagent lifecycle, hooks | Calls kiro-cortex via MCP | Session state |
+| **Subagents** | Autonomous block execution with fresh context | kiro-cortex MCP, OpenMemory MCP | No (ephemeral) |
+| **Hooks** | Supplementary OPA (AgentSpawn, PreToolUse) | OPA, kiro-cortex | No (per-event) |
+| **LangGraph** | Deterministic pipeline graph definition and step sequencing | Embedded in kiro-cortex | State in PG |
 
 kiro-cortex is the **sole mediator**. No component talks directly to another. All data flows through kiro-cortex.
 
@@ -284,12 +331,12 @@ Pipeline {
 ### Execution Model
 
 A block can be triggered via:
-- **MCP tool** — from kiro-cli (MCP stdio wrapper). Returns assembled context + metadata.
-- **HTTP API** — direct POST to `/blocks/{id}/run`. Can chain into pipeline steps.
-- **Pipeline step** — from LangGraph orchestration. Output feeds next step's state.
-- **Direct trigger** (web/Slack, future) — LangGraph routes to Kiro headless for full execution.
+- **MCP tool** — from kiro-cli (MCP stdio wrapper). Claude calls block tools in a loop for AI-orchestrated workflows.
+- **HTTP API** — direct POST to `/blocks/{id}/run`. Used by MCP wrapper internally.
+- **Pipeline step** — from LangGraph orchestration (deterministic mode). Output feeds next step's state.
+- **Subagent** — Kiro spawns a subagent with custom agent config + kiro-cortex MCP. For autonomous blocks needing LLM reasoning with fresh context.
 
-All share the same block implementation. Each block gets OPA-scoped instructions injected via the core RAG loop. Context size is configurable per-call via `token_budget` parameter.
+All share the same block implementation and OPA-scoped instruction injection. Context size is configurable per-call via `token_budget` parameter.
 
 ### Block Reuse
 
@@ -334,17 +381,38 @@ Building workflows by hand doesn't scale. Each workflow needs decomposition into
 - **UC-MW-16**: Import/export workflows to filesystem for Nix reproducibility. Every workflow must be reconstructable from files on disk — a fresh `home-manager switch` on a new system should be able to load all workflows into a fresh DB. Meta-workflow must update these files whenever a workflow is created or updated — including when updating itself. **Decision: re-embed at load time, don't export vectors.** Vectors are derived data (deterministic given same model + text). Export only instruction text + OPA metadata + content_hash as YAML. On load, compare content_hash — only re-embed what changed. Pin nomic-embed-text model version to prevent drift. At our scale (~1K instructions), full re-embed takes ~8 seconds via local Ollama.
 - **UC-MW-17**: Self-updating filesystem export — when meta-workflow updates itself (adding blocks, refining instructions), it must also update its own YAML export files in the repo so the init/seed files stay in sync with the DB state. This is the dogfooding case: meta-workflow's author/wire blocks write to DB AND export to `workflows/meta-workflow/`.
 - **UC-MW-18**: Reusable sub-workflows are first-class on disk. Blocks/sub-workflows designed for cross-workflow reuse (stacked-commits, historical-tracking, etc.) live in a dedicated `shared/` directory — separate from any specific workflow. This makes reusable patterns visually distinct from workflow-specific blocks. In code, reusable blocks get their own files under `src/shared/`, not nested inside the workflow that first uses them. On the YAML export side, `workflows/shared/` holds their instructions and pipeline definitions. Any workflow can compose them in.
+
+### Orchestration & Execution Use Cases
+
+- **UC-MW-19**: Meta-workflow selects orchestration pattern (deterministic vs AI-orchestrated vs subagent) based on workflow characteristics during interview. Knowledge of when to use each pattern is codified in meta-workflow's instructions, not hardcoded. Validation: a data pipeline gets deterministic, an interactive design workflow gets AI-orchestrated, a code generation task gets subagent.
+- **UC-MW-20**: Meta-workflow designs custom Kiro agent configs per workflow — specialized agents, not one generic worker. Considers reusable agent patterns as lego blocks (e.g., stacked-commits agent, code-review agent). When self-improving (4.5+), can identify need for new agents or refine existing ones.
+- **UC-MW-21**: AI-orchestrated blocks return structured output (`{ what_was_done, result, suggested_next_step, human_decisions_needed }`) so Claude can reason about next steps and decide the next MCP call. Convention similar to Sequential Thinking MCP pattern.
+- **UC-MW-22**: Autonomous blocks execute in Kiro subagents with fresh context. Subagents access kiro-cortex + OpenMemory via MCP. Results auto-return to parent. Meta-workflow must know subagent constraints (no interactive, no web_search, no grep/glob) and design around them.
+- **UC-MW-23**: Hooks (AgentSpawn, PreToolUse) supplement OPA as lightweight context injection and access control at the Kiro CLI layer. AgentSpawn injects OPA user profile at session start. PreToolUse gates kiro-cortex MCP calls against OPA access policy. Not a replacement for block executor wrapper (hooks are per-prompt, block executor is per-block; hooks are Kiro-specific, block executor is portable).
 - _(Add more use cases here as they emerge)_
 
 ### Description
 
 The meta-workflow is a hand-built collection of tools for the workflow lifecycle. It is the first real customer of the OPA pipeline — its instructions ("how to build workflows") are the first content in the instructions table.
 
-**Human-in-the-loop by design.** The meta-workflow interviews the user on goals, proposes a decomposition into blocks, and iterates until the user approves. This HITL pattern must work across interfaces (kiro-cli chat now, web UI and Slack later).
+**Human-in-the-loop by design.** The meta-workflow interviews the user on goals, proposes a decomposition into blocks, and iterates until the user approves. This HITL pattern works via kiro-cli chat (MCP tool calls or direct conversation).
+
+### Orchestration Pattern Knowledge
+
+Meta-workflow must codify knowledge about orchestration patterns in its instructions so it can recommend the right approach when designing new workflows:
+
+- **When to recommend deterministic (LangGraph)**: strict ordering required, data processing pipelines, reproducibility needed, persistent state across sessions
+- **When to recommend AI-orchestrated (MCP tool loop)**: interactive workflows, exploratory/judgment-based, flexible ordering, Sequential Thinking-like patterns
+- **When to recommend subagents**: autonomous blocks needing LLM reasoning, fresh context beneficial, parallel execution, long-running background tasks
+- **Subagent constraints to design around**: no interactive tasks, no web_search/web_fetch, no grep/glob — blocks requiring these must run in parent conversation or deterministic pipeline
+- **Agent design**: specialized agents per workflow (not one generic worker). Consider reusable agent patterns as lego blocks (e.g., a stacked-commits agent). When self-improving, meta-workflow should identify when new agents are needed.
+- **Structured output convention for AI-orchestrated blocks**: blocks return `{ what_was_done, result, suggested_next_step, human_decisions_needed }` so Claude can reason about next steps
+
+This knowledge lives in meta-workflow's seed instructions (YAML), not hardcoded in block logic. When meta-workflow self-improves (4.5+), it can refine these patterns.
 
 ### Capabilities
 
-- **Interview**: Understand user goals — what problem the workflow solves, what triggers it, what it outputs. Help the user discover and articulate the problem statement if they have a vague idea. Help identify concrete use cases through examples, edge cases, and probing questions. Propose blocks and pipeline structure. User approves/refines.
+- **Interview**: Understand user goals — what problem the workflow solves, what triggers it, what it outputs. Help the user discover and articulate the problem statement if they have a vague idea. Help identify concrete use cases through examples, edge cases, and probing questions. Propose blocks and pipeline structure. Assess orchestration needs (interactive vs autonomous, ordering constraints) to recommend deterministic vs AI-orchestrated vs hybrid. User approves/refines.
 - **Research**: Proactively discover ideas and suggest use cases the user may not have thought of. Do external research during design (best practices, similar systems, prior art) to inform decomposition. Query knowledge base for similar workflows, patterns, and best practices.
 - **Build**: Decompose into blocks → find existing blocks → create new if needed → compose reusable patterns (e.g., historical tracking) → wire pipeline → store instructions in DB → suggest triggers. When building or updating, check for DRY violations across all workflows — abstract common patterns into reusable blocks configurable via inputs.
 - **Update**: "Kiro, help me update workflow X to do Y" → find existing instructions → modify/add/deprecate. Check if any block's instruction set has grown too large and suggest splitting — but optimize the whole flow holistically, don't just keep adding blocks (no spaghetti).
@@ -577,16 +645,19 @@ Maps to existing steering structure:
 |----------|--------|-----------|
 | Core abstraction | RAG over steering files | Solves context dilution directly |
 | Platform role | Workflow orchestration (not just context prep) | Each step needs different rules |
-| Smart executor | Kiro headless (not Ollama) | Kiro has tools, reasoning, quality |
+| Orchestration model | Hybrid (LangGraph + AI-orchestrated + subagents) | Deterministic for pipelines, AI for interactive, subagents for autonomous |
+| Smart executor | Kiro CLI subagents (not custom headless service) | Kiro manages lifecycle, no process management code needed |
 | Ollama role | Embeddings + classification only | Cheap/fast for bulk preprocessing |
 | OPA in Phase 3 | Access control only (allow/deny) | SQL WHERE sufficient for filtering until policy complexity grows |
 | OPA in Phase 5 | Generates filtering criteria per step | Complex policies need declarative rules |
+| Hooks | Supplementary OPA (AgentSpawn + PreToolUse) | Lightweight CLI-layer injection, not a replacement for block executor |
 | Single DB | PostgreSQL (metadata + vectors together) | Split via Effect Service boundary when scaling demands it |
 | Vector index | HNSW over IVFFlat | Better accuracy, no training needed, works at any scale |
 | Token estimation | chars/4 approximation | Upgrade to tiktoken when accuracy matters |
 | Context budget | Caller-specified per request | Task complexity determines budget |
 | Hosting | Self-hosted, NixOS/Home Manager | Full control, privacy, no vendor lock-in |
 | Runtime | Bun + pnpm, Effect-TS | User preference, type safety |
+| Web UI | Read-only dashboard (afterthought) | Local CLI is primary interface; local-first development experience preferred |
 
 ## Phase 4a Infrastructure Detail
 
@@ -673,7 +744,7 @@ The generic execution engine that runs any block:
 4. Runs core RAG loop (embed query → pgvector search with OPA-derived filters → assemble context)
 5. Injects retrieved instructions into block's execution context (via state)
 6. Calls block's execute function with enriched state
-7. For blocks needing smart execution: routes to Kiro headless
+7. For blocks needing smart execution: routes to Kiro subagent (autonomous) or returns structured output for AI orchestration
 
 This is the Phase 3 core loop applied per-block automatically. The block executor is what makes "scale to millions" work — each block only sees its OPA-scoped slice of instructions.
 
@@ -722,12 +793,19 @@ Thin MCP stdio server, separate process. kiro-cli launches it via mcp.json confi
 - Registered in default.nix mcp.json alongside other MCP servers
 - Meta-workflow end step generates SKILL.md files that reference these MCP tools
 
-### Kiro Headless Service
+### Execution Environments
 
-New Effect.Service wrapping Kiro headless API:
-- Sends scoped instructions + task to Kiro for smart execution
-- Blocks that need reasoning/generation (steering-generate, workflow-suggest) call this
-- Interface TBD — need to research Kiro headless API (HTTP? CLI subprocess?)
+Blocks run in different environments depending on their needs:
+
+| Environment | When | How | Limitations |
+|-------------|------|-----|-------------|
+| **Inline** | Simple blocks, routing, state transforms | Block runs in kiro-cortex process via `Effect.runPromise` | No LLM reasoning |
+| **Subagent** | Autonomous blocks needing LLM reasoning | Kiro spawns subagent with custom agent config + kiro-cortex MCP | No interactive, no web_search, no grep/glob |
+| **AI-orchestrated** | Interactive workflows, judgment-based sequencing | Claude calls block MCP tools in a loop, blocks return structured output | Non-deterministic ordering |
+
+**Subagents replace the originally planned Kiro headless service.** Kiro manages the subagent lifecycle (spawning, progress tracking, result aggregation, agent approval). No process management code needed in kiro-cortex.
+
+**Custom agent configs per workflow** (UC-MW-20): Meta-workflow designs specialized agents rather than one generic worker. Agent configs live alongside workflow definitions and can be reusable lego blocks (e.g., a stacked-commits agent used by any file-writing workflow).
 
 ## Phase Plan
 
@@ -763,7 +841,7 @@ Built the core retrieval pipeline:
 **Strategy**: Build minimal infrastructure, then MVP meta-workflow, then use meta-workflow to iteratively add features to itself. Each sub-phase is small, git-trackable, and the user relaunches kiro between sub-phases. Repo-analysis is NOT touched until meta-workflow is fully functional.
 
 **Deferred until needed:**
-- Kiro headless service — not needed when user is always in the loop via kiro-cli. Required later for autonomous workflows.
+- Hooks integration (AgentSpawn + PreToolUse for supplementary OPA) — not needed until workflows are running end-to-end
 
 **Required before 4.5 (OPA per-block injection):**
 - Rename `policies/test.rego` → `policies/access.rego`, update package + OPA query path
@@ -858,7 +936,10 @@ Each is a sub-phase added by using meta-workflow's update capability (UC-MW-2). 
 - **audit** mode in route — UC-MW-13 manual trigger
 - **programmatic** mode in route — UC-MW-4/12 short-circuit path
 - `policies/isolation.rego` — repo boundary enforcement
-- Kiro headless service (when autonomous execution needed)
+- Subagent integration — custom agent configs per workflow (UC-MW-20), cortex-worker patterns
+- Hooks integration — AgentSpawn (OPA user profile injection), PreToolUse (access control gate) (UC-MW-23)
+- AI-orchestrated block convention — structured output format (UC-MW-21)
+- Agent config generation — meta-workflow produces `.kiro/agents/*.json` for workflow-specific agents
 - Explore replacing zod with Effect Schema → JSON Schema for MCP tool definitions (remove zod dependency)
 
 ### Phase 5: Repo-Analysis (Built by Meta-Workflow)
@@ -870,11 +951,11 @@ Each is a sub-phase added by using meta-workflow's update capability (UC-MW-2). 
 - Output workflows TBD (meta-workflow interviews user on what's useful)
 - Known knowledge sources: EffectPatterns (300+), effect-solutions (10+)
 
-### Phase 6: Web UI
-- LangGraph Studio or custom dashboard
-- OPA management interface
+### Phase 6: Web Dashboard (Read-Only, Afterthought)
+- Read-only DB visualizer: instruction browser, workflow status, pipeline execution history
+- OPA policy viewer
 - Knowledge graph visualization
-- HITL workflow interactions via web (same pattern as kiro-cli chat)
+- No HITL interactions — all workflow interaction via kiro-cli
 
 ## Effect-TS Patterns
 

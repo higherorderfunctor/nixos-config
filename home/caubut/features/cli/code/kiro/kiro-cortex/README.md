@@ -8,7 +8,7 @@ Steering files don't scale. As repos, agents, and policies grow, context windows
 
 ## Solution
 
-All codified knowledge (steering rules, coding standards, repo conventions, workflow definitions) stored as structured instructions with rich metadata. LangGraph orchestrates multi-step workflows where each step consults OPA for its specific rule set, retrieves relevant instructions via pgvector, and invokes Kiro (headless) with precisely scoped context.
+All codified knowledge (steering rules, coding standards, repo conventions, workflow definitions) stored as structured instructions with rich metadata. Hybrid orchestration: LangGraph for deterministic pipelines, Claude via MCP tool loops for AI-orchestrated workflows, and Kiro CLI subagents for autonomous block execution. Each step consults OPA for its specific rule set and retrieves relevant instructions via pgvector with precisely scoped context.
 
 ## Current Status
 
@@ -23,7 +23,7 @@ All codified knowledge (steering rules, coding standards, repo conventions, work
   - 4.4: MVP Meta-Workflow (route, interview, author, wire)
   - 4.5+: Incremental features via meta-workflow itself
 - Phase 5: Repo-Analysis (Built by Meta-Workflow)
-- Phase 6: Web UI
+- Phase 6: Web Dashboard (read-only)
 
 ## Quick Start
 
@@ -48,5 +48,6 @@ See [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) for full design, phase plan, an
 - Bun runtime, pnpm package manager
 - PostgreSQL 18 + pgvector (HNSW indexing)
 - OPA with Rego v1 policies
-- LangGraph.js (TypeScript) with PG checkpointer
-- Kiro headless for smart execution, Ollama for embeddings + classification
+- LangGraph.js (TypeScript) with PG checkpointer for deterministic pipelines
+- Kiro CLI subagents for autonomous block execution, hooks for supplementary OPA
+- Ollama for embeddings + classification
