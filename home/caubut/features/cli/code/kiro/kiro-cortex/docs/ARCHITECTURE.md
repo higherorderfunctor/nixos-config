@@ -658,23 +658,68 @@ Maps to existing steering structure:
 | Hosting | Self-hosted, NixOS/Home Manager | Full control, privacy, no vendor lock-in |
 | Runtime | Bun + pnpm, Effect-TS | User preference, type safety |
 | HTTP clients | HttpApi + Schema (not raw HttpClient) | Full type safety on request/response; Schema validates at runtime, no `as any` casts |
+| API client pattern | Context.Tag + Layer.effect (not Effect.Service) | Client type inferred from HttpApiClient.make; Effect.Service wrapper is unnecessary indirection |
+| Envelope handling | Schema.transform (not transformResponse) | transformResponse runs after decode and erases types; Schema.transform preserves full type safety |
+| Error handling | .addError() with real API error schemas | Model what the external API actually returns on error; no manual mapError |
+| Code organization | Domain folders with barrel files | Discoverability for humans and AI; each domain is self-contained |
+| Error co-location | Domain-scoped errors (not monolithic error file) | Errors live with their domain; no cross-domain imports for error types |
 | Web UI | Read-only dashboard (afterthought) | Local CLI is primary interface; local-first development experience preferred |
 
 ## Code Conventions
+
+### Package Structure
+
+Code is organized by domain, not by technical layer. Each domain folder has a barrel `index.ts` with rich TSDoc describing the domain's purpose, public API, and relationship to other domains.
+
+```
+src/
+  opa/            → OPA policy client (access control + scoping)
+  embedding/      → Ollama embedding client (text → vector)
+  instruction/    → Instruction data layer (pgvector Repo + YAML Loader)
+  workflow/       → Orchestration engine (Block, Registry, Executor, Pipeline, Workflow types)
+  meta-workflow/  → Meta-workflow block implementations (route, interview, author, wire, graph, state)
+  Sql.ts          → Shared PostgreSQL connection layer
+  index.ts        → HTTP server (composes all domains)
+  mcp.ts          → MCP stdio server (standalone process, zod-only)
+  migrations/     → Database migrations
+```
+
+**Barrel file convention:** Every domain folder exports its public API through `index.ts`. The barrel file MUST have a module-level TSDoc comment explaining: what the domain does, what it exports, and how it relates to other domains. Barrel files are the primary navigation aid for both humans and AI.
 
 ### HTTP Clients via HttpApi + Schema
 
 All HTTP calls to external services (OPA, Ollama, etc.) use `HttpApi` + `HttpApiClient.make()` with Effect `Schema` types for request and response bodies. This gives compile-time AND runtime type safety — no `as any` casts, no manual JSON parsing.
 
 **Pattern:**
-1. Define the external API's shape using `HttpApiEndpoint` + `HttpApiGroup` + `HttpApi`
-2. Define request/response `Schema` types that match the real API (keep schemas honest — model what the API actually returns)
-3. Derive a typed client via `HttpApiClient.make(api, { baseUrl })`
-4. Client calls are fully typed: payload in, validated response out
+1. Define `Schema` types matching the real external API (keep schemas honest)
+2. Use `Schema.transform` to handle envelope unwrapping (e.g., OPA's `{ result: T }` → `T`) at the schema level — keeps endpoint success types clean
+3. Use `.addError(ErrorSchema)` on endpoints with schemas matching the external API's actual error shape — no manual `mapError`
+4. Define the API shape using `HttpApiEndpoint` + `HttpApiGroup` + `HttpApi`
+5. Create a `Context.Tag` for the client type (inferred from `HttpApiClient.make`)
+6. Export `const layer = Layer.effect(Tag, HttpApiClient.make(...))` — no `Effect.Service` wrapper needed
 
-**Why not raw HttpClient:** Raw `HttpClient` requires manual JSON parsing and `as any` casts. `HttpClientResponse.schemaBodyJson` validates responses but doesn't type-check request payloads. `HttpApi` + `HttpApiClient` covers both directions.
+**Client pattern (no Effect.Service):**
+```typescript
+const make = HttpApiClient.make(MyApi, { baseUrl: "http://..." })
+export class MyClient extends Context.Tag("MyClient")<MyClient, Effect.Effect.Success<typeof make>>() {}
+export const layer = Layer.effect(MyClient, make).pipe(Layer.provide(NodeHttpClient.layer))
+```
+
+**Why Context.Tag over Effect.Service for API clients:** The client type is fully inferred from `HttpApiClient.make`. An `Effect.Service` wrapper would just re-export the same methods — unnecessary indirection. `Context.Tag` + `Layer.effect` is the minimal injectable pattern.
+
+**Why Schema.transform over transformResponse:** `HttpApiClient.make`'s `transformResponse` runs AFTER schema decoding and erases types to `Effect<unknown, unknown>`. `Schema.transform` handles envelope unwrapping at the schema level, preserving full type safety.
+
+**Why not raw HttpClient:** Raw `HttpClient` requires manual JSON parsing and `as any` casts. `HttpApi` + `HttpApiClient` covers both request and response typing.
 
 **Exception:** `src/mcp.ts` uses plain `fetch` because it runs as a standalone MCP stdio process outside the Effect runtime. Zod is allowed only in this file for MCP SDK compatibility.
+
+### Layer Export Convention
+
+Every module that provides a `Layer` MUST export it as `export const layer = ...`. This is the standard Effect pattern for discoverability and composition.
+
+- For `Context.Tag` + `Layer.effect`: `export const layer = Layer.effect(Tag, make).pipe(...)`
+- For `Effect.Service`: `export const layer = ServiceName.Default`
+- Callers compose via `Layer.provide(MyModule.layer)` — consistent across all modules
 
 ### Commenting Standards
 
@@ -998,9 +1043,13 @@ Each is a sub-phase added by using meta-workflow's update capability (UC-MW-2). 
 
 Established patterns:
 
-- `Effect.Service` with `dependencies` array for layer provision
-- `NodeHttpClient.layer` in dependencies (self-contained, no agent leak)
-- `Schema.TaggedError` for API errors, registered via `.addError()` on endpoints
+- `Context.Tag` + `Layer.effect` for external API clients (OPA, Ollama) — type inferred from `HttpApiClient.make`, no `Effect.Service` wrapper
+- `Effect.Service` with `dependencies` array for infrastructure services (BlockRegistry, InstructionRepo) that have custom logic beyond a client
+- Every module exporting a Layer: `export const layer = ...` (Tag-based: `Layer.effect(Tag, make)`, Service-based: `ServiceName.Default`)
+- `Schema.transform` for envelope unwrapping (e.g., OPA `{ result: T }` → `T`) — keeps endpoint success types clean
+- `.addError(ErrorSchema)` on `HttpApiEndpoint` with schemas matching external API error shapes — no manual `mapError`
+- `NodeHttpClient.layer` in dependencies / `Layer.provide` (self-contained, no agent leak)
+- `Schema.TaggedError` for domain errors, co-located with their domain module (not a monolithic error file)
 - `HttpApiBuilder.api(Api).pipe(Layer.provide(groups))` — api needs groups, not reverse
 - `HttpLive.pipe(Layer.launch, BunRuntime.runMain)` for server startup
 - `effect-language-service diagnostics --project tsconfig.json` for Effect-specific checks
