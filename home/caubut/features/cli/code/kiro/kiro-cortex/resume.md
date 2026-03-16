@@ -47,14 +47,14 @@ export.ts writes workflow.yaml, author.ts writes instructions/*.yaml, wire.ts wr
 Implemented as block in meta-workflow graph (`src/meta-workflow/gap-analyze.ts`). Design decision: block (not reusable segment, skill, or subagent) because gap-analyzing workflows is meta-workflow's job. Checks filesystem artifacts, pipeline↔instruction consistency, block coverage. Wired: `route(audit) → gap-analyze → optimize → interview`. Deterministic, no interrupt.
 
 **MCP+Backend Blocker: RESOLVED.**
-Previously the MCP stdio server (`mcp.ts`) was a proxy to a separate HTTP backend process. Now `mcp.ts` imports `main.ts` directly, starting the HTTP backend (port 3100) in-process. No separate `bun run src/index.ts` needed. Race condition fixed: single `Effect.gen` program forks backend, polls `/health` until ready, then connects MCP transport.
+Previously the MCP stdio server (`mcp.ts`) was a proxy to a separate HTTP backend process. Now `mcp.ts` imports `main.ts` directly, starting the HTTP backend (port 3100) in-process. No separate `bun run src/index.ts` needed. Startup order: connect MCP stdio transport FIRST (so kiro-cli gets `initialize` response immediately), then fork backend. Tool handlers gate on `ensureBackend()` — a cached promise polling `/health`. Old order (fork backend → wait health → connect transport) caused kiro-cli timeout because `initialize` arrived before transport was listening (0ca5f5d).
 
 **Validation checklist (before Phase 5):**
 1. [x] Start kiro-cli from nixos-config root (not kiro-cortex subdir) for LSP/λ
 2. [ ] Switch to meta-workflow agent (Ctrl+Shift+M)
 3. [x] Verify `list_workflows` works — stdio test confirmed clean JSON-RPC + correct response (8a7d49c)
-4. [~] Verify agent can identify itself in workflow list — MCP connection fails in kiro-cli ("Unable to connect") despite manual `bun run src/mcp.ts` working. Debug file logger added (CORTEX_DEBUG=true → /tmp/kiro-cortex-mcp.log). Next: set CORTEX_DEBUG=true in MCP config env, restart kiro-cli, check log for failure point.
-5. [ ] Test update mode on meta-workflow itself — blocked on item 4
+4. [~] Verify agent can identify itself in workflow list — MCP connection timeout DIAGNOSED and FIXED (0ca5f5d). Root cause: old startup order (fork backend → wait health → connect transport) meant kiro-cli's initialize request arrived before transport was listening. Fix: connect MCP transport FIRST, fork backend in background, tools gate on ensureBackend(). Smoke test passes. Next: hm switch + kiro-cli restart to confirm live, then remove CORTEX_DEBUG=true from default.nix.
+5. [ ] Test update mode on meta-workflow itself — unblocked once item 4 confirmed live
 6. [x] Verify prompt file loads correctly — confirmed: workflow ID is meta-workflow, all interaction patterns (build/update/refine/audit/self-maintenance) present
 7. [~] Verify knowledgeBase resource indexes ARCHITECTURE.md — ARCHITECTURE.md exists and is comprehensive, but cannot confirm kiro-cli indexing until MCP connects (item 4)
 8. [x] Verify λ icon appears (code intelligence active)
