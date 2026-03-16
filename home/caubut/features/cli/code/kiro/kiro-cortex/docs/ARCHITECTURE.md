@@ -1294,10 +1294,8 @@ Custom agents must explicitly include skills via `resources`:
 ```
 
 **Implementation remaining:**
-- Enhance promote block: generate skill OR agent config based on UC-MW-26 interview answer (to be implemented)
-- Enhance interview block: add trigger selection question (to be implemented)
-- Create meta-workflow agent config (`~/.kiro/agents/meta-workflow.json`) per UC-MW-27 (to be implemented)
-- Enhance promote block: use comprehensive agent config template above (to be implemented)
+- Phase 4.5+ complete. All items implemented or documented.
+- Next: Phase 5 — Repo-Analysis (first workflow built by meta-workflow)
 
 ### Phase 5: Repo-Analysis (Built by Meta-Workflow)
 - Use meta-workflow to build repo-analysis as first generated workflow
