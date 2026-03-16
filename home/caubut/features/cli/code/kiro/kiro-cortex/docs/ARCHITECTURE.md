@@ -1057,7 +1057,7 @@ Built the core retrieval pipeline:
 
 #### 4.3: MCP Stdio Wrapper
 - Thin MCP server calling HTTP API
-- Exposes `list_workflows` + `run_workflow` tools
+- Exposes `list_workflows` + `run_workflow` + `reload_workflows` tools
 - Registered in mcp.json for kiro-cli discovery
 
 #### 4.4: MVP Meta-Workflow (4 blocks)
@@ -1065,6 +1065,7 @@ Built the core retrieval pipeline:
 - **interview**: basic HITL via `interrupt()` — user describes what they want, provides block breakdown manually
 - **author**: write instructions to DB with OPA metadata + export to filesystem (UC-MW-16)
 - **wire**: create pipeline definition, store in DB + export to filesystem (UC-MW-16)
+- **export**: write workflow.yaml metadata (UC-MW-16) — added in 4.5+
 - First instructions in DB = "how to build workflows" (hand-written seed)
 - Supports: build (basic), update (basic), refine
 - No research, no optimize, no decompose, no promote — added incrementally
@@ -1311,7 +1312,7 @@ Before Phase 5, validate that meta-workflow can maintain itself. Gap analysis pe
 - G9: ✅ `fs_write`, `execute_bash`, git tools added to `allowedTools`
 
 **Important Gaps (Documented, Not Yet Implemented):**
-- G7: UC-MW-15,16,17 (filesystem export/import) — prerequisite for true self-maintenance. Without these, DB changes don't persist to disk. **Blocking for full self-maintenance.**
+- G7: ~~UC-MW-15,16,17 (filesystem export/import)~~ — UC-MW-16/17 implemented. Export: workflow.yaml (export.ts) + instructions/*.yaml (author.ts) + pipeline.yaml (wire.ts). Import: seed.ts reads YAML, Loader.ts embeds and upserts to DB. MCP tool: `reload_workflows` triggers re-seed. UC-MW-15 (stacked commits) still future.
 - G8: knowledgeBase resource for ARCHITECTURE.md — added but needs testing
 
 **Enhancement Ideas (Future):**
@@ -1334,7 +1335,7 @@ Before Phase 5, validate that meta-workflow can maintain itself. Gap analysis pe
 6. [ ] Verify knowledgeBase resource indexes ARCHITECTURE.md
 
 **Blocking Issue for Full Self-Maintenance:**
-UC-MW-16/17 (filesystem export) not implemented. Changes to meta-workflow in DB won't persist to disk. Current workaround: manually update YAML exports. True self-maintenance requires implementing export blocks.
+~~UC-MW-16/17 (filesystem export) not implemented.~~ **RESOLVED.** Export node writes workflow.yaml, author writes instructions/*.yaml, wire writes pipeline.yaml. Seed.ts reads YAML back. MCP tool `reload_workflows` triggers re-seed. Meta-workflow can now update itself and persist changes to disk.
 
 ### Phase 5: Repo-Analysis (Built by Meta-Workflow)
 - Use meta-workflow to build repo-analysis as first generated workflow

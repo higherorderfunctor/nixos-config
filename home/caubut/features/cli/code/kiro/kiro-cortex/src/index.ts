@@ -107,6 +107,15 @@ const WorkflowInvokeEndpoint = HttpApiEndpoint.make("POST")("invoke", "/workflow
   .addSuccess(WorkflowInvokeResponse)
   .addError(TestError, { status: 500 })
 
+const WorkflowReloadResponse = Schema.Struct({
+  loaded: Schema.Number,
+  message: Schema.String,
+})
+
+const WorkflowReloadEndpoint = HttpApiEndpoint.make("POST")("reload", "/workflows/reload")
+  .addSuccess(WorkflowReloadResponse)
+  .addError(TestError, { status: 500 })
+
 // ---------------------------------------------------------------------------
 // Groups + API
 // ---------------------------------------------------------------------------
@@ -122,6 +131,7 @@ class ContextGroup extends HttpApiGroup.make("context")
 class WorkflowGroup extends HttpApiGroup.make("workflows")
   .add(WorkflowListEndpoint)
   .add(WorkflowInvokeEndpoint)
+  .add(WorkflowReloadEndpoint)
 {}
 
 class CortexApi extends HttpApi.make("cortex")
@@ -254,7 +264,11 @@ const WorkflowApiLive = HttpApiBuilder.group(CortexApi, "workflows", (handlers) 
         },
         catch: (e) => new TestError({ message: String(e) }),
       }),
-    ),
+    )
+    .handle("reload", () => loadInstructions.pipe(
+      Effect.map(() => ({ loaded: 0, message: "Workflow instructions reloaded from YAML" })),
+      Effect.mapError((e) => new TestError({ message: String(e) })),
+    )),
 )
 
 const ApiLive = HttpApiBuilder.api(CortexApi).pipe(

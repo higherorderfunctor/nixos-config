@@ -34,9 +34,7 @@ Phase 4.5+ COMPLETE. 30 files, 0 errors.
 - fs_write, execute_bash, git tools in allowedTools
 
 **Blocking for full self-maintenance:**
-- UC-MW-16/17 (filesystem export) not implemented
-- DB changes don't persist to disk without manual YAML export
-- True self-maintenance requires export blocks
+- ~~UC-MW-16/17 (filesystem export)~~ **RESOLVED.** export.ts writes workflow.yaml, author.ts writes instructions/*.yaml, wire.ts writes pipeline.yaml. seed.ts reads YAML back. MCP tool `reload_workflows` triggers re-seed. 32 files, 0 errors.
 
 **Validation checklist (before Phase 5):**
 1. Switch to meta-workflow agent (Ctrl+Shift+M)

@@ -11,10 +11,14 @@
  * - decompose → optimize → author (optimize can recommend redesign via HITL)
  *
  * Graph structure (by mode):
- *   BUILD/UPDATE: route → interview → research → decompose → optimize → author → wire → promote → END
+ *   BUILD/UPDATE: route → interview → research → decompose → optimize → author → wire → promote → export → END
  *   REFINE:       route → author → END
- *   AUDIT:        route → optimize → interview → research → decompose → optimize → author → wire → promote → END
- *   PROGRAMMATIC: route → decompose → optimize → author → wire → promote → END
+ *   AUDIT:        route → optimize → interview → research → decompose → optimize → author → wire → promote → export → END
+ *   PROGRAMMATIC: route → decompose → optimize → author → wire → promote → export → END
+ *
+ * ARCH: export node (UC-MW-16/17) writes workflow.yaml metadata to disk for Nix reproducibility.
+ * Together with author (instructions/*.yaml) and wire (pipeline.yaml), workflows are fully
+ * reconstructable from files. seed.ts provides the inverse: YAML → data for DB insertion.
  */
 
 import { StateGraph, START, END } from "@langchain/langgraph"
@@ -28,6 +32,7 @@ import { optimizeNode } from "./optimize.js"
 import { authorNode } from "./author.js"
 import { wireNode } from "./wire.js"
 import { promoteNode } from "./promote.js"
+import { exportNode } from "./export.js"
 
 /**
  * Build the meta-workflow StateGraph with PG checkpointer.
@@ -48,6 +53,7 @@ export const buildMetaWorkflow = async () => {
     .addNode("author", authorNode)
     .addNode("wire", wireNode)
     .addNode("promote", promoteNode)
+    .addNode("export", exportNode)
 
     // --- Entry ---
     .addEdge(START, "route")
@@ -76,9 +82,10 @@ export const buildMetaWorkflow = async () => {
       s.mode === "refine" ? END : "wire",
     )
 
-    // --- wire → promote → END ---
+    // --- wire → promote → export → END ---
     .addEdge("wire", "promote")
-    .addEdge("promote", END)
+    .addEdge("promote", "export")
+    .addEdge("export", END)
 
   return graph.compile({ checkpointer })
 }

@@ -6,7 +6,7 @@ You are the meta-workflow agent for kiro-cortex. Your role is to design, build, 
 
 - **Workflow ID**: `meta-workflow`
 - **Location**: `~/.kiro/agents/meta-workflow.json`
-- **MCP**: kiro-cortex (tools: `list_workflows`, `run_workflow`)
+- **MCP**: kiro-cortex (tools: `list_workflows`, `run_workflow`, `reload_workflows`)
 
 ## First Action on Spawn
 

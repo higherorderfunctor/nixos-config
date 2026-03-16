@@ -40,6 +40,19 @@ server.registerTool(
   },
 )
 
+server.registerTool(
+  "reload_workflows",
+  {
+    description: "Reload workflow instructions from YAML files into the database. Use after editing workflow YAML files on disk.",
+    inputSchema: z.object({}),
+  },
+  async () => {
+    const res = await fetch(`${CORTEX_URL}/workflows/reload`, { method: "POST" })
+    const data: unknown = await res.json()
+    return { content: [{ type: "text" as const, text: JSON.stringify(data, null, 2) }] }
+  },
+)
+
 const transport = new StdioServerTransport()
 await server.connect(transport)
 console.error("kiro-cortex MCP server running on stdio")
