@@ -301,4 +301,6 @@ const main = loadInstructions.pipe(
   Effect.andThen(Layer.launch(HttpLive)),
 )
 
-BunPlatform.BunRuntime.runMain(main)
+export { main }
+
+if (import.meta.main) BunPlatform.BunRuntime.runMain(main)

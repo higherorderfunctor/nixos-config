@@ -1,6 +1,12 @@
-// ARCH: Import starts the HTTP backend (port 3100) in-process alongside the MCP
-// stdio server. No separate process needed.
-import "./main.js"
+// ARCH: Start HTTP backend (port 3100) in-process with logging silenced —
+// stdout is reserved for MCP JSON-RPC, so Effect logs must not pollute it.
+import { main } from "./main.js"
+import * as BunPlatform from "@effect/platform-bun"
+import { Logger, LogLevel } from "effect"
+
+BunPlatform.BunRuntime.runMain(
+  main.pipe(Logger.withMinimumLogLevel(LogLevel.None)),
+)
 
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js"
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js"
