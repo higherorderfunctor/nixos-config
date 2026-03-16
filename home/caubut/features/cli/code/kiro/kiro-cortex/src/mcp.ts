@@ -1,3 +1,7 @@
+// ARCH: Import starts the HTTP backend (port 3100) in-process alongside the MCP
+// stdio server. No separate process needed.
+import "./main.js"
+
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js"
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js"
 import { z } from "zod"

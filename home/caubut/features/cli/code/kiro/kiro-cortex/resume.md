@@ -7,8 +7,8 @@ kiro-cortex is a workflow orchestration platform that replaces steering files wi
 ## Current State
 
 Branch: chore/save-point
-Phase 4.5+ COMPLETE. UC-MW-29 DONE. 33 files, 0 errors.
-**Next: Meta-workflow self-maintenance validation (checklist below), then Phase 5.**
+Phase 4.5+ COMPLETE. UC-MW-29 DONE. 34 files, 0 errors.
+**Next: Commit uncommitted changes, then continue meta-workflow validation checklist, then Phase 5.**
 
 ### What's Built (all phases)
 
@@ -21,6 +21,17 @@ Phase 4.5+ COMPLETE. UC-MW-29 DONE. 33 files, 0 errors.
 | 4.5 | done | decompose, research, optimize, promote + audit/programmatic modes |
 | 4.5+ | done | Segment model, NextStep union, UC-MW-26/27/28, hook conventions, artifact templates |
 | UC-MW-29 | done | Gap-analyze block: cross-system completeness checks, wired into audit mode |
+
+### Uncommitted Changes (ready to commit)
+
+1. **MCP+backend merge**: Resolved the blocker where MCP and HTTP backend were separate processes.
+   - `src/index.ts` → `src/main.ts` (all server logic moved)
+   - `src/index.ts` is now package-level doc comments only (no exports, service not library)
+   - `src/mcp.ts` imports `./main.js` — backend starts in-process with MCP stdio server
+   - `package.json` scripts (`dev`, `start`) point at `src/main.ts`
+2. **Migration 0003**: `content_hash` and `model_version` columns added to instructions table.
+3. **Loader fix**: `workflowsDir` path corrected (`../../workflows` instead of `../workflows`).
+4. **Schema snapshot**: `_schema.sql` updated to reflect migration 0003.
 
 ## Meta-Workflow Self-Maintenance
 
@@ -37,20 +48,23 @@ Phase 4.5+ COMPLETE. UC-MW-29 DONE. 33 files, 0 errors.
 - `thinking` tool removed from allowedTools (prefer `sequentialthinking` MCP)
 
 **Filesystem export (UC-MW-16/17): RESOLVED.**
-export.ts writes workflow.yaml, author.ts writes instructions/*.yaml, wire.ts writes pipeline.yaml. seed.ts reads YAML back. MCP tool `reload_workflows` triggers re-seed. 33 files, 0 errors.
+export.ts writes workflow.yaml, author.ts writes instructions/*.yaml, wire.ts writes pipeline.yaml. seed.ts reads YAML back. MCP tool `reload_workflows` triggers re-seed. 34 files, 0 errors.
 
 **UC-MW-29 Gap Analysis: RESOLVED.**
 Implemented as block in meta-workflow graph (`src/meta-workflow/gap-analyze.ts`). Design decision: block (not reusable segment, skill, or subagent) because gap-analyzing workflows is meta-workflow's job. Checks filesystem artifacts, pipeline↔instruction consistency, block coverage. Wired: `route(audit) → gap-analyze → optimize → interview`. Deterministic, no interrupt.
 
+**MCP+Backend Blocker: RESOLVED.**
+Previously the MCP stdio server (`mcp.ts`) was a proxy to a separate HTTP backend process. Now `mcp.ts` imports `main.ts` directly, starting the HTTP backend (port 3100) in-process. No separate `bun run src/index.ts` needed.
+
 **Validation checklist (before Phase 5):**
-1. [ ] Start kiro-cli from nixos-config root (not kiro-cortex subdir) for LSP/λ
+1. [x] Start kiro-cli from nixos-config root (not kiro-cortex subdir) for LSP/λ
 2. [ ] Switch to meta-workflow agent (Ctrl+Shift+M)
-3. [ ] Verify `list_workflows` works without permission prompt
+3. [~] Verify `list_workflows` works without permission prompt — tool dispatched without prompt ✓, but backend wasn't running (now fixed, needs retest)
 4. [ ] Verify agent can identify itself in workflow list
 5. [ ] Test update mode on meta-workflow itself
 6. [ ] Verify prompt file loads correctly
 7. [ ] Verify knowledgeBase resource indexes ARCHITECTURE.md
-8. [ ] Verify λ icon appears (code intelligence active)
+8. [x] Verify λ icon appears (code intelligence active)
 
 ## Items for Interaction-Analysis (Future)
 
@@ -76,8 +90,8 @@ src/
   embedding/{index,Embedding}.ts
   instruction/{index,Repo,Loader,Error}.ts
   workflow/{index,Block,Registry,Executor,Pipeline,Workflow}.ts
-  meta-workflow/{state,route,interview,research,decompose,optimize,gap-analyze,author,wire,promote,export,graph}.ts
-  Sql.ts, index.ts, mcp.ts, migrations/
+  meta-workflow/{state,route,interview,research,decompose,optimize,gap-analyze,author,wire,promote,export,seed,graph}.ts
+  Sql.ts, main.ts, mcp.ts, index.ts (doc-only), migrations/
 policies/access.rego, scoping.rego, isolation.rego
 ```
 

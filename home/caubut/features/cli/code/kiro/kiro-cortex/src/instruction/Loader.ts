@@ -110,7 +110,7 @@ const parseYaml = (path: string) =>
 export const loadInstructions = Effect.gen(function* () {
   const repo = yield* InstructionRepo
 
-  const workflowsDir = join(import.meta.dir, "..", "workflows")
+  const workflowsDir = join(import.meta.dir, "..", "..", "workflows")
   const files = yield* findYamlFiles(workflowsDir)
 
   let loaded = 0
