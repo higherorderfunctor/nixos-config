@@ -89,7 +89,7 @@ const CortexToolHandlers = CortexToolkit.toLayer(
               : await graph.invoke(params.input ?? {}, config)
             return JSON.stringify({ thread_id: tid, state: result }, null, 2)
           },
-          catch: () => new Error("run_workflow failed"),
+          catch: (e) => new Error(`run_workflow failed: ${e instanceof Error ? e.message : String(e)}`),
         }).pipe(Effect.orDie),
 
       reload_workflows: () =>
