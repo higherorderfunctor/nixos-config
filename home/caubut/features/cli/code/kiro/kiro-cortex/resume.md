@@ -51,6 +51,19 @@ Phase 4.5+ COMPLETE. 30 files, 0 errors.
 - F3: "pattern-detector" skill — DRY across workflows
 - F4: Meta-workflow self-analysis for interview improvement
 
+## Gap Analysis as Meta-Workflow Capability
+
+Meta-workflow should be able to gap-analyze itself and any workflow it manages. This is a meta-task: "given a workflow's current state (code, config, docs, use cases), identify what's missing, broken, or inconsistent."
+
+Open design question: should gap analysis be a block in the meta-workflow graph, a reusable segment, a standalone skill, or a subagent task? Discuss with meta-workflow agent to determine the right artifact type. Considerations:
+- It needs read access to code, config, docs, and ARCHITECTURE.md (parent context tools)
+- It needs to compare use cases against implementation (reasoning-heavy)
+- It could be triggered manually ("gap analyze meta-workflow") or as part of audit mode
+- It may overlap with the existing optimize block (which checks bloat/spaghetti/DRY)
+- Gap analysis is broader than optimize: it checks config, symlinks, MCP registration, agent config completeness, not just instruction quality
+
+Resolve this when switching to meta-workflow agent.
+
 ## Next: Phase 5 — Repo-Analysis
 
 First workflow built by meta-workflow:

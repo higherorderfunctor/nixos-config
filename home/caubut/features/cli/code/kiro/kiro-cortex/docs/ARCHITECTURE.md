@@ -1326,6 +1326,9 @@ Before Phase 5, validate that meta-workflow can maintain itself. Gap analysis pe
 - F3: Suggest "pattern-detector" skill — identify common patterns across workflows for DRY
 - F4: Meta-workflow should analyze its own interaction patterns to improve interview questions
 
+**Gap Analysis as Meta-Workflow Capability (UC-MW-29, Design TBD):**
+Meta-workflow should be able to gap-analyze itself and any workflow it manages. A gap analysis compares a workflow's current state (code, config, docs, use cases, Nix integration) against what should exist, identifying missing items, inconsistencies, and incomplete implementations. This is broader than the existing optimize block (which checks instruction quality): gap analysis checks config completeness, symlink registration, MCP availability, agent config fields, use case coverage, and cross-system consistency. Open question: should this be a new block in the meta-workflow graph, a reusable segment in `src/shared/`, a standalone skill, or a subagent task? Considerations: needs parent context tools (fs_read, grep, code), reasoning-heavy, could integrate with audit mode or be standalone. Resolve when switching to meta-workflow agent.
+
 **Validation Checklist (Before Phase 5):**
 1. [ ] Switch to meta-workflow agent (Ctrl+Shift+M)
 2. [ ] Verify `list_workflows` works without permission prompt
