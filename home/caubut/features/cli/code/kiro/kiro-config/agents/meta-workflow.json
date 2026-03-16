@@ -12,7 +12,6 @@
     "openmemory_list",
     "openmemory_get",
     "sequentialthinking",
-    "thinking",
     "fs_read",
     "fs_write",
     "code",
