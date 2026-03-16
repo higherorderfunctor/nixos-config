@@ -1,7 +1,7 @@
 {
   "name": "meta-workflow",
   "description": "Design, build, update, and refine kiro-cortex workflows. Use when creating new workflows or improving existing ones.",
-  "model": "auto",
+  "model": "claude-opus-4.6",
   "prompt": "file://./prompts/meta-workflow.md",
   "tools": ["*"],
   "allowedTools": [
