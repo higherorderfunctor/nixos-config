@@ -1,6 +1,7 @@
-// ARCH: Single Effect program — forks the HTTP backend, waits for it to be
-// ready, then connects the MCP stdio transport. All logging suppressed so
-// stdout stays clean for JSON-RPC. Set CORTEX_DEBUG=true to write logs to /tmp.
+// ARCH: Single Effect program — connects MCP stdio transport FIRST (so kiro-cli
+// gets its initialize response immediately), then forks the HTTP backend. Tool
+// handlers wait for the backend on demand. Set CORTEX_DEBUG=true to write logs
+// to /tmp.
 import { main } from "./main.js"
 import { Config, Effect, Layer, Logger, LogLevel, Schedule } from "effect"
 import * as BunPlatform from "@effect/platform-bun"
@@ -12,17 +13,10 @@ import { appendFileSync, writeFileSync } from "node:fs"
 const CORTEX_URL = "http://localhost:3100"
 const LOG_PATH = "/tmp/kiro-cortex-mcp.log"
 
-// ARCH: File logger for MCP diagnostics. Writes to /tmp so it works regardless
-// of cwd. Gated behind CORTEX_DEBUG env var — off by default.
 const fileLogger = Logger.make(({ message, date, logLevel }) => {
   appendFileSync(LOG_PATH, `${date.toISOString()} [${logLevel.label}] ${String(message)}\n`)
 })
 
-// ARCH: Logger layer is a bootstrap concern — must be resolved before the
-// Effect program runs. Logger.withMinimumLogLevel (Effect combinator) is the
-// only reliable way to suppress stdout with BunRuntime.runMain. Logger.replace
-// via Layer doesn't fully override the runtime's default logger. When debug is
-// on, stdout leaking is acceptable — the file logger is the diagnostic target.
 const debug = process.env.CORTEX_DEBUG === "true" || process.env.CORTEX_DEBUG === "1"
 
 const DebugLoggerLive = Layer.mergeAll(
@@ -37,13 +31,35 @@ const waitForBackend = Effect.tryPromise(() =>
   Effect.asVoid,
 )
 
-const startMcp = Effect.async<never>(() => {
+// ARCH: Backend readiness gate. Tools call this before hitting the HTTP API.
+// Resolves once /health returns 200. Caches the result after first success.
+let _backendReady: Promise<void> | null = null
+const ensureBackend = (): Promise<void> => {
+  if (_backendReady) return _backendReady
+  _backendReady = (async () => {
+    for (let i = 0; i < 60; i++) {
+      try {
+        const r = await fetch(`${CORTEX_URL}/health`)
+        if (r.ok) return
+      } catch { /* retry */ }
+      await new Promise((r) => setTimeout(r, 250))
+    }
+    throw new Error("Backend did not become healthy within 15s")
+  })()
+  return _backendReady
+}
+
+// ARCH: MCP transport connects synchronously at startup — kiro-cli gets its
+// initialize response before the backend is ready. Tool handlers gate on
+// ensureBackend() so they work once the backend is up.
+const connectMcp = Effect.async<never>(() => {
   const server = new McpServer({ name: "kiro-cortex", version: "0.1.0" })
 
   server.registerTool(
     "list_workflows",
     { description: "List available kiro-cortex workflows", inputSchema: z.object({}) },
     async () => {
+      await ensureBackend()
       const res = await fetch(`${CORTEX_URL}/workflows`)
       const data: unknown = await res.json()
       return { content: [{ type: "text" as const, text: JSON.stringify(data, null, 2) }] }
@@ -61,6 +77,7 @@ const startMcp = Effect.async<never>(() => {
       }),
     },
     async (params) => {
+      await ensureBackend()
       const res = await fetch(`${CORTEX_URL}/workflows/${params.id}/invoke`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -78,6 +95,7 @@ const startMcp = Effect.async<never>(() => {
       inputSchema: z.object({}),
     },
     async () => {
+      await ensureBackend()
       const res = await fetch(`${CORTEX_URL}/workflows/reload`, { method: "POST" })
       const data: unknown = await res.json()
       return { content: [{ type: "text" as const, text: JSON.stringify(data, null, 2) }] }
@@ -85,7 +103,7 @@ const startMcp = Effect.async<never>(() => {
   )
 
   const transport = new StdioServerTransport()
-  server.connect(transport).then(() => console.error("kiro-cortex MCP server running on stdio"))
+  server.connect(transport)
   // Never resume — MCP server runs until stdin closes
 })
 
@@ -93,15 +111,24 @@ const program = Effect.gen(function* () {
   const isDebug = yield* Config.boolean("CORTEX_DEBUG").pipe(Config.withDefault(false))
   if (isDebug) yield* Effect.sync(() => writeFileSync(LOG_PATH, ""))
   yield* Effect.logInfo(`MCP startup — pid=${process.pid} cwd=${process.cwd()}`)
-  yield* Effect.logDebug(`env: PATH=${process.env.PATH?.slice(0, 200)}`)
-  yield* Effect.logDebug(`env: PGHOST=${process.env.PGHOST} PGPORT=${process.env.PGPORT} PGDATABASE=${process.env.PGDATABASE} DATABASE_URL=${process.env.DATABASE_URL}`)
+  yield* Effect.logDebug(`env: PGHOST=${process.env.PGHOST} PGPORT=${process.env.PGPORT} PGDATABASE=${process.env.PGDATABASE}`)
+
+  // ARCH: Connect MCP transport FIRST — kiro-cli needs the initialize response
+  // before its connection timeout fires. Backend starts in background; tools
+  // gate on ensureBackend() internally.
+  yield* connectMcp.pipe(Effect.fork)
+  yield* Effect.logInfo("MCP transport forked")
+
   yield* main.pipe(Effect.fork)
   yield* Effect.logInfo("backend forked, waiting for health...")
+
   yield* waitForBackend.pipe(
     Effect.tapError((e) => Effect.logError(`health check failed: ${e}`)),
   )
-  yield* Effect.logInfo("backend healthy, connecting MCP transport...")
-  yield* startMcp
+  yield* Effect.logInfo("backend healthy — MCP tools ready")
+
+  // Keep alive — both MCP transport and backend run in forked fibers
+  yield* Effect.never
 })
 
 BunPlatform.BunRuntime.runMain(
