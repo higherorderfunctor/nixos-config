@@ -1152,13 +1152,152 @@ type NextStep =
 
 Design follows Sequential Thinking MCP pattern: structured outputSchema that Claude parses to decide its next action. No free text interpretation needed. See references below.
 
+**Hook Conventions:**
+
+Hooks are per-agent (defined in agent config JSON `hooks` field), not standalone scripts. Reusable hook scripts live in `~/.kiro/hooks/` and agent configs reference them with workflow-specific matchers.
+
+Hook triggers available:
+- `agentSpawn` — when agent is activated (e.g., `git status`, load context)
+- `userPromptSubmit` — when user submits a prompt
+- `preToolUse` — before tool execution, can block (use `matcher` for tool name pattern)
+- `postToolUse` — after tool execution (e.g., `cargo fmt` after `fs_write`)
+- `stop` — when assistant finishes responding (e.g., `npm test`)
+
+Hook matchers use internal tool names: `fs_read`, `fs_write`, `execute_bash`, `use_aws`, etc.
+
+Example hook script convention for `~/.kiro/hooks/`:
+```
+~/.kiro/hooks/
+├── audit-bash.sh       # Log bash commands: preToolUse matcher "execute_bash"
+├── audit-aws.sh        # Log AWS calls: preToolUse matcher "use_aws"
+├── format-on-write.sh  # Auto-format: postToolUse matcher "fs_write"
+└── spawn-context.sh    # Load context: agentSpawn (no matcher)
+```
+
+Agent configs reference these:
+```json
+{
+  "hooks": {
+    "agentSpawn": [{ "command": "~/.kiro/hooks/spawn-context.sh" }],
+    "preToolUse": [{ "matcher": "execute_bash", "command": "~/.kiro/hooks/audit-bash.sh" }]
+  }
+}
+```
+
+Ref: https://kiro.dev/docs/cli/custom-agents/configuration-reference (hooks field), https://kiro.dev/docs/cli/hooks
+
+**BlockOutput → Claude → Action Flow:**
+
+When `run_workflow` returns a `BlockOutput` at an AI boundary, Claude reads `next_step.type` and maps it to a concrete action:
+
+```
+run_workflow returns BlockOutput
+  ├── next_step.type === "resume"
+  │   → Claude calls run_workflow(thread_id, input: context)
+  │
+  ├── next_step.type === "spawn_subagent"
+  │   → Claude calls use_subagent(agent: next_step.agent, task: next_step.task)
+  │   → Subagent runs autonomously with fresh context
+  │   → Claude resumes workflow with subagent output
+  │
+  ├── next_step.type === "ask_user"
+  │   → Claude presents next_step.question (with options if provided)
+  │   → User responds
+  │   → Claude resumes workflow with user answer
+  │
+  └── next_step.type === "complete"
+      → Claude presents next_step.summary
+      → Workflow done
+```
+
+Agent config prompts should include this instruction pattern so Claude knows how to handle BlockOutput:
+```
+When run_workflow returns a BlockOutput:
+- If next_step.type is "resume": call run_workflow with the same thread_id
+- If next_step.type is "spawn_subagent": call use_subagent with the specified agent and task
+- If next_step.type is "ask_user": present the question to the user, then resume with their answer
+- If next_step.type is "complete": present the summary — workflow is done
+```
+
+Subagent constraints to encode in prompts: subagents cannot use web_search, web_fetch, introspect, thinking, todo_list, use_aws, grep, glob, or interactive tools. Blocks requiring these must run in parent conversation or deterministic pipeline. Ref: https://kiro.dev/docs/cli/chat/subagents/#tool-availability
+
+**Comprehensive Agent Config Template:**
+
+Promote block generates agent configs with these fields (ref: https://kiro.dev/docs/cli/custom-agents/configuration-reference):
+
+```json
+{
+  "name": "<workflow>-agent",
+  "description": "<workflow description>",
+  "model": "auto",
+  "prompt": "file://./prompts/<workflow>-agent.md",
+  "tools": ["*"],
+  "allowedTools": ["@openmemory", "@sequentialthinking", "fs_read", "code"],
+  "includeMcpJson": true,
+  "mcpServers": {},
+  "resources": [
+    "skill://.kiro/skills/**/SKILL.md",
+    "file://.kiro/steering/**/*.md"
+  ],
+  "hooks": {
+    "agentSpawn": [{ "command": "git status" }]
+  },
+  "keyboardShortcut": "<optional>",
+  "welcomeMessage": "<workflow-specific greeting>"
+}
+```
+
+Fields promote block should populate per workflow:
+- `tools`: restrict to only what the workflow needs (not always `*`)
+- `allowedTools`: pre-approve tools the workflow uses frequently
+- `mcpServers`: add kiro-cortex MCP if workflow uses instruction DB
+- `resources`: include workflow-specific skills and steering files
+- `hooks`: add workflow-appropriate hooks (audit, format, context loading)
+- `prompt`: generate a prompt file with BlockOutput handling instructions + workflow-specific guidance
+
+**SKILL.md Template:**
+
+Promote block generates skills following the [Agent Skills standard](https://agentskills.io) (ref: https://kiro.dev/docs/cli/skills/):
+
+```markdown
+---
+name: <workflow-name>
+description: <activation description — Kiro matches this against user requests>
+---
+
+# <Workflow Name>
+
+<workflow description>
+
+## Trigger
+
+- **Automatic**: Activated when request matches description above
+
+## Workflow
+
+<block-by-block instructions>
+
+## MCP Tools
+
+- `run_workflow` with workflow_id: "<workflow-name>"
+```
+
+Skill locations:
+- `.kiro/skills/<name>/SKILL.md` — workspace-specific
+- `~/.kiro/skills/<name>/SKILL.md` — global (personal)
+
+Optional `references/` folder for detailed docs loaded on demand.
+
+Custom agents must explicitly include skills via `resources`:
+```json
+{ "resources": ["skill://.kiro/skills/**/SKILL.md", "skill://~/.kiro/skills/**/SKILL.md"] }
+```
+
 **Implementation remaining:**
-- Enhance promote block: generate skill (SKILL.md + references/) OR agent config based on UC-MW-26 interview answer
-- Enhance interview block: add trigger selection question (dedicated agent vs skill) per UC-MW-26
-- Create meta-workflow agent config (`~/.kiro/agents/meta-workflow.json`) per UC-MW-27
-- Enhance promote block: comprehensive agent configs (hooks, subagent settings, mcpServers)
-- Create shared hook script conventions
-- Document BlockOutput → Claude → use_subagent flow in agent config prompts
+- Enhance promote block: generate skill OR agent config based on UC-MW-26 interview answer (to be implemented)
+- Enhance interview block: add trigger selection question (to be implemented)
+- Create meta-workflow agent config (`~/.kiro/agents/meta-workflow.json`) per UC-MW-27 (to be implemented)
+- Enhance promote block: use comprehensive agent config template above (to be implemented)
 
 ### Phase 5: Repo-Analysis (Built by Meta-Workflow)
 - Use meta-workflow to build repo-analysis as first generated workflow
