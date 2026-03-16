@@ -5,7 +5,7 @@
  * ARCH: Uses LangGraph Command for conditional routing. Supports 5 modes:
  * - build/update → interview (gather requirements)
  * - refine → author (direct instruction editing)
- * - audit → optimize (scan workflow for issues, UC-MW-13)
+ * - audit → gap-analyze (cross-system completeness check, UC-MW-29, then optimize)
  * - programmatic → decompose (skip interview, UC-MW-4/12)
  */
 
@@ -23,7 +23,7 @@ export const routeNode = (state: MetaWorkflowStateType): Command => {
     case "refine":
       return new Command({ goto: "author" })
     case "audit":
-      return new Command({ goto: "optimize" })
+      return new Command({ goto: "gap-analyze" })
     case "programmatic":
       return new Command({ goto: "decompose" })
     default:

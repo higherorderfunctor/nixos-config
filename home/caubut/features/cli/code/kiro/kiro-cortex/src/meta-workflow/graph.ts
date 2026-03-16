@@ -13,7 +13,7 @@
  * Graph structure (by mode):
  *   BUILD/UPDATE: route → interview → research → decompose → optimize → author → wire → promote → export → END
  *   REFINE:       route → author → END
- *   AUDIT:        route → optimize → interview → research → decompose → optimize → author → wire → promote → export → END
+ *   AUDIT:        route → gap-analyze → optimize → interview → research → decompose → optimize → author → wire → promote → export → END
  *   PROGRAMMATIC: route → decompose → optimize → author → wire → promote → export → END
  *
  * ARCH: export node (UC-MW-16/17) writes workflow.yaml metadata to disk for Nix reproducibility.
@@ -33,6 +33,7 @@ import { authorNode } from "./author.js"
 import { wireNode } from "./wire.js"
 import { promoteNode } from "./promote.js"
 import { exportNode } from "./export.js"
+import { gapAnalyzeNode } from "./gap-analyze.js"
 
 /**
  * Build the meta-workflow StateGraph with PG checkpointer.
@@ -45,7 +46,8 @@ export const buildMetaWorkflow = async () => {
 
   const graph = new StateGraph(MetaWorkflowState)
     // --- Nodes ---
-    .addNode("route", routeNode, { ends: ["interview", "author", "optimize", "decompose"] })
+    .addNode("route", routeNode, { ends: ["interview", "author", "gap-analyze", "decompose"] })
+    .addNode("gap-analyze", gapAnalyzeNode)
     .addNode("interview", interviewNode)
     .addNode("research", researchNode)
     .addNode("decompose", decomposeNode)
@@ -65,6 +67,9 @@ export const buildMetaWorkflow = async () => {
       s.needs_research ? "research" : "decompose",
     )
     .addEdge("research", "interview")
+
+    // --- gap-analyze → optimize (audit mode entry, UC-MW-29) ---
+    .addEdge("gap-analyze", "optimize")
 
     // --- decompose → optimize → author (with redesign loop) ---
     .addEdge("decompose", "optimize")
