@@ -4,7 +4,7 @@
 import { McpServer, Tool, Toolkit } from "@effect/ai"
 import { BunSink, BunStream } from "@effect/platform-bun"
 import * as BunPlatform from "@effect/platform-bun"
-import { Effect, Layer, Logger, LogLevel, Schema } from "effect"
+import { Data, Effect, Layer, Logger, LogLevel, Schema } from "effect"
 import { SqlLive } from "./Sql.js"
 import { layer as opaLayer } from "./opa/index.js"
 import { layer as embeddingLayer } from "./embedding/index.js"
@@ -52,6 +52,11 @@ const getMetaGraph = async () => {
   return _metaGraph
 }
 
+/** Tagged error for workflow execution failures. */
+class WorkflowError extends Data.TaggedError("WorkflowError")<{
+  readonly message: string
+}> {}
+
 const CortexToolHandlers = CortexToolkit.toLayer(
   Effect.gen(function* () {
     yield* loadInstructions
@@ -78,7 +83,7 @@ const CortexToolHandlers = CortexToolkit.toLayer(
       }) =>
         Effect.tryPromise({
           try: async () => {
-            if (params.id !== "meta-workflow") throw new Error(`Unknown workflow: ${params.id}`)
+            if (params.id !== "meta-workflow") throw new WorkflowError({ message: `Unknown workflow: ${params.id}` })
             const graph = await getMetaGraph()
             const tid = params.thread_id ?? crypto.randomUUID()
             const config = { configurable: { thread_id: tid } }
@@ -89,7 +94,7 @@ const CortexToolHandlers = CortexToolkit.toLayer(
               : await graph.invoke(params.input ?? {}, config)
             return JSON.stringify({ thread_id: tid, state: result }, null, 2)
           },
-          catch: (e) => new Error(`run_workflow failed: ${e instanceof Error ? e.message : String(e)}`),
+          catch: (e) => new WorkflowError({ message: e instanceof Error ? e.message : String(e) }),
         }).pipe(Effect.orDie),
 
       reload_workflows: () =>
