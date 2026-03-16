@@ -7,8 +7,8 @@ kiro-cortex is a workflow orchestration platform that replaces steering files wi
 ## Current State
 
 Branch: chore/save-point
-Phase 4.5+ COMPLETE. 30 files, 0 errors.
-**Next: Meta-workflow self-maintenance validation, then Phase 5.**
+Phase 4.5+ COMPLETE. UC-MW-29 DONE. 33 files, 0 errors.
+**Next: Meta-workflow self-maintenance validation (checklist below), then Phase 5.**
 
 ### What's Built (all phases)
 
@@ -20,8 +20,9 @@ Phase 4.5+ COMPLETE. 30 files, 0 errors.
 | Conventions | done | Domain folders, Context.Tag, Schema.transform, .addError, layer exports |
 | 4.5 | done | decompose, research, optimize, promote + audit/programmatic modes |
 | 4.5+ | done | Segment model, NextStep union, UC-MW-26/27/28, hook conventions, artifact templates |
+| UC-MW-29 | done | Gap-analyze block: cross-system completeness checks, wired into audit mode |
 
-## Meta-Workflow Self-Maintenance (Gap Analysis Done)
+## Meta-Workflow Self-Maintenance
 
 **Fixed in agent config:**
 - `@kiro-cortex` in allowedTools (can use own MCP without prompts)
@@ -32,17 +33,24 @@ Phase 4.5+ COMPLETE. 30 files, 0 errors.
 - toolsSettings.fs_write.allowedPaths for write restrictions
 - knowledgeBase resource for ARCHITECTURE.md
 - fs_write, execute_bash, git tools in allowedTools
+- Model pinned to `claude-opus-4.6` (reasoning-heavy workflow design)
+- `thinking` tool removed from allowedTools (prefer `sequentialthinking` MCP)
 
-**Blocking for full self-maintenance:**
-- ~~UC-MW-16/17 (filesystem export)~~ **RESOLVED.** export.ts writes workflow.yaml, author.ts writes instructions/*.yaml, wire.ts writes pipeline.yaml. seed.ts reads YAML back. MCP tool `reload_workflows` triggers re-seed. 32 files, 0 errors.
+**Filesystem export (UC-MW-16/17): RESOLVED.**
+export.ts writes workflow.yaml, author.ts writes instructions/*.yaml, wire.ts writes pipeline.yaml. seed.ts reads YAML back. MCP tool `reload_workflows` triggers re-seed. 33 files, 0 errors.
+
+**UC-MW-29 Gap Analysis: RESOLVED.**
+Implemented as block in meta-workflow graph (`src/meta-workflow/gap-analyze.ts`). Design decision: block (not reusable segment, skill, or subagent) because gap-analyzing workflows is meta-workflow's job. Checks filesystem artifacts, pipeline↔instruction consistency, block coverage. Wired: `route(audit) → gap-analyze → optimize → interview`. Deterministic, no interrupt.
 
 **Validation checklist (before Phase 5):**
-1. Switch to meta-workflow agent (Ctrl+Shift+M)
-2. Verify list_workflows works without permission prompt
-3. Verify agent can identify itself
-4. Test update mode on meta-workflow
-5. Verify prompt file loads
-6. Verify knowledgeBase indexes ARCHITECTURE.md
+1. [ ] Start kiro-cli from nixos-config root (not kiro-cortex subdir) for LSP/λ
+2. [ ] Switch to meta-workflow agent (Ctrl+Shift+M)
+3. [ ] Verify `list_workflows` works without permission prompt
+4. [ ] Verify agent can identify itself in workflow list
+5. [ ] Test update mode on meta-workflow itself
+6. [ ] Verify prompt file loads correctly
+7. [ ] Verify knowledgeBase resource indexes ARCHITECTURE.md
+8. [ ] Verify λ icon appears (code intelligence active)
 
 ## Items for Interaction-Analysis (Future)
 
@@ -50,19 +58,6 @@ Phase 4.5+ COMPLETE. 30 files, 0 errors.
 - F2: "workflow-metrics" subagent — usage tracking
 - F3: "pattern-detector" skill — DRY across workflows
 - F4: Meta-workflow self-analysis for interview improvement
-
-## Gap Analysis as Meta-Workflow Capability
-
-Meta-workflow should be able to gap-analyze itself and any workflow it manages. This is a meta-task: "given a workflow's current state (code, config, docs, use cases), identify what's missing, broken, or inconsistent."
-
-Open design question: should gap analysis be a block in the meta-workflow graph, a reusable segment, a standalone skill, or a subagent task? Discuss with meta-workflow agent to determine the right artifact type. Considerations:
-- It needs read access to code, config, docs, and ARCHITECTURE.md (parent context tools)
-- It needs to compare use cases against implementation (reasoning-heavy)
-- It could be triggered manually ("gap analyze meta-workflow") or as part of audit mode
-- It may overlap with the existing optimize block (which checks bloat/spaghetti/DRY)
-- Gap analysis is broader than optimize: it checks config, symlinks, MCP registration, agent config completeness, not just instruction quality
-
-Resolve this when switching to meta-workflow agent.
 
 ## Next: Phase 5 — Repo-Analysis
 
@@ -81,7 +76,7 @@ src/
   embedding/{index,Embedding}.ts
   instruction/{index,Repo,Loader,Error}.ts
   workflow/{index,Block,Registry,Executor,Pipeline,Workflow}.ts
-  meta-workflow/{state,route,interview,research,decompose,optimize,author,wire,promote,graph}.ts
+  meta-workflow/{state,route,interview,research,decompose,optimize,gap-analyze,author,wire,promote,export,graph}.ts
   Sql.ts, index.ts, mcp.ts, migrations/
 policies/access.rego, scoping.rego, isolation.rego
 ```

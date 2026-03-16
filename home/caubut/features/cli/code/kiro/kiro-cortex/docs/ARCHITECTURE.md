@@ -483,6 +483,7 @@ Building workflows by hand doesn't scale. Each workflow needs decomposition into
 - **UC-MW-26**: Workflow trigger selection during interview. Meta-workflow asks: "How will this workflow be triggered?" Options: (A) **Dedicated agent** — user switches to it explicitly, good for focused work with specialized context; (B) **Skill** — default agent activates it when request matches description, good for "Claude identifies and uses" workflows. This determines whether promote block generates an agent config (`.kiro/agents/`) or a skill (`.kiro/skills/` or `~/.kiro/skills/`). Skills follow the [Agent Skills standard](https://agentskills.io).
 - **UC-MW-27**: Meta-workflow itself is a top-level agent (not always in context). User switches to meta-workflow agent when designing/updating workflows. This keeps meta-workflow's instructions out of default context — critical for the 1M tiny instructions goal. Meta-workflow agent config lives in `~/.kiro/agents/meta-workflow.json`.
 - **UC-MW-28**: Context optimization is a first-class design goal. Meta-workflow proposes the right artifact type (agent, skill, subagent, MCP) based on context budget impact. Guidelines: (1) Skills for on-demand activation by description matching; (2) Agents for dedicated focused work; (3) Subagents for autonomous blocks needing fresh context; (4) MCPs for external tools not in context until called. The 1M instructions goal requires aggressive context management.
+- **UC-MW-29**: Gap analysis as a meta-workflow block. Checks cross-system completeness for any workflow: filesystem artifacts (workflow.yaml, pipeline.yaml, instruction YAMLs), pipeline↔block consistency, and block coverage. Broader than optimize (which checks instruction quality) — gap-analyze checks structural completeness. Runs deterministically before optimize in audit mode: `route → gap-analyze → optimize → interview`. Implemented as `src/meta-workflow/gap-analyze.ts`.
 - _(Add more use cases here as they emerge)_
 
 ### Description
@@ -537,6 +538,7 @@ More reusable patterns will emerge as workflows are built. The meta-workflow sho
 | **interview** | Multi-turn conversation via LangGraph `interrupt()`. Adapts questions based on mode. Loops with research when needed. | Yes | Potentially |
 | **research** | External search for best practices, similar systems, prior art. Also searches block registry for reuse candidates. Generic — usable by any workflow. | No | Yes |
 | **decompose** | Takes interview output → proposes block structure. Searches existing blocks for reuse. Applies reusable patterns (historical tracking, etc.). Calls optimize before presenting proposal. | Yes (approve/refine) | No |
+| **gap-analyze** | Cross-system completeness check (UC-MW-29). Verifies filesystem artifacts, pipeline↔instruction consistency, block coverage. Broader than optimize — checks structural completeness, not instruction quality. | No (feeds into optimize) | Yes |
 | **optimize** | Reviews structure for instruction bloat (UC-MW-8), spaghetti (UC-MW-9), DRY violations (UC-MW-10). Returns recommendations — doesn't act on them. Scope: local to the workflow being worked on during create/update. Full repo scan only via manual audit trigger (UC-MW-13). | No (feeds into interview/decompose) | Yes |
 | **author** | Writes/updates instructions for each block. Stores in DB with OPA metadata (agent_role, task_type, domain). | No | No |
 | **wire** | Creates/updates pipeline definition (block order, conditions, routing). Stores in DB. | No | No |
@@ -559,24 +561,24 @@ More reusable patterns will emerge as workflows are built. The meta-workflow sho
                │          │       │       (UC-MW-4)      │
                │          │       │           │          │
                ▼          │       ▼           │     (invalid input)
-          ┌─────────┐     │  ┌──────────┐    │          │
-          │interview│     │  │ optimize │    │          ▼
-          └────┬────┘     │  │(all wfs) │    │        FAIL
-            ▲  │          │  └────┬─────┘    │    (UC-MW-12)
-            │  ▼          │       │          │
-          ┌──────────┐    │  ┌────▼─────┐    │
-          │ research │    │  │interview │    │
-          └──────────┘    │  │(findings)│    │
+          ┌─────────┐     │  ┌───────────┐   │          │
+          │interview│     │  │gap-analyze│   │          ▼
+          └────┬────┘     │  └─────┬─────┘   │        FAIL
+            ▲  │          │        │         │    (UC-MW-12)
+            │  ▼          │        ▼         │
+          ┌──────────┐    │  ┌──────────┐    │
+          │ research │    │  │ optimize │    │
+          └──────────┘    │  │(all wfs) │    │
                │          │  └────┬─────┘    │
                ▼          │       │          │
-          ┌─────────┐     │       ▼          │
-          │decompose│◄────────────────────────┘
-          └────┬────┘     │
-            ▲  │          │
-            │  ▼          │
-          ┌──────────┐    │
-          │ optimize │    │
-          │ (local)  │    │
+          ┌─────────┐     │  ┌────▼─────┐    │
+          │decompose│◄──  │  │interview │    │
+          └────┬────┘     │  │(findings)│    │
+            ▲  │          │  └────┬─────┘    │
+            │  ▼          │       │          │
+          ┌──────────┐    │       ▼          │
+          │ optimize │    │  ┌─────────┐     │
+          │ (local)  │    │  │decompose│◄────┘
           └──────────┘    │
                │          │
                ▼          ▼
@@ -608,7 +610,7 @@ More reusable patterns will emerge as workflows are built. The meta-workflow sho
 
 **REFINE** (UC-MW-3): route (load block) → interview (what's wrong) → author (rewrite) → END
 
-**AUDIT** (UC-MW-13): route → optimize (all workflows in repo) → interview (present findings) → decompose (restructure approved items) → author → wire → promote → END
+**AUDIT** (UC-MW-13, UC-MW-29): route → gap-analyze → optimize (all workflows in repo) → interview (present findings) → decompose (restructure approved items) → author → wire → promote → END
 
 **PROGRAMMATIC** (UC-MW-4, 12): route (validate structured input) → decompose (skip interview) ↔ optimize → author → wire → promote → END. Fails if input lacks problem statement or use cases.
 
@@ -1326,8 +1328,8 @@ Before Phase 5, validate that meta-workflow can maintain itself. Gap analysis pe
 - F3: Suggest "pattern-detector" skill — identify common patterns across workflows for DRY
 - F4: Meta-workflow should analyze its own interaction patterns to improve interview questions
 
-**Gap Analysis as Meta-Workflow Capability (UC-MW-29, Design TBD):**
-Meta-workflow should be able to gap-analyze itself and any workflow it manages. A gap analysis compares a workflow's current state (code, config, docs, use cases, Nix integration) against what should exist, identifying missing items, inconsistencies, and incomplete implementations. This is broader than the existing optimize block (which checks instruction quality): gap analysis checks config completeness, symlink registration, MCP availability, agent config fields, use case coverage, and cross-system consistency. Open question: should this be a new block in the meta-workflow graph, a reusable segment in `src/shared/`, a standalone skill, or a subagent task? Considerations: needs parent context tools (fs_read, grep, code), reasoning-heavy, could integrate with audit mode or be standalone. Resolve when switching to meta-workflow agent.
+**Gap Analysis as Meta-Workflow Capability (UC-MW-29, IMPLEMENTED):**
+Meta-workflow can gap-analyze itself and any workflow it manages. Implemented as a new block (`gap-analyze`) in the meta-workflow graph at `src/meta-workflow/gap-analyze.ts`. Checks cross-system completeness: filesystem artifacts (workflow.yaml, pipeline.yaml, instruction YAMLs), pipeline↔block consistency, and block coverage. Broader than optimize (which checks instruction quality). Runs deterministically (no interrupt) before optimize in audit mode: `route → gap-analyze → optimize → interview`. Findings flow into state for downstream HITL review. Design decision: block in graph (not reusable segment, skill, or subagent) because gap-analyzing workflows is inherently meta-workflow's job — no other workflow needs this capability.
 
 **Validation Checklist (Before Phase 5):**
 1. [ ] Switch to meta-workflow agent (Ctrl+Shift+M)
