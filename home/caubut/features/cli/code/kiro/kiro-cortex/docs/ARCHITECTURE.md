@@ -295,6 +295,53 @@ For autonomous blocks needing LLM reasoning with fresh context. Claude spawns a 
 
 Meta-workflow codifies this knowledge in its instructions so it can recommend the right pattern when designing new workflows. The segment model means most workflows are hybrid — the question is how many AI boundaries they need.
 
+#### NextStep Design (Q2 Resolution)
+
+`BlockOutput.next_step` is a discriminated union that tells Claude exactly what to do after a deterministic segment completes. This follows the Sequential Thinking MCP pattern where structured output (not free text) drives Claude's next action.
+
+**Variants:**
+
+| Type | Claude Action | When Used |
+|------|--------------|-----------|
+| `resume` | Call `run_workflow` with same `thread_id` | Next deterministic segment ready |
+| `spawn_subagent` | Call `use_subagent` with agent + task | Autonomous block needs LLM reasoning |
+| `ask_user` | Present question (with optional choices) | Human decision needed before continuing |
+| `complete` | Present summary, stop | Workflow finished |
+
+**Full BlockOutput shape:**
+```typescript
+interface BlockOutput {
+  what_was_done: string           // summary of segment accomplishment
+  result: unknown                 // block-specific data
+  next_step: NextStep             // discriminated union (see below)
+  human_decisions_needed: string[] // decisions needed (may be empty)
+}
+
+type NextStep =
+  | { type: "resume"; context?: string }
+  | { type: "spawn_subagent"; agent: string; task: string }
+  | { type: "ask_user"; question: string; options?: string[] }
+  | { type: "complete"; summary: string }
+```
+
+**Design rationale:**
+- Structured over free text: Claude maps `type` directly to an action — no interpretation ambiguity
+- Matches Sequential Thinking MCP's `outputSchema` pattern (structured fields → Claude decides)
+- Machine-readable: future automation can act on NextStep without LLM interpretation
+- Extensible: add new variants without breaking existing ones
+- `resume.context` is optional UX hint about what's coming next (not required for correctness)
+- `ask_user.options` is optional — omit for open-ended questions, include for structured choices
+
+**Data flow at AI boundaries:**
+1. `run_workflow` runs deterministic segment → hits `interrupt()` → returns `BlockOutput`
+2. Claude reads `next_step.type` and acts accordingly
+3. When resuming, Claude passes results (user answer, subagent output) via `run_workflow`'s `input` param
+4. LangGraph's interrupt/resume mechanism handles state continuity
+
+**References:**
+- Sequential Thinking MCP outputSchema: https://www.npmjs.com/package/@modelcontextprotocol/server-sequential-thinking
+- Anthropic advanced tool use patterns: https://www.anthropic.com/engineering/advanced-tool-use
+
 ## Component Responsibilities
 
 | Component | Manages | Talks to | Stateful? |
@@ -452,7 +499,7 @@ Meta-workflow must codify knowledge about orchestration patterns in its instruct
 - **Subagent constraints to design around**: no interactive tasks, no web_search/web_fetch/introspect/thinking/todo_list/use_aws/grep/glob — blocks requiring these must run in parent conversation or deterministic pipeline (ref: https://kiro.dev/docs/cli/chat/subagents/#tool-availability)
 - **Agent design**: specialized agents per workflow (not one generic worker). Agent configs are comprehensive: tools, hooks, subagent settings, MCP servers, resources, prompt. Consider reusable agent patterns as lego blocks. When self-improving, meta-workflow should identify when new agents or hooks are needed.
 - **Hooks in agent configs**: hooks are per-agent (defined in agent config JSON), not standalone. Hook scripts are reusable (`~/.kiro/hooks/`); agent configs reference them with workflow-specific matchers. Meta-workflow proposes hooks during design (UC-MW-25).
-- **Structured output convention for AI-orchestrated blocks**: blocks return `{ what_was_done, result, next_step, human_decisions_needed }` so Claude can reason about next steps
+- **Structured output convention for AI-orchestrated blocks**: blocks return `BlockOutput` with `next_step: NextStep` — a discriminated union (Q2 resolved). Claude maps each variant to a specific action. See "NextStep Design" below.
 - **Single MCP tool (UC-MW-24)**: `run_workflow` is the only tool. Runs deterministic segments, interrupts at AI boundaries, returns BlockOutput. Claude resumes with same thread_id. No separate `run_block` tool. Reusable segments (sub-graphs from `src/shared/`) compose transparently — LangGraph traverses them including their internal interrupt points.
 
 This knowledge lives in meta-workflow's seed instructions (YAML), not hardcoded in block logic. When meta-workflow self-improves (4.5+), it can refine these patterns.
@@ -1087,8 +1134,23 @@ Remaining items to add incrementally as needed:
 **Resolved: Q1 — single `run_workflow` tool (interrupt/resume)**
 Workflows are composed of deterministic LangGraph segments. `run_workflow` runs until an AI boundary (`interrupt()`), returns `BlockOutput`, Claude does its work, calls `run_workflow` with same `thread_id` to resume. No separate `run_block` tool. Reusable segments (UC-MW-18) are sub-graphs that compose transparently. See "Segment Model" in orchestration section.
 
-**Open question (resolve before implementing):**
-- Q2: How does BlockOutput.next_step encode "spawn subagent X with task Y"? Structured discriminated union or free text?
+**Resolved: Q2 — structured NextStep discriminated union**
+`BlockOutput.next_step` uses a discriminated union (not free text). Claude maps each variant to a specific action:
+
+```typescript
+type NextStep =
+  | { type: "resume"; context?: string }        // call run_workflow with same thread_id
+  | { type: "spawn_subagent"; agent: string; task: string }  // call use_subagent
+  | { type: "ask_user"; question: string; options?: string[] }  // present to user
+  | { type: "complete"; summary: string }       // workflow done
+```
+
+Design follows Sequential Thinking MCP pattern: structured outputSchema that Claude parses to decide its next action. No free text interpretation needed. See references below.
+
+**Implementation remaining:**
+- Enhance promote block's agent config generation (hooks, subagent settings, mcpServers)
+- Create shared hook script conventions
+- Document BlockOutput → Claude → use_subagent flow in agent config prompts
 
 ### Phase 5: Repo-Analysis (Built by Meta-Workflow)
 - Use meta-workflow to build repo-analysis as first generated workflow
@@ -1138,7 +1200,15 @@ Run `pnpm run check` after every commit to catch both TypeScript and Effect-spec
 
 ## References
 
+### Core Dependencies
 - [OPA](https://www.openpolicyagent.org/) — Open Policy Agent
-- [LangGraph.js](https://langchain-ai.github.io/langgraphjs/) — Agent orchestration
+- [LangGraph.js](https://langchain-ai.github.io/langgraphjs/) — Agent orchestration (interrupt/resume, sub-graphs, checkpointing)
 - [pgvector](https://github.com/pgvector/pgvector) — PostgreSQL vector extension
 - [Effect-TS](https://effect.website/) — Functional TypeScript framework
+- [MCP SDK](https://www.npmjs.com/package/@modelcontextprotocol/sdk) — Model Context Protocol server/client
+
+### Design Influences
+- [Sequential Thinking MCP](https://www.npmjs.com/package/@modelcontextprotocol/server-sequential-thinking) — Structured outputSchema pattern for Claude self-orchestration (influenced NextStep design)
+- [Anthropic: Advanced Tool Use](https://www.anthropic.com/engineering/advanced-tool-use) — Tool Search, Programmatic Tool Calling, Tool Use Examples (informed structured output decision over free text)
+- [Anthropic: Building Effective Agents](https://www.anthropic.com/research/building-effective-agents) — Agent design patterns
+- [Kiro CLI Subagent Docs](https://kiro.dev/docs/cli/chat/subagents/#tool-availability) — Subagent tool constraints (shaped block execution routing)

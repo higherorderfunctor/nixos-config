@@ -8,7 +8,7 @@ kiro-cortex is a workflow orchestration platform that replaces steering files wi
 
 Branch: chore/save-point
 Phase 4.5 meta-workflow blocks COMPLETE. 30 files, 0 errors.
-Items 1-2 of 4.5+ done. Items 3+4 merged. Q1 resolved, Q2 open.
+Q1 and Q2 both resolved. Implementation remaining: enhance promote block.
 
 ### Commits This Session
 | SHA | What |
@@ -17,7 +17,8 @@ Items 1-2 of 4.5+ done. Items 3+4 merged. Q1 resolved, Q2 open.
 | `266aea0` | BlockOutput type for AI-orchestrated blocks (UC-MW-21) |
 | `bca7337` | isolation.rego + wire repo into block executor |
 | `71684a2` | Use case updates (UC-MW-20,22,23,24,25) |
-| (pending) | Segment model + Q1 resolution |
+| `549b326` | Segment model + Q1 resolution |
+| (pending) | NextStep type + Q2 resolution |
 
 ### What's Built (all phases)
 
@@ -28,39 +29,42 @@ Items 1-2 of 4.5+ done. Items 3+4 merged. Q1 resolved, Q2 open.
 | Pre-4.5 | done | OPA per-block injection: access.rego, scoping.rego, YAML loader, block executor |
 | Conventions | done | Domain folders, Context.Tag, Schema.transform, .addError, layer exports |
 | 4.5 | done | decompose, research, optimize, promote + audit/programmatic modes |
-| 4.5+ item 1 | done | BlockOutput type (UC-MW-21) |
-| 4.5+ item 2 | done | isolation.rego + repo param in executeBlock |
+| 4.5+ Q1 | done | Segment model — single run_workflow tool with interrupt/resume |
+| 4.5+ Q2 | done | NextStep discriminated union — structured output for Claude orchestration |
 
-## Segment Model (Q1 Resolved)
+## Design Decisions (Q1 + Q2)
 
-**Decision:** Single `run_workflow` MCP tool with interrupt/resume. No separate `run_block` tool.
+### Q1: Segment Model (resolved)
+Single `run_workflow` MCP tool with interrupt/resume. No separate `run_block` tool.
 
-A workflow = sequence of deterministic LangGraph segments. Between segments, Claude takes over (Sequential Thinking pattern). `run_workflow` runs until an AI boundary (`interrupt()`), returns `BlockOutput`, Claude does its work (reason, ask user, spawn subagent), calls `run_workflow` with same `thread_id` to resume.
+- Workflow = sequence of deterministic LangGraph segments
+- Between segments: Claude orchestrates (Sequential Thinking pattern)
+- `run_workflow` runs until AI boundary (interrupt), returns BlockOutput
+- Claude does its work, calls `run_workflow` with same `thread_id` to resume
+- Reusable segments (UC-MW-18) are sub-graphs that compose transparently
 
-**Pattern variants are segment configurations:**
-- Pure deterministic = 1 segment, no interrupts (run_workflow runs end-to-end)
-- Hybrid = N segments with AI boundaries (most real workflows)
-- Pure AI-orchestrated = N single-block segments with boundaries between all (rare)
+### Q2: NextStep Type (resolved)
+Structured discriminated union (not free text). Claude maps each variant to a specific action:
 
-**Reusable segments (UC-MW-18):** LangGraph sub-graphs in `src/shared/`. Compose into any workflow as nodes. `run_workflow` traverses them transparently including internal interrupt points. Parameterizable via state. Optimize block recommends extracting DRY violations into shared segments.
+```typescript
+type NextStep =
+  | { type: "resume"; context?: string }        // call run_workflow
+  | { type: "spawn_subagent"; agent: string; task: string }  // call use_subagent
+  | { type: "ask_user"; question: string; options?: string[] }  // present to user
+  | { type: "complete"; summary: string }       // done
+```
 
-## 4.5+ Remaining: Subagent + Hooks Integration
+Design follows Sequential Thinking MCP pattern: structured outputSchema → Claude parses → decides action.
 
-### Open question:
-- Q2: How does BlockOutput.next_step encode "spawn subagent X with task Y"? Structured discriminated union or free text?
+References:
+- Sequential Thinking MCP: https://www.npmjs.com/package/@modelcontextprotocol/server-sequential-thinking
+- Anthropic advanced tool use: https://www.anthropic.com/engineering/advanced-tool-use
 
-### What to implement (after Q2 resolved):
-- Update BlockOutput type with structured next_step (per Q2 answer)
+## Implementation Remaining
+
 - Enhance promote block's agent config generation (hooks, subagent settings, mcpServers)
 - Create shared hook script conventions
-- Document BlockOutput → Claude → use_subagent convention
-
-### Use cases (in ARCHITECTURE.md):
-- UC-MW-20: Agent configs include hooks, toolsSettings.subagent, mcpServers, resources, prompt
-- UC-MW-22: Mechanism: BlockOutput.next_step → Claude → use_subagent
-- UC-MW-23: Hooks per-agent in config; scripts reusable in ~/.kiro/hooks/
-- UC-MW-24: Single run_workflow tool, interrupt/resume at AI boundaries, no run_block
-- UC-MW-25: Meta-workflow proposes hooks (workflow-specific or reusable)
+- Document BlockOutput → Claude → use_subagent flow in agent config prompts
 
 ## File Structure
 
@@ -78,7 +82,7 @@ policies/access.rego, scoping.rego, isolation.rego
 ## Key References
 - Subagent tool limitations: https://kiro.dev/docs/cli/chat/subagents/#tool-availability
 - Agent config format: hooks, toolsSettings.subagent, mcpServers, resources (from Kiro docs)
-- Segment model: ARCHITECTURE.md "Segment Model" section under orchestration
+- Segment model + NextStep design: ARCHITECTURE.md sections "Segment Model" and "NextStep Design"
 
 ## Dependencies (pinned exact)
 effect 3.19.19, @effect/platform 0.94.5, @effect/sql 0.49.0, @effect/sql-pg 0.50.3

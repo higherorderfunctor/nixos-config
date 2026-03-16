@@ -121,10 +121,64 @@ export interface BlockOutput {
   readonly what_was_done: string
   /** The actual result data (block-specific shape). */
   readonly result: unknown
-  /** Block's suggestion for what should happen next, or null if done. */
-  readonly suggested_next_step: string | null
+  /** Structured signal for what Claude should do next (UC-MW-21, Q2). */
+  readonly next_step: NextStep
   /** Decisions that need human input before proceeding. */
   readonly human_decisions_needed: ReadonlyArray<string>
+}
+
+/**
+ * Discriminated union for BlockOutput.next_step (Q2 resolution).
+ *
+ * Claude maps each variant to a specific action:
+ * - resume → call run_workflow with same thread_id (next deterministic segment)
+ * - spawn_subagent → call use_subagent, inspect result, then resume
+ * - ask_user → present question to user, pass answer back when resuming
+ * - complete → workflow done, present summary
+ *
+ * Design follows Sequential Thinking MCP pattern: structured outputSchema that
+ * Claude parses to decide its next action. No free text interpretation needed.
+ *
+ * References:
+ * - Sequential Thinking MCP: https://www.npmjs.com/package/@modelcontextprotocol/server-sequential-thinking
+ * - Anthropic advanced tool use: https://www.anthropic.com/engineering/advanced-tool-use
+ */
+export type NextStep =
+  | NextStepResume
+  | NextStepSpawnSubagent
+  | NextStepAskUser
+  | NextStepComplete
+
+/** Continue to next deterministic segment. */
+export interface NextStepResume {
+  readonly type: "resume"
+  /** Optional hint about what the next segment will do (for UX framing). */
+  readonly context?: string
+}
+
+/** Spawn a subagent before resuming. Claude calls use_subagent. */
+export interface NextStepSpawnSubagent {
+  readonly type: "spawn_subagent"
+  /** Agent name from workflow's agent config. */
+  readonly agent: string
+  /** Task description for the subagent. */
+  readonly task: string
+}
+
+/** Ask user a question before resuming. */
+export interface NextStepAskUser {
+  readonly type: "ask_user"
+  /** The question to present. */
+  readonly question: string
+  /** Optional structured choices (if omitted, open-ended). */
+  readonly options?: ReadonlyArray<string>
+}
+
+/** Workflow complete. */
+export interface NextStepComplete {
+  readonly type: "complete"
+  /** Summary of what the workflow accomplished. */
+  readonly summary: string
 }
 
 /**
