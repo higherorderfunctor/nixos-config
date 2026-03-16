@@ -667,6 +667,12 @@ Maps to existing steering structure:
 
 ## Code Conventions
 
+### TypeScript Configuration
+
+- `verbatimModuleSyntax: true` — use `export type` for type-only re-exports in barrel files
+- `exactOptionalPropertyTypes: true` — optional properties must be explicitly `undefined` or omitted
+- No `as any` casts. **One exception:** `CompiledPipeline` in `workflow/Workflow.ts` (LangGraph's compiled graph type is not fully generic)
+
 ### Package Structure
 
 Code is organized by domain, not by technical layer. Each domain folder has a barrel `index.ts` with rich TSDoc describing the domain's purpose, public API, and relationship to other domains.
@@ -740,6 +746,8 @@ All TypeScript files use consistent documentation for both human and AI readers:
 - `// CONSTRAINT: ...` — non-obvious constraint that must be preserved
 - `// EXTERNAL: ...` — documents external API behavior/quirks
 - These help AI assistants understand intent when modifying code
+
+**JSDoc gotcha:** Avoid glob patterns containing `/*` in JSDoc comments — the `*/` sequence closes the comment block prematurely. Use prose descriptions instead of literal glob syntax.
 
 ## Phase 4a Infrastructure Detail
 
@@ -1066,6 +1074,18 @@ Established patterns:
 - `sql.and([...conditions])` for dynamic WHERE clause construction
 - `sql.unsafe()` for pgvector literal interpolation (vector strings)
 - `Schema.optionalWith(Schema.String, { default: () => "value" })` for optional request fields with defaults
+
+## Development
+
+### Commands
+
+```bash
+pnpm run check          # runs check:tsc + check:els in parallel
+pnpm run check:tsc      # TypeScript compiler
+pnpm run check:els      # effect-language-service diagnostics
+```
+
+Run `pnpm run check` after every commit to catch both TypeScript and Effect-specific errors.
 
 ## References
 

@@ -62,9 +62,13 @@ export const buildMetaWorkflow = async () => {
 
     // --- decompose → optimize → author (with redesign loop) ---
     .addEdge("decompose", "optimize")
-    // ARCH: optimize sets needs_redesign via HITL. If true → back to decompose.
+    // ARCH: optimize routing depends on scope:
+    // - Audit mode (UC-MW-13): global scan → interview to discuss findings with user
+    // - Build/update/programmatic: local check → redesign loop or author
     .addConditionalEdges("optimize", (s: MetaWorkflowStateType) =>
-      s.needs_redesign ? "decompose" : "author",
+      s.mode === "audit" && !s.needs_redesign ? "interview"
+        : s.needs_redesign ? "decompose"
+        : "author",
     )
 
     // --- author → wire or END (refine skips wire) ---
