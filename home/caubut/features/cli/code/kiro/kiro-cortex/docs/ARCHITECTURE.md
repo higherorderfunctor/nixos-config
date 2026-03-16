@@ -84,11 +84,11 @@ OPA sits in front of the search step. Instead of hardcoded SQL WHERE clauses, OP
 
 #### OPA Policy Design
 
-**Policy file structure** (replaces `test.rego`):
+**Policy file structure:**
 
 ```
 policies/
-  access.rego          # request-level allow/deny (was test.rego)
+  access.rego          # request-level allow/deny
   scoping.rego         # per-block instruction filtering
   isolation.rego       # repo isolation rules
 ```
@@ -159,26 +159,13 @@ Each `BlockDef<S>` declares its OPA context:
 }
 ```
 
-The block executor (not yet built) does:
+The block executor does:
 1. Send `block.opa` context to OPA `/v1/data/cortex/scoping/filters`
 2. OPA returns filtering criteria: `{ allowed_domains, allowed_task_types, repo_filter, max_results }`
 3. kiro-cortex translates to SQL WHERE: `domain IN (...) AND task_type IN (...) AND (repo = ... OR repo IS NULL)`
 4. pgvector search with those filters → scoped instructions for this block
 5. Inject instructions into block execution context
 6. Block executes with only its relevant instructions
-
-**Migration from test.rego:**
-- Rename `policies/test.rego` → `policies/access.rego`
-- Update `package cortex.test` → `package cortex.access`
-- Update OPA query path in `Opa.ts`: `/v1/data/cortex/test/decision` → `/v1/data/cortex/access/decision`
-- Add `policies/scoping.rego` and `policies/isolation.rego`
-- OPA loads all `.rego` files from `policies/` directory automatically
-
-**Phasing:**
-- Phase 3 (done): `access.rego` only (allow/deny). Instruction filtering via hardcoded SQL WHERE.
-- Phase 4.4 (done): Blocks declare OPA context but don't query it yet (hardcoded logic).
-- Pre-4.5 (done): Rename test.rego → access.rego. Add scoping.rego. Build block executor wrapper. Wire YAML loader.
-- 4.5+: isolation.rego, complex cross-domain rules, per-repo policies.
 
 ### Layer 3: Workflow Orchestration (Phase 4)
 
@@ -420,8 +407,7 @@ Pipeline {
 ### Execution Model
 
 A block can be triggered via:
-- **MCP tool** — from kiro-cli (MCP stdio wrapper). Claude calls block tools in a loop for AI-orchestrated workflows.
-- **HTTP API** — direct POST to `/blocks/{id}/run`. Used by MCP wrapper internally.
+- **MCP tool** — from kiro-cli via `run_workflow`. Claude calls it in a loop for AI-orchestrated workflows.
 - **Pipeline step** — from LangGraph orchestration (deterministic mode). Output feeds next step's state.
 - **Subagent** — Kiro spawns a subagent with custom agent config + kiro-cortex MCP. For autonomous blocks needing LLM reasoning with fresh context.
 
@@ -1019,7 +1005,6 @@ Blocks run in different environments depending on their needs:
 - OPA systemd service (port 8181, out-of-store symlink to policies/)
 - OpaService: Effect.Service with self-contained HTTP client
 - LangGraph StateGraph with initial nodes (policy → vector → assemble → generate)
-- HttpApi /test endpoint wiring OPA + LangGraph end-to-end
 
 ### Phase 3: Core RAG Loop ✅
 Built the core retrieval pipeline:
@@ -1029,7 +1014,6 @@ Built the core retrieval pipeline:
 - Workflow nodes wired to real services (OPA → embed → search → assemble)
 - OPA for access control (allow/deny), SQL WHERE for instruction filtering
 - Context assembly with token budgets (chars/4 approximation)
-- `/context` endpoint replacing `/test`
 - Validated end-to-end with inline psql test data (no persistent seed data)
 
 ### Phase 4: MVP-Incremental Build
@@ -1038,13 +1022,6 @@ Built the core retrieval pipeline:
 
 **Deferred until needed:**
 - Hooks integration (AgentSpawn + PreToolUse for supplementary OPA) — not needed until workflows are running end-to-end
-
-**Required before 4.5 (OPA per-block injection) — DONE:**
-- ✅ Rename `policies/test.rego` → `policies/access.rego`, update package + OPA query path
-- ✅ Add `policies/scoping.rego` — per-block instruction filtering
-- ✅ Build YAML → pgvector startup loader (read `workflows/*/instructions/*.yaml` → embed → upsert)
-- ✅ Build block executor wrapper (query OPA scoping → pgvector search → inject instructions → execute block)
-- This closes the loop: blocks consume their seed instructions via OPA at runtime
 
 #### 4.1: Block Model + Registry
 - `BlockDef<S>` — generic over pipeline state, LangGraph node signature, OPA context declaration
@@ -1063,7 +1040,7 @@ Built the core retrieval pipeline:
 - Validate: can define a pipeline, run it, pause/resume via interrupt
 
 #### 4.3: MCP Stdio Wrapper
-- Thin MCP server calling HTTP API
+- Pure Effect MCP server via `@effect/ai` McpServer.layerStdio (stdin Stream, stdout Sink)
 - Exposes `list_workflows` + `run_workflow` + `reload_workflows` tools
 - Registered in mcp.json for kiro-cli discovery
 
@@ -1305,48 +1282,6 @@ Custom agents must explicitly include skills via `resources`:
 - Phase 4.5+ complete. All items implemented or documented.
 - Next: Meta-workflow self-maintenance validation, then Phase 5
 
-### Meta-Workflow Self-Maintenance Gap Analysis (2026-03-16)
-
-Before Phase 5, validate that meta-workflow can maintain itself. Gap analysis performed:
-
-**Critical Gaps (Fixed):**
-- G1: ✅ kiro-cortex MCP tools (`@kiro-cortex`) added to `allowedTools`
-- G2: ✅ Self-identification added to prompt ("Your workflow ID is meta-workflow")
-- G3: ✅ Prompt moved to `file://./prompts/meta-workflow.md` for maintainability
-- G4: ✅ agentSpawn hook enhanced (git log + status)
-- G5: ✅ Resource paths fixed (absolute with triple slash `file:///`)
-- G6: ✅ `toolsSettings.fs_write.allowedPaths` added for write restrictions
-- G9: ✅ `fs_write`, `execute_bash`, git tools added to `allowedTools`
-
-**Important Gaps (Documented, Not Yet Implemented):**
-- G7: ~~UC-MW-15,16,17 (filesystem export/import)~~ — UC-MW-16/17 implemented. Export: workflow.yaml (export.ts) + instructions/*.yaml (author.ts) + pipeline.yaml (wire.ts). Import: seed.ts reads YAML, Loader.ts embeds and upserts to DB. MCP tool: `reload_workflows` triggers re-seed. UC-MW-15 (stacked commits) still future.
-- G8: knowledgeBase resource for ARCHITECTURE.md — added but needs testing
-
-**Enhancement Ideas (Future):**
-- E1: ✅ Pre-gen prompt file with interaction templates — done
-- E2: userPromptSubmit hook for dynamic context injection — deferred
-- E3: ✅ welcomeMessage made more actionable
-
-**Items for Interaction-Analysis (Record Only):**
-- F1: Suggest "workflow-audit" skill — periodic optimization of all workflows
-- F2: Suggest "workflow-metrics" subagent — track workflow usage patterns
-- F3: Suggest "pattern-detector" skill — identify common patterns across workflows for DRY
-- F4: Meta-workflow should analyze its own interaction patterns to improve interview questions
-
-**Gap Analysis as Meta-Workflow Capability (UC-MW-29, IMPLEMENTED):**
-Meta-workflow can gap-analyze itself and any workflow it manages. Implemented as a new block (`gap-analyze`) in the meta-workflow graph at `src/meta-workflow/gap-analyze.ts`. Checks cross-system completeness: filesystem artifacts (workflow.yaml, pipeline.yaml, instruction YAMLs), pipeline↔block consistency, and block coverage. Broader than optimize (which checks instruction quality). Runs deterministically (no interrupt) before optimize in audit mode: `route → gap-analyze → optimize → interview`. Findings flow into state for downstream HITL review. Design decision: block in graph (not reusable segment, skill, or subagent) because gap-analyzing workflows is inherently meta-workflow's job — no other workflow needs this capability.
-
-**Validation Checklist (Before Phase 5):**
-1. [ ] Switch to meta-workflow agent (Ctrl+Shift+M)
-2. [ ] Verify `list_workflows` works without permission prompt
-3. [ ] Verify agent can identify itself in workflow list
-4. [ ] Test update mode on meta-workflow itself
-5. [ ] Verify prompt file loads correctly
-6. [ ] Verify knowledgeBase resource indexes ARCHITECTURE.md
-
-**Blocking Issue for Full Self-Maintenance:**
-~~UC-MW-16/17 (filesystem export) not implemented.~~ **RESOLVED.** Export node writes workflow.yaml, author writes instructions/*.yaml, wire writes pipeline.yaml. Seed.ts reads YAML back. MCP tool `reload_workflows` triggers re-seed. Meta-workflow can now update itself and persist changes to disk.
-
 ### Phase 5: Repo-Analysis (Built by Meta-Workflow)
 - Use meta-workflow to build repo-analysis as first generated workflow
 - Git worktree aware (repo identity by remote origin)
@@ -1372,9 +1307,9 @@ Established patterns:
 - `Schema.transform` for envelope unwrapping (e.g., OPA `{ result: T }` → `T`) — keeps endpoint success types clean
 - `.addError(ErrorSchema)` on `HttpApiEndpoint` with schemas matching external API error shapes — no manual `mapError`
 - `NodeHttpClient.layer` in dependencies / `Layer.provide` (self-contained, no agent leak)
-- `Schema.TaggedError` for domain errors, co-located with their domain module (not a monolithic error file)
+- `Schema.TaggedError` / `Data.TaggedError` for domain errors, co-located with their domain module (not a monolithic error file)
 - `HttpApiBuilder.api(Api).pipe(Layer.provide(groups))` — api needs groups, not reverse
-- `HttpLive.pipe(Layer.launch, BunRuntime.runMain)` for server startup
+- `Layer.launch(ServerLayer)` with `BunRuntime.runMain` for MCP server startup
 - `effect-language-service diagnostics --project tsconfig.json` for Effect-specific checks
 - `sql.and([...conditions])` for dynamic WHERE clause construction
 - `sql.unsafe()` for pgvector literal interpolation (vector strings)
