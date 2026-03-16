@@ -8,7 +8,7 @@ kiro-cortex is a workflow orchestration platform that replaces steering files wi
 
 Branch: chore/save-point
 Phase 4.5+ COMPLETE. UC-MW-29 DONE. 34 files, 0 errors.
-**Next: `hm switch` + restart kiro-cli to confirm MCP connects live, then finish validation checklist items 2-7, then Phase 5.**
+**Next: Fix HITL resume bug (bug 2 below), then Phase 5.**
 
 ### What's Built (all phases)
 
@@ -71,13 +71,17 @@ What replaced it:
 
 **Validation checklist (before Phase 5):**
 1. [x] Start kiro-cli from nixos-config root (not kiro-cortex subdir) for LSP/λ
-2. [ ] Switch to meta-workflow agent (Ctrl+Shift+M)
+2. [x] Switch to meta-workflow agent — confirmed, MCP tools responding
 3. [x] Verify `list_workflows` works — stdio test confirmed clean JSON-RPC + correct response (8a7d49c)
-4. [ ] Verify agent can identify itself in workflow list — needs `hm switch` + kiro-cli restart with new @effect/ai MCP server
-5. [ ] Test update mode on meta-workflow itself — unblocked once item 4 confirmed live
-6. [x] Verify prompt file loads correctly — confirmed: workflow ID is meta-workflow, all interaction patterns (build/update/refine/audit/self-maintenance) present
-7. [~] Verify knowledgeBase resource indexes ARCHITECTURE.md — ARCHITECTURE.md exists and is comprehensive, but cannot confirm kiro-cli indexing until MCP connects (item 4)
+4. [x] Verify agent can identify itself in workflow list — confirmed: sees meta-workflow with correct description
+5. [⚠] Test update mode on meta-workflow — route + interview interrupt works, but **two bugs found** (see below)
+6. [x] Verify prompt file loads correctly — confirmed: workflow ID is meta-workflow, all interaction patterns present
+7. [x] Verify knowledgeBase resource indexes ARCHITECTURE.md — file exists, well-structured, MCP connects. Can't verify kiro-cli indexing programmatically but all prerequisites met
 8. [x] Verify λ icon appears (code intelligence active)
+
+**Bugs found during validation (item 5):**
+1. **workflow_id not propagated to state** — FIXED. Added `workflow_id` to state annotation, route node maps it to `workflow_name` via Command update.
+2. **HITL resume doesn't advance** — FIXED. `mcp.ts` resume branch checked `params.input === undefined` but callers pass the answer as `input`. Changed to: `thread_id` present → always `Command({ resume: params.input })`. Needs `hm switch` + restart to verify live.
 
 ## Items for Interaction-Analysis (Future)
 

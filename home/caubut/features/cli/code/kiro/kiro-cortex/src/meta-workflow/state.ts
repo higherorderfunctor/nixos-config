@@ -55,6 +55,8 @@ export const MetaWorkflowState = Annotation.Root({
 
   /** Workflow operation mode. */
   mode: Annotation<"build" | "update" | "refine" | "audit" | "programmatic">,
+  /** Workflow ID from caller input (mapped to workflow_name by route). */
+  workflow_id: Annotation<string>,
   /** Name of the workflow being designed (used as directory name). */
   workflow_name: Annotation<string>,
   /** Human-readable description of the workflow's purpose. */

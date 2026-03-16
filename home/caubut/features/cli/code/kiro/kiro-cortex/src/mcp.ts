@@ -82,8 +82,10 @@ const CortexToolHandlers = CortexToolkit.toLayer(
             const graph = await getMetaGraph()
             const tid = params.thread_id ?? crypto.randomUUID()
             const config = { configurable: { thread_id: tid } }
-            const result = params.input === undefined && params.thread_id !== undefined
-              ? await graph.invoke(new Command({ resume: undefined }), config)
+            // ARCH: thread_id present → HITL resume. The input becomes the
+            // resume value returned by interrupt() in the paused node.
+            const result = params.thread_id !== undefined
+              ? await graph.invoke(new Command({ resume: params.input }), config)
               : await graph.invoke(params.input ?? {}, config)
             return JSON.stringify({ thread_id: tid, state: result }, null, 2)
           },

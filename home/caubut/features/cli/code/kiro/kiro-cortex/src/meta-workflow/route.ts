@@ -19,15 +19,20 @@ import type { MetaWorkflowStateType } from "./state.js"
  * Each mode maps to a specific entry block in the pipeline.
  */
 export const routeNode = (state: MetaWorkflowStateType): Command => {
+  // ARCH: Map workflow_id from caller input to workflow_name used by all downstream nodes.
+  const update = state.workflow_id && !state.workflow_name
+    ? { workflow_name: state.workflow_id }
+    : {}
+
   switch (state.mode) {
     case "refine":
-      return new Command({ goto: "author" })
+      return new Command({ goto: "author", update })
     case "audit":
-      return new Command({ goto: "gap-analyze" })
+      return new Command({ goto: "gap-analyze", update })
     case "programmatic":
-      return new Command({ goto: "decompose" })
+      return new Command({ goto: "decompose", update })
     default:
       // build, update
-      return new Command({ goto: "interview" })
+      return new Command({ goto: "interview", update })
   }
 }
