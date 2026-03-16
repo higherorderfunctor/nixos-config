@@ -11,12 +11,6 @@ importers:
       '@effect/ai':
         specifier: 0.34.0
         version: 0.34.0(@effect/experimental@0.59.0(@effect/platform@0.95.0(effect@3.20.0))(effect@3.20.0))(@effect/platform@0.95.0(effect@3.20.0))(@effect/rpc@0.74.0(@effect/platform@0.95.0(effect@3.20.0))(effect@3.20.0))(effect@3.20.0)
-      '@effect/cluster':
-        specifier: 0.57.0
-        version: 0.57.0(@effect/platform@0.95.0(effect@3.20.0))(@effect/rpc@0.74.0(@effect/platform@0.95.0(effect@3.20.0))(effect@3.20.0))(@effect/sql@0.50.0(@effect/experimental@0.59.0(@effect/platform@0.95.0(effect@3.20.0))(effect@3.20.0))(@effect/platform@0.95.0(effect@3.20.0))(effect@3.20.0))(@effect/workflow@0.17.0(@effect/experimental@0.59.0(@effect/platform@0.95.0(effect@3.20.0))(effect@3.20.0))(@effect/platform@0.95.0(effect@3.20.0))(@effect/rpc@0.74.0(@effect/platform@0.95.0(effect@3.20.0))(effect@3.20.0))(effect@3.20.0))(effect@3.20.0)
-      '@effect/experimental':
-        specifier: 0.59.0
-        version: 0.59.0(@effect/platform@0.95.0(effect@3.20.0))(effect@3.20.0)
       '@effect/platform':
         specifier: 0.95.0
         version: 0.95.0(effect@3.20.0)
@@ -26,18 +20,12 @@ importers:
       '@effect/platform-node':
         specifier: 0.105.0
         version: 0.105.0(@effect/cluster@0.57.0(@effect/platform@0.95.0(effect@3.20.0))(@effect/rpc@0.74.0(@effect/platform@0.95.0(effect@3.20.0))(effect@3.20.0))(@effect/sql@0.50.0(@effect/experimental@0.59.0(@effect/platform@0.95.0(effect@3.20.0))(effect@3.20.0))(@effect/platform@0.95.0(effect@3.20.0))(effect@3.20.0))(@effect/workflow@0.17.0(@effect/experimental@0.59.0(@effect/platform@0.95.0(effect@3.20.0))(effect@3.20.0))(@effect/platform@0.95.0(effect@3.20.0))(@effect/rpc@0.74.0(@effect/platform@0.95.0(effect@3.20.0))(effect@3.20.0))(effect@3.20.0))(effect@3.20.0))(@effect/platform@0.95.0(effect@3.20.0))(@effect/rpc@0.74.0(@effect/platform@0.95.0(effect@3.20.0))(effect@3.20.0))(@effect/sql@0.50.0(@effect/experimental@0.59.0(@effect/platform@0.95.0(effect@3.20.0))(effect@3.20.0))(@effect/platform@0.95.0(effect@3.20.0))(effect@3.20.0))(effect@3.20.0)
-      '@effect/rpc':
-        specifier: 0.74.0
-        version: 0.74.0(@effect/platform@0.95.0(effect@3.20.0))(effect@3.20.0)
       '@effect/sql':
         specifier: 0.50.0
         version: 0.50.0(@effect/experimental@0.59.0(@effect/platform@0.95.0(effect@3.20.0))(effect@3.20.0))(@effect/platform@0.95.0(effect@3.20.0))(effect@3.20.0)
       '@effect/sql-pg':
         specifier: 0.51.0
         version: 0.51.0(@effect/experimental@0.59.0(@effect/platform@0.95.0(effect@3.20.0))(effect@3.20.0))(@effect/platform@0.95.0(effect@3.20.0))(@effect/sql@0.50.0(@effect/experimental@0.59.0(@effect/platform@0.95.0(effect@3.20.0))(effect@3.20.0))(@effect/platform@0.95.0(effect@3.20.0))(effect@3.20.0))(effect@3.20.0)
-      '@effect/workflow':
-        specifier: 0.17.0
-        version: 0.17.0(@effect/experimental@0.59.0(@effect/platform@0.95.0(effect@3.20.0))(effect@3.20.0))(@effect/platform@0.95.0(effect@3.20.0))(@effect/rpc@0.74.0(@effect/platform@0.95.0(effect@3.20.0))(effect@3.20.0))(effect@3.20.0)
       '@langchain/langgraph':
         specifier: 1.2.2
         version: 1.2.2(@langchain/core@1.1.32(ws@8.19.0))(zod-to-json-schema@3.25.1(zod@4.3.6))(zod@4.3.6)
