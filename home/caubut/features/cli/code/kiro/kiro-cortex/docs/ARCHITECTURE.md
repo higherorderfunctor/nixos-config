@@ -241,7 +241,8 @@ For autonomous blocks needing LLM reasoning with fresh context. Kiro spawns a su
 **Subagent constraints** (meta-workflow must know these when designing workflows):
 - ✅ read, write, shell, code, MCP tools
 - ❌ interactive tasks (no back-and-forth with user)
-- ❌ web_search, web_fetch, grep, glob, use_aws
+- ❌ web_search, web_fetch, introspect, thinking, todo_list, use_aws, grep, glob
+- Reference: https://kiro.dev/docs/cli/chat/subagents/#tool-availability
 
 #### Pattern Selection
 
@@ -385,10 +386,12 @@ Building workflows by hand doesn't scale. Each workflow needs decomposition into
 ### Orchestration & Execution Use Cases
 
 - **UC-MW-19**: Meta-workflow selects orchestration pattern (deterministic vs AI-orchestrated vs subagent) based on workflow characteristics during interview. Knowledge of when to use each pattern is codified in meta-workflow's instructions, not hardcoded. Validation: a data pipeline gets deterministic, an interactive design workflow gets AI-orchestrated, a code generation task gets subagent.
-- **UC-MW-20**: Meta-workflow designs custom Kiro agent configs per workflow — specialized agents, not one generic worker. Considers reusable agent patterns as lego blocks (e.g., stacked-commits agent, code-review agent). When self-improving (4.5+), can identify need for new agents or refine existing ones.
+- **UC-MW-20**: Meta-workflow designs custom Kiro agent configs per workflow — specialized agents, not one generic worker. Agent configs include: tools/allowedTools, toolsSettings.subagent (availableAgents, trustedAgents), hooks (agentSpawn, preToolUse with matchers), mcpServers (kiro-cortex for instruction access), resources (SKILL.md, relevant files), prompt (workflow-specific system prompt). Considers reusable agent patterns as lego blocks. When self-improving (4.5+), can identify need for new agents or refine existing ones.
 - **UC-MW-21**: AI-orchestrated blocks return structured output (`{ what_was_done, result, suggested_next_step, human_decisions_needed }`) so Claude can reason about next steps and decide the next MCP call. Convention similar to Sequential Thinking MCP pattern.
-- **UC-MW-22**: Autonomous blocks execute in Kiro subagents with fresh context. Subagents access kiro-cortex + OpenMemory via MCP. Results auto-return to parent. Meta-workflow must know subagent constraints (no interactive, no web_search, no grep/glob) and design around them.
-- **UC-MW-23**: Hooks (AgentSpawn, PreToolUse) supplement OPA as lightweight context injection and access control at the Kiro CLI layer. AgentSpawn injects OPA user profile at session start. PreToolUse gates kiro-cortex MCP calls against OPA access policy. Not a replacement for block executor wrapper (hooks are per-prompt, block executor is per-block; hooks are Kiro-specific, block executor is portable).
+- **UC-MW-22**: Autonomous blocks execute in Kiro subagents with fresh context. Mechanism: kiro-cortex returns BlockOutput with subagent spawn info (agent name, task) → Claude reads it and calls `use_subagent`. Subagents access kiro-cortex + OpenMemory via MCP. Results auto-return to parent. Meta-workflow must know subagent constraints and design around them.
+- **UC-MW-23**: Hooks supplement OPA as lightweight context injection and access control. Hooks are defined per-agent in agent config JSON; hook scripts (actual logic) are reusable and live in `~/.kiro/hooks/`. AgentSpawn injects OPA user profile at session start. PreToolUse gates kiro-cortex MCP calls against OPA access policy. Agent configs reference scripts with workflow-specific matchers.
+- **UC-MW-24**: Claude orchestrates AI-orchestrated workflows by calling block MCP tools in a loop, reading BlockOutput, and deciding next steps (call next block, spawn subagent, ask user). For hybrid workflows, kiro-cortex runs deterministic sections via LangGraph and returns BlockOutput at AI-orchestrated boundaries for Claude to take over. This is the "bridge" between LangGraph and Claude.
+- **UC-MW-25**: Meta-workflow proposes hooks when designing workflows. Can propose workflow-specific hooks (e.g., preToolUse that validates domain constraints) or identify new reusable hooks (when a pattern emerges across workflows). Reusable hook scripts go in shared location (`~/.kiro/hooks/`); workflow-specific hooks are generated alongside agent configs.
 - _(Add more use cases here as they emerge)_
 
 ### Description
@@ -404,9 +407,11 @@ Meta-workflow must codify knowledge about orchestration patterns in its instruct
 - **When to recommend deterministic (LangGraph)**: strict ordering required, data processing pipelines, reproducibility needed, persistent state across sessions
 - **When to recommend AI-orchestrated (MCP tool loop)**: interactive workflows, exploratory/judgment-based, flexible ordering, Sequential Thinking-like patterns
 - **When to recommend subagents**: autonomous blocks needing LLM reasoning, fresh context beneficial, parallel execution, long-running background tasks
-- **Subagent constraints to design around**: no interactive tasks, no web_search/web_fetch, no grep/glob — blocks requiring these must run in parent conversation or deterministic pipeline
-- **Agent design**: specialized agents per workflow (not one generic worker). Consider reusable agent patterns as lego blocks (e.g., a stacked-commits agent). When self-improving, meta-workflow should identify when new agents are needed.
+- **Subagent constraints to design around**: no interactive tasks, no web_search/web_fetch/introspect/thinking/todo_list/use_aws/grep/glob — blocks requiring these must run in parent conversation or deterministic pipeline (ref: https://kiro.dev/docs/cli/chat/subagents/#tool-availability)
+- **Agent design**: specialized agents per workflow (not one generic worker). Agent configs are comprehensive: tools, hooks, subagent settings, MCP servers, resources, prompt. Consider reusable agent patterns as lego blocks. When self-improving, meta-workflow should identify when new agents or hooks are needed.
+- **Hooks in agent configs**: hooks are per-agent (defined in agent config JSON), not standalone. Hook scripts are reusable (`~/.kiro/hooks/`); agent configs reference them with workflow-specific matchers. Meta-workflow proposes hooks during design (UC-MW-25).
 - **Structured output convention for AI-orchestrated blocks**: blocks return `{ what_was_done, result, suggested_next_step, human_decisions_needed }` so Claude can reason about next steps
+- **Claude as bridge (UC-MW-24)**: for AI-orchestrated blocks, Claude calls block MCP tools and reads BlockOutput. For subagent blocks, BlockOutput tells Claude to spawn via `use_subagent`. For hybrid workflows, LangGraph runs deterministic sections and returns BlockOutput at AI-orchestrated boundaries.
 
 This knowledge lives in meta-workflow's seed instructions (YAML), not hardcoded in block logic. When meta-workflow self-improves (4.5+), it can refine these patterns.
 
@@ -1035,9 +1040,11 @@ Remaining items to add incrementally as needed:
 - **optimize** block — ✅ (4.5)
 - **audit** mode in route — ✅ (4.5)
 - **programmatic** mode in route — ✅ (4.5)
-- Subagent integration — custom agent configs per workflow (UC-MW-20), cortex-worker patterns
-- Hooks integration — AgentSpawn (OPA user profile injection), PreToolUse (access control gate) (UC-MW-23)
-- Agent config generation — meta-workflow produces `.kiro/agents/*.json` for workflow-specific agents
+- Subagent + hooks integration (UC-MW-20, 22, 23, 24, 25) — merged: agent configs are the central artifact containing tools, hooks, subagent settings, MCP servers. Promote block generates comprehensive agent configs. Shared hook scripts in `~/.kiro/hooks/`. Claude orchestrates AI-orchestrated blocks via BlockOutput.
+
+**Open questions (resolve before implementing):**
+- Does `run_workflow` MCP tool need a step-by-step mode for AI-orchestrated blocks, or do we need a separate `run_block` tool?
+- How does BlockOutput.suggested_next_step encode "spawn subagent X with task Y"? Structured convention or free text?
 
 ### Phase 5: Repo-Analysis (Built by Meta-Workflow)
 - Use meta-workflow to build repo-analysis as first generated workflow
