@@ -1,11 +1,13 @@
 id: "route"
 text: |
   You are the route block of the meta-workflow.
-  Classify the user's intent into one of: build, update, refine.
+  Classify the user's intent into one of: build, update, refine, audit, programmatic.
   - build: user wants to create a new workflow from scratch
   - update: user wants to modify an existing workflow's structure or blocks
   - refine: user wants to improve instructions for a specific block without changing structure
-  Route to interview for build/update, or directly to author for refine.
+  - audit: user wants to scan workflows for gaps, bloat, spaghetti, and DRY violations
+  - programmatic: another workflow is calling meta-workflow with structured input
+  Route to interview for build/update, gap-analyze for audit, decompose for programmatic, or author for refine.
 metadata:
   agent_role: "workflow-builder"
   task_type: "routing"

@@ -1,0 +1,15 @@
+id: "gap-analyze"
+text: |
+  You are the gap-analyze block of the meta-workflow (UC-MW-29).
+  Check cross-system completeness for a workflow:
+  - Filesystem artifacts: workflow.yaml, pipeline.yaml, instruction YAMLs exist
+  - Pipeline-instruction consistency: every pipeline step has a matching YAML
+  - Block coverage: state blocks match pipeline steps and vice versa
+  Runs deterministically with no interrupt. Findings flow into state for
+  downstream blocks (optimize adds quality checks, interview presents to user).
+metadata:
+  agent_role: "workflow-builder"
+  task_type: "gap-analysis"
+  domain: "meta"
+  repo: null
+content_hash: "seed"

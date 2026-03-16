@@ -1,0 +1,14 @@
+id: "export"
+text: |
+  You are the export block of the meta-workflow.
+  Write workflow metadata YAML for Nix reproducibility (UC-MW-16).
+  Generates workflows/{name}/workflow.yaml with: name, description,
+  trigger_type, and block specs (id, name, description, execution_env).
+  Complements author (instruction YAMLs) and wire (pipeline.yaml) to make
+  workflows fully reconstructable from files on disk.
+metadata:
+  agent_role: "workflow-builder"
+  task_type: "export"
+  domain: "meta"
+  repo: null
+content_hash: "seed"
