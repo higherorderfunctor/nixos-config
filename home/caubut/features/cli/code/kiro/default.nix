@@ -64,6 +64,11 @@
       config.lib.file.mkOutOfStoreSymlink "${kiroConfigPath}/agents/${name}";
   };
 
+  symlinkAgentDir = name: {
+    ".kiro/agents/${name}".source =
+      config.lib.file.mkOutOfStoreSymlink "${kiroConfigPath}/agents/${name}";
+  };
+
   symlinkSkill = name: {
     ".kiro/skills/${name}".source =
       config.lib.file.mkOutOfStoreSymlink "${kiroConfigPath}/skills/${name}";
@@ -91,6 +96,12 @@
 
   agentFiles = [
     "ideation.json"
+    "meta-workflow.json"
+  ];
+
+  # Directories under agents/ that need symlinks (e.g., prompts/)
+  agentDirs = [
+    "prompts"
   ];
 
   skillDirs = [
@@ -156,6 +167,10 @@
         url = "https://knowledge-mcp.global.api.aws";
         type = "http";
       };
+      kiro-cortex = {
+        command = "${pkgs.bun}/bin/bun";
+        args = ["run" "${kiroCortexPath}/src/mcp.ts"];
+      };
     };
   };
 in {
@@ -168,6 +183,7 @@ in {
 
   home = {
     packages = with pkgs; [
+      bun
       kiro-cli
       kiro-gateway
       github-mcp-server
@@ -195,6 +211,8 @@ in {
       // builtins.foldl' (acc: name: acc // symlinkSteering name) {} steeringFiles
       # Agent files (out-of-store symlinks)
       // builtins.foldl' (acc: name: acc // symlinkAgent name) {} agentFiles
+      # Agent directories (out-of-store symlinks, e.g., prompts/)
+      // builtins.foldl' (acc: name: acc // symlinkAgentDir name) {} agentDirs
       # Skill directories (out-of-store symlinks)
       // builtins.foldl' (acc: name: acc // symlinkSkill name) {} skillDirs;
   };
