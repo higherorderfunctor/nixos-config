@@ -44,15 +44,19 @@ export interface BlockExecutorServices {
  * @param block - The block definition to execute.
  * @param state - Current pipeline state.
  * @param services - Async wrappers around OPA, Embedding, and InstructionRepo.
+ * @param repo - Repository identity (e.g., "org/repo") for OPA isolation, or null for framework-agnostic.
  * @returns Partial state update from the block's execute function.
  */
 export const executeBlock = async <S>(
   block: BlockDef<S>,
   state: S,
   services: BlockExecutorServices,
+  repo: string | null = null,
 ): Promise<Partial<S>> => {
   // --- OPA scoping: determine which instructions this block can see ---
-  const filters = await services.scope({ ...block.opa, repo: null })
+  // ARCH: repo is passed through to OPA so isolation.rego can enforce
+  // repo boundaries — repo-specific instructions never leak across repos.
+  const filters = await services.scope({ ...block.opa, repo })
 
   // --- Embed block description as the search query ---
   // ARCH: We embed the block's description (not state content) because the

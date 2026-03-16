@@ -1035,7 +1035,6 @@ Remaining items to add incrementally as needed:
 - **optimize** block — ✅ (4.5)
 - **audit** mode in route — ✅ (4.5)
 - **programmatic** mode in route — ✅ (4.5)
-- `policies/isolation.rego` — repo boundary enforcement
 - Subagent integration — custom agent configs per workflow (UC-MW-20), cortex-worker patterns
 - Hooks integration — AgentSpawn (OPA user profile injection), PreToolUse (access control gate) (UC-MW-23)
 - Agent config generation — meta-workflow produces `.kiro/agents/*.json` for workflow-specific agents
