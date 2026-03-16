@@ -8,7 +8,7 @@ kiro-cortex is a workflow orchestration platform that replaces steering files wi
 
 Branch: chore/save-point
 Phase 4.5 meta-workflow blocks COMPLETE. 30 files, 0 errors.
-Q1 and Q2 both resolved. Implementation remaining: enhance promote block.
+Q1 and Q2 both resolved. New use cases UC-MW-26,27,28 added.
 
 ### Commits This Session
 | SHA | What |
@@ -18,7 +18,8 @@ Q1 and Q2 both resolved. Implementation remaining: enhance promote block.
 | `bca7337` | isolation.rego + wire repo into block executor |
 | `71684a2` | Use case updates (UC-MW-20,22,23,24,25) |
 | `549b326` | Segment model + Q1 resolution |
-| (pending) | NextStep type + Q2 resolution |
+| `a089b36` | NextStep discriminated union + Q2 resolution |
+| (pending) | Skills + meta-workflow as agent + context optimization (UC-MW-26,27,28) |
 
 ### What's Built (all phases)
 
@@ -32,37 +33,37 @@ Q1 and Q2 both resolved. Implementation remaining: enhance promote block.
 | 4.5+ Q1 | done | Segment model — single run_workflow tool with interrupt/resume |
 | 4.5+ Q2 | done | NextStep discriminated union — structured output for Claude orchestration |
 
-## Design Decisions (Q1 + Q2)
+## Design Decisions
 
 ### Q1: Segment Model (resolved)
 Single `run_workflow` MCP tool with interrupt/resume. No separate `run_block` tool.
 
-- Workflow = sequence of deterministic LangGraph segments
-- Between segments: Claude orchestrates (Sequential Thinking pattern)
-- `run_workflow` runs until AI boundary (interrupt), returns BlockOutput
-- Claude does its work, calls `run_workflow` with same `thread_id` to resume
-- Reusable segments (UC-MW-18) are sub-graphs that compose transparently
-
 ### Q2: NextStep Type (resolved)
-Structured discriminated union (not free text). Claude maps each variant to a specific action:
+Structured discriminated union: resume, spawn_subagent, ask_user, complete.
 
-```typescript
-type NextStep =
-  | { type: "resume"; context?: string }        // call run_workflow
-  | { type: "spawn_subagent"; agent: string; task: string }  // call use_subagent
-  | { type: "ask_user"; question: string; options?: string[] }  // present to user
-  | { type: "complete"; summary: string }       // done
-```
+### Skills vs Agents (UC-MW-26)
+During interview, meta-workflow asks: "How will this workflow be triggered?"
+- Dedicated agent: user switches explicitly (focused context)
+- Skill: default agent activates on request match (on-demand)
+Determines whether promote generates agent config or SKILL.md.
+Ref: https://kiro.dev/docs/cli/skills/
 
-Design follows Sequential Thinking MCP pattern: structured outputSchema → Claude parses → decides action.
+### Meta-Workflow as Top-Level Agent (UC-MW-27)
+Meta-workflow itself is a dedicated agent (`~/.kiro/agents/meta-workflow.json`), not always in context. User switches to it when designing/updating workflows. Critical for 1M instructions goal.
 
-References:
-- Sequential Thinking MCP: https://www.npmjs.com/package/@modelcontextprotocol/server-sequential-thinking
-- Anthropic advanced tool use: https://www.anthropic.com/engineering/advanced-tool-use
+### Context Optimization (UC-MW-28)
+Meta-workflow proposes the right artifact type based on context budget:
+- Skills: on-demand by description matching (lowest context cost)
+- Agents: dedicated focused work (loaded only when switched to)
+- Subagents: fresh context, parallel execution
+- MCPs: external tools, not in context until called
 
 ## Implementation Remaining
 
-- Enhance promote block's agent config generation (hooks, subagent settings, mcpServers)
+- Enhance promote block: generate skill (SKILL.md + references/) OR agent config based on UC-MW-26
+- Enhance interview block: add trigger selection question (dedicated agent vs skill)
+- Create meta-workflow agent config (`~/.kiro/agents/meta-workflow.json`)
+- Enhance promote block: comprehensive agent configs (hooks, subagent settings, mcpServers)
 - Create shared hook script conventions
 - Document BlockOutput → Claude → use_subagent flow in agent config prompts
 
@@ -81,7 +82,8 @@ policies/access.rego, scoping.rego, isolation.rego
 
 ## Key References
 - Subagent tool limitations: https://kiro.dev/docs/cli/chat/subagents/#tool-availability
-- Agent config format: hooks, toolsSettings.subagent, mcpServers, resources (from Kiro docs)
+- Skills docs: https://kiro.dev/docs/cli/skills/
+- Agent Skills standard: https://agentskills.io
 - Segment model + NextStep design: ARCHITECTURE.md sections "Segment Model" and "NextStep Design"
 
 ## Dependencies (pinned exact)

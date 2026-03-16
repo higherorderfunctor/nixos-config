@@ -475,11 +475,14 @@ Building workflows by hand doesn't scale. Each workflow needs decomposition into
 
 - **UC-MW-19**: Meta-workflow selects orchestration pattern (deterministic vs AI-orchestrated vs subagent) based on workflow characteristics during interview. Knowledge of when to use each pattern is codified in meta-workflow's instructions, not hardcoded. Validation: a data pipeline gets deterministic, an interactive design workflow gets AI-orchestrated, a code generation task gets subagent.
 - **UC-MW-20**: Meta-workflow designs custom Kiro agent configs per workflow — specialized agents, not one generic worker. Agent configs include: tools/allowedTools, toolsSettings.subagent (availableAgents, trustedAgents), hooks (agentSpawn, preToolUse with matchers), mcpServers (kiro-cortex for instruction access), resources (SKILL.md, relevant files), prompt (workflow-specific system prompt). Considers reusable agent patterns as lego blocks. When self-improving (4.5+), can identify need for new agents or refine existing ones.
-- **UC-MW-21**: AI-orchestrated blocks return structured output (`{ what_was_done, result, suggested_next_step, human_decisions_needed }`) so Claude can reason about next steps and decide the next MCP call. Convention similar to Sequential Thinking MCP pattern.
+- **UC-MW-21**: AI-orchestrated blocks return structured output (`BlockOutput` with `next_step: NextStep`) so Claude can reason about next steps and decide the next MCP call. Convention similar to Sequential Thinking MCP pattern.
 - **UC-MW-22**: Autonomous blocks execute in Kiro subagents with fresh context. Mechanism: kiro-cortex returns BlockOutput with subagent spawn info (agent name, task) → Claude reads it and calls `use_subagent`. Subagents access kiro-cortex + OpenMemory via MCP. Results auto-return to parent. Meta-workflow must know subagent constraints and design around them.
 - **UC-MW-23**: Hooks supplement OPA as lightweight context injection and access control. Hooks are defined per-agent in agent config JSON; hook scripts (actual logic) are reusable and live in `~/.kiro/hooks/`. AgentSpawn injects OPA user profile at session start. PreToolUse gates kiro-cortex MCP calls against OPA access policy. Agent configs reference scripts with workflow-specific matchers.
 - **UC-MW-24**: Single MCP tool design — `run_workflow` is the only tool needed. It runs deterministic segments (LangGraph sub-graphs) until hitting an AI boundary (`interrupt()`), returns `BlockOutput` with context for what Claude should do, Claude does its work (reason, ask user, spawn subagent), then calls `run_workflow` with same `thread_id` to resume. LangGraph checkpointing handles all state. No separate `run_block` tool — AI boundaries are interrupt points in the graph, not separate tool calls. Reusable segments (UC-MW-18) compose as sub-graph nodes; `run_workflow` traverses them transparently.
 - **UC-MW-25**: Meta-workflow proposes hooks when designing workflows. Can propose workflow-specific hooks (e.g., preToolUse that validates domain constraints) or identify new reusable hooks (when a pattern emerges across workflows). Reusable hook scripts go in shared location (`~/.kiro/hooks/`); workflow-specific hooks are generated alongside agent configs.
+- **UC-MW-26**: Workflow trigger selection during interview. Meta-workflow asks: "How will this workflow be triggered?" Options: (A) **Dedicated agent** — user switches to it explicitly, good for focused work with specialized context; (B) **Skill** — default agent activates it when request matches description, good for "Claude identifies and uses" workflows. This determines whether promote block generates an agent config (`.kiro/agents/`) or a skill (`.kiro/skills/` or `~/.kiro/skills/`). Skills follow the [Agent Skills standard](https://agentskills.io).
+- **UC-MW-27**: Meta-workflow itself is a top-level agent (not always in context). User switches to meta-workflow agent when designing/updating workflows. This keeps meta-workflow's instructions out of default context — critical for the 1M tiny instructions goal. Meta-workflow agent config lives in `~/.kiro/agents/meta-workflow.json`.
+- **UC-MW-28**: Context optimization is a first-class design goal. Meta-workflow proposes the right artifact type (agent, skill, subagent, MCP) based on context budget impact. Guidelines: (1) Skills for on-demand activation by description matching; (2) Agents for dedicated focused work; (3) Subagents for autonomous blocks needing fresh context; (4) MCPs for external tools not in context until called. The 1M instructions goal requires aggressive context management.
 - _(Add more use cases here as they emerge)_
 
 ### Description
@@ -497,7 +500,9 @@ Meta-workflow must codify knowledge about orchestration patterns in its instruct
 - **When to recommend pure AI-orchestrated**: rare. Every block is its own single-block segment with AI boundaries between all of them. Use only when ordering is truly flexible and every step needs judgment. Degenerate case of hybrid.
 - **When to recommend subagents**: autonomous blocks needing LLM reasoning, fresh context beneficial, parallel execution, long-running background tasks. Triggered by `BlockOutput.next_step` at AI boundaries — Claude reads it and calls `use_subagent`.
 - **Subagent constraints to design around**: no interactive tasks, no web_search/web_fetch/introspect/thinking/todo_list/use_aws/grep/glob — blocks requiring these must run in parent conversation or deterministic pipeline (ref: https://kiro.dev/docs/cli/chat/subagents/#tool-availability)
-- **Agent design**: specialized agents per workflow (not one generic worker). Agent configs are comprehensive: tools, hooks, subagent settings, MCP servers, resources, prompt. Consider reusable agent patterns as lego blocks. When self-improving, meta-workflow should identify when new agents or hooks are needed.
+- **Agent design**: specialized agents per workflow (not one generic worker). Agent configs are comprehensive: tools, hooks, subagent settings, MCP servers, resources, prompt. Consider reusable agent patterns as lego blocks. When self-improving, meta-workflow should identify when new agents, skills, hooks, or MCPs are needed.
+- **Skills vs agents (UC-MW-26)**: during interview, meta-workflow asks how the workflow will be triggered. Dedicated agent = user switches explicitly (focused context). Skill = default agent activates on request match (on-demand). This determines what promote block generates. Skills follow the [Agent Skills standard](https://agentskills.io) — SKILL.md with frontmatter (name, description) + optional references/. Ref: https://kiro.dev/docs/cli/skills/
+- **Context optimization (UC-MW-28)**: 1M instructions goal requires aggressive context management. Meta-workflow proposes the right artifact type based on context budget: skills (on-demand by description), agents (dedicated focus), subagents (fresh context), MCPs (external, not in context until called). Meta-workflow itself is a top-level agent (UC-MW-27) — not always loaded.
 - **Hooks in agent configs**: hooks are per-agent (defined in agent config JSON), not standalone. Hook scripts are reusable (`~/.kiro/hooks/`); agent configs reference them with workflow-specific matchers. Meta-workflow proposes hooks during design (UC-MW-25).
 - **Structured output convention for AI-orchestrated blocks**: blocks return `BlockOutput` with `next_step: NextStep` — a discriminated union (Q2 resolved). Claude maps each variant to a specific action. See "NextStep Design" below.
 - **Single MCP tool (UC-MW-24)**: `run_workflow` is the only tool. Runs deterministic segments, interrupts at AI boundaries, returns BlockOutput. Claude resumes with same thread_id. No separate `run_block` tool. Reusable segments (sub-graphs from `src/shared/`) compose transparently — LangGraph traverses them including their internal interrupt points.
@@ -1116,7 +1121,7 @@ Added remaining blocks to make meta-workflow fully functional:
 - **decompose** — registry search for reuse, block proposal via interrupt, programmatic mode (UC-MW-4/12), execution_env recommendation (UC-MW-19)
 - **research** — interrupt-based external knowledge gathering (UC-MW-7), pass-through when not needed, feeds back into interview loop
 - **optimize** — rule-based bloat (UC-MW-8), spaghetti (UC-MW-9), DRY (UC-MW-10) checks with HITL approval, needs_redesign loop
-- **promote** — generates SKILL.md + agent config JSON (UC-MW-20) with HITL artifact selection
+- **promote** — generates trigger artifacts based on UC-MW-26 interview answer: SKILL.md (for skill trigger) or agent config JSON (for dedicated agent). HITL artifact selection.
 - Updated route with audit (UC-MW-13) and programmatic (UC-MW-4) modes
 - Updated interview with research loop support and audit mode
 - Full graph wiring: interview↔research loop, decompose→optimize→author with redesign loop
@@ -1148,7 +1153,10 @@ type NextStep =
 Design follows Sequential Thinking MCP pattern: structured outputSchema that Claude parses to decide its next action. No free text interpretation needed. See references below.
 
 **Implementation remaining:**
-- Enhance promote block's agent config generation (hooks, subagent settings, mcpServers)
+- Enhance promote block: generate skill (SKILL.md + references/) OR agent config based on UC-MW-26 interview answer
+- Enhance interview block: add trigger selection question (dedicated agent vs skill) per UC-MW-26
+- Create meta-workflow agent config (`~/.kiro/agents/meta-workflow.json`) per UC-MW-27
+- Enhance promote block: comprehensive agent configs (hooks, subagent settings, mcpServers)
 - Create shared hook script conventions
 - Document BlockOutput → Claude → use_subagent flow in agent config prompts
 
@@ -1212,3 +1220,5 @@ Run `pnpm run check` after every commit to catch both TypeScript and Effect-spec
 - [Anthropic: Advanced Tool Use](https://www.anthropic.com/engineering/advanced-tool-use) — Tool Search, Programmatic Tool Calling, Tool Use Examples (informed structured output decision over free text)
 - [Anthropic: Building Effective Agents](https://www.anthropic.com/research/building-effective-agents) — Agent design patterns
 - [Kiro CLI Subagent Docs](https://kiro.dev/docs/cli/chat/subagents/#tool-availability) — Subagent tool constraints (shaped block execution routing)
+- [Kiro CLI Skills Docs](https://kiro.dev/docs/cli/skills/) — Skills vs agents, SKILL.md format, activation by description matching
+- [Agent Skills Standard](https://agentskills.io) — Open standard for portable instruction packages
