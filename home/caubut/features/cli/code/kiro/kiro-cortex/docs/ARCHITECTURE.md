@@ -8,7 +8,7 @@ Steering files don't scale. As repos, agents, and policies grow, context windows
 
 RAG over steering files, with policy governance and hybrid workflow orchestration layered on top.
 
-All codified knowledge — steering rules, coding standards, repo conventions — gets parsed into structured rows in a PostgreSQL table (`instructions`), each tagged with metadata and an embedding vector. When a task arrives, kiro-cortex searches for semantically relevant instructions, filters by metadata, trims to a token budget, and returns only what the agent needs. Orchestration is hybrid: LangGraph for deterministic pipelines, Claude via MCP tool loops for AI-orchestrated workflows, and Kiro CLI subagents for autonomous block execution.
+All codified knowledge — steering rules, coding standards, repo conventions — gets parsed into structured rows in a PostgreSQL table (`instructions`), each tagged with metadata and an embedding vector. When a task arrives, kiro-cortex searches for semantically relevant instructions, filters by metadata, trims to a token budget, and returns only what the agent needs. Orchestration uses the **segment model**: workflows are composed of deterministic LangGraph segments stitched by Claude orchestration at AI boundaries. A single `run_workflow` MCP tool runs segments, interrupts at boundaries, and resumes — no separate block-level tools needed.
 
 ## Layered Design
 
@@ -203,37 +203,83 @@ For data pipelines with strict ordering, persistent state, and reproducible exec
   └────────────────────────────────────────────────────────────┘
 ```
 
-#### AI-Orchestrated (MCP Tool Loop)
+#### Segment Model (How Workflows Actually Execute)
 
-For interactive and judgment-based workflows. Claude calls block MCP tools in a loop (similar to Sequential Thinking MCP pattern). Each block returns structured output; Claude decides the next step.
+A real end-to-end workflow is composed of **segments**. Each segment is a deterministic LangGraph sub-graph (one or more blocks in strict order). Claude stitches segments together using the Sequential Thinking pattern: call `run_workflow` → read BlockOutput → reason/interact → call `run_workflow` to resume.
+
+**There is only one MCP tool: `run_workflow`.** It runs the workflow's LangGraph graph until it hits an AI-orchestrated boundary (implemented as `interrupt()`), then returns a `BlockOutput` containing:
+- What the deterministic segment accomplished
+- Context/instructions for what Claude should do at this boundary
+- Whether to spawn a subagent, ask the user, or just resume
+
+Claude does its work (reasoning, user interaction, subagent spawning), then calls `run_workflow` with the same `thread_id` to resume the next deterministic segment. LangGraph checkpointing handles all state across interrupt/resume cycles.
 
 ```
   Claude (in Kiro CLI)
     │
-    ├─ calls block_A MCP tool → structured output
-    │   (what was done, result, suggested next step, decisions needing human input)
+    ├─ calls run_workflow(id, thread_id) → runs deterministic segment A
+    │   LangGraph: block_1 → block_2 → block_3 → interrupt()
+    │   Returns: BlockOutput { what_was_done, result, next_step, human_decisions_needed }
     │
-    ├─ reasons about output, asks user if needed
+    ├─ reads BlockOutput.next_step → "ask user about X"
+    │   Claude asks user, gets answer
     │
-    ├─ calls block_B MCP tool → structured output
+    ├─ calls run_workflow(id, thread_id) → resumes, runs deterministic segment B
+    │   LangGraph: block_4 → block_5 → interrupt()
+    │   Returns: BlockOutput { ..., next_step: spawn_subagent("code-review", task) }
     │
-    └─ continues until workflow complete
+    ├─ reads BlockOutput.next_step → spawns subagent via use_subagent
+    │   Subagent runs autonomously, returns results
+    │
+    ├─ calls run_workflow(id, thread_id) → resumes, runs final segment C
+    │   LangGraph: block_6 → block_7 → END
+    │   Returns: BlockOutput { ..., next_step: complete }
+    │
+    └─ done
 ```
+
+**Pattern variants are just different segment configurations:**
+
+| Pattern | Segments | AI Boundaries | Example |
+|---------|----------|---------------|---------|
+| Pure deterministic | 1 segment | None | Data pipeline: `run_workflow` runs end-to-end |
+| Hybrid | N segments | Between segments | Meta-workflow: interview(interrupt) → decompose→optimize(interrupt) → author→wire→promote |
+| Pure AI-orchestrated | N single-block segments | Between every block | Exploratory design: each block is its own segment, Claude decides everything |
+
+#### Reusable Segments (Sub-Graphs)
+
+Reusable patterns (UC-MW-18) like stacked-commits and historical-tracking are LangGraph sub-graphs in `src/shared/`. They compose into any workflow as nodes in the parent graph:
+
+```typescript
+import { stackedCommitsGraph } from "../shared/stacked-commits.js"
+
+// wire block composes reusable segment into parent workflow graph:
+graph.addNode("commit-changes", stackedCommitsGraph)
+     .addEdge("author", "commit-changes")
+     .addEdge("commit-changes", "promote")
+```
+
+At runtime, `run_workflow` traverses the parent graph. When it hits a sub-graph node, LangGraph executes the sub-graph transparently — including any interrupt points within it. State flows through. Checkpointing works across the boundary.
+
+When optimize detects DRY violations, it can recommend: "Extract blocks X and Y into a reusable segment in `shared/`." The wire block then imports and composes them. Reusable segments are parameterizable via state (e.g., stacked-commits receives file paths from the parent workflow's state).
 
 #### Subagent Execution
 
-For autonomous blocks needing LLM reasoning with fresh context. Kiro spawns a subagent with a custom agent config and kiro-cortex MCP access. Results auto-return to parent.
+For autonomous blocks needing LLM reasoning with fresh context. Claude spawns a subagent when `BlockOutput.next_step` says to. Subagents access kiro-cortex + OpenMemory via MCP. Results auto-return to parent.
 
 ```
   Parent Claude (main conversation)
     │
-    ├─ handles interactive steps (interview, approval)
+    ├─ calls run_workflow → deterministic segment runs → interrupt()
+    │   BlockOutput.next_step = { type: "spawn_subagent", agent: "...", task: "..." }
     │
-    ├─ spawns subagent: "Generate instruction YAML for blocks: [spec]"
+    ├─ spawns subagent via use_subagent
     │   └─ Subagent (fresh context, kiro-cortex MCP + OpenMemory MCP)
     │       ├─ calls kiro-cortex for OPA-scoped instructions
     │       ├─ generates output autonomously
     │       └─ returns results to parent
+    │
+    ├─ calls run_workflow(thread_id) → resumes next segment
     │
     └─ presents results to user for approval
 ```
@@ -242,17 +288,12 @@ For autonomous blocks needing LLM reasoning with fresh context. Kiro spawns a su
 - ✅ read, write, shell, code, MCP tools
 - ❌ interactive tasks (no back-and-forth with user)
 - ❌ web_search, web_fetch, introspect, thinking, todo_list, use_aws, grep, glob
+- Blocks requiring these ❌ tools must run in parent conversation or deterministic pipeline
 - Reference: https://kiro.dev/docs/cli/chat/subagents/#tool-availability
 
 #### Pattern Selection
 
-| Pattern | Use When | State | Ordering |
-|---------|----------|-------|----------|
-| Deterministic | Data pipelines, reproducible, strict ordering | PG checkpointer | Guaranteed |
-| AI-orchestrated | Interactive, exploratory, judgment adds value | Conversation context or OpenMemory | Flexible |
-| Hybrid | Interactive interview then autonomous pipeline | Both | Mixed |
-
-Meta-workflow codifies this knowledge in its instructions so it can recommend the right pattern when designing new workflows.
+Meta-workflow codifies this knowledge in its instructions so it can recommend the right pattern when designing new workflows. The segment model means most workflows are hybrid — the question is how many AI boundaries they need.
 
 ## Component Responsibilities
 
@@ -390,7 +431,7 @@ Building workflows by hand doesn't scale. Each workflow needs decomposition into
 - **UC-MW-21**: AI-orchestrated blocks return structured output (`{ what_was_done, result, suggested_next_step, human_decisions_needed }`) so Claude can reason about next steps and decide the next MCP call. Convention similar to Sequential Thinking MCP pattern.
 - **UC-MW-22**: Autonomous blocks execute in Kiro subagents with fresh context. Mechanism: kiro-cortex returns BlockOutput with subagent spawn info (agent name, task) → Claude reads it and calls `use_subagent`. Subagents access kiro-cortex + OpenMemory via MCP. Results auto-return to parent. Meta-workflow must know subagent constraints and design around them.
 - **UC-MW-23**: Hooks supplement OPA as lightweight context injection and access control. Hooks are defined per-agent in agent config JSON; hook scripts (actual logic) are reusable and live in `~/.kiro/hooks/`. AgentSpawn injects OPA user profile at session start. PreToolUse gates kiro-cortex MCP calls against OPA access policy. Agent configs reference scripts with workflow-specific matchers.
-- **UC-MW-24**: Claude orchestrates AI-orchestrated workflows by calling block MCP tools in a loop, reading BlockOutput, and deciding next steps (call next block, spawn subagent, ask user). For hybrid workflows, kiro-cortex runs deterministic sections via LangGraph and returns BlockOutput at AI-orchestrated boundaries for Claude to take over. This is the "bridge" between LangGraph and Claude.
+- **UC-MW-24**: Single MCP tool design — `run_workflow` is the only tool needed. It runs deterministic segments (LangGraph sub-graphs) until hitting an AI boundary (`interrupt()`), returns `BlockOutput` with context for what Claude should do, Claude does its work (reason, ask user, spawn subagent), then calls `run_workflow` with same `thread_id` to resume. LangGraph checkpointing handles all state. No separate `run_block` tool — AI boundaries are interrupt points in the graph, not separate tool calls. Reusable segments (UC-MW-18) compose as sub-graph nodes; `run_workflow` traverses them transparently.
 - **UC-MW-25**: Meta-workflow proposes hooks when designing workflows. Can propose workflow-specific hooks (e.g., preToolUse that validates domain constraints) or identify new reusable hooks (when a pattern emerges across workflows). Reusable hook scripts go in shared location (`~/.kiro/hooks/`); workflow-specific hooks are generated alongside agent configs.
 - _(Add more use cases here as they emerge)_
 
@@ -404,14 +445,15 @@ The meta-workflow is a hand-built collection of tools for the workflow lifecycle
 
 Meta-workflow must codify knowledge about orchestration patterns in its instructions so it can recommend the right approach when designing new workflows:
 
-- **When to recommend deterministic (LangGraph)**: strict ordering required, data processing pipelines, reproducibility needed, persistent state across sessions
-- **When to recommend AI-orchestrated (MCP tool loop)**: interactive workflows, exploratory/judgment-based, flexible ordering, Sequential Thinking-like patterns
-- **When to recommend subagents**: autonomous blocks needing LLM reasoning, fresh context beneficial, parallel execution, long-running background tasks
+- **When to recommend deterministic (LangGraph)**: strict ordering required, data processing pipelines, reproducibility needed, persistent state across sessions. These become single-segment workflows — `run_workflow` runs end-to-end with no interrupts.
+- **When to recommend hybrid (segments)**: most real workflows. Deterministic segments (LangGraph sub-graphs) stitched by Claude orchestration at AI boundaries. `run_workflow` runs each segment, interrupts at boundaries, Claude reasons/interacts, resumes. Example: interview(interrupt) → decompose→optimize(interrupt) → author→wire→promote.
+- **When to recommend pure AI-orchestrated**: rare. Every block is its own single-block segment with AI boundaries between all of them. Use only when ordering is truly flexible and every step needs judgment. Degenerate case of hybrid.
+- **When to recommend subagents**: autonomous blocks needing LLM reasoning, fresh context beneficial, parallel execution, long-running background tasks. Triggered by `BlockOutput.next_step` at AI boundaries — Claude reads it and calls `use_subagent`.
 - **Subagent constraints to design around**: no interactive tasks, no web_search/web_fetch/introspect/thinking/todo_list/use_aws/grep/glob — blocks requiring these must run in parent conversation or deterministic pipeline (ref: https://kiro.dev/docs/cli/chat/subagents/#tool-availability)
 - **Agent design**: specialized agents per workflow (not one generic worker). Agent configs are comprehensive: tools, hooks, subagent settings, MCP servers, resources, prompt. Consider reusable agent patterns as lego blocks. When self-improving, meta-workflow should identify when new agents or hooks are needed.
 - **Hooks in agent configs**: hooks are per-agent (defined in agent config JSON), not standalone. Hook scripts are reusable (`~/.kiro/hooks/`); agent configs reference them with workflow-specific matchers. Meta-workflow proposes hooks during design (UC-MW-25).
-- **Structured output convention for AI-orchestrated blocks**: blocks return `{ what_was_done, result, suggested_next_step, human_decisions_needed }` so Claude can reason about next steps
-- **Claude as bridge (UC-MW-24)**: for AI-orchestrated blocks, Claude calls block MCP tools and reads BlockOutput. For subagent blocks, BlockOutput tells Claude to spawn via `use_subagent`. For hybrid workflows, LangGraph runs deterministic sections and returns BlockOutput at AI-orchestrated boundaries.
+- **Structured output convention for AI-orchestrated blocks**: blocks return `{ what_was_done, result, next_step, human_decisions_needed }` so Claude can reason about next steps
+- **Single MCP tool (UC-MW-24)**: `run_workflow` is the only tool. Runs deterministic segments, interrupts at AI boundaries, returns BlockOutput. Claude resumes with same thread_id. No separate `run_block` tool. Reusable segments (sub-graphs from `src/shared/`) compose transparently — LangGraph traverses them including their internal interrupt points.
 
 This knowledge lives in meta-workflow's seed instructions (YAML), not hardcoded in block logic. When meta-workflow self-improves (4.5+), it can refine these patterns.
 
@@ -1040,11 +1082,13 @@ Remaining items to add incrementally as needed:
 - **optimize** block — ✅ (4.5)
 - **audit** mode in route — ✅ (4.5)
 - **programmatic** mode in route — ✅ (4.5)
-- Subagent + hooks integration (UC-MW-20, 22, 23, 24, 25) — merged: agent configs are the central artifact containing tools, hooks, subagent settings, MCP servers. Promote block generates comprehensive agent configs. Shared hook scripts in `~/.kiro/hooks/`. Claude orchestrates AI-orchestrated blocks via BlockOutput.
+- Subagent + hooks integration (UC-MW-20, 22, 23, 24, 25) — merged: agent configs are the central artifact containing tools, hooks, subagent settings, MCP servers. Promote block generates comprehensive agent configs. Shared hook scripts in `~/.kiro/hooks/`. Single `run_workflow` MCP tool with interrupt/resume at AI boundaries (Q1 resolved).
 
-**Open questions (resolve before implementing):**
-- Does `run_workflow` MCP tool need a step-by-step mode for AI-orchestrated blocks, or do we need a separate `run_block` tool?
-- How does BlockOutput.suggested_next_step encode "spawn subagent X with task Y"? Structured convention or free text?
+**Resolved: Q1 — single `run_workflow` tool (interrupt/resume)**
+Workflows are composed of deterministic LangGraph segments. `run_workflow` runs until an AI boundary (`interrupt()`), returns `BlockOutput`, Claude does its work, calls `run_workflow` with same `thread_id` to resume. No separate `run_block` tool. Reusable segments (UC-MW-18) are sub-graphs that compose transparently. See "Segment Model" in orchestration section.
+
+**Open question (resolve before implementing):**
+- Q2: How does BlockOutput.next_step encode "spawn subagent X with task Y"? Structured discriminated union or free text?
 
 ### Phase 5: Repo-Analysis (Built by Meta-Workflow)
 - Use meta-workflow to build repo-analysis as first generated workflow

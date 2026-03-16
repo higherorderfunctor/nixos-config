@@ -2,21 +2,22 @@
 
 ## What Is This Project
 
-kiro-cortex is a workflow orchestration platform that replaces steering files with structured instructions stored in PostgreSQL/pgvector, governed by OPA policies, and orchestrated via a hybrid model (LangGraph deterministic + Claude AI-orchestrated + Kiro subagents).
+kiro-cortex is a workflow orchestration platform that replaces steering files with structured instructions stored in PostgreSQL/pgvector, governed by OPA policies, and orchestrated via the **segment model**: workflows are composed of deterministic LangGraph segments stitched by Claude orchestration at AI boundaries.
 
 ## Current State
 
 Branch: chore/save-point
 Phase 4.5 meta-workflow blocks COMPLETE. 30 files, 0 errors.
-Items 1-2 of 4.5+ done. Items 3+4 merged into single implementation.
+Items 1-2 of 4.5+ done. Items 3+4 merged. Q1 resolved, Q2 open.
 
 ### Commits This Session
 | SHA | What |
 |-----|------|
-| `99505e2` | Fix audit mode graph routing + docs gaps (dev commands, tsconfig, JSDoc gotcha) |
+| `99505e2` | Fix audit mode graph routing + docs gaps |
 | `266aea0` | BlockOutput type for AI-orchestrated blocks (UC-MW-21) |
 | `bca7337` | isolation.rego + wire repo into block executor |
-| (pending) | Use case updates + open questions (UC-MW-20,22,23,24,25) |
+| `71684a2` | Use case updates (UC-MW-20,22,23,24,25) |
+| (pending) | Segment model + Q1 resolution |
 
 ### What's Built (all phases)
 
@@ -30,25 +31,36 @@ Items 1-2 of 4.5+ done. Items 3+4 merged into single implementation.
 | 4.5+ item 1 | done | BlockOutput type (UC-MW-21) |
 | 4.5+ item 2 | done | isolation.rego + repo param in executeBlock |
 
-## 4.5+ Remaining: Subagent + Hooks Integration (merged items 3+4)
+## Segment Model (Q1 Resolved)
 
-Items 3 (subagent execution routing) and 4 (hooks generation) merged because agent configs are the central artifact containing tools, hooks, subagent settings, and MCP servers.
+**Decision:** Single `run_workflow` MCP tool with interrupt/resume. No separate `run_block` tool.
 
-### What to implement:
-- Enhance promote block's agent config generation (comprehensive configs with hooks, subagent settings, mcpServers)
-- Create shared hook scripts (`~/.kiro/hooks/opa-profile.sh`, `~/.kiro/hooks/cortex-gate.sh`)
-- Document convention: BlockOutput tells Claude when to spawn subagents
+A workflow = sequence of deterministic LangGraph segments. Between segments, Claude takes over (Sequential Thinking pattern). `run_workflow` runs until an AI boundary (`interrupt()`), returns `BlockOutput`, Claude does its work (reason, ask user, spawn subagent), calls `run_workflow` with same `thread_id` to resume.
 
-### New/updated use cases (in ARCHITECTURE.md):
-- UC-MW-20: Agent configs now include hooks, toolsSettings.subagent, mcpServers, resources, prompt
-- UC-MW-22: Mechanism clarified — BlockOutput → Claude → use_subagent
-- UC-MW-23: Hooks are per-agent in config; scripts are reusable
-- UC-MW-24: Claude as bridge between LangGraph and AI-orchestrated blocks
+**Pattern variants are segment configurations:**
+- Pure deterministic = 1 segment, no interrupts (run_workflow runs end-to-end)
+- Hybrid = N segments with AI boundaries (most real workflows)
+- Pure AI-orchestrated = N single-block segments with boundaries between all (rare)
+
+**Reusable segments (UC-MW-18):** LangGraph sub-graphs in `src/shared/`. Compose into any workflow as nodes. `run_workflow` traverses them transparently including internal interrupt points. Parameterizable via state. Optimize block recommends extracting DRY violations into shared segments.
+
+## 4.5+ Remaining: Subagent + Hooks Integration
+
+### Open question:
+- Q2: How does BlockOutput.next_step encode "spawn subagent X with task Y"? Structured discriminated union or free text?
+
+### What to implement (after Q2 resolved):
+- Update BlockOutput type with structured next_step (per Q2 answer)
+- Enhance promote block's agent config generation (hooks, subagent settings, mcpServers)
+- Create shared hook script conventions
+- Document BlockOutput → Claude → use_subagent convention
+
+### Use cases (in ARCHITECTURE.md):
+- UC-MW-20: Agent configs include hooks, toolsSettings.subagent, mcpServers, resources, prompt
+- UC-MW-22: Mechanism: BlockOutput.next_step → Claude → use_subagent
+- UC-MW-23: Hooks per-agent in config; scripts reusable in ~/.kiro/hooks/
+- UC-MW-24: Single run_workflow tool, interrupt/resume at AI boundaries, no run_block
 - UC-MW-25: Meta-workflow proposes hooks (workflow-specific or reusable)
-
-### Open questions (resolve before implementing):
-1. Does `run_workflow` MCP tool need step-by-step mode for AI-orchestrated blocks, or separate `run_block` tool?
-2. How does BlockOutput.suggested_next_step encode "spawn subagent X with task Y"? Structured convention or free text?
 
 ## File Structure
 
@@ -66,6 +78,7 @@ policies/access.rego, scoping.rego, isolation.rego
 ## Key References
 - Subagent tool limitations: https://kiro.dev/docs/cli/chat/subagents/#tool-availability
 - Agent config format: hooks, toolsSettings.subagent, mcpServers, resources (from Kiro docs)
+- Segment model: ARCHITECTURE.md "Segment Model" section under orchestration
 
 ## Dependencies (pinned exact)
 effect 3.19.19, @effect/platform 0.94.5, @effect/sql 0.49.0, @effect/sql-pg 0.50.3
