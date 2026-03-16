@@ -16,14 +16,15 @@ All codified knowledge (steering rules, coding standards, repo conventions, work
 - Phase 1: Data Migration ✅
 - Phase 2: Infrastructure Wiring ✅
 - Phase 3: Core RAG Loop ✅
-- Phase 4: MVP-Incremental Build
+- Phase 4: MVP-Incremental Build ✅
   - 4.1: Block Model + Registry ✅
   - 4.2: Pipeline Executor + HITL ✅
   - 4.3: MCP Stdio Wrapper ✅
   - 4.4: MVP Meta-Workflow ✅
-  - Pre-4.5: OPA per-block injection ✅ (access.rego, scoping.rego, YAML loader, block executor)
-  - 4.5+: Incremental features via meta-workflow itself
-- Phase 5: Repo-Analysis (Built by Meta-Workflow)
+  - Pre-4.5: OPA per-block injection ✅
+  - 4.5: Meta-Workflow Completion ✅
+  - 4.5+: Segment model, NextStep, YAML export, gap-analyze ✅
+- Phase 5: Repo-Analysis (next — built by meta-workflow)
 - Phase 6: Web Dashboard (read-only)
 
 ## Quick Start
@@ -49,3 +50,11 @@ See [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) for full design, phase plan, an
 - LangGraph.js (TypeScript) with PG checkpointer for deterministic pipelines
 - Kiro CLI subagents for autonomous block execution, hooks for supplementary OPA
 - Ollama for embeddings + classification
+
+## Development
+
+```bash
+pnpm run check          # TypeScript + Effect language service diagnostics
+```
+
+33 files, 0 errors, 0 warnings.
