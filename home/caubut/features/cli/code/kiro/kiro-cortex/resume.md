@@ -17,7 +17,7 @@ Phase 4.5+ COMPLETE. UC-MW-29 DONE. 34 files, 0 errors.
 | 0-3 | done | Core RAG loop: OPA, Embedding, InstructionRepo, LangGraph context assembly |
 | 4.1-4.4 | done | Block model, Registry, PipelineExecutor, MCP wrapper, MVP meta-workflow |
 | Pre-4.5 | done | OPA per-block injection: access.rego, scoping.rego, YAML loader, block executor |
-| Conventions | done | Domain folders, Context.Tag, Schema.transform, .addError, layer exports |
+| Conventions | done | Domain folders, Context.Tag, Schema.transform, .addError, layer exports, Config for env, Effect.log* for logging |
 | 4.5 | done | decompose, research, optimize, promote + audit/programmatic modes |
 | 4.5+ | done | Segment model, NextStep union, UC-MW-26/27/28, hook conventions, artifact templates |
 | UC-MW-29 | done | Gap-analyze block: cross-system completeness checks, wired into audit mode |
@@ -53,10 +53,10 @@ Previously the MCP stdio server (`mcp.ts`) was a proxy to a separate HTTP backen
 1. [x] Start kiro-cli from nixos-config root (not kiro-cortex subdir) for LSP/λ
 2. [ ] Switch to meta-workflow agent (Ctrl+Shift+M)
 3. [x] Verify `list_workflows` works — stdio test confirmed clean JSON-RPC + correct response (8a7d49c)
-4. [ ] Verify agent can identify itself in workflow list — needs live session with new MCP code
-5. [ ] Test update mode on meta-workflow itself
-6. [ ] Verify prompt file loads correctly
-7. [ ] Verify knowledgeBase resource indexes ARCHITECTURE.md
+4. [~] Verify agent can identify itself in workflow list — MCP connection fails in kiro-cli ("Unable to connect") despite manual `bun run src/mcp.ts` working. Debug file logger added (CORTEX_DEBUG=true → /tmp/kiro-cortex-mcp.log). Next: set CORTEX_DEBUG=true in MCP config env, restart kiro-cli, check log for failure point.
+5. [ ] Test update mode on meta-workflow itself — blocked on item 4
+6. [x] Verify prompt file loads correctly — confirmed: workflow ID is meta-workflow, all interaction patterns (build/update/refine/audit/self-maintenance) present
+7. [~] Verify knowledgeBase resource indexes ARCHITECTURE.md — ARCHITECTURE.md exists and is comprehensive, but cannot confirm kiro-cli indexing until MCP connects (item 4)
 8. [x] Verify λ icon appears (code intelligence active)
 
 ## Items for Interaction-Analysis (Future)

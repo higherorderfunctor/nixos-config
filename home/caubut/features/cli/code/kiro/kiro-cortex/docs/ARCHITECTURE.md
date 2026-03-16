@@ -1376,6 +1376,43 @@ Established patterns:
 - `sql.unsafe()` for pgvector literal interpolation (vector strings)
 - `Schema.optionalWith(Schema.String, { default: () => "value" })` for optional request fields with defaults
 
+## Effect-TS Conventions
+
+Patterns enforced across the codebase. Follow these — don't reinvent.
+
+### Services & Layers
+- Services use `Context.Tag` (e.g., `class OpaClient extends Context.Tag("OpaClient")<...>()`)
+- Each domain folder exports a `layer` (e.g., `export const layer: Layer<OpaClient>`)
+- Layers compose via `Layer.mergeAll` and `Layer.provide`
+
+### Schema & Errors
+- Request/response types use `Schema.Struct`, `Schema.Literal`, `Schema.Array`
+- Optional fields: `Schema.optionalWith(Schema.String, { default: () => "value" })`
+- Errors use `Schema.TaggedError` (e.g., `class TestError extends Schema.TaggedError<TestError>()("TestError", { ... })`)
+- Error mapping: `.pipe(Effect.mapError(e => new DomainError({ message: ... })))` — always `.addError` on endpoints
+
+### Config
+- Read env vars via `Config`: `yield* Config.boolean("VAR_NAME").pipe(Config.withDefault(false))`
+- Available types: `Config.string`, `Config.boolean`, `Config.number`, `Config.port`, `Config.url`
+- Default ConfigProvider reads from `process.env` — no setup needed
+- Use for values the program consumes. For diagnostic env dumps, `Effect.logDebug` with `process.env` is acceptable.
+
+### Logging
+- Use `Effect.logInfo(...)`, `Effect.logDebug(...)`, `Effect.logError(...)` inside `Effect.gen`
+- Custom loggers: `Logger.make(({ message, date, logLevel }) => ...)`
+- Replace default: `Logger.replace(Logger.defaultLogger, customLogger)` — returns a Layer
+- Suppress all: `Logger.withMinimumLogLevel(LogLevel.None)` — Effect combinator, reliable with `BunRuntime.runMain`
+- **Caveat**: `Logger.replace` via `Layer.unwrapEffect` doesn't fully override `BunRuntime.runMain`'s default logger. For bootstrap logger config, read env synchronously and provide the layer directly.
+- File logging: write to `/tmp` for diagnostics, gate behind env var (e.g., `CORTEX_DEBUG=true`)
+
+### Generators
+- All effectful code uses `Effect.gen(function* () { ... })`
+- Yield services: `const repo = yield* InstructionRepo`
+- Yield effects: `yield* Effect.tryPromise({ try: ..., catch: ... })`
+
+### NO @effect/schema
+- `Schema` is imported from `"effect"` directly — **not** from `@effect/schema`
+
 ## Development
 
 ### Commands
