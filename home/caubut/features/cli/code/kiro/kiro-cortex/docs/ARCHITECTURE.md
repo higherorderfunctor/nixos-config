@@ -1038,7 +1038,6 @@ Remaining items to add incrementally as needed:
 - `policies/isolation.rego` — repo boundary enforcement
 - Subagent integration — custom agent configs per workflow (UC-MW-20), cortex-worker patterns
 - Hooks integration — AgentSpawn (OPA user profile injection), PreToolUse (access control gate) (UC-MW-23)
-- AI-orchestrated block convention — structured output format (UC-MW-21)
 - Agent config generation — meta-workflow produces `.kiro/agents/*.json` for workflow-specific agents
 
 ### Phase 5: Repo-Analysis (Built by Meta-Workflow)

@@ -107,6 +107,27 @@ export interface PipelineDef<S> {
 // ---------------------------------------------------------------------------
 
 /**
+ * Structured output for AI-orchestrated blocks (UC-MW-21).
+ *
+ * When Claude calls block MCP tools in a loop (Sequential Thinking pattern),
+ * each block returns this shape so Claude can reason about next steps and
+ * decide the next MCP call.
+ *
+ * ARCH: Only used by blocks with execution_env "ai-orchestrated". Inline and
+ * subagent blocks return plain state updates via BlockDef.execute.
+ */
+export interface BlockOutput {
+  /** Summary of what the block accomplished. */
+  readonly what_was_done: string
+  /** The actual result data (block-specific shape). */
+  readonly result: unknown
+  /** Block's suggestion for what should happen next, or null if done. */
+  readonly suggested_next_step: string | null
+  /** Decisions that need human input before proceeding. */
+  readonly human_decisions_needed: ReadonlyArray<string>
+}
+
+/**
  * YAML export shape for a single instruction.
  * ARCH: Vectors are NOT exported — they're re-embedded at load time from the
  * same model, ensuring consistency. Only source data is persisted to disk.

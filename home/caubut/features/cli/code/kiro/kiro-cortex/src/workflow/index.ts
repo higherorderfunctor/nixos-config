@@ -10,7 +10,7 @@
  * the block model but serves the /context endpoint.
  *
  * Public API:
- * - Type exports: {@link BlockDef}, {@link PipelineDef}, {@link OpaContext}, etc.
+ * - Type exports: {@link BlockDef}, {@link PipelineDef}, {@link OpaContext}, {@link BlockOutput}, etc.
  * - {@link BlockRegistry} — Effect.Service for block registration and lookup
  * - {@link executeBlock} — generic block execution with OPA injection
  * - {@link buildPipeline} / {@link getCheckpointer} — LangGraph pipeline construction
@@ -22,6 +22,7 @@
 export type {
   OpaContext,
   BlockDef,
+  BlockOutput,
   ConditionalNext,
   PipelineStep,
   PipelineDef,
