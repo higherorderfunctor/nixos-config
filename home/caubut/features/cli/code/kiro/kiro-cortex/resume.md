@@ -8,7 +8,7 @@ kiro-cortex is a workflow orchestration platform that replaces steering files wi
 
 Branch: chore/save-point
 Phase 4.5+ COMPLETE. 30 files, 0 errors.
-All design questions resolved. All implementation items done.
+**Next: Meta-workflow self-maintenance validation, then Phase 5.**
 
 ### What's Built (all phases)
 
@@ -21,13 +21,37 @@ All design questions resolved. All implementation items done.
 | 4.5 | done | decompose, research, optimize, promote + audit/programmatic modes |
 | 4.5+ | done | Segment model, NextStep union, UC-MW-26/27/28, hook conventions, artifact templates |
 
-## Design Decisions (All Resolved)
+## Meta-Workflow Self-Maintenance (Gap Analysis Done)
 
-- Q1: Segment model — single `run_workflow` with interrupt/resume, no run_block
-- Q2: NextStep discriminated union — resume, spawn_subagent, ask_user, complete
-- UC-MW-26: Interview asks trigger type → promote generates skill OR agent config
-- UC-MW-27: Meta-workflow is top-level agent (`~/.kiro/agents/meta-workflow.json`, Ctrl+Shift+M)
-- UC-MW-28: Context optimization — skills > agents > subagents > MCPs
+**Fixed in agent config:**
+- `@kiro-cortex` in allowedTools (can use own MCP without prompts)
+- Prompt moved to `file://./prompts/meta-workflow.md`
+- Self-identification in prompt ("Your workflow ID is meta-workflow")
+- agentSpawn hook shows git log + status
+- Resource paths fixed (absolute `file:///`)
+- toolsSettings.fs_write.allowedPaths for write restrictions
+- knowledgeBase resource for ARCHITECTURE.md
+- fs_write, execute_bash, git tools in allowedTools
+
+**Blocking for full self-maintenance:**
+- UC-MW-16/17 (filesystem export) not implemented
+- DB changes don't persist to disk without manual YAML export
+- True self-maintenance requires export blocks
+
+**Validation checklist (before Phase 5):**
+1. Switch to meta-workflow agent (Ctrl+Shift+M)
+2. Verify list_workflows works without permission prompt
+3. Verify agent can identify itself
+4. Test update mode on meta-workflow
+5. Verify prompt file loads
+6. Verify knowledgeBase indexes ARCHITECTURE.md
+
+## Items for Interaction-Analysis (Future)
+
+- F1: "workflow-audit" skill — periodic optimization
+- F2: "workflow-metrics" subagent — usage tracking
+- F3: "pattern-detector" skill — DRY across workflows
+- F4: Meta-workflow self-analysis for interview improvement
 
 ## Next: Phase 5 — Repo-Analysis
 

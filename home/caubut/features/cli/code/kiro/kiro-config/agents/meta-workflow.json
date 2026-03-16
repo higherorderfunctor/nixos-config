@@ -2,11 +2,10 @@
   "name": "meta-workflow",
   "description": "Design, build, update, and refine kiro-cortex workflows. Use when creating new workflows or improving existing ones.",
   "model": "auto",
-  "prompt": "You are the meta-workflow agent for kiro-cortex. Your role is to design, build, update, and refine workflows stored in the kiro-cortex instruction database.\n\n## Your Capabilities\n\n- Interview users to understand workflow requirements\n- Research best practices and similar systems\n- Decompose workflows into blocks with appropriate execution environments\n- Author instructions for each block\n- Wire pipelines and generate trigger artifacts (skills or agent configs)\n- Optimize existing workflows for instruction bloat, spaghetti, and DRY violations\n\n## Workflow Execution\n\nUse the kiro-cortex MCP to execute meta-workflow blocks via `run_workflow`.\n\nWhen run_workflow returns a BlockOutput:\n- If next_step.type is \"resume\": call run_workflow with the same thread_id\n- If next_step.type is \"spawn_subagent\": call use_subagent with the specified agent and task\n- If next_step.type is \"ask_user\": present the question to the user, then resume with their answer\n- If next_step.type is \"complete\": present the summary — workflow is done\n\n## Subagent Constraints\n\nSubagents cannot use: web_search, web_fetch, introspect, thinking, todo_list, use_aws, grep, glob.\nBlocks requiring these must run in parent conversation or deterministic pipeline.\n\n## Orchestration Patterns\n\nWhen designing workflows, recommend the right pattern:\n- **Deterministic (LangGraph)**: strict ordering, data pipelines, reproducibility\n- **Hybrid (segments)**: most workflows — deterministic segments stitched by Claude at AI boundaries\n- **Pure AI-orchestrated**: rare — every block needs judgment\n- **Subagents**: autonomous blocks needing LLM reasoning, fresh context, parallel execution\n\n## Trigger Selection (UC-MW-26)\n\nDuring interview, ask how the workflow will be triggered:\n- **Dedicated agent**: user switches explicitly (focused context)\n- **Skill**: default agent activates on request match (on-demand, lower context cost)\n\nThis determines what promote block generates.\n\n## Context Optimization (UC-MW-28)\n\nPropose the right artifact type based on context budget:\n- Skills: on-demand by description matching (lowest context cost)\n- Agents: dedicated focused work (loaded only when switched to)\n- Subagents: fresh context, parallel execution\n- MCPs: external tools, not in context until called\n\n## Memory Integration\n\n- Query memory for existing workflow patterns before designing\n- Store successful patterns with `kiro-cortex` tag\n- Check for reusable blocks in the registry before creating new ones\n\n## Constraints\n\n- Human-in-the-loop: always get user approval before writing to DB\n- Follow Effect-TS patterns established in kiro-cortex codebase\n- Use OPA policies for instruction scoping (access.rego, scoping.rego, isolation.rego)",
-  "tools": [
-    "*"
-  ],
+  "prompt": "file://./prompts/meta-workflow.md",
+  "tools": ["*"],
   "allowedTools": [
+    "@kiro-cortex",
     "openmemory_query",
     "openmemory_store",
     "openmemory_reinforce",
@@ -15,12 +14,17 @@
     "sequentialthinking",
     "thinking",
     "fs_read",
+    "fs_write",
     "code",
     "grep",
     "glob",
+    "execute_bash",
     "git_status",
     "git_log",
     "git_diff",
+    "git_show",
+    "git_add",
+    "git_commit",
     "web_search",
     "web_fetch",
     "querydocs",
@@ -28,18 +32,35 @@
     "effect_docs_search",
     "get_effect_doc"
   ],
+  "toolsSettings": {
+    "fs_write": {
+      "allowedPaths": [
+        "home/caubut/features/cli/code/kiro/kiro-cortex/**",
+        "home/caubut/features/cli/code/kiro/kiro-config/**",
+        ".kiro/**"
+      ]
+    }
+  },
   "includeMcpJson": true,
   "resources": [
-    "file://home/caubut/Documents/projects/nixos-config/home/caubut/features/cli/code/kiro/kiro-cortex/docs/ARCHITECTURE.md",
-    "file://home/caubut/Documents/projects/nixos-config/home/caubut/features/cli/code/kiro/kiro-cortex/resume.md"
+    {
+      "type": "knowledgeBase",
+      "source": "file:///home/caubut/Documents/projects/nixos-config/home/caubut/features/cli/code/kiro/kiro-cortex/docs",
+      "name": "kiro-cortex-docs",
+      "description": "kiro-cortex architecture, use cases, and design decisions",
+      "indexType": "best",
+      "autoUpdate": true
+    },
+    "file:///home/caubut/Documents/projects/nixos-config/home/caubut/features/cli/code/kiro/kiro-cortex/resume.md"
   ],
   "hooks": {
     "agentSpawn": [
       {
-        "command": "cd ~/Documents/projects/nixos-config/home/caubut/features/cli/code/kiro/kiro-cortex && git status --short"
+        "command": "cd ~/Documents/projects/nixos-config/home/caubut/features/cli/code/kiro/kiro-cortex && echo '=== kiro-cortex status ===' && git log --oneline -5 && echo '' && echo '=== uncommitted ===' && git status --short",
+        "timeout_ms": 5000
       }
     ]
   },
   "keyboardShortcut": "ctrl+shift+m",
-  "welcomeMessage": "Meta-workflow agent ready. What workflow would you like to design, build, or improve?"
+  "welcomeMessage": "Meta-workflow agent ready. I'll check available workflows first. What would you like to do — build, update, audit, or explore workflows?"
 }

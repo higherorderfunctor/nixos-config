@@ -1295,7 +1295,46 @@ Custom agents must explicitly include skills via `resources`:
 
 **Implementation remaining:**
 - Phase 4.5+ complete. All items implemented or documented.
-- Next: Phase 5 — Repo-Analysis (first workflow built by meta-workflow)
+- Next: Meta-workflow self-maintenance validation, then Phase 5
+
+### Meta-Workflow Self-Maintenance Gap Analysis (2026-03-16)
+
+Before Phase 5, validate that meta-workflow can maintain itself. Gap analysis performed:
+
+**Critical Gaps (Fixed):**
+- G1: ✅ kiro-cortex MCP tools (`@kiro-cortex`) added to `allowedTools`
+- G2: ✅ Self-identification added to prompt ("Your workflow ID is meta-workflow")
+- G3: ✅ Prompt moved to `file://./prompts/meta-workflow.md` for maintainability
+- G4: ✅ agentSpawn hook enhanced (git log + status)
+- G5: ✅ Resource paths fixed (absolute with triple slash `file:///`)
+- G6: ✅ `toolsSettings.fs_write.allowedPaths` added for write restrictions
+- G9: ✅ `fs_write`, `execute_bash`, git tools added to `allowedTools`
+
+**Important Gaps (Documented, Not Yet Implemented):**
+- G7: UC-MW-15,16,17 (filesystem export/import) — prerequisite for true self-maintenance. Without these, DB changes don't persist to disk. **Blocking for full self-maintenance.**
+- G8: knowledgeBase resource for ARCHITECTURE.md — added but needs testing
+
+**Enhancement Ideas (Future):**
+- E1: ✅ Pre-gen prompt file with interaction templates — done
+- E2: userPromptSubmit hook for dynamic context injection — deferred
+- E3: ✅ welcomeMessage made more actionable
+
+**Items for Interaction-Analysis (Record Only):**
+- F1: Suggest "workflow-audit" skill — periodic optimization of all workflows
+- F2: Suggest "workflow-metrics" subagent — track workflow usage patterns
+- F3: Suggest "pattern-detector" skill — identify common patterns across workflows for DRY
+- F4: Meta-workflow should analyze its own interaction patterns to improve interview questions
+
+**Validation Checklist (Before Phase 5):**
+1. [ ] Switch to meta-workflow agent (Ctrl+Shift+M)
+2. [ ] Verify `list_workflows` works without permission prompt
+3. [ ] Verify agent can identify itself in workflow list
+4. [ ] Test update mode on meta-workflow itself
+5. [ ] Verify prompt file loads correctly
+6. [ ] Verify knowledgeBase resource indexes ARCHITECTURE.md
+
+**Blocking Issue for Full Self-Maintenance:**
+UC-MW-16/17 (filesystem export) not implemented. Changes to meta-workflow in DB won't persist to disk. Current workaround: manually update YAML exports. True self-maintenance requires implementing export blocks.
 
 ### Phase 5: Repo-Analysis (Built by Meta-Workflow)
 - Use meta-workflow to build repo-analysis as first generated workflow
