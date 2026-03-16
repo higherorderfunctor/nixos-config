@@ -21,6 +21,8 @@ interface InterviewAnswer {
   readonly blocks?: ReadonlyArray<BlockSpec>
   /** Set true to trigger research before decompose (UC-MW-7). */
   readonly needs_research?: boolean
+  /** How the workflow will be triggered (UC-MW-26). */
+  readonly trigger_type?: "agent" | "skill"
 }
 
 /**
@@ -37,11 +39,13 @@ export function interviewNode(state: MetaWorkflowStateType): Partial<MetaWorkflo
     ? `\n\nResearch findings from previous step:\n${state.research_findings}`
     : ""
 
+  const triggerPrompt = "\n\nHow should this workflow be triggered?\n- agent: dedicated agent (user switches explicitly, focused context)\n- skill: default agent activates on request match (on-demand, lower context cost)"
+
   const question = state.mode === "update"
     ? `Updating workflow "${state.workflow_name}". What changes?${researchContext}\n\nProvide updated details. Set needs_research: true if you need external research first.`
     : state.mode === "audit"
       ? `Optimization findings for review:\n${state.optimization_report}${researchContext}\n\nWhich issues should be addressed? Provide workflow_name and blocks to restructure.`
-      : `Describe the workflow: name, description, and optionally blocks.${researchContext}\n\nSet needs_research: true if you want external research before decomposition.`
+      : `Describe the workflow: name, description, and optionally blocks.${researchContext}${triggerPrompt}\n\nSet needs_research: true if you want external research before decomposition.`
 
   const answer: unknown = interrupt({ question })
 
@@ -55,5 +59,6 @@ export function interviewNode(state: MetaWorkflowStateType): Partial<MetaWorkflo
     workflow_description: parsed.workflow_description ?? state.workflow_description,
     blocks: parsed.blocks ?? state.blocks,
     needs_research: parsed.needs_research ?? false,
+    trigger_type: parsed.trigger_type ?? state.trigger_type,
   }
 }

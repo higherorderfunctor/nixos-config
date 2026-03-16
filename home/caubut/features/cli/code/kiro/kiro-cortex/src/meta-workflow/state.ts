@@ -82,6 +82,11 @@ export const MetaWorkflowState = Annotation.Root({
   /** Whether optimize recommends redesign (loops back to decompose). */
   needs_redesign: Annotation<boolean>,
 
+  // --- Trigger selection (UC-MW-26) ---
+
+  /** How the workflow will be triggered: dedicated agent or skill. */
+  trigger_type: Annotation<"agent" | "skill" | null>,
+
   // --- Promote fields (4.5) ---
 
   /** File paths of generated trigger artifacts (SKILL.md, agent config). */

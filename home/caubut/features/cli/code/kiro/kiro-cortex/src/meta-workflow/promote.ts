@@ -2,12 +2,13 @@
  * @module meta-workflow/promote
  * Promote block — generates trigger artifacts so workflows are discoverable.
  *
- * ARCH: Generates SKILL.md (kiro-cli skill trigger) and agent config JSON
- * (.kiro/agents/*.json) for workflow-specific agents. Uses interrupt() to
- * let the user choose which artifacts to generate (UC-MW-20).
+ * ARCH: Based on UC-MW-26 trigger_type from interview:
+ * - "skill" → generates SKILL.md (+ optional references/) in .kiro/skills/ or ~/.kiro/skills/
+ * - "agent" → generates comprehensive agent config JSON in .kiro/agents/ or ~/.kiro/agents/
+ * - null/both → interrupt to ask, then generate chosen artifact
  *
- * ARCH: Agent configs are specialized per workflow — not one generic worker.
- * Each config includes only the MCP tools the workflow needs (UC-MW-20).
+ * ARCH: Agent configs follow kiro.dev/docs/cli/custom-agents/configuration-reference.
+ * Skills follow the Agent Skills standard (agentskills.io).
  */
 
 import { mkdir, writeFile } from "node:fs/promises"
@@ -15,27 +16,30 @@ import { join } from "node:path"
 import { interrupt } from "@langchain/langgraph"
 import type { MetaWorkflowStateType } from "./state.js"
 
-/**
- * Generate a SKILL.md trigger file for kiro-cli discovery.
- *
- * ARCH: Skills are the entry point for users to invoke workflows.
- * The SKILL.md describes what the workflow does and how to trigger it.
- */
+// ---------------------------------------------------------------------------
+// SKILL.md generation
+// ---------------------------------------------------------------------------
+
 const generateSkillMd = (state: MetaWorkflowStateType): string => {
   const blockList = state.blocks
     .map((b) => `- **${b.name}**: ${b.description}`)
     .join("\n")
 
   return [
+    "---",
+    `name: ${state.workflow_name}`,
+    `description: ${state.workflow_description}`,
+    "---",
+    "",
     `# ${state.workflow_name}`,
     "",
     state.workflow_description,
     "",
     "## Trigger",
     "",
-    `- **Manual**: User invokes with \`/skill ${state.workflow_name}\``,
+    "- **Automatic**: Activated when request matches description above",
     "",
-    "## Blocks",
+    "## Workflow",
     "",
     blockList,
     "",
@@ -46,71 +50,92 @@ const generateSkillMd = (state: MetaWorkflowStateType): string => {
   ].join("\n")
 }
 
-/**
- * Generate a Kiro agent config JSON for workflow-specific execution.
- *
- * ARCH: Specialized agents per workflow (UC-MW-20). The agent config
- * includes kiro-cortex MCP + OpenMemory MCP as minimum tool set.
- */
+// ---------------------------------------------------------------------------
+// Agent config generation
+// ---------------------------------------------------------------------------
+
+const generateAgentPrompt = (state: MetaWorkflowStateType): string => [
+  `You are executing the "${state.workflow_name}" workflow.`,
+  "",
+  state.workflow_description,
+  "",
+  "## Workflow Execution",
+  "",
+  "Use kiro-cortex MCP tools to execute workflow blocks.",
+  "Follow instructions provided by each block's OPA-scoped context.",
+  "",
+  "When run_workflow returns a BlockOutput:",
+  '- If next_step.type is "resume": call run_workflow with the same thread_id',
+  '- If next_step.type is "spawn_subagent": call use_subagent with the specified agent and task',
+  '- If next_step.type is "ask_user": present the question to the user, then resume with their answer',
+  '- If next_step.type is "complete": present the summary — workflow is done',
+  "",
+  "## Subagent Constraints",
+  "",
+  "Subagents cannot use: web_search, web_fetch, introspect, thinking, todo_list, use_aws, grep, glob.",
+  "Blocks requiring these must run in parent conversation or deterministic pipeline.",
+].join("\n")
+
 const generateAgentConfig = (state: MetaWorkflowStateType): string =>
   JSON.stringify(
     {
       name: `${state.workflow_name}-agent`,
       description: state.workflow_description,
       model: "auto",
-      prompt: [
-        `You are executing the "${state.workflow_name}" workflow.`,
-        "",
-        state.workflow_description,
-        "",
-        "Use kiro-cortex MCP tools to execute workflow blocks.",
-        "Follow instructions provided by each block's OPA-scoped context.",
-      ].join("\n"),
+      prompt: generateAgentPrompt(state),
+      tools: ["*"],
       allowedTools: [
-        "openmemory_query",
-        "openmemory_store",
-        "sequentialthinking",
-        "thinking",
+        "@openmemory",
+        "@sequentialthinking",
+        "fs_read",
+        "code",
       ],
       includeMcpJson: true,
+      resources: [
+        "skill://.kiro/skills/**/SKILL.md",
+        "skill://~/.kiro/skills/**/SKILL.md",
+        "file://.kiro/steering/**/*.md",
+      ],
+      hooks: {
+        agentSpawn: [{ command: "git status" }],
+      },
     },
     null,
     2,
   )
 
-/**
- * Present trigger artifact options and generate chosen artifacts.
- *
- * @returns Partial state with promoted_artifacts (file paths written).
- */
+// ---------------------------------------------------------------------------
+// Promote node
+// ---------------------------------------------------------------------------
+
 export const promoteNode = async (
   state: MetaWorkflowStateType,
 ): Promise<Partial<MetaWorkflowStateType>> => {
-  const answer: unknown = interrupt({
-    question: [
-      `Generate trigger artifacts for "${state.workflow_name}"?`,
-      "Options: skill (SKILL.md), agent (agent config JSON), both, skip",
-    ].join("\n"),
-    preview: {
-      skill: `workflows/${state.workflow_name}/SKILL.md`,
-      agent: `.kiro/agents/${state.workflow_name}-agent.json`,
-    },
-  })
-
-  const choice = (typeof answer === "string" ? answer : "both").trim().toLowerCase()
-  if (choice === "skip") return { promoted_artifacts: [] }
-
-  const artifacts: Array<string> = []
-  const wfDir = join(process.cwd(), "workflows", state.workflow_name)
-  await mkdir(wfDir, { recursive: true })
-
-  if (choice === "skill" || choice === "both") {
-    const path = join(wfDir, "SKILL.md")
-    await writeFile(path, generateSkillMd(state))
-    artifacts.push(path)
+  // Determine trigger type — use interview answer or ask now
+  let choice = state.trigger_type
+  if (!choice) {
+    const answer: unknown = interrupt({
+      question: [
+        `Generate trigger artifact for "${state.workflow_name}"?`,
+        "- skill: SKILL.md (default agent activates on request match)",
+        "- agent: dedicated agent config (user switches explicitly)",
+        "- skip: no artifact",
+      ].join("\n"),
+    })
+    const raw = (typeof answer === "string" ? answer : "skill").trim().toLowerCase()
+    if (raw === "skip") return { promoted_artifacts: [] }
+    choice = raw === "agent" ? "agent" : "skill"
   }
 
-  if (choice === "agent" || choice === "both") {
+  const artifacts: Array<string> = []
+
+  if (choice === "skill") {
+    const dir = join(process.cwd(), ".kiro", "skills", state.workflow_name)
+    await mkdir(dir, { recursive: true })
+    const path = join(dir, "SKILL.md")
+    await writeFile(path, generateSkillMd(state))
+    artifacts.push(path)
+  } else {
     const dir = join(process.cwd(), ".kiro", "agents")
     await mkdir(dir, { recursive: true })
     const path = join(dir, `${state.workflow_name}-agent.json`)
