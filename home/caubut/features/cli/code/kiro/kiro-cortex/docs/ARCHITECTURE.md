@@ -19,7 +19,7 @@ The system is built in layers. Each layer adds capability on top of the previous
 The foundation. A query comes in, relevant instructions come out.
 
 ```
-                         kiro-cortex (Effect-TS server, port 3100)
+                         kiro-cortex (Effect-TS, MCP stdio via @effect/ai)
                          ═══════════════════════════════════════
                                         │
   ┌─────────────────────────────────────┼──────────────────────────────────┐
@@ -758,6 +758,7 @@ Maps to existing steering structure:
 | Context budget | Caller-specified per request | Task complexity determines budget |
 | Hosting | Self-hosted, NixOS/Home Manager | Full control, privacy, no vendor lock-in |
 | Runtime | Bun + pnpm, Effect-TS | User preference, type safety |
+| MCP transport | @effect/ai McpServer.layerStdio (stdin Stream, stdout Sink) | Pure Effect, no port, no race condition on agent switch |
 | HTTP clients | HttpApi + Schema (not raw HttpClient) | Full type safety on request/response; Schema validates at runtime, no `as any` casts |
 | API client pattern | Context.Tag + Layer.effect (not Effect.Service) | Client type inferred from HttpApiClient.make; Effect.Service wrapper is unnecessary indirection |
 | Envelope handling | Schema.transform (not transformResponse) | transformResponse runs after decode and erases types; Schema.transform preserves full type safety |
@@ -786,8 +787,8 @@ src/
   workflow/       → Orchestration engine (Block, Registry, Executor, Pipeline, Workflow types)
   meta-workflow/  → Meta-workflow block implementations (route, interview, author, wire, graph, state)
   Sql.ts          → Shared PostgreSQL connection layer
-  index.ts        → HTTP server (composes all domains)
-  mcp.ts          → MCP stdio server (standalone process, zod-only)
+  index.ts        → Doc-only module comment (no public exports)
+  mcp.ts          → MCP stdio server (@effect/ai McpServer.layerStdio, pure Effect)
   migrations/     → Database migrations
 ```
 
@@ -818,7 +819,7 @@ export const layer = Layer.effect(MyClient, make).pipe(Layer.provide(NodeHttpCli
 
 **Why not raw HttpClient:** Raw `HttpClient` requires manual JSON parsing and `as any` casts. `HttpApi` + `HttpApiClient` covers both request and response typing.
 
-**Exception:** `src/mcp.ts` uses plain `fetch` because it runs as a standalone MCP stdio process outside the Effect runtime. Zod is allowed only in this file for MCP SDK compatibility.
+**Exception:** None — all code including `mcp.ts` uses Effect-native patterns. No callback bridging or `runPromise` needed.
 
 ### Layer Export Convention
 
@@ -976,13 +977,17 @@ interface PipelineExport {
 
 On-disk layout: `workflows/{name}/pipeline.yaml` + `workflows/{name}/instructions/{block}.yaml`
 
-### MCP Server Wrapper
+### MCP Server (Effect-Native)
 
-Thin MCP stdio server, separate process. kiro-cli launches it via mcp.json config.
-- Exposes tools: `list_blocks`, `run_block`, `list_pipelines`, `run_pipeline`
-- Calls kiro-cortex HTTP API internally (keeps processes separate)
+Pure Effect MCP server using `@effect/ai`'s `McpServer.layerStdio`. kiro-cli launches it via mcp.json config.
+- Reads stdin as an Effect `Stream`, writes stdout as an Effect `Sink` — no HTTP, no port
+- Tools defined with `Tool.make` + `Toolkit.make` (Effect Schema for parameters)
+- Handlers via `CortexToolkit.toLayer` — Effects with direct service access (SQL, OPA, Embedding, InstructionRepo)
+- `loadInstructions` runs during layer construction (before tools accept calls)
+- Exposes tools: `list_workflows`, `run_workflow`, `reload_workflows`
 - Registered in default.nix mcp.json alongside other MCP servers
 - Meta-workflow end step generates SKILL.md files that reference these MCP tools
+- No port binding eliminates the agent-switch race condition (old instance shutting down while new instance starts)
 
 ### Execution Environments
 
@@ -1002,7 +1007,7 @@ Blocks run in different environments depending on their needs:
 
 ### Phase 0: Database Layer ✅ (commit 75d246a)
 - PostgreSQL 18 + pgvector on port 5435 (home-manager user service)
-- Effect-TS HttpApi server on port 3100
+- Effect-TS MCP stdio server via @effect/ai
 - `kiro_cortex` database with instructions table + HNSW index
 
 ### Phase 1: OpenMemory Migration ✅ (commit 33f656f)
@@ -1356,7 +1361,6 @@ Meta-workflow can gap-analyze itself and any workflow it manages. Implemented as
 - OPA policy viewer
 - Knowledge graph visualization
 - No HITL interactions — all workflow interaction via kiro-cli
-- Explore replacing zod 4 with Effect Schema → JSON Schema for MCP tool definitions
 
 ## Effect-TS Patterns
 
@@ -1432,7 +1436,7 @@ Run `pnpm run check` after every commit to catch both TypeScript and Effect-spec
 - [LangGraph.js](https://langchain-ai.github.io/langgraphjs/) — Agent orchestration (interrupt/resume, sub-graphs, checkpointing)
 - [pgvector](https://github.com/pgvector/pgvector) — PostgreSQL vector extension
 - [Effect-TS](https://effect.website/) — Functional TypeScript framework
-- [MCP SDK](https://www.npmjs.com/package/@modelcontextprotocol/sdk) — Model Context Protocol server/client
+- [@effect/ai](https://effect.website/docs/ai/introduction/) — Effect-native MCP server (McpServer.layerStdio), Tool/Toolkit definitions
 
 ### Design Influences
 - [Sequential Thinking MCP](https://www.npmjs.com/package/@modelcontextprotocol/server-sequential-thinking) — Structured outputSchema pattern for Claude self-orchestration (influenced NextStep design)

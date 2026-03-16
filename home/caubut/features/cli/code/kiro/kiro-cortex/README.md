@@ -31,12 +31,9 @@ All codified knowledge (steering rules, coding standards, repo conventions, work
 ```bash
 home-manager switch          # PostgreSQL + OPA services
 cd kiro-cortex && pnpm install
-bun run src/index.ts         # Start server on port 3100
-
-curl http://localhost:3100/health
-curl -X POST http://localhost:3100/context \
-  -H 'Content-Type: application/json' \
-  -d '{"query":"how should I write Effect code","user_id":"caubut"}'
+# MCP server is launched by kiro-cli via mcp.json — not run directly
+# For manual testing:
+CORTEX_DEBUG=true bun src/mcp.ts
 ```
 
 ## Architecture
@@ -45,7 +42,7 @@ See [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) for full design, phase plan, an
 
 ## Tech Stack
 
-- Effect-TS + HttpApi (server, typed errors, layer composition)
+- Effect-TS + @effect/ai (MCP server, typed tools, layer composition)
 - Bun runtime, pnpm package manager
 - PostgreSQL 18 + pgvector (HNSW indexing)
 - OPA with Rego v1 policies
