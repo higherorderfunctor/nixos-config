@@ -82,6 +82,7 @@ Validation checklist: **9/9 complete** — all 5 smoke tests pass.
 ## Pre-Phase 5 TODO
 
 - ~~Rename `gap-analyze` block~~ — DONE: renamed to `lint-artifacts`. Name now reflects it's a structural consistency checker (filesystem lint), not semantic analysis.
+- Subagent context reset strategy. Subagent tool restrictions are mostly workable: `thinking` → Sequential Thinking MCP, `grep`/`glob` → bash, `fetch` → MCP fetch server, `introspect`/`todo_list` → not needed. Only `web_search` requires root agent. Autonomous blocks (lint-artifacts, optimize, decompose, author, wire, export) should run as subagents for context shedding — only the summary returns to parent, not the full RAG payload. HITL blocks (interview, research, promote) stay in root agent. Add use case(s) to ARCHITECTURE.md, update block table with execution_env recommendations, configure subagent MCP access (kiro-cortex, OpenMemory, Sequential Thinking, fetch).
 - Multi-instruction YAML format + hierarchical disk layout (UC-MW-30, UC-MW-31). Current model is 1 instruction per YAML, 1 YAML per block — won't scale to millions. Need:
   - Array of instructions per YAML file (each gets its own vector in pgvector)
   - Directory hierarchy for organization: `instructions/<domain>/<topic>.yaml` (e.g., `effect/effect-stream.yaml`, `effect/effect-http-api.yaml`)
