@@ -82,6 +82,12 @@ Validation checklist: **9/9 complete** — all 5 smoke tests pass.
 ## Pre-Phase 5 TODO
 
 - Rename `gap-analyze` block — name implies semantic/LLM analysis but it's a structural consistency checker (filesystem lint). Consider: `check-artifacts`, `lint-workflow`, `verify-structure`, or similar.
+- Multi-instruction YAML format + hierarchical disk layout. Current model is 1 instruction per YAML, 1 YAML per block — won't scale to millions. Need:
+  - Array of instructions per YAML file (each gets its own vector in pgvector)
+  - Directory hierarchy for organization: `instructions/<domain>/<topic>.yaml` (e.g., `effect/effect-stream.yaml`, `effect/effect-http-api.yaml`)
+  - Seed.ts updated to walk directories recursively and parse multi-instruction files
+  - Author block needs guidance on chunking: one concept per instruction for optimal retrieval
+  - Add use case(s) to ARCHITECTURE.md for instruction organization/scaling
 
 ## Items for Interaction-Analysis (Future)
 
