@@ -1,0 +1,125 @@
+kiro-cortex Generic Workflow Execution — Sequence Diagram
+═══════════════════════════════════════════════════════════
+
+  User          Root Agent        LangGraph          OPA           pgvector        Subagent
+   │            (Claude)        (kiro-cortex)      (policies)       (RAG)        (fresh ctx)
+   │               │                 │                │               │               │
+   │  "do X"       │                 │                │               │               │
+   ├──────────────►│                 │                │               │               │
+   │               │  run_workflow   │                │               │               │
+   │               ├────────────────►│                │               │               │
+   │               │                 │                │               │               │
+   │               │    ┌────────────┴────────────────┴───────────────┤               │
+   │               │    │  SEGMENT 1: HITL block (interview, etc.)   │               │
+   │               │    └────────────┬────────────────┬───────────────┤               │
+   │               │                 │                │               │               │
+   │               │                 │  scope(role,   │               │               │
+   │               │                 │  task, domain) │               │               │
+   │               │                 ├───────────────►│               │               │
+   │               │                 │  {domains,     │               │               │
+   │               │                 │   max_results} │               │               │
+   │               │                 │◄───────────────┤               │               │
+   │               │                 │                                │               │
+   │               │                 │  cosine search(embed, filters) │               │
+   │               │                 ├───────────────────────────────►│               │
+   │               │                 │  instructions[]                │               │
+   │               │                 │◄──────────────────────────────┤│               │
+   │               │                 │                                │               │
+   │               │                 │  inject state._context         │               │
+   │               │                 │  block.execute()               │               │
+   │               │                 │  → interrupt(question)         │               │
+   │               │                 │                                │               │
+   │               │  BlockOutput    │                                │               │
+   │               │  {ask_user}     │                                │               │
+   │               │◄────────────────┤                                │               │
+   │               │                 │                                │               │
+   │  question     │                 │                                │               │
+   │◄──────────────┤                 │                                │               │
+   │  answer       │                 │                                │               │
+   ├──────────────►│                 │                                │               │
+   │               │                 │                                │               │
+   │               │  run_workflow   │                                │               │
+   │               │  (thread_id,   │                                │               │
+   │               │   answer)      │                                │               │
+   │               ├────────────────►│                                │               │
+   │               │                 │                                │               │
+   │               │    ┌────────────┴────────────────────────────────┤               │
+   │               │    │  SEGMENT 2: Subagent block (author, etc.)  │               │
+   │               │    └────────────┬────────────────────────────────┤               │
+   │               │                 │                                │               │
+   │               │                 │  execution_env = "subagent"    │               │
+   │               │                 │  → interrupt(spawn_payload)    │               │
+   │               │                 │                                │               │
+   │               │  BlockOutput    │                                │               │
+   │               │  {spawn_subagent│                                │               │
+   │               │   task, state}  │                                │               │
+   │               │◄────────────────┤                                │               │
+   │               │                 │                                │               │
+   │               │  use_subagent(task + state_slice)                │               │
+   │               ├──────────────────────────────────────────────────────────────────►│
+   │               │                 │                                │               │
+   │               │                 │                 ┌──────────────┴───────────┐   │
+   │               │                 │                 │  Subagent has fresh ctx  │   │
+   │               │                 │                 │  + MCP access:           │   │
+   │               │                 │                 │  • kiro-cortex (RAG)     │   │
+   │               │                 │                 │  • OpenMemory            │   │
+   │               │                 │                 │  • Sequential Thinking   │   │
+   │               │                 │                 │  • fetch                 │   │
+   │               │                 │                 │  + built-in:             │   │
+   │               │                 │                 │  • read, write, shell    │   │
+   │               │                 │                 └──────────────┬───────────┘   │
+   │               │                 │                                │               │
+   │               │                 │                 OPA scope      │               │
+   │               │                 │                                │               │
+   │               │                 │    ┌─ subagent calls kiro-cortex MCP ──────────┤
+   │               │                 │    │  which internally does:                   │
+   │               │                 │    │                                            │
+   │               │                 │    │  OPA: scope(role, task, domain)            │
+   │               │                 ├───────────────►│               │               │
+   │               │                 │◄───────────────┤               │               │
+   │               │                 │    │                                            │
+   │               │                 │    │  RAG: cosine search(embed, filters)        │
+   │               │                 ├───────────────────────────────►│               │
+   │               │                 │◄──────────────────────────────┤│               │
+   │               │                 │    │                                            │
+   │               │                 │    └─ returns instructions ────────────────────►│
+   │               │                 │                                │               │
+   │               │                 │                                │               │
+   │               │                 │                                │               │
+   │               │                 │                                │    does work  │
+   │               │                 │                                │    (files,    │
+   │               │                 │                                │     etc.)     │
+   │               │                 │                                │               │
+   │               │                 │                                │               │
+   │               │  ◄──── summary only (context shed) ─────────────────────────────┤
+   │               │                 │                                │               │
+   │               │  run_workflow   │                                │               │
+   │               │  (thread_id,   │                                │               │
+   │               │   summary)     │                                │               │
+   │               ├────────────────►│                                │               │
+   │               │                 │                                │               │
+   │               │                 │  merge summary into state      │               │
+   │               │                 │  continue graph...             │               │
+   │               │                 │                                │               │
+   │               │  BlockOutput    │                                │               │
+   │               │  {complete}     │                                │               │
+   │               │◄────────────────┤                                │               │
+   │               │                 │                                │               │
+   │  "done: ..."  │                 │                                │               │
+   │◄──────────────┤                 │                                │               │
+   │               │                 │                                │               │
+
+
+Context Window Impact
+─────────────────────
+  Root Agent sees:          │  Subagent sees:
+  • run_workflow calls      │  • task description
+  • BlockOutput summaries   │  • fresh RAG from kiro-cortex
+  • HITL Q&A with user      │  • its own work
+  • subagent summaries      │  (all discarded after return)
+  ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─   │
+  Does NOT see:             │
+  • RAG instructions from   │
+    subagent blocks         │
+  • subagent's internal     │
+    reasoning               │
