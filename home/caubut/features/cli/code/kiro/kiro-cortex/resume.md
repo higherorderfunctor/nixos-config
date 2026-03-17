@@ -82,13 +82,12 @@ Validation checklist: **9/9 complete** — all 5 smoke tests pass.
 ## Pre-Phase 5 TODO
 
 - Rename `gap-analyze` block — name implies semantic/LLM analysis but it's a structural consistency checker (filesystem lint). Consider: `check-artifacts`, `lint-workflow`, `verify-structure`, or similar.
-- Multi-instruction YAML format + hierarchical disk layout. Current model is 1 instruction per YAML, 1 YAML per block — won't scale to millions. Need:
+- Multi-instruction YAML format + hierarchical disk layout (UC-MW-30, UC-MW-31). Current model is 1 instruction per YAML, 1 YAML per block — won't scale to millions. Need:
   - Array of instructions per YAML file (each gets its own vector in pgvector)
   - Directory hierarchy for organization: `instructions/<domain>/<topic>.yaml` (e.g., `effect/effect-stream.yaml`, `effect/effect-http-api.yaml`)
   - Seed.ts updated to walk directories recursively and parse multi-instruction files
   - Author block needs guidance on chunking: one concept per instruction for optimal retrieval
-  - Add use case(s) to ARCHITECTURE.md for instruction organization/scaling
-- Semantic gap analysis — real use-case-vs-implementation validation. Current gap-analyze is filesystem lint (rename it). The meta-workflow needs a separate capability that:
+- Semantic gap analysis + per-workflow arch docs (UC-MW-32, UC-MW-33). Current gap-analyze is filesystem lint (rename it). The meta-workflow needs a separate capability that:
   - Maintains an ARCHITECTURE.md per workflow (generated from interview + refinements over time)
   - Captures use cases during interview, stores them as testable assertions
   - Compares designed flow (blocks, pipeline, instructions) against documented use cases + arch
