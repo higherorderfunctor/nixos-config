@@ -26,6 +26,8 @@ const contentHash = (text: string): string =>
  */
 export const authorNode = async (state: MetaWorkflowStateType): Promise<Partial<MetaWorkflowStateType>> => {
   const instructions: Record<string, string> = {}
+  if (!state.blocks?.length) return { instructions }
+
   const dir = join(process.cwd(), "workflows", state.workflow_name, "instructions")
   await mkdir(dir, { recursive: true })
 

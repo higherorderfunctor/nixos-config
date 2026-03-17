@@ -1,4 +1,4 @@
-# kiro-cortex Resume — 2026-03-16
+# kiro-cortex Resume — 2026-03-17
 
 ## What Is This Project
 
@@ -40,7 +40,25 @@ Phase 4.5+ COMPLETE. UC-MW-29 DONE. 33 files, 0 errors, 0 warnings.
 6. [x] Verify prompt file loads correctly
 7. [x] Verify knowledgeBase resource indexes ARCHITECTURE.md
 8. [x] Verify λ icon appears (code intelligence active)
-9. [ ] Smoke test all 5 mode paths end-to-end (requires running services)
+9. [~] Smoke test all 5 mode paths — **3/5 pass, 2 fixed, pending restart verification**
+
+### Smoke Test Results (2026-03-17)
+
+**Finding:** Agent must pass `mode` (and `workflow_id` for targeted ops) explicitly to `run_workflow`. The route block is deterministic — dispatches on `state.mode`, not natural language.
+
+| Mode | Input | Route | Status |
+|------|-------|-------|--------|
+| Build | `{mode: "build"}` | → interview ✅ | ✅ pass |
+| Update | `{mode: "update", workflow_id: "..."}` | → interview (update prompt) ✅ | ✅ pass |
+| Self-Maint | (= update + meta-workflow) | → interview ✅ | ✅ pass |
+| Refine | `{mode: "refine", workflow_id: "..."}` | → author ✅ | ❌→✅ fixed |
+| Audit | `{mode: "audit"}` | → gap-analyze ✅ | ❌→✅ fixed |
+
+**Bugs fixed (pending MCP restart to verify):**
+- **author.ts**: Crashed on `state.blocks` undefined in refine mode (skips interview/decompose). Fix: early return guard `if (!state.blocks?.length)`.
+- **gap-analyze.ts**: Crashed on `path.join` with undefined `workflow_name` in audit-all mode. Fix: scan `workflows/` dir when no name provided; guard `state.blocks?.length`.
+
+**Note:** `bun build` to `dist/` is unnecessary — MCP config runs `bun run src/mcp.ts` directly.
 
 ## Items for Interaction-Analysis (Future)
 

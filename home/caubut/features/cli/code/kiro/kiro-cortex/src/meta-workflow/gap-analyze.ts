@@ -11,7 +11,7 @@
  * blocks (optimize adds its own, interview presents everything to user).
  */
 
-import { access, readFile } from "node:fs/promises"
+import { access, readdir, readFile } from "node:fs/promises"
 import { join } from "node:path"
 import { parse } from "yaml"
 import type { MetaWorkflowStateType } from "./state.js"
@@ -38,12 +38,38 @@ export const gapAnalyzeNode = async (
 ): Promise<Partial<MetaWorkflowStateType>> => {
   const findings: Array<GapFinding> = []
   const name = state.workflow_name
-  const dir = join(process.cwd(), "workflows", name)
+  const base = join(process.cwd(), "workflows")
 
-  // --- Filesystem artifact checks ---
-  if (!(await exists(dir))) {
-    findings.push({ severity: "error", category: "filesystem", message: `Workflow directory missing: workflows/${name}/` })
+  // ARCH: When no workflow_name, scan all workflow directories (audit-all mode).
+  const names = name
+    ? [name]
+    : await readdir(base, { withFileTypes: true })
+        .then((entries) => entries.filter((e) => e.isDirectory()).map((e) => e.name))
+        .catch(() => [] as string[])
+
+  if (names.length === 0) {
+    findings.push({ severity: "error", category: "filesystem", message: "No workflows found in workflows/" })
     return { gap_analysis_report: formatFindings(findings) }
+  }
+
+  for (const wfName of names) {
+    const dir = join(base, wfName)
+    await analyzeWorkflow(dir, wfName, state, findings)
+  }
+
+  return { gap_analysis_report: formatFindings(findings) }
+}
+
+/** Analyze a single workflow directory for gaps. */
+const analyzeWorkflow = async (
+  dir: string,
+  wfName: string,
+  state: MetaWorkflowStateType,
+  findings: Array<GapFinding>,
+): Promise<void> => {
+  if (!(await exists(dir))) {
+    findings.push({ severity: "error", category: "filesystem", message: `Workflow directory missing: workflows/${wfName}/` })
+    return
   }
 
   const workflowYaml = join(dir, "workflow.yaml")
@@ -70,7 +96,7 @@ export const gapAnalyzeNode = async (
     }
 
     // Check graph blocks vs pipeline steps (if blocks are in state)
-    if (state.blocks.length > 0) {
+    if (state.blocks?.length > 0) {
       const stateBlockIds = new Set(state.blocks.map((b) => b.id))
       for (const pid of pipelineBlockIds) {
         if (!stateBlockIds.has(pid))
@@ -82,8 +108,6 @@ export const gapAnalyzeNode = async (
       }
     }
   }
-
-  return { gap_analysis_report: formatFindings(findings) }
 }
 
 const formatFindings = (findings: Array<GapFinding>): string =>
