@@ -13,7 +13,7 @@
  * Graph structure (by mode):
  *   BUILD/UPDATE: route → interview → research → decompose → optimize → author → wire → promote → export → END
  *   REFINE:       route → author → END
- *   AUDIT:        route → gap-analyze → optimize → interview → research → decompose → optimize → author → wire → promote → export → END
+ *   AUDIT:        route → lint-artifacts → optimize → interview → research → decompose → optimize → author → wire → promote → export → END
  *   PROGRAMMATIC: route → decompose → optimize → author → wire → promote → export → END
  *
  * ARCH: export node (UC-MW-16/17) writes workflow.yaml metadata to disk for Nix reproducibility.
@@ -33,7 +33,7 @@ import { authorNode } from "./author.js"
 import { wireNode } from "./wire.js"
 import { promoteNode } from "./promote.js"
 import { exportNode } from "./export.js"
-import { gapAnalyzeNode } from "./gap-analyze.js"
+import { lintArtifactsNode } from "./lint-artifacts.js"
 
 /**
  * Build the meta-workflow StateGraph with PG checkpointer.
@@ -46,8 +46,8 @@ export const buildMetaWorkflow = async () => {
 
   const graph = new StateGraph(MetaWorkflowState)
     // --- Nodes ---
-    .addNode("route", routeNode, { ends: ["interview", "author", "gap-analyze", "decompose"] })
-    .addNode("gap-analyze", gapAnalyzeNode)
+    .addNode("route", routeNode, { ends: ["interview", "author", "lint-artifacts", "decompose"] })
+    .addNode("lint-artifacts", lintArtifactsNode)
     .addNode("interview", interviewNode)
     .addNode("research", researchNode)
     .addNode("decompose", decomposeNode)
@@ -68,8 +68,8 @@ export const buildMetaWorkflow = async () => {
     )
     .addEdge("research", "interview")
 
-    // --- gap-analyze → optimize (audit mode entry, UC-MW-29) ---
-    .addEdge("gap-analyze", "optimize")
+    // --- lint-artifacts → optimize (audit mode entry, UC-MW-29) ---
+    .addEdge("lint-artifacts", "optimize")
 
     // --- decompose → optimize → author (with redesign loop) ---
     .addEdge("decompose", "optimize")

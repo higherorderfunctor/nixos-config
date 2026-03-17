@@ -23,7 +23,7 @@ All codified knowledge (steering rules, coding standards, repo conventions, work
   - 4.4: MVP Meta-Workflow ✅
   - Pre-4.5: OPA per-block injection ✅
   - 4.5: Meta-Workflow Completion ✅
-  - 4.5+: Segment model, NextStep, YAML export, gap-analyze ✅
+  - 4.5+: Segment model, NextStep, YAML export, lint-artifacts ✅
 - Phase 5: Repo-Analysis (next — built by meta-workflow)
 - Phase 6: Web Dashboard (read-only)
 

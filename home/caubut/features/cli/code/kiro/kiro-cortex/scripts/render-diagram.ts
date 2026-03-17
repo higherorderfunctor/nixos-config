@@ -5,7 +5,7 @@
 //   BUILD:        route → interview ↔ research → decompose ↔ optimize → author → wire → promote → END
 //   UPDATE:       route → interview ↔ research → decompose ↔ optimize → author → wire → promote → END
 //   REFINE:       route → interview → author → END
-//   AUDIT:        route → gap-analyze → optimize → interview → decompose → author → wire → promote → END
+//   AUDIT:        route → lint-artifacts → optimize → interview → decompose → author → wire → promote → END
 //   PROGRAMMATIC: route → decompose ↔ optimize → author → wire → promote → END (FAIL if invalid input)
 
 const BOX_W = 14
@@ -19,7 +19,7 @@ const nodes: Node[] = [
   { id: "START",       row: 0, col: 1 },
   { id: "route",       row: 1, col: 1 },
   { id: "interview",   row: 2, col: 0 },
-  { id: "gap-analyze", row: 2, col: 1 },
+  { id: "lint-artifacts", row: 2, col: 1 },
   { id: "decompose-p", label: "decompose", row: 2, col: 2 },
   { id: "research",    row: 3, col: 0 },
   { id: "optimize-a",  label: "optimize",  row: 3, col: 1 },
@@ -95,7 +95,7 @@ g.put(px, y1, "┐")
 for (let y = y1 + 1; y < topY(2); y++) g.put(px, y, "│")
 g.put(px, topY(2), "▼")
 
-// Center: audit → gap-analyze (straight down)
+// Center: audit → lint-artifacts (straight down)
 for (let y = botY(1) + 1; y < topY(2); y++) g.put(rx, y, "│")
 g.put(rx, topY(2), "▼")
 
@@ -118,7 +118,7 @@ vDown("wire", "promote")
 vDown("promote", "END")
 
 // --- Audit path ---
-vDown("gap-analyze", "optimize-a")
+vDown("lint-artifacts", "optimize-a")
 vDown("optimize-a", "interview-a")
 vDown("interview-a", "decompose-a")
 

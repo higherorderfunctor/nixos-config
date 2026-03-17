@@ -1,8 +1,8 @@
 /**
- * @module meta-workflow/gap-analyze
- * Gap analysis block — checks cross-system completeness for a workflow (UC-MW-29).
+ * @module meta-workflow/lint-artifacts
+ * Lint-artifacts block — checks cross-system structural completeness for a workflow (UC-MW-29).
  *
- * ARCH: Broader than optimize (which checks instruction quality). Gap-analyze checks:
+ * ARCH: Broader than optimize (which checks instruction quality). Lint-artifacts checks:
  * - Filesystem artifacts: workflow.yaml, pipeline.yaml, instruction YAMLs
  * - Pipeline ↔ instruction file consistency
  * - Block coverage (expected blocks vs actual files on disk)
@@ -31,9 +31,9 @@ const exists = (path: string): Promise<boolean> =>
  * Analyze a workflow for cross-system gaps.
  *
  * ARCH: Uses Node.js fs directly (same pattern as export.ts, author.ts).
- * Deterministic — no interrupt. Produces gap_analysis_report for downstream consumption.
+ * Deterministic — no interrupt. Produces lint_report for downstream consumption.
  */
-export const gapAnalyzeNode = async (
+export const lintArtifactsNode = async (
   state: MetaWorkflowStateType,
 ): Promise<Partial<MetaWorkflowStateType>> => {
   const findings: Array<GapFinding> = []
@@ -49,7 +49,7 @@ export const gapAnalyzeNode = async (
 
   if (names.length === 0) {
     findings.push({ severity: "error", category: "filesystem", message: "No workflows found in workflows/" })
-    return { gap_analysis_report: formatFindings(findings) }
+    return { lint_report: formatFindings(findings) }
   }
 
   for (const wfName of names) {
@@ -57,7 +57,7 @@ export const gapAnalyzeNode = async (
     await analyzeWorkflow(dir, wfName, state, findings)
   }
 
-  return { gap_analysis_report: formatFindings(findings) }
+  return { lint_report: formatFindings(findings) }
 }
 
 /** Analyze a single workflow directory for gaps. */

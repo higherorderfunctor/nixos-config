@@ -21,7 +21,7 @@ Validation checklist: **9/9 complete** — all 5 smoke tests pass.
 | Conventions | done | Domain folders, Context.Tag, Schema.transform, .addError, layer exports, Config for env, Effect.log* for logging |
 | 4.5 | done | decompose, research, optimize, promote + audit/programmatic modes |
 | 4.5+ | done | Segment model, NextStep union, UC-MW-26/27/28, hook conventions, artifact templates |
-| UC-MW-29 | done | Gap-analyze block: cross-system completeness checks, wired into audit mode |
+| UC-MW-29 | done | Lint-artifacts block: cross-system structural completeness checks, wired into audit mode |
 | Cleanup | done | MCP rewrite to @effect/ai (stdio, no HTTP), tagged WorkflowError, unused deps removed, YAML export complete |
 
 ## Meta-Workflow Self-Maintenance
@@ -53,11 +53,11 @@ Validation checklist: **9/9 complete** — all 5 smoke tests pass.
 | Update | `{mode: "update", workflow_id: "..."}` | → interview (update prompt) ✅ | ✅ pass |
 | Self-Maint | (= update + meta-workflow) | → interview ✅ | ✅ pass |
 | Refine | `{mode: "refine", workflow_id: "..."}` | → author ✅ | ✅ pass |
-| Audit | `{mode: "audit"}` | → gap-analyze → optimize ✅ | ✅ pass |
+| Audit | `{mode: "audit"}` | → lint-artifacts → optimize ✅ | ✅ pass |
 
 **Bugs fixed:**
 - **author.ts** (57fdb69): Crashed on `state.blocks` undefined in refine mode. Fix: early return guard.
-- **gap-analyze.ts** (57fdb69): Crashed on `path.join` with undefined `workflow_name` in audit-all mode. Fix: scan `workflows/` dir when no name; guard `state.blocks?.length`.
+- **gap-analyze.ts** (57fdb69): Renamed to `lint-artifacts.ts`. Originally crashed on `path.join` with undefined `workflow_name` in audit-all mode. Fix: scan `workflows/` dir when no name; guard `state.blocks?.length`.
 - **optimize.ts** (91cf496): Crashed on `state.blocks.length` in audit mode (no blocks in state). Fix: early return guard `if (!state.blocks?.length)`.
 
 **Note:** `bun build` to `dist/` is unnecessary — MCP config runs `bun run src/mcp.ts` directly.
@@ -81,13 +81,13 @@ Validation checklist: **9/9 complete** — all 5 smoke tests pass.
 
 ## Pre-Phase 5 TODO
 
-- Rename `gap-analyze` block — name implies semantic/LLM analysis but it's a structural consistency checker (filesystem lint). Consider: `check-artifacts`, `lint-workflow`, `verify-structure`, or similar.
+- ~~Rename `gap-analyze` block~~ — DONE: renamed to `lint-artifacts`. Name now reflects it's a structural consistency checker (filesystem lint), not semantic analysis.
 - Multi-instruction YAML format + hierarchical disk layout (UC-MW-30, UC-MW-31). Current model is 1 instruction per YAML, 1 YAML per block — won't scale to millions. Need:
   - Array of instructions per YAML file (each gets its own vector in pgvector)
   - Directory hierarchy for organization: `instructions/<domain>/<topic>.yaml` (e.g., `effect/effect-stream.yaml`, `effect/effect-http-api.yaml`)
   - Seed.ts updated to walk directories recursively and parse multi-instruction files
   - Author block needs guidance on chunking: one concept per instruction for optimal retrieval
-- Semantic gap analysis + per-workflow arch docs (UC-MW-32, UC-MW-33). Current gap-analyze is filesystem lint (rename it). The meta-workflow needs a separate capability that:
+- Semantic gap analysis + per-workflow arch docs (UC-MW-32, UC-MW-33). Current lint-artifacts is filesystem lint. The meta-workflow needs a separate capability that:
   - Maintains an ARCHITECTURE.md per workflow (generated from interview + refinements over time)
   - Captures use cases during interview, stores them as testable assertions
   - Compares designed flow (blocks, pipeline, instructions) against documented use cases + arch
@@ -120,7 +120,7 @@ src/
   embedding/{index,Embedding}.ts
   instruction/{index,Repo,Loader,Error}.ts
   workflow/{index,Block,Registry,Executor,Pipeline,Workflow}.ts
-  meta-workflow/{state,route,interview,research,decompose,optimize,gap-analyze,author,wire,promote,export,seed,graph}.ts
+  meta-workflow/{state,route,interview,research,decompose,optimize,lint-artifacts,author,wire,promote,export,seed,graph}.ts
   Sql.ts, mcp.ts, index.ts (doc-only)
   migrations/{0001_init,0002_add_instruction_columns,0003_add_content_hash,_schema.sql}.ts
 scripts/
@@ -128,7 +128,7 @@ scripts/
 workflows/
   meta-workflow/
     workflow.yaml, pipeline.yaml
-    instructions/{route,interview,research,decompose,optimize,author,wire,promote,export,gap-analyze}.yaml
+    instructions/{route,interview,research,decompose,optimize,author,wire,promote,export,lint-artifacts}.yaml
 policies/
   access.rego, scoping.rego, isolation.rego
 ```

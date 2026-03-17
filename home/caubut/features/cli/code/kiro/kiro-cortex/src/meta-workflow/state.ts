@@ -77,10 +77,10 @@ export const MetaWorkflowState = Annotation.Root({
   /** Whether interview wants research before proceeding. */
   needs_research: Annotation<boolean>,
 
-  // --- Gap analysis fields (UC-MW-29) ---
+  // --- Lint fields (UC-MW-29) ---
 
-  /** Gap analysis report — cross-system completeness findings. */
-  gap_analysis_report: Annotation<string>,
+  /** Lint-artifacts report — cross-system structural completeness findings. */
+  lint_report: Annotation<string>,
 
   // --- Decompose / optimize fields (4.5) ---
 

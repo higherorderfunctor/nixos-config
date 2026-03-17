@@ -3,7 +3,7 @@ name: "meta-workflow"
 description: "Build, update, and refine workflows"
 steps:
   - block_id: "route"
-  - block_id: "gap-analyze"
+  - block_id: "lint-artifacts"
   - block_id: "interview"
   - block_id: "research"
   - block_id: "decompose"

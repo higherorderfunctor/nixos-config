@@ -7,7 +7,7 @@ text: |
   - refine: user wants to improve instructions for a specific block without changing structure
   - audit: user wants to scan workflows for gaps, bloat, spaghetti, and DRY violations
   - programmatic: another workflow is calling meta-workflow with structured input
-  Route to interview for build/update, gap-analyze for audit, decompose for programmatic, or author for refine.
+  Route to interview for build/update, lint-artifacts for audit, decompose for programmatic, or author for refine.
 metadata:
   agent_role: "workflow-builder"
   task_type: "routing"

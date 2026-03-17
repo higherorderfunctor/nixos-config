@@ -48,7 +48,7 @@ const wordSimilarity = (a: string, b: string): number => {
  * @returns Partial state with optimization_report and needs_redesign flag.
  */
 export function optimizeNode(state: MetaWorkflowStateType): Partial<MetaWorkflowStateType> {
-  // ARCH: In audit mode, optimize runs after gap-analyze with no blocks in state.
+  // ARCH: In audit mode, optimize runs after lint-artifacts with no blocks in state.
   if (!state.blocks?.length) {
     return { optimization_report: "No blocks to analyze.", needs_redesign: false }
   }
