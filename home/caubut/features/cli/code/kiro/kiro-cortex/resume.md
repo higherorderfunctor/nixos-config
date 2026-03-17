@@ -79,6 +79,10 @@ Validation checklist: **9/9 complete** — all 5 smoke tests pass.
 
 **Resume prompt:** "Read resume.md. We were reviewing the ARCHITECTURE.md flow diagram. The renderer at scripts/render-diagram.ts produces a corrected diagram. Run it to see current output. We need to: (1) walk through each mode path end-to-end to verify it matches the use cases in ARCHITECTURE.md, (2) check if the refine short-circuit (interview → author, skipping research/decompose/optimize) is clear in the diagram, (3) once verified, replace the Flow Diagram section in ARCHITECTURE.md with the rendered output, (4) commit and move to Phase 5."
 
+## Pre-Phase 5 TODO
+
+- Rename `gap-analyze` block — name implies semantic/LLM analysis but it's a structural consistency checker (filesystem lint). Consider: `check-artifacts`, `lint-workflow`, `verify-structure`, or similar.
+
 ## Items for Interaction-Analysis (Future)
 
 - F1: "workflow-audit" skill — periodic optimization
