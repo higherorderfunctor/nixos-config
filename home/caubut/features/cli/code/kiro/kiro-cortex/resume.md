@@ -40,7 +40,7 @@ Phase 4.5+ COMPLETE. UC-MW-29 DONE. 33 files, 0 errors, 0 warnings.
 6. [x] Verify prompt file loads correctly
 7. [x] Verify knowledgeBase resource indexes ARCHITECTURE.md
 8. [x] Verify λ icon appears (code intelligence active)
-9. [~] Smoke test all 5 mode paths — **3/5 pass, 2 fixed, pending restart verification**
+9. [x] Smoke test all 5 mode paths — **5/5 pass** (57fdb69, 91cf496)
 
 ### Smoke Test Results (2026-03-17)
 
@@ -51,12 +51,13 @@ Phase 4.5+ COMPLETE. UC-MW-29 DONE. 33 files, 0 errors, 0 warnings.
 | Build | `{mode: "build"}` | → interview ✅ | ✅ pass |
 | Update | `{mode: "update", workflow_id: "..."}` | → interview (update prompt) ✅ | ✅ pass |
 | Self-Maint | (= update + meta-workflow) | → interview ✅ | ✅ pass |
-| Refine | `{mode: "refine", workflow_id: "..."}` | → author ✅ | ❌→✅ fixed |
-| Audit | `{mode: "audit"}` | → gap-analyze ✅ | ❌→✅ fixed |
+| Refine | `{mode: "refine", workflow_id: "..."}` | → author ✅ | ✅ pass |
+| Audit | `{mode: "audit"}` | → gap-analyze → optimize ✅ | ✅ pass |
 
-**Bugs fixed (pending MCP restart to verify):**
-- **author.ts**: Crashed on `state.blocks` undefined in refine mode (skips interview/decompose). Fix: early return guard `if (!state.blocks?.length)`.
-- **gap-analyze.ts**: Crashed on `path.join` with undefined `workflow_name` in audit-all mode. Fix: scan `workflows/` dir when no name provided; guard `state.blocks?.length`.
+**Bugs fixed:**
+- **author.ts** (57fdb69): Crashed on `state.blocks` undefined in refine mode. Fix: early return guard.
+- **gap-analyze.ts** (57fdb69): Crashed on `path.join` with undefined `workflow_name` in audit-all mode. Fix: scan `workflows/` dir when no name; guard `state.blocks?.length`.
+- **optimize.ts** (91cf496): Crashed on `state.blocks.length` in audit mode (no blocks in state). Fix: early return guard `if (!state.blocks?.length)`.
 
 **Note:** `bun build` to `dist/` is unnecessary — MCP config runs `bun run src/mcp.ts` directly.
 
