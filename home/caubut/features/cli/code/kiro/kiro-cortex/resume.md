@@ -8,7 +8,8 @@ kiro-cortex is a workflow orchestration platform that replaces steering files wi
 
 Branch: chore/save-point
 Phase 4.5+ COMPLETE. UC-MW-29 DONE. 33 files, 0 errors, 0 warnings.
-**Next: Phase 5 — Repo-Analysis (first workflow built by meta-workflow).**
+Validation checklist: **9/9 complete** — all 5 smoke tests pass.
+**Next: Review ARCHITECTURE.md flow diagram against use cases, then Phase 5.**
 
 ### What's Built (all phases)
 
@@ -61,6 +62,23 @@ Phase 4.5+ COMPLETE. UC-MW-29 DONE. 33 files, 0 errors, 0 warnings.
 
 **Note:** `bun build` to `dist/` is unnecessary — MCP config runs `bun run src/mcp.ts` directly.
 
+### Flow Diagram Review (WIP — 2026-03-17)
+
+**Problem:** Hand-drawn ASCII flow diagram in ARCHITECTURE.md had hallucinated lines, inconsistent arrows, and misaligned mode paths vs documented use cases.
+
+**Approach:** Built `scripts/render-diagram.ts` — a grid-based deterministic ASCII renderer (Bun + TS, zero deps). Nodes placed on explicit grid positions, edges drawn with Manhattan routing. No auto-layout. Source of truth for the diagram.
+
+**Tooling evaluated:** `mermaid-ascii` (Go, 1.3k stars, active) — good for simple graphs but auto-layout fails on complex multi-branch convergence. `graph-easy` (Perl) — abandoned 16 years. Decision: custom renderer for manual layout control.
+
+**Misalignments found (diagram vs ARCHITECTURE.md Mode Paths):**
+1. REFINE: diagram showed route → author → END. Correct: route → interview → author → END
+2. AUDIT: diagram dead-ended at decompose. Correct: full path through author → wire → promote → END
+3. PROGRAMMATIC: diagram only showed FAIL case. Correct: decompose → optimize → author → wire → promote → END (FAIL only on invalid input)
+
+**Current state:** Renderer produces correct 3-column layout (build|audit|programmatic) with convergence into shared tail. WIP — need to review full flow end-to-end against use cases before replacing ARCHITECTURE.md diagram.
+
+**Resume prompt:** "Read resume.md. We were reviewing the ARCHITECTURE.md flow diagram. The renderer at scripts/render-diagram.ts produces a corrected diagram. Run it to see current output. We need to: (1) walk through each mode path end-to-end to verify it matches the use cases in ARCHITECTURE.md, (2) check if the refine short-circuit (interview → author, skipping research/decompose/optimize) is clear in the diagram, (3) once verified, replace the Flow Diagram section in ARCHITECTURE.md with the rendered output, (4) commit and move to Phase 5."
+
 ## Items for Interaction-Analysis (Future)
 
 - F1: "workflow-audit" skill — periodic optimization
@@ -88,6 +106,8 @@ src/
   meta-workflow/{state,route,interview,research,decompose,optimize,gap-analyze,author,wire,promote,export,seed,graph}.ts
   Sql.ts, mcp.ts, index.ts (doc-only)
   migrations/{0001_init,0002_add_instruction_columns,0003_add_content_hash,_schema.sql}.ts
+scripts/
+  render-diagram.ts  # deterministic ASCII flow diagram renderer
 workflows/
   meta-workflow/
     workflow.yaml, pipeline.yaml
