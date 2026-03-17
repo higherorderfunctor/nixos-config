@@ -100,6 +100,7 @@ Validation checklist: **9/9 complete** — all 5 smoke tests pass.
   - Mirrors how we work now: arch doc is source of truth, diagram/flow must align with it
   - Could be a new block (e.g., `validate`) or an LLM-powered mode of the existing audit path
   - Interview refinements accumulate in the arch doc — not lost between sessions
+- Load/validation test. Seed pgvector with ~100K instructions across multiple domains/repos. Run a complex multi-block workflow with mocked HITL (auto-answer interrupts). Validate: (1) OPA scoping returns correct filtered set at scale, (2) RAG retrieval stays relevant — no context drift/dilution from unrelated instructions bleeding in, (3) block executor injects only scoped instructions, (4) subagent context shedding works — parent context doesn't grow with RAG payload. Goal: prove the OPA→RAG pipeline holds at scale before building real workflows on top of it.
 
 ## Items for Interaction-Analysis (Future)
 
