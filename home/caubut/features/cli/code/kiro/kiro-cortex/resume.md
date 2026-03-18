@@ -10,7 +10,7 @@ Branch: chore/save-point
 Phase 4.5+ COMPLETE. UC-MW-29 DONE. 34 files, 0 errors, 0 warnings.
 Validation checklist: **9/9 complete** — all 5 smoke tests pass.
 
-**5.1 (flow redesign) COMPLETE. Next: 5.2 interview (validate block design).**
+**5.1 (flow redesign) COMPLETE. Next: 5.3 interview (validate block design).**
 
 ### What's Built (all phases)
 
@@ -143,7 +143,7 @@ route → [interview ↔ research] → decompose → optimize → author → wir
 
 ### 5.2: Subagent Design (INTERVIEW → IMPLEMENT)
 
-**Status: INTERVIEW IN PROGRESS**
+**Status: INTERVIEW COMPLETE — implementation deferred to 5.6 load test**
 
 Subagent is a general execution pattern (context reset). Decisions here inform how validate and other blocks get executed.
 
@@ -167,14 +167,18 @@ Subagent is a general execution pattern (context reset). Decisions here inform h
 
 #### Decisions
 
-_(filled in as interview progresses)_
+11. _(moved to 5.3 — validate-specific, resolved there)_
+12. **PER-BLOCK** — One subagent per autonomous block. Each block has its own OPA context; grouping into segments would mix contexts and defeat isolation.
+13. **NO SPECIAL CASE** — Programmatic mode runs the same graph. Each autonomous block spawns its own subagent. No HITL interrupts, but subagent-per-block pattern is identical.
+14. **DIRECT MCP** — Subagent calls kiro-cortex MCP directly for OPA-scoped instructions. Root doesn't pre-fetch. Fresh context + own RAG query = maximum isolation.
 
-#### Implementation (after interview)
-
-- Update workflow.yaml execution_env per block
-- Generate subagent agent configs
-- Wire subagent spawn into block executor
-- Smoke test subagent paths
+**Overall design: Option B — Generic subagent for context reset.**
+- One generic subagent config. Purpose: fresh context window.
+- Specialization comes from OPA scoping + task description, not agent config.
+- Root agent blocks (HITL): route (inline), interview, research, promote.
+- Subagent candidates (autonomous): decompose, optimize, author, wire, validate, export.
+- Implemented as `execution_env: "subagent"` flag on BlockDef — toggle per-block without rewiring graph.
+- Start inline, flip to subagent as scale demands (validated in 5.6 load test).
 
 ### 5.3: Validate Block (INTERVIEW → IMPLEMENT)
 
