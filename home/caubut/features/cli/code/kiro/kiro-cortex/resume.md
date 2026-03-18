@@ -79,6 +79,7 @@ Phase 6: Repo-Analysis
    - **Automatic (every flow)**: optimize block checks the current workflow for bloat, spaghetti, local DRY during every create/update. Part of the unified flow.
    - **Manual trigger (user-prompted)**: cross-workflow DRY analysis — scanning all workflows for patterns to abstract into shared segments. User prompts this explicitly. HITL required before creating any new shared patterns.
    - No separate audit mode. Local optimization is automatic. Cross-workflow refactoring is on-demand.
+4. **DROP MODE** — Remove `mode` field from state. Route uses context detection: `workflow_id` → update, `workflow_id` + `block_id` → refine, `structured_input` → programmatic, neither → build. No redundant flag.
 
 #### Proposed Unified Flow
 
