@@ -182,11 +182,11 @@ Subagent is a general execution pattern (context reset). Decisions here inform h
 
 ### 5.3: Validate Block (INTERVIEW → IMPLEMENT)
 
-**Status: BLOCKED on 5.2**
+**Status: INTERVIEW COMPLETE — ready for implementation**
 
-Depends on 5.2 — subagent decisions inform how validate executes (root vs subagent, escalation path).
+5.2 complete — subagent decisions (Option B, per-block, direct MCP) inform validate execution.
 
-#### Interview Questions (4)
+#### Interview Questions (5)
 
 7. UC-MW-32 (per-workflow arch docs): created during interview? Validate checks against it?
 8. UC-MW-33 (semantic gap analysis): is this the validate block, or a sub-step within it?
@@ -197,10 +197,18 @@ Depends on 5.2 — subagent decisions inform how validate executes (root vs suba
     - Cross-workflow DRY (UC-MW-10/13) — currently in optimize
     - Scoped re-optimize: can this workflow reuse global patterns? Context budget? (UC-MW-14)
     - Semantic gap: use cases vs implementation coverage (UC-MW-33)
+11. Validate as subagent: autonomous loop that can interrupt back to root? Or stays in root agent?
 
 #### Decisions
 
-_(filled in as interview progresses)_
+7. **INTERVIEW → ARCH DOC** — Interview captures architecture doc, stored at `docs/architecture.yaml` in the workflow root. Validate checks implementation against it. Arch doc lives with the agent package (not centrally). Packaging split (kiro-cortex as shared lib, agent packages self-contained) deferred to Phase 6 when multi-repo becomes real — validate just needs a workflow root path.
+8. **SUB-CHECK INSIDE VALIDATE** — Semantic gap analysis is tier 3 within validate, not a separate block. Validate runs as subagent (Option B), loops through tiers with fresh RAG queries per check. Sequential thinking pattern handles context pressure within the subagent. Returns condensed result to root.
+9. **CONFIDENCE-BASED RESOLUTION** — Validate fixes what it's confident about (any tier), re-validates. Low confidence: interactive → raises to interview (HITL), programmatic → fails with explanation (UC-MW-37). Tier distinction is about check type (structural/quality/semantic), not fix aggressiveness. Confidence drives escalation, not tier number.
+10. **CHECK LIST CONFIRMED** —
+    - Tier 1 (structural): filesystem artifacts exist, pipeline↔block consistency, YAML schema validity
+    - Tier 2 (quality): instruction bloat per block (UC-MW-8), local DRY, scoped re-optimize against global patterns (UC-MW-14)
+    - Tier 3 (semantic): arch doc use cases vs block coverage (UC-MW-33), cross-workflow DRY (UC-MW-10/13, user-prompted only)
+11. **YES, SUBAGENT** — Validate runs as subagent (Option B). Autonomous, multiple RAG queries per check, returns condensed result. Escalation: subagent returns "low confidence on X" → root routes to interview. Poster child for context reset pattern.
 
 #### Implementation (after interview)
 
