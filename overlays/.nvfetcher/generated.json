@@ -49,11 +49,11 @@
     "pinned": false,
     "src": {
       "name": "bruno-x86_64-linux.zip",
-      "sha256": "sha256-NgzIOmhmPU3Y3nOFZ4zsHdynEkmoopaz0p5ncae76MM=",
+      "sha256": "sha256-A0M7TwmY8DJmKzcnBaX/ZvUT/0qrv8X00smT4Hyt2E8=",
       "type": "url",
-      "url": "https://github.com/usebruno/bruno/releases/download/v3.1.4/bruno_3.1.4_amd64_linux.deb"
+      "url": "https://github.com/usebruno/bruno/releases/download/v3.2.0/bruno_3.2.0_amd64_linux.deb"
     },
-    "version": "3.1.4"
+    "version": "3.2.0"
   },
   "btop": {
     "cargoLock": null,
@@ -258,11 +258,11 @@
     "pinned": false,
     "src": {
       "name": null,
-      "sha256": "sha256-yFmEMuGOiE0Jp8qPYvxbIx8kJ7KlxgN0tN0m3kn3ykE=",
+      "sha256": "sha256-vT0Q99uUnzWW9CxvAK6DeMOC1kPOQVoXwZWIcCja8hQ=",
       "type": "url",
-      "url": "https://desktop-release.q.us-east-1.amazonaws.com/1.27.2/kirocli-x86_64-linux.tar.gz"
+      "url": "https://desktop-release.q.us-east-1.amazonaws.com/1.27.3/kirocli-x86_64-linux.tar.gz"
     },
-    "version": "1.27.2"
+    "version": "1.27.3"
   },
   "kiro-gateway": {
     "cargoLock": null,
@@ -412,6 +412,27 @@
       "type": "github"
     },
     "version": "v1.1.4"
+  },
+  "sympy-mcp": {
+    "cargoLock": null,
+    "date": null,
+    "extract": null,
+    "name": "sympy-mcp",
+    "passthru": null,
+    "pinned": false,
+    "src": {
+      "deepClone": false,
+      "fetchSubmodules": false,
+      "leaveDotGit": false,
+      "name": null,
+      "owner": "sdiehl",
+      "repo": "sympy-mcp",
+      "rev": "0.1.1",
+      "sha256": "sha256-rx/ERsLs9R1WI10DVaj/I/E9MUBA2R7pi6UQdwcYuWI=",
+      "sparseCheckout": [],
+      "type": "github"
+    },
+    "version": "0.1.1"
   },
   "tree-sitter-cql": {
     "cargoLock": null,

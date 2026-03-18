@@ -194,3 +194,7 @@ fetch.git = "https://github.com/jwadow/kiro-gateway.git"
 [mcp-server-fetch]
 src.pypi = "mcp-server-fetch"
 fetch.pypi = "mcp_server_fetch"
+
+[sympy-mcp]
+src.github = "sdiehl/sympy-mcp"
+fetch.github = "sdiehl/sympy-mcp"

@@ -213,6 +213,10 @@
         command = "${pkgs.nodejs}/bin/node";
         args = ["${git-analytics-mcp-server}/lib/git-analytics-mcp-server/dist/index.js"];
       };
+      sympy = {
+        command = "${pkgs.sympy-mcp}/bin/sympy-mcp";
+        args = [];
+      };
     };
   };
   # ── Default agent configuration ────────────────────────────────
@@ -254,6 +258,7 @@
       "@nixos"
       "@kiro-cortex"
       "@sequential-thinking"
+      "@sympy"
     ];
     toolsSettings = {
       execute_bash = {

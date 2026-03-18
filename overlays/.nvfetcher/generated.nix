@@ -33,11 +33,11 @@
   };
   bruno-deb-x86_64-linux = {
     pname = "bruno-deb-x86_64-linux";
-    version = "3.1.4";
+    version = "3.2.0";
     src = fetchurl {
-      url = "https://github.com/usebruno/bruno/releases/download/v3.1.4/bruno_3.1.4_amd64_linux.deb";
+      url = "https://github.com/usebruno/bruno/releases/download/v3.2.0/bruno_3.2.0_amd64_linux.deb";
       name = "bruno-x86_64-linux.zip";
-      sha256 = "sha256-NgzIOmhmPU3Y3nOFZ4zsHdynEkmoopaz0p5ncae76MM=";
+      sha256 = "sha256-A0M7TwmY8DJmKzcnBaX/ZvUT/0qrv8X00smT4Hyt2E8=";
     };
   };
   btop = {
@@ -159,10 +159,10 @@
   };
   kiro-cli = {
     pname = "kiro-cli";
-    version = "1.27.2";
+    version = "1.27.3";
     src = fetchurl {
-      url = "https://desktop-release.q.us-east-1.amazonaws.com/1.27.2/kirocli-x86_64-linux.tar.gz";
-      sha256 = "sha256-yFmEMuGOiE0Jp8qPYvxbIx8kJ7KlxgN0tN0m3kn3ykE=";
+      url = "https://desktop-release.q.us-east-1.amazonaws.com/1.27.3/kirocli-x86_64-linux.tar.gz";
+      sha256 = "sha256-vT0Q99uUnzWW9CxvAK6DeMOC1kPOQVoXwZWIcCja8hQ=";
     };
   };
   kiro-gateway = {
@@ -249,6 +249,17 @@
       rev = "v1.1.4";
       fetchSubmodules = false;
       sha256 = "sha256-0p5aFzaddgSKM62R5Y0K10eCNo9CJkGuJZBhJ2cUF/w=";
+    };
+  };
+  sympy-mcp = {
+    pname = "sympy-mcp";
+    version = "0.1.1";
+    src = fetchFromGitHub {
+      owner = "sdiehl";
+      repo = "sympy-mcp";
+      rev = "0.1.1";
+      fetchSubmodules = false;
+      sha256 = "sha256-rx/ERsLs9R1WI10DVaj/I/E9MUBA2R7pi6UQdwcYuWI=";
     };
   };
   tree-sitter-cql = {
