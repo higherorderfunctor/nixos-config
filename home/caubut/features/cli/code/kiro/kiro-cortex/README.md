@@ -24,6 +24,12 @@ All codified knowledge (steering rules, coding standards, repo conventions, work
   - Pre-4.5: OPA per-block injection ✅
   - 4.5: Meta-Workflow Completion ✅
   - 4.5+: Segment model, NextStep, YAML export, lint-artifacts ✅
+- Pre-Phase 5: Flow Redesign + Subagent Design 🔄
+  - Pre-5.1: Unified flow + validate block + subagent design (NEEDS INTERVIEW)
+  - Pre-5.2: Implementation (graph.ts, blocks, state)
+  - Pre-5.3: Multi-instruction YAML + hierarchical layout (UC-MW-30/31)
+  - Pre-5.4: Load/validation test at 100K instructions
+  - Pre-5.5: Documentation finalization
 - Phase 5: Repo-Analysis (next — built by meta-workflow)
 - Phase 6: Web Dashboard (read-only)
 

@@ -592,19 +592,71 @@ More reusable patterns will emerge as workflows are built. The meta-workflow sho
 - `decompose ↔ optimize` — optimize may reject, send back for restructuring
 - `decompose → interview` — user may want to refine goals after seeing proposed decomposition
 
-### Mode Paths
+### Mode Paths (current — being replaced by unified flow, see below)
 
-**BUILD** (UC-MW-1, 5, 6): route → interview ↔ research → decompose ↔ optimize → author → wire → promote → END
+**BUILD** (UC-MW-1, 5, 6): route → interview ↔ research → decompose ↔ optimize → author → wire → promote → export → END
 
-**UPDATE** (UC-MW-2): route (load existing) → interview ↔ research → decompose (modify) ↔ optimize → author → wire → promote → END
+**UPDATE** (UC-MW-2): route (load existing) → interview ↔ research → decompose (modify) ↔ optimize → author → wire → promote → export → END
 
-**REFINE** (UC-MW-3): route (load block) → interview (what's wrong) → author (rewrite) → END
+**REFINE** (UC-MW-3): route → author → END _(Note: ARCHITECTURE.md previously said route → interview → author → END but code routes directly to author. Moot — refine collapses into adaptive interview in unified flow.)_
 
-**AUDIT** (UC-MW-13, UC-MW-29): route → lint-artifacts → optimize (all workflows in repo) → interview (present findings) → decompose (restructure approved items) → author → wire → promote → END
+**AUDIT** (UC-MW-13, UC-MW-29): route → lint-artifacts → optimize → interview → decompose → author → wire → promote → export → END _(Note: has infinite loop bug — optimize routes back to interview after decompose. Moot — audit mode eliminated in unified flow.)_
 
-**PROGRAMMATIC** (UC-MW-4, 12): route (validate structured input) → decompose (skip interview) ↔ optimize → author → wire → promote → END. Fails if input lacks problem statement or use cases.
+**PROGRAMMATIC** (UC-MW-4, 12): route (validate structured input) → decompose ↔ optimize → author → wire → promote → export → END. Fails if input lacks problem statement or use cases.
 
 **SCOPED RE-OPTIMIZE** (UC-MW-14): A calling workflow (e.g., repo-analysis) triggers meta-workflow to re-optimize its full workflow scope. Scoped to the calling workflow, not all workflows. Baked into the calling workflow at design time.
+
+### PROPOSED: Unified Flow (Pre-Phase 5 Redesign — pending interview)
+
+**Status: DESIGN PHASE — requires interview to resolve open questions before implementation.**
+
+Collapse 6 modes into 1 flow with 2 entry points. Interview adapts based on context. Validate block runs before promote on every flow.
+
+```
+route → [interview ↔ research] → decompose → optimize → author → wire → validate ↔ [interview] → promote → export → END
+                                    ↑                                         │
+                                    └── programmatic enters here              │
+                                                                  raises discrepancies
+                                                                  back to interview
+```
+
+**Route (context-based, no mode switch):**
+- `workflow_id` provided → load existing workflow into state
+- `structured_input` provided → skip to decompose
+- Neither → fresh start
+
+**Interview adapts based on state:**
+- No existing workflow → "What do you want to build?" (was BUILD)
+- Existing workflow loaded → "What do you want to change?" (was UPDATE)
+- Existing workflow + `block_id` → narrows to that block (was REFINE)
+- Called back from validate → "Here are discrepancies, how should we resolve?"
+
+**Validate block (new — replaces standalone audit/lint-artifacts modes):**
+- Runs before promote on EVERY flow
+- Subsumes: UC-MW-29 (structural completeness), UC-MW-14 (scoped re-optimize), UC-MW-13 (cross-workflow DRY), UC-MW-33 (semantic gap analysis)
+- Autonomous loop: checks → fixes what it can → raises discrepancies to interview if human input needed
+- On clean → promote
+
+**What this eliminates:**
+- REFINE mode → interview with `block_id` in state
+- AUDIT mode → validate step on every flow
+- SCOPED RE-OPTIMIZE mode → validate step on every flow
+- BUILD vs UPDATE distinction → interview adapts based on whether workflow exists
+
+**New use cases (proposed):**
+- UC-MW-34: Interview adapts behavior based on state context
+- UC-MW-35: Validate block — autonomous loop with structural + semantic checks
+- UC-MW-36: Validate → interview → decompose loop (discrepancy resolution)
+
+**Open questions (14 — see resume.md Pre-5.1 for full list):**
+1. Validate → interview loop: full re-pass or short-circuit?
+2. Cross-workflow "refactor everything": per-workflow run or separate capability?
+3. Mode field: replace with context detection or keep with 2 values?
+4. Export block: keep separate or fold into other blocks?
+5. Naming: "validate" or something else?
+6. UC-MW-32/33 integration into validate
+7. Subagent design for validate (autonomous but needs to raise to interview)
+8–14. See resume.md
 
 ### HITL Implementation
 

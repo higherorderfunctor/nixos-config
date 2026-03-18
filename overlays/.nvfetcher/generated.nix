@@ -53,11 +53,11 @@
   };
   bun-x86_64-linux = {
     pname = "bun-x86_64-linux";
-    version = "1.3.10";
+    version = "1.3.11";
     src = fetchurl {
-      url = "https://github.com/oven-sh/bun/releases/download/bun-v1.3.10/bun-linux-x64.zip";
+      url = "https://github.com/oven-sh/bun/releases/download/bun-v1.3.11/bun-linux-x64.zip";
       name = "bun-x86_64-linux.zip";
-      sha256 = "sha256-9XvAGH45Yj3nFro6OJ/aVIay175xMamAulTce3M9Lgg=";
+      sha256 = "sha256-hhG6k1r4hvBabzh0ChUWAybBXl1dB63vlmEwtEk2B+0=";
     };
   };
   catppuccin-btop = {
@@ -181,13 +181,13 @@
   };
   oh-my-posh = {
     pname = "oh-my-posh";
-    version = "v29.8.0";
+    version = "v29.9.0";
     src = fetchFromGitHub {
       owner = "JanDeDobbeleer";
       repo = "oh-my-posh";
-      rev = "v29.8.0";
+      rev = "v29.9.0";
       fetchSubmodules = false;
-      sha256 = "sha256-BTCATtZ8pTIf0qwDPOUFHS++K+k0oJVtaNEEY2JEGAY=";
+      sha256 = "sha256-F80vnUm7/F16ucQ0UqZPjSmwR2c1uo5boNqlWQj2H3g=";
     };
   };
   otel-desktop-viewer = {

@@ -1,4 +1,4 @@
-# kiro-cortex Resume — 2026-03-17
+# kiro-cortex Resume — 2026-03-18
 
 ## What Is This Project
 
@@ -9,7 +9,8 @@ kiro-cortex is a workflow orchestration platform that replaces steering files wi
 Branch: chore/save-point
 Phase 4.5+ COMPLETE. UC-MW-29 DONE. 33 files, 0 errors, 0 warnings.
 Validation checklist: **9/9 complete** — all 5 smoke tests pass.
-**Next: Pre-Phase 5 work (subagent design, flow diagram, UC-MW-30..33), then Phase 5.**
+
+**Next: Pre-Phase 5 redesign (flow simplification + subagent design + remaining UCs), then Phase 5 (repo-analysis).**
 
 ### What's Built (all phases)
 
@@ -21,8 +22,189 @@ Validation checklist: **9/9 complete** — all 5 smoke tests pass.
 | Conventions | done | Domain folders, Context.Tag, Schema.transform, .addError, layer exports, Config for env, Effect.log* for logging |
 | 4.5 | done | decompose, research, optimize, promote + audit/programmatic modes |
 | 4.5+ | done | Segment model, NextStep union, UC-MW-26/27/28, hook conventions, artifact templates |
-| UC-MW-29 | done | Lint-artifacts block: cross-system structural completeness checks, wired into audit mode |
+| UC-MW-29 | done | Lint-artifacts block: cross-system structural completeness checks |
 | Cleanup | done | MCP rewrite to @effect/ai (stdio, no HTTP), tagged WorkflowError, unused deps removed, YAML export complete |
+
+## Pre-Phase 5 Combined Plan
+
+### Overview
+
+Two work streams merged into one dependency-ordered plan:
+
+**Stream A — Flow Redesign:** Collapse 6 modes (build/update/refine/audit/programmatic/scoped-reoptimize) into a unified flow with 2 entry points. Add a "validate" block that runs before promote on every flow. Interview adapts based on context rather than mode.
+
+**Stream B — Remaining Pre-Phase 5 work:** Subagent design, multi-instruction YAML (UC-MW-30/31), per-workflow arch docs (UC-MW-32), semantic gap analysis (UC-MW-33), load test at 100K.
+
+### Dependency Order
+
+```
+Pre-5.1: Flow Redesign + Subagent Design + Validate Block Design
+    ↓    (tightly coupled — designed together, requires interview)
+Pre-5.2: Implementation — graph.ts, new/modified blocks, state changes
+    ↓
+Pre-5.3: Multi-instruction YAML + Hierarchical Layout (UC-MW-30/31)
+    ↓    (independent of flow, but needed before repo-analysis generates many instructions)
+Pre-5.4: Load/Validation Test at 100K Instructions
+    ↓
+Pre-5.5: Documentation Finalization — ARCHITECTURE.md, diagram, sequence diagram, README
+    ↓
+Phase 5: Repo-Analysis
+```
+
+### Pre-5.1: Flow Redesign + Subagent + Validate (NEEDS INTERVIEW)
+
+#### Proposed Unified Flow
+
+```
+route → [interview ↔ research] → decompose → optimize → author → wire → validate ↔ [interview] → promote → export → END
+                                    ↑                                         │
+                                    └── programmatic enters here              │
+                                                                  raises discrepancies
+                                                                  back to interview
+```
+
+**Route simplification:**
+- `workflow_id` provided → load existing workflow into state (was UPDATE)
+- `structured_input` provided → skip to decompose (was PROGRAMMATIC)
+- Neither → fresh start (was BUILD)
+- No mode switch needed. Route sets up context.
+
+**Interview adapts based on state context:**
+- No existing workflow → "What do you want to build?" (was BUILD)
+- Existing workflow loaded → "What do you want to change?" (was UPDATE)
+- Existing workflow + `block_id` → narrows to that block (was REFINE)
+- Called back from validate → "Here are discrepancies, how should we resolve?"
+
+**Validate block (new, replaces standalone audit/lint-artifacts modes):**
+- Runs before promote on EVERY flow
+- Subsumes: UC-MW-29 (structural completeness), UC-MW-14 (scoped re-optimize), UC-MW-13 (cross-workflow DRY)
+- Autonomous loop: checks → fixes what it can → raises discrepancies to interview if human input needed
+- On clean → promote
+
+**What this eliminates:**
+- REFINE mode → interview with `block_id` in state
+- AUDIT mode → validate step on every flow
+- SCOPED RE-OPTIMIZE mode → validate step on every flow
+- BUILD vs UPDATE distinction → interview adapts based on whether workflow exists
+- Separate lint-artifacts entry point → lint-artifacts logic moves into validate
+
+#### Use Case Impact
+
+| UC | Current | Proposed |
+|----|---------|----------|
+| UC-MW-1 (build) | BUILD mode | Interactive, no workflow_id |
+| UC-MW-2 (update) | UPDATE mode | Interactive, workflow_id provided |
+| UC-MW-3 (refine) | REFINE mode | Interactive, workflow_id + block_id |
+| UC-MW-4/12 (programmatic) | PROGRAMMATIC mode | structured_input → skip to decompose |
+| UC-MW-13 (cross-wf DRY) | AUDIT mode | Part of validate block |
+| UC-MW-14 (scoped re-opt) | SCOPED RE-OPTIMIZE | Part of validate block |
+| UC-MW-29 (structural lint) | lint-artifacts block in audit mode | Part of validate block |
+| UC-MW-32 (per-wf arch docs) | Not implemented | Interview captures → validate checks against |
+| UC-MW-33 (semantic gap) | Not implemented | Part of validate block (LLM-powered) |
+
+#### New Use Cases Needed
+
+- **UC-MW-34**: Interview adapts behavior based on state context (build/update/refine/validate-callback are one block with adaptive instructions)
+- **UC-MW-35**: Validate block — autonomous loop before promote. Structural checks (UC-MW-29) + scoped re-optimize (UC-MW-14) + cross-workflow DRY (UC-MW-13) + semantic gap analysis (UC-MW-33). Loops until clean, raises discrepancies to interview.
+- **UC-MW-36**: Validate → interview → decompose loop (discrepancy resolution path). When validate finds issues needing human judgment, it interrupts back to interview. After resolution, flow continues through decompose → ... → validate again.
+
+#### Subagent Design (integrated with flow redesign)
+
+**Design proposal (from 2026-03-17):** Use existing interrupt() pattern — block executor checks execution_env, if "subagent" it interrupts with spawn payload. Claude spawns subagent, gets summary, resumes. No graph changes needed.
+
+**Block classification (needs review post-redesign):**
+- Root agent (HITL): route (inline), interview, research, promote
+- Subagent candidates (autonomous): validate, author, wire, export, decompose, optimize
+- Key question: validate is autonomous but needs to raise to interview — how does this work across subagent boundary?
+
+**Subagent MCPs:** kiro-cortex (RAG), OpenMemory, Sequential Thinking, fetch. Built-in: read, write, shell, code.
+
+**Open questions (5 from original + new ones from flow redesign):**
+1. Per-block vs per-segment subagents
+2. Should programmatic mode be fully autonomous (single subagent for entire flow)?
+3. Generic vs specialized subagent agent configs
+4. Author block RAG access — via kiro-cortex MCP or task description?
+5. Update workflow.yaml execution_env now or at implementation time?
+6. Validate as subagent — how does "raise to interview" work across subagent boundary?
+7. Does validate run as one long subagent that can interrupt, or does it interrupt back to root which then goes to interview?
+
+#### Interview Questions (for next session)
+
+These must be resolved before implementation:
+
+**Flow structure:**
+1. Confirm: unified flow with 2 entry points (interactive / programmatic). No separate modes. Interview adapts. Validate runs on every flow. Yes/no?
+2. Validate → interview loop: full re-pass (interview → decompose → ... → validate) or short-circuit to just affected blocks?
+3. Cross-workflow "refactor everything" (UC-MW-13): run the flow once per workflow? Or a separate capability?
+4. Mode field in state: replace with context detection (workflow_id/block_id/structured_input presence)? Or keep mode with 2 values (interactive/programmatic)?
+5. Export block: keep separate or fold into author/wire/promote (each exports its own artifacts)?
+6. Naming: "validate" for the new block? Or "check"/"verify"/something else?
+
+**Validate block design:**
+7. UC-MW-32 (per-workflow arch docs): created during interview? Validate checks against it?
+8. UC-MW-33 (semantic gap analysis): is this the validate block, or a sub-step within it?
+9. Should validate attempt autonomous fixes or only report? (User said "loop until analysis is complete with option to raise discrepancies")
+10. What checks does validate run? Proposed list:
+    - Structural completeness (filesystem artifacts, pipeline↔block consistency) — from UC-MW-29
+    - Instruction bloat per block (UC-MW-8) — currently in optimize
+    - Cross-workflow DRY (UC-MW-10/13) — currently in optimize
+    - Scoped re-optimize: can this workflow reuse global patterns? Context budget? (UC-MW-14)
+    - Semantic gap: use cases vs implementation coverage (UC-MW-33)
+
+**Subagent design:**
+11. Validate as subagent: autonomous loop that can interrupt back to root? Or stays in root agent?
+12. Per-block vs per-segment: spawn one subagent per autonomous block, or one per autonomous segment (multiple blocks)?
+13. Programmatic mode: single subagent for entire flow (no HITL needed)?
+14. Author RAG: subagent calls kiro-cortex MCP directly, or root agent pre-fetches and passes via task description?
+
+### Pre-5.2: Implementation (after interview resolves questions)
+
+- Redesign graph.ts with simplified edges
+- New validate block (or refactored lint-artifacts)
+- Update route.ts (remove mode switch, context-based routing)
+- Update interview.ts (adaptive behavior based on state)
+- Update state.ts (remove/simplify mode field, add block_id, validate state)
+- Update optimize.ts (move cross-workflow checks to validate, keep local checks)
+- Update render-diagram.ts for new flow
+- Smoke test all paths
+
+### Pre-5.3: Multi-instruction YAML + Hierarchical Layout (UC-MW-30/31)
+
+Independent of flow redesign. Needed before Phase 5 generates many instructions.
+
+- Array of instructions per YAML (each gets own vector in pgvector)
+- Directory hierarchy: `instructions/<domain>/<topic>.yaml`
+- Seed.ts: recursive directory walk + multi-instruction parsing
+- Author block: chunking guidance (one concept per instruction)
+- Backward compat with single-instruction files
+
+### Pre-5.4: Load/Validation Test at 100K Instructions
+
+Depends on Pre-5.2 and Pre-5.3.
+
+- Seed pgvector with ~100K instructions across multiple domains
+- Run complex multi-block workflow with mocked HITL
+- Validate: OPA scoping at scale, RAG relevance (no context drift), block executor injection, subagent context shedding
+- Goal: prove OPA→RAG pipeline holds at scale before building real workflows
+
+### Pre-5.5: Documentation Finalization
+
+After all implementation.
+
+- ARCHITECTURE.md: updated use cases, flow, block table, diagram, mode paths
+- Sequence diagram: updated for unified flow + validate loop
+- README: updated status
+- Resume: final state for Phase 5 handoff
+
+## Bugs Found (2026-03-18 flow review)
+
+These are subsumed by the flow redesign but documented for reference:
+
+1. **AUDIT path infinite loop in graph.ts**: After decompose → optimize in audit mode, optimize routes back to interview indefinitely. No mechanism to distinguish first-pass scan from second-pass fix. One-line fix: `s.mode === "audit" && !s.needs_redesign && !s.blocks?.length ? "interview"`. Moot after redesign removes audit mode.
+
+2. **REFINE path mismatch**: ARCHITECTURE.md says route → interview → author → END. Actual code (route.ts): route → author → END. No conditional edge from interview → author exists. Moot after redesign collapses refine into adaptive interview.
+
+3. **Missing export block in documented mode paths**: All ARCHITECTURE.md paths end with promote → END but graph.ts has promote → export → END. Moot after redesign updates all paths.
 
 ## Meta-Workflow Self-Maintenance
 
@@ -32,76 +214,6 @@ Validation checklist: **9/9 complete** — all 5 smoke tests pass.
 
 **Filesystem export (UC-MW-16/17):** Complete. export.ts writes workflow.yaml, author.ts writes instructions/*.yaml, wire.ts writes pipeline.yaml. seed.ts reads YAML back. All 10 blocks have instruction YAMLs. `reload_workflows` MCP tool triggers re-seed.
 
-**Validation checklist (before Phase 5):**
-1. [x] Start kiro-cli from nixos-config root for LSP/λ
-2. [x] Switch to meta-workflow agent — MCP tools responding
-3. [x] Verify `list_workflows` works — confirmed (8a7d49c)
-4. [x] Verify agent can identify itself in workflow list
-5. [x] Test update mode — route + interview interrupt works, bugs fixed (ce3c3ad)
-6. [x] Verify prompt file loads correctly
-7. [x] Verify knowledgeBase resource indexes ARCHITECTURE.md
-8. [x] Verify λ icon appears (code intelligence active)
-9. [x] Smoke test all 5 mode paths — **5/5 pass** (57fdb69, 91cf496)
-
-### Smoke Test Results (2026-03-17)
-
-**Finding:** Agent must pass `mode` (and `workflow_id` for targeted ops) explicitly to `run_workflow`. The route block is deterministic — dispatches on `state.mode`, not natural language.
-
-| Mode | Input | Route | Status |
-|------|-------|-------|--------|
-| Build | `{mode: "build"}` | → interview ✅ | ✅ pass |
-| Update | `{mode: "update", workflow_id: "..."}` | → interview (update prompt) ✅ | ✅ pass |
-| Self-Maint | (= update + meta-workflow) | → interview ✅ | ✅ pass |
-| Refine | `{mode: "refine", workflow_id: "..."}` | → author ✅ | ✅ pass |
-| Audit | `{mode: "audit"}` | → lint-artifacts → optimize ✅ | ✅ pass |
-
-**Bugs fixed:**
-- **author.ts** (57fdb69): Crashed on `state.blocks` undefined in refine mode. Fix: early return guard.
-- **gap-analyze.ts** (57fdb69): Renamed to `lint-artifacts.ts`. Originally crashed on `path.join` with undefined `workflow_name` in audit-all mode. Fix: scan `workflows/` dir when no name; guard `state.blocks?.length`.
-- **optimize.ts** (91cf496): Crashed on `state.blocks.length` in audit mode (no blocks in state). Fix: early return guard `if (!state.blocks?.length)`.
-
-**Note:** `bun build` to `dist/` is unnecessary — MCP config runs `bun run src/mcp.ts` directly.
-
-### Flow Diagram Review (WIP — 2026-03-17)
-
-**Problem:** Hand-drawn ASCII flow diagram in ARCHITECTURE.md had hallucinated lines, inconsistent arrows, and misaligned mode paths vs documented use cases.
-
-**Approach:** Built `scripts/render-diagram.ts` — a grid-based deterministic ASCII renderer (Bun + TS, zero deps). Nodes placed on explicit grid positions, edges drawn with Manhattan routing. No auto-layout. Source of truth for the diagram.
-
-**Tooling evaluated:** `mermaid-ascii` (Go, 1.3k stars, active) — good for simple graphs but auto-layout fails on complex multi-branch convergence. `graph-easy` (Perl) — abandoned 16 years. Decision: custom renderer for manual layout control.
-
-**Misalignments found (diagram vs ARCHITECTURE.md Mode Paths):**
-1. REFINE: diagram showed route → author → END. Correct: route → interview → author → END
-2. AUDIT: diagram dead-ended at decompose. Correct: full path through author → wire → promote → END
-3. PROGRAMMATIC: diagram only showed FAIL case. Correct: decompose → optimize → author → wire → promote → END (FAIL only on invalid input)
-
-**Current state:** Renderer produces correct 3-column layout (build|audit|programmatic) with convergence into shared tail. WIP — need to review full flow end-to-end against use cases before replacing ARCHITECTURE.md diagram.
-
-**Resume prompt:** "Read resume.md. Pre-Phase 5 work in progress. Key items: (1) Flow diagram — run `scripts/render-diagram.ts`, walk each mode path against ARCHITECTURE.md use cases, I want to review before replacing the diagram. (2) Subagent context reset — design proposal in Pre-Phase 5 TODO with 5 open questions: per-block vs per-segment, programmatic mode autonomy, generic vs specialized configs, author RAG access, execution_env timing. Generic sequence diagram at `docs/sequence-diagram.txt`. (3) UC-MW-30..33 not yet implemented: multi-instruction YAML, hierarchical layout, per-workflow arch docs, semantic gap analysis. (4) Load/validation test at 100K instructions. (5) `gap-analyze` already renamed to `lint-artifacts` across all code/docs."
-
-## Pre-Phase 5 TODO
-
-- ~~Rename `gap-analyze` block~~ — DONE: renamed to `lint-artifacts`. Name now reflects it's a structural consistency checker (filesystem lint), not semantic analysis.
-- Subagent context reset strategy. Subagent tool restrictions are mostly workable: `thinking` → Sequential Thinking MCP, `grep`/`glob` → bash, `fetch` → MCP fetch server, `introspect`/`todo_list` → not needed. Only `web_search` requires root agent. Autonomous blocks (lint-artifacts, optimize, decompose, author, wire, export) should run as subagents for context shedding — only the summary returns to parent, not the full RAG payload. HITL blocks (interview, research, promote) stay in root agent. Add use case(s) to ARCHITECTURE.md, update block table with execution_env recommendations, configure subagent MCP access (kiro-cortex, OpenMemory, Sequential Thinking, fetch).
-  - **Design proposal drafted (2026-03-17):** Use existing interrupt() pattern — block executor checks execution_env, if "subagent" it interrupts with spawn payload instead of running block.execute(). Claude spawns subagent, gets summary, resumes. No graph changes needed.
-  - **Block classification:** root agent = route (inline), interview, research, decompose, optimize, promote (all HITL). Subagent = lint-artifacts, author, wire, export (all autonomous).
-  - **Subagent MCPs:** kiro-cortex (RAG), OpenMemory, Sequential Thinking, fetch. Built-in: read, write, shell, code.
-  - **Open questions:** (1) per-block vs per-segment subagents, (2) should programmatic mode be fully autonomous (single subagent for entire flow), (3) generic vs specialized subagent agent configs, (4) author block RAG access — via kiro-cortex MCP or task description, (5) update workflow.yaml execution_env now or at implementation time.
-- Multi-instruction YAML format + hierarchical disk layout (UC-MW-30, UC-MW-31). Current model is 1 instruction per YAML, 1 YAML per block — won't scale to millions. Need:
-  - Array of instructions per YAML file (each gets its own vector in pgvector)
-  - Directory hierarchy for organization: `instructions/<domain>/<topic>.yaml` (e.g., `effect/effect-stream.yaml`, `effect/effect-http-api.yaml`)
-  - Seed.ts updated to walk directories recursively and parse multi-instruction files
-  - Author block needs guidance on chunking: one concept per instruction for optimal retrieval
-- Semantic gap analysis + per-workflow arch docs (UC-MW-32, UC-MW-33). Current lint-artifacts is filesystem lint. The meta-workflow needs a separate capability that:
-  - Maintains an ARCHITECTURE.md per workflow (generated from interview + refinements over time)
-  - Captures use cases during interview, stores them as testable assertions
-  - Compares designed flow (blocks, pipeline, instructions) against documented use cases + arch
-  - Uses LLM to reason about coverage gaps: "UC-3 says X but no block handles X"
-  - Mirrors how we work now: arch doc is source of truth, diagram/flow must align with it
-  - Could be a new block (e.g., `validate`) or an LLM-powered mode of the existing audit path
-  - Interview refinements accumulate in the arch doc — not lost between sessions
-- Load/validation test. Seed pgvector with ~100K instructions across multiple domains/repos. Run a complex multi-block workflow with mocked HITL (auto-answer interrupts). Validate: (1) OPA scoping returns correct filtered set at scale, (2) RAG retrieval stays relevant — no context drift/dilution from unrelated instructions bleeding in, (3) block executor injects only scoped instructions, (4) subagent context shedding works — parent context doesn't grow with RAG payload. Goal: prove the OPA→RAG pipeline holds at scale before building real workflows on top of it.
-
 ## Items for Interaction-Analysis (Future)
 
 - F1: "workflow-audit" skill — periodic optimization
@@ -109,7 +221,7 @@ Validation checklist: **9/9 complete** — all 5 smoke tests pass.
 - F3: "pattern-detector" skill — DRY across workflows
 - F4: Meta-workflow self-analysis for interview improvement
 
-## Next: Phase 5 — Repo-Analysis
+## Phase 5 — Repo-Analysis (after Pre-Phase 5 complete)
 
 First workflow built by meta-workflow:
 - Git worktree aware (repo identity by remote origin)
@@ -137,6 +249,8 @@ workflows/
     instructions/{route,interview,research,decompose,optimize,author,wire,promote,export,lint-artifacts}.yaml
 policies/
   access.rego, scoping.rego, isolation.rego
+docs/
+  ARCHITECTURE.md, sequence-diagram.txt
 ```
 
 ## Dependencies (pinned exact)
@@ -144,3 +258,19 @@ effect 3.20.0, @effect/ai 0.34.0, @effect/platform 0.95.0, @effect/platform-bun 
 @effect/platform-node 0.105.0, @effect/sql 0.50.0, @effect/sql-pg 0.51.0
 @langchain/langgraph 1.2.2, @langchain/langgraph-checkpoint-postgres 1.0.1
 pg 8.20.0, yaml 2.8.2. NO @effect/schema. NO zod.
+
+## Resume Prompt
+
+Read resume.md. Pre-Phase 5 redesign in progress. Status: NEEDS INTERVIEW before implementation.
+
+Key context:
+1. Flow redesign proposed — collapse 6 modes into unified flow + validate block. See "Pre-5.1" section for full proposal and interview questions (14 questions).
+2. Subagent design integrated with flow redesign — 7 open questions.
+3. UC-MW-30..33 not yet implemented. UC-MW-32/33 may fold into the new validate block.
+4. Load test at 100K instructions planned for Pre-5.4.
+5. Three bugs found in current graph (audit loop, refine mismatch, missing export) — all subsumed by redesign.
+6. `gap-analyze` already renamed to `lint-artifacts` across all code/docs.
+7. Diagram renderer at `scripts/render-diagram.ts` — needs update after flow redesign.
+8. Generic sequence diagram at `docs/sequence-diagram.txt` — needs update after flow redesign.
+
+Next step: Interview user on the 14 questions in Pre-5.1 to resolve open design decisions before implementation.
