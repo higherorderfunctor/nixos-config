@@ -331,12 +331,12 @@ pg 8.20.0, yaml 2.8.2. NO @effect/schema. NO zod.
 Read resume.md. Phase 5 in progress. Interviews scoped per-task — each task has its own interview, then implementation.
 
 Key context:
-1. Phase 5 restructured into 7 tasks (5.1-5.7), each with scoped interview before implementation.
-2. 5.1 (flow redesign) interview IN PROGRESS — 6 questions about flow structure.
-3. 5.2 (validate block) BLOCKED on 5.1 — 4 questions, need to see flow before designing validate.
-4. 5.3 (subagent design) BLOCKED on 5.2 — 4 questions, need to see validate before deciding subagent boundaries.
-5. 5.4 (multi-instruction YAML) READY — no interview needed, can run parallel with 5.1-5.3.
-6. Three bugs found in current graph — all subsumed by redesign.
-7. `gap-analyze` already renamed to `lint-artifacts` across all code/docs.
+1. 5.1 (flow redesign) COMPLETE — all 6 questions answered, code implemented. 34 files, 0 errors.
+2. 5.2 (subagent design) COMPLETE — Option B (generic subagent for context reset). Implementation deferred to 5.6 load test.
+3. 5.3 (validate block) READY for interview — Q7-10 + Q11 (moved from subagent). Next step.
+4. 5.4 (multi-instruction YAML) READY — no interview needed, can run parallel.
+5. New UCs: UC-MW-34 (adaptive interview), UC-MW-35 (tiered validate), UC-MW-36 (validate→interview loop), UC-MW-37 (programmatic validation), UC-MW-38 (session persistence).
+6. Agent prompt (`prompts/meta-workflow.md`) needs updating — currently mode-centric.
+7. Three bugs in old graph all subsumed by redesign.
 
-Next step: Interview user on 5.1 questions (Q1-6: flow structure) one at a time, recording decisions as we go.
+Next step: Interview user on 5.3 questions (Q7-10 + Q11: validate block design) one at a time, recording decisions as we go.
