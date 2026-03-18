@@ -151,11 +151,11 @@ Personal Kiro config files (`~/.kiro/`) are managed by home-manager and symlinke
 
 **Symlinked paths (personal only):**
 - `~/.kiro/steering/*.md`
-- `~/.kiro/settings/mcp.json`
+- `~/.kiro/settings/cli.json`
 - `~/.kiro/agents/*.json` (declarative configs)
 
 **Real files (user runtime):**
-- `~/.kiro/settings/cli.json`
+- `~/.kiro/settings/mcp.json` (inline generated, not symlinked)
 - `~/.kiro/sessions/`
 - `~/.kiro/.cli_bash_history`
 

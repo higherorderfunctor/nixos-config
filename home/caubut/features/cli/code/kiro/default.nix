@@ -100,6 +100,11 @@
       config.lib.file.mkOutOfStoreSymlink "${kiroConfigPath}/skills/${name}";
   };
 
+  symlinkSetting = name: {
+    ".kiro/settings/${name}".source =
+      config.lib.file.mkOutOfStoreSymlink "${kiroConfigPath}/settings/${name}";
+  };
+
   # ── Steering file list ────────────────────────────────────────
   steeringFiles = [
     "00-ip-protection.md"
@@ -122,6 +127,7 @@
 
   agentFiles = [
     "ideation.json"
+    "default.json"
     "meta-workflow.json"
   ];
 
@@ -132,6 +138,10 @@
 
   skillDirs = [
     "interaction-analysis"
+  ];
+
+  settingFiles = [
+    "cli.json"
   ];
 
   # ── MCP configuration ────────────────────────────────────────
@@ -247,7 +257,9 @@ in {
       # Agent directories (out-of-store symlinks, e.g., prompts/)
       // builtins.foldl' (acc: name: acc // symlinkAgentDir name) {} agentDirs
       # Skill directories (out-of-store symlinks)
-      // builtins.foldl' (acc: name: acc // symlinkSkill name) {} skillDirs;
+      // builtins.foldl' (acc: name: acc // symlinkSkill name) {} skillDirs
+      # Settings files (out-of-store symlinks — edit without rebuild)
+      // builtins.foldl' (acc: name: acc // symlinkSetting name) {} settingFiles;
   };
 
   # ── kiro-cortex: OPA user service ────────────────────────

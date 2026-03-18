@@ -15,8 +15,8 @@ in {
       (attrs.postFixup or "")
       + ''
         wrapProgram $out/bin/kiro-cli --set TERM xterm-256color
-        wrapProgram $out/bin/kiro-cli --set TERM xterm-256color
-        wrapProgram $out/bin/kiro-cli-chat --set TERM xterm-256color
+        wrapProgram $out/bin/kiro-cli-chat \
+          --set TERM xterm-256color
       '';
 
     meta =

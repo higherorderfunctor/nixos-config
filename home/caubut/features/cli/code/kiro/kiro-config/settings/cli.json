@@ -1,0 +1,6 @@
+{
+  "mcp.loadedBefore": true,
+  "chat.enableTangentMode": true,
+  "chat.enableCheckpoint": true,
+  "chat.defaultAgent": "default"
+}
