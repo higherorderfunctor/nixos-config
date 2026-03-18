@@ -7,10 +7,10 @@ kiro-cortex is a workflow orchestration platform that replaces steering files wi
 ## Current State
 
 Branch: chore/save-point
-Phase 4.5+ COMPLETE. UC-MW-29 DONE. 33 files, 0 errors, 0 warnings.
+Phase 4.5+ COMPLETE. UC-MW-29 DONE. 34 files, 0 errors, 0 warnings.
 Validation checklist: **9/9 complete** — all 5 smoke tests pass.
 
-**Next: Phase 5 (flow redesign + subagent design + remaining UCs), then Phase 6 (repo-analysis).**
+**5.1 (flow redesign) COMPLETE. Next: 5.2 interview (validate block design).**
 
 ### What's Built (all phases)
 
