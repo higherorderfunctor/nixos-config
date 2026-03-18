@@ -174,6 +174,10 @@
           CORTEX_DEBUG = "true";
         };
       };
+      git-analytics = {
+        command = "npx";
+        args = ["-y" "git-analytics-mcp-server"];
+      };
     };
   };
 in {
