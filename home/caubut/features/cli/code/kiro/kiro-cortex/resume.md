@@ -75,6 +75,10 @@ Phase 6: Repo-Analysis
    - Interview adapts to caller: human (interactive) or LLM-as-interviewer (programmatic).
    - Programmatic mode: LLM resolves what it can confidently, fails with explanation on low confidence (consistent with UC-MW-12).
    - New UC-MW-37: Programmatic validation resolution — LLM acts as interviewer, fails on ambiguity.
+3. **SPLIT** — Two scopes for optimization:
+   - **Automatic (every flow)**: optimize block checks the current workflow for bloat, spaghetti, local DRY during every create/update. Part of the unified flow.
+   - **Manual trigger (user-prompted)**: cross-workflow DRY analysis — scanning all workflows for patterns to abstract into shared segments. User prompts this explicitly. HITL required before creating any new shared patterns.
+   - No separate audit mode. Local optimization is automatic. Cross-workflow refactoring is on-demand.
 
 #### Proposed Unified Flow
 
