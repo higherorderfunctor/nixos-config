@@ -127,7 +127,6 @@
 
   agentFiles = [
     "ideation.json"
-    "default.json"
     "meta-workflow.json"
   ];
 
@@ -216,6 +215,62 @@
       };
     };
   };
+  # ── Default agent configuration ────────────────────────────────
+  defaultAgentConfig = {
+    name = "default";
+    description = "Default agent with curated tool permissions";
+    model = "claude-opus-4.6";
+    tools = ["*"];
+    inherit (mcpConfig) mcpServers;
+    allowedTools = [
+      "fs_read"
+      "grep"
+      "glob"
+      "introspect"
+      "code"
+      "sequentialthinking"
+      "@openmemory"
+      "@git/git_status"
+      "@git/git_log"
+      "@git/git_diff"
+      "@git/git_diff_staged"
+      "@git/git_diff_unstaged"
+      "@git/git_show"
+      "@git/git_branch"
+      "@git-analytics"
+      "@github/get_code_scanning_alert"
+      "@github/get_commit"
+      "@github/get_file_contents"
+      "@github/get_label"
+      "@github/get_latest_release"
+      "@github/get_release_by_tag"
+      "@github/get_tag"
+      "@github/issue_read"
+      "@github/list_*"
+      "@github/search_*"
+      "@aws-knowledge"
+      "@context7"
+      "@effect-docs"
+      "@nixos"
+      "@kiro-cortex"
+      "@sequential-thinking"
+    ];
+    toolsSettings = {
+      execute_bash = {
+        autoAllowReadonly = true;
+        allowedCommands = [
+          "readlink -f .*"
+          "ollama list.*"
+          "systemctl --user status .*"
+          "curl http://localhost:.*"
+        ];
+      };
+      use_aws = {
+        autoAllowReadonly = true;
+      };
+    };
+  };
+
 in {
   # ── Sops secrets ──────────────────────────────────────────────
   sops.secrets = {
@@ -249,6 +304,7 @@ in {
       # MCP config (inline JSON — needs Nix interpolation, rarely changes)
       {
         ".kiro/settings/mcp.json".text = builtins.toJSON mcpConfig;
+        ".kiro/agents/default.json".text = builtins.toJSON defaultAgentConfig;
       }
       # Steering files (out-of-store symlinks — edit without rebuild)
       // builtins.foldl' (acc: name: acc // symlinkSteering name) {} steeringFiles
