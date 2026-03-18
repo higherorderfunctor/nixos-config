@@ -23,7 +23,7 @@
  */
 
 import { StateGraph, START, END } from "@langchain/langgraph"
-import { getCheckpointer } from "../workflow/index.js"
+import { getCheckpointer } from "kiro-cortex/workflow"
 import { MetaWorkflowState, type MetaWorkflowStateType } from "./state.js"
 import { routeNode } from "./route.js"
 import { interviewNode } from "./interview.js"

@@ -13,7 +13,7 @@
 
 import { Effect } from "effect"
 import { interrupt } from "@langchain/langgraph"
-import { BlockRegistry } from "../workflow/index.js"
+import { BlockRegistry } from "kiro-cortex/workflow"
 import type { MetaWorkflowStateType, BlockSpec } from "./state.js"
 
 /**

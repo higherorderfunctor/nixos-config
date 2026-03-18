@@ -55,6 +55,12 @@ importers:
         specifier: 5.9.3
         version: 5.9.3
 
+  agents/meta-workflow:
+    dependencies:
+      kiro-cortex:
+        specifier: workspace:*
+        version: link:../..
+
 packages:
 
   '@cfworker/json-schema@4.1.1':

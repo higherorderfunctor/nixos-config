@@ -60,17 +60,17 @@ interface YamlInstruction {
 // ---------------------------------------------------------------------------
 
 /**
- * Find all instruction YAML files under the workflows directory.
- * Scans each workflow's instructions subdirectory for .yaml files.
+ * Find all instruction YAML files under the agents directory.
+ * Scans each agent's instructions subdirectory for .yaml files.
  */
-const findYamlFiles = (workflowsDir: string) =>
+const findYamlFiles = (agentsDir: string) =>
   Effect.tryPromise({
     try: async () => {
-      const workflows = await readdir(workflowsDir, { withFileTypes: true })
+      const agents = await readdir(agentsDir, { withFileTypes: true })
       const files: Array<string> = []
-      for (const wf of workflows) {
-        if (!wf.isDirectory()) continue
-        const instrDir = join(workflowsDir, wf.name, "instructions")
+      for (const agent of agents) {
+        if (!agent.isDirectory()) continue
+        const instrDir = join(agentsDir, agent.name, "instructions")
         try {
           const entries = await readdir(instrDir)
           for (const f of entries) {
@@ -80,7 +80,7 @@ const findYamlFiles = (workflowsDir: string) =>
       }
       return files
     },
-    catch: (e) => new LoaderError({ message: `Failed to scan workflows: ${e}` }),
+    catch: (e) => new LoaderError({ message: `Failed to scan agents: ${e}` }),
   })
 
 /** Parse a YAML file into a typed instruction object. */
@@ -110,8 +110,8 @@ const parseYaml = (path: string) =>
 export const loadInstructions = Effect.gen(function* () {
   const repo = yield* InstructionRepo
 
-  const workflowsDir = join(import.meta.dir, "..", "..", "workflows")
-  const files = yield* findYamlFiles(workflowsDir)
+  const agentsDir = join(import.meta.dir, "..", "..", "agents")
+  const files = yield* findYamlFiles(agentsDir)
 
   let loaded = 0
   for (const file of files) {

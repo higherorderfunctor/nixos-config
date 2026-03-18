@@ -7,7 +7,7 @@
     "moduleDetection": "force",
     "lib": ["ESNext"],
     "outDir": "dist",
-    "rootDir": "src",
+    "rootDir": ".",
     "strict": true,
     "strictNullChecks": true,
     "exactOptionalPropertyTypes": true,
@@ -26,6 +26,6 @@
     "types": ["bun"],
     "plugins": [{ "name": "@effect/language-service" }]
   },
-  "include": ["src"],
+  "include": ["src", "agents/*/src"],
   "exclude": ["node_modules", "dist"]
 }

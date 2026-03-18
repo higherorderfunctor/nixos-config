@@ -1,6 +1,5 @@
-// ARCH: Pure Effect MCP server using @effect/ai. No HTTP server, no port, no
-// race condition on agent switch. Tool handlers run Effects directly with full
-// service access via layers. Set CORTEX_DEBUG=true to write logs to /tmp.
+// ARCH: Generic MCP server factory. Agent packages call startMcpServer() with
+// their workflows. No workflow-specific imports — agents register via WorkflowDef.
 import { McpServer, Tool, Toolkit } from "@effect/ai"
 import { BunSink, BunStream } from "@effect/platform-bun"
 import * as BunPlatform from "@effect/platform-bun"
@@ -10,9 +9,16 @@ import { layer as opaLayer } from "./opa/index.js"
 import { layer as embeddingLayer } from "./embedding/index.js"
 import { layer as instructionLayer, loadInstructions } from "./instruction/index.js"
 import { registryLayer } from "./workflow/index.js"
-import { buildMetaWorkflow } from "./meta-workflow/graph.js"
 import { Command } from "@langchain/langgraph"
 import { appendFileSync, writeFileSync } from "node:fs"
+
+/** Workflow registration — agent packages provide these. */
+export interface WorkflowDef {
+  readonly id: string
+  readonly name: string
+  readonly description: string
+  readonly build: () => Promise<unknown>
+}
 
 // ---------------------------------------------------------------------------
 // Tools
@@ -40,120 +46,109 @@ const ReloadWorkflows = Tool.make("reload_workflows", {
 
 const CortexToolkit = Toolkit.make(ListWorkflows, RunWorkflow, ReloadWorkflows)
 
-// ---------------------------------------------------------------------------
-// Handlers
-// ---------------------------------------------------------------------------
-
-// ARCH: Lazy singleton — meta-workflow graph is built once on first invoke.
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-let _metaGraph: any = null
-const getMetaGraph = async () => {
-  if (!_metaGraph) _metaGraph = await buildMetaWorkflow()
-  return _metaGraph
-}
-
 /** Tagged error for workflow execution failures. */
 class WorkflowError extends Data.TaggedError("WorkflowError")<{
   readonly message: string
 }> {}
 
-const CortexToolHandlers = CortexToolkit.toLayer(
-  Effect.gen(function* () {
-    yield* loadInstructions
-    yield* Effect.logInfo("Instructions loaded — MCP tools ready")
-
-    // Inline reload: same logic as loadInstructions but with captured services
-    const reload = Effect.provide(
-      loadInstructions,
-      Layer.mergeAll(instructionLayer, embeddingLayer).pipe(Layer.provide(SqlLive)),
-    )
-
-    return {
-      list_workflows: () =>
-        Effect.succeed(JSON.stringify([{
-          id: "meta-workflow",
-          name: "meta-workflow",
-          description: "Build, update, and refine workflows",
-        }], null, 2)),
-
-      run_workflow: (params: {
-        readonly id: string
-        readonly input?: { readonly [x: string]: unknown } | undefined
-        readonly thread_id?: string | undefined
-      }) =>
-        Effect.tryPromise({
-          try: async () => {
-            if (params.id !== "meta-workflow") throw new WorkflowError({ message: `Unknown workflow: ${params.id}` })
-            const graph = await getMetaGraph()
-            const tid = params.thread_id ?? crypto.randomUUID()
-            const config = { configurable: { thread_id: tid } }
-            // ARCH: thread_id present → HITL resume. The input becomes the
-            // resume value returned by interrupt() in the paused node.
-            const result = params.thread_id !== undefined
-              ? await graph.invoke(new Command({ resume: params.input }), config)
-              : await graph.invoke(params.input ?? {}, config)
-            return JSON.stringify({ thread_id: tid, state: result }, null, 2)
-          },
-          catch: (e) => new WorkflowError({ message: e instanceof Error ? e.message : String(e) }),
-        }).pipe(Effect.orDie),
-
-      reload_workflows: () =>
-        reload.pipe(
-          Effect.map(() => JSON.stringify({ loaded: 0, message: "Workflow instructions reloaded from YAML" })),
-          Effect.orDie,
-        ),
-    }
-  }),
-)
-
 // ---------------------------------------------------------------------------
-// Layer composition
+// Server factory
 // ---------------------------------------------------------------------------
 
-const ServiceLive = Layer.mergeAll(
-  opaLayer,
-  embeddingLayer,
-  instructionLayer,
-  registryLayer,
-).pipe(Layer.provideMerge(SqlLive))
+/**
+ * Start the kiro-cortex MCP stdio server with registered workflows.
+ * Called by agent packages as their entry point.
+ */
+export const startMcpServer = (workflows: ReadonlyArray<WorkflowDef>): void => {
+  // Lazy graph cache per workflow
+  const graphCache = new Map<string, unknown>()
+  const getGraph = async (def: WorkflowDef) => {
+    let g = graphCache.get(def.id)
+    if (!g) { g = await def.build(); graphCache.set(def.id, g) }
+    return g as { invoke: (input: unknown, config: unknown) => Promise<unknown> }
+  }
 
-const ServerLayer = McpServer.toolkit(CortexToolkit).pipe(
-  Layer.provide(CortexToolHandlers),
-  Layer.provide(McpServer.layerStdio({
-    name: "kiro-cortex",
-    version: "0.1.0",
-    stdin: BunStream.stdin,
-    stdout: BunSink.stdout,
-  })),
-  Layer.provide(ServiceLive),
-)
+  const CortexToolHandlers = CortexToolkit.toLayer(
+    Effect.gen(function* () {
+      yield* loadInstructions
+      yield* Effect.logInfo("Instructions loaded — MCP tools ready")
 
-// ---------------------------------------------------------------------------
-// Debug logger (CORTEX_DEBUG=true → /tmp/kiro-cortex-mcp.log)
-// ---------------------------------------------------------------------------
+      const reload = Effect.provide(
+        loadInstructions,
+        Layer.mergeAll(instructionLayer, embeddingLayer).pipe(Layer.provide(SqlLive)),
+      )
 
-const LOG_PATH = "/tmp/kiro-cortex-mcp.log"
-const debug = process.env.CORTEX_DEBUG === "true" || process.env.CORTEX_DEBUG === "1"
+      return {
+        list_workflows: () =>
+          Effect.succeed(JSON.stringify(
+            workflows.map((w) => ({ id: w.id, name: w.name, description: w.description })),
+            null, 2,
+          )),
 
-const fileLogger = Logger.make(({ message, date, logLevel }) => {
-  appendFileSync(LOG_PATH, `${date.toISOString()} [${logLevel.label}] ${String(message)}\n`)
-})
+        run_workflow: (params: {
+          readonly id: string
+          readonly input?: { readonly [x: string]: unknown } | undefined
+          readonly thread_id?: string | undefined
+        }) =>
+          Effect.tryPromise({
+            try: async () => {
+              const def = workflows.find((w) => w.id === params.id)
+              if (!def) throw new WorkflowError({ message: `Unknown workflow: ${params.id}` })
+              const graph = await getGraph(def)
+              const tid = params.thread_id ?? crypto.randomUUID()
+              const config = { configurable: { thread_id: tid } }
+              const result = params.thread_id !== undefined
+                ? await graph.invoke(new Command({ resume: params.input }), config)
+                : await graph.invoke(params.input ?? {}, config)
+              return JSON.stringify({ thread_id: tid, state: result }, null, 2)
+            },
+            catch: (e) => new WorkflowError({ message: e instanceof Error ? e.message : String(e) }),
+          }).pipe(Effect.orDie),
 
-const DebugLoggerLive = Layer.mergeAll(
-  Logger.replace(Logger.defaultLogger, fileLogger),
-  Logger.minimumLogLevel(LogLevel.Debug),
-)
+        reload_workflows: () =>
+          reload.pipe(
+            Effect.map(() => JSON.stringify({ loaded: 0, message: "Workflow instructions reloaded from YAML" })),
+            Effect.orDie,
+          ),
+      }
+    }),
+  )
 
-// ---------------------------------------------------------------------------
-// Main
-// ---------------------------------------------------------------------------
+  const ServiceLive = Layer.mergeAll(
+    opaLayer, embeddingLayer, instructionLayer, registryLayer,
+  ).pipe(Layer.provideMerge(SqlLive))
 
-const program = Layer.launch(ServerLayer).pipe(
-  debug
-    ? Effect.provide(DebugLoggerLive)
-    : Logger.withMinimumLogLevel(LogLevel.None),
-)
+  const ServerLayer = McpServer.toolkit(CortexToolkit).pipe(
+    Layer.provide(CortexToolHandlers),
+    Layer.provide(McpServer.layerStdio({
+      name: "kiro-cortex",
+      version: "0.1.0",
+      stdin: BunStream.stdin,
+      stdout: BunSink.stdout,
+    })),
+    Layer.provide(ServiceLive),
+  )
 
-if (debug) writeFileSync(LOG_PATH, "")
+  // Debug logger
+  const LOG_PATH = "/tmp/kiro-cortex-mcp.log"
+  const debug = process.env.CORTEX_DEBUG === "true" || process.env.CORTEX_DEBUG === "1"
 
-BunPlatform.BunRuntime.runMain(program, { disablePrettyLogger: true })
+  const fileLogger = Logger.make(({ message, date, logLevel }) => {
+    appendFileSync(LOG_PATH, `${date.toISOString()} [${logLevel.label}] ${String(message)}\n`)
+  })
+
+  const DebugLoggerLive = Layer.mergeAll(
+    Logger.replace(Logger.defaultLogger, fileLogger),
+    Logger.minimumLogLevel(LogLevel.Debug),
+  )
+
+  const program = Layer.launch(ServerLayer).pipe(
+    debug
+      ? Effect.provide(DebugLoggerLive)
+      : Logger.withMinimumLogLevel(LogLevel.None),
+  )
+
+  if (debug) writeFileSync(LOG_PATH, "")
+
+  BunPlatform.BunRuntime.runMain(program, { disablePrettyLogger: true })
+}
