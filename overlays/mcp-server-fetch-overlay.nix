@@ -23,6 +23,11 @@ in
         requests
       ];
 
+      postPatch = ''
+        substituteInPlace src/mcp_server_fetch/server.py \
+          --replace-fail 'AsyncClient(proxies=' 'AsyncClient(proxy='
+      '';
+
       pythonRelaxDeps = ["httpx"];
 
       # No tests in sdist
