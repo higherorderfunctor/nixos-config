@@ -10,7 +10,7 @@ kiro-cortex Generic Workflow Execution — Sequence Diagram
    │               ├────────────────►│                │               │               │
    │               │                 │                │               │               │
    │               │    ┌────────────┴────────────────┴───────────────┤               │
-   │               │    │  SEGMENT 1: HITL block (interview, etc.)   │               │
+   │               │    │  SEGMENT 1: HITL block (interview, etc.)    │               │
    │               │    └────────────┬────────────────┬───────────────┤               │
    │               │                 │                │               │               │
    │               │                 │  scope(role,   │               │               │
@@ -23,7 +23,7 @@ kiro-cortex Generic Workflow Execution — Sequence Diagram
    │               │                 │  cosine search(embed, filters) │               │
    │               │                 ├───────────────────────────────►│               │
    │               │                 │  instructions[]                │               │
-   │               │                 │◄──────────────────────────────┤│               │
+   │               │                 │◄───────────────────────────────┤               │
    │               │                 │                                │               │
    │               │                 │  inject state._context         │               │
    │               │                 │  block.execute()               │               │
@@ -39,12 +39,12 @@ kiro-cortex Generic Workflow Execution — Sequence Diagram
    ├──────────────►│                 │                                │               │
    │               │                 │                                │               │
    │               │  run_workflow   │                                │               │
-   │               │  (thread_id,   │                                │               │
-   │               │   answer)      │                                │               │
+   │               │  (thread_id,    │                                │               │
+   │               │   answer)       │                                │               │
    │               ├────────────────►│                                │               │
    │               │                 │                                │               │
    │               │    ┌────────────┴────────────────────────────────┤               │
-   │               │    │  SEGMENT 2: Subagent block (author, etc.)  │               │
+   │               │    │  SEGMENT 2: Subagent block (author, etc.)   │               │
    │               │    └────────────┬────────────────────────────────┤               │
    │               │                 │                                │               │
    │               │                 │  execution_env = "subagent"    │               │
@@ -56,7 +56,7 @@ kiro-cortex Generic Workflow Execution — Sequence Diagram
    │               │◄────────────────┤                                │               │
    │               │                 │                                │               │
    │               │  use_subagent(task + state_slice)                │               │
-   │               ├──────────────────────────────────────────────────────────────────►│
+   │               ├─────────────────────────────────────────────────────────────────►│
    │               │                 │                                │               │
    │               │                 │                 ┌──────────────┴───────────┐   │
    │               │                 │                 │  Subagent has fresh ctx  │   │
@@ -73,16 +73,16 @@ kiro-cortex Generic Workflow Execution — Sequence Diagram
    │               │                 │                                │               │
    │               │                 │    ┌─ subagent calls kiro-cortex MCP ──────────┤
    │               │                 │    │  which internally does:                   │
-   │               │                 │    │                                            │
-   │               │                 │    │  OPA: scope(role, task, domain)            │
+   │               │                 │    │                                           │
+   │               │                 │    │  OPA: scope(role, task, domain)           │
    │               │                 ├───────────────►│               │               │
    │               │                 │◄───────────────┤               │               │
-   │               │                 │    │                                            │
-   │               │                 │    │  RAG: cosine search(embed, filters)        │
+   │               │                 │    │                                           │
+   │               │                 │    │  RAG: cosine search(embed, filters)       │
    │               │                 ├───────────────────────────────►│               │
-   │               │                 │◄──────────────────────────────┤│               │
-   │               │                 │    │                                            │
-   │               │                 │    └─ returns instructions ────────────────────►│
+   │               │                 │◄───────────────────────────────┤               │
+   │               │                 │    │                                           │
+   │               │                 │    └─ returns instructions ───────────────────►│
    │               │                 │                                │               │
    │               │                 │                                │               │
    │               │                 │                                │               │
@@ -91,11 +91,11 @@ kiro-cortex Generic Workflow Execution — Sequence Diagram
    │               │                 │                                │     etc.)     │
    │               │                 │                                │               │
    │               │                 │                                │               │
-   │               │  ◄──── summary only (context shed) ─────────────────────────────┤
+   │               │◄──── summary only (context shed) ────────────────────────────────┤
    │               │                 │                                │               │
    │               │  run_workflow   │                                │               │
-   │               │  (thread_id,   │                                │               │
-   │               │   summary)     │                                │               │
+   │               │  (thread_id,    │                                │               │
+   │               │   summary)      │                                │               │
    │               ├────────────────►│                                │               │
    │               │                 │                                │               │
    │               │                 │  merge summary into state      │               │
