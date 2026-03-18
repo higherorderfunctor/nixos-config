@@ -420,6 +420,6 @@ Key context:
 6. 5.6 (context budget) INTERVIEW COMPLETE — adaptive multi-query with distance-based sizing. Two-layer retrieval: executor fast pass + subagent iterative fold. Ready for implementation.
 7. New UCs: UC-MW-34 (adaptive interview), UC-MW-35 (tiered validate), UC-MW-36 (validate→interview loop), UC-MW-37 (programmatic validation), UC-MW-38 (session persistence).
 8. Agent prompt (`prompts/meta-workflow.md`) needs updating — currently mode-centric.
-9. Entry point is now `bun agents/meta-workflow/src/main.ts` (not `bun src/mcp.ts`). Nix/agent config needs updating.
+9. Entry point: `bun agents/meta-workflow/src/main.ts`. Nix config updated (default.nix), needs `home-manager switch` to regenerate mcp.json.
 
-Next step: Implement 5.6 (distance surfacing, cosine cutoff, repurpose OPA ceiling). Then 5.7 load test validates the full stack at 100K.
+Next step: Implement 5.6 — update InstructionRepo.search() to return distances, add cosine distance cutoff to Executor.ts, repurpose OPA max_results as ceiling. Then 5.7 load test validates the full stack at 100K.
