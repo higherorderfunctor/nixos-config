@@ -606,7 +606,7 @@ More reusable patterns will emerge as workflows are built. The meta-workflow sho
 
 **SCOPED RE-OPTIMIZE** (UC-MW-14): A calling workflow (e.g., repo-analysis) triggers meta-workflow to re-optimize its full workflow scope. Scoped to the calling workflow, not all workflows. Baked into the calling workflow at design time.
 
-### PROPOSED: Unified Flow (Pre-Phase 5 Redesign — pending interview)
+### PROPOSED: Unified Flow (Phase 5 Redesign — pending interview)
 
 **Status: DESIGN PHASE — requires interview to resolve open questions before implementation.**
 

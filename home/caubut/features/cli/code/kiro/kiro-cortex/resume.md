@@ -10,7 +10,7 @@ Branch: chore/save-point
 Phase 4.5+ COMPLETE. UC-MW-29 DONE. 33 files, 0 errors, 0 warnings.
 Validation checklist: **9/9 complete** — all 5 smoke tests pass.
 
-**Next: Pre-Phase 5 redesign (flow simplification + subagent design + remaining UCs), then Phase 5 (repo-analysis).**
+**Next: Phase 5 (flow redesign + subagent design + remaining UCs), then Phase 6 (repo-analysis).**
 
 ### What's Built (all phases)
 
@@ -25,7 +25,7 @@ Validation checklist: **9/9 complete** — all 5 smoke tests pass.
 | UC-MW-29 | done | Lint-artifacts block: cross-system structural completeness checks |
 | Cleanup | done | MCP rewrite to @effect/ai (stdio, no HTTP), tagged WorkflowError, unused deps removed, YAML export complete |
 
-## Pre-Phase 5 Combined Plan
+## Phase 5: Flow Redesign + Subagent + Remaining UCs
 
 ### Overview
 
@@ -33,25 +33,25 @@ Two work streams merged into one dependency-ordered plan:
 
 **Stream A — Flow Redesign:** Collapse 6 modes (build/update/refine/audit/programmatic/scoped-reoptimize) into a unified flow with 2 entry points. Add a "validate" block that runs before promote on every flow. Interview adapts based on context rather than mode.
 
-**Stream B — Remaining Pre-Phase 5 work:** Subagent design, multi-instruction YAML (UC-MW-30/31), per-workflow arch docs (UC-MW-32), semantic gap analysis (UC-MW-33), load test at 100K.
+**Stream B — Remaining work:** Subagent design, multi-instruction YAML (UC-MW-30/31), per-workflow arch docs (UC-MW-32), semantic gap analysis (UC-MW-33), load test at 100K.
 
 ### Dependency Order
 
 ```
-Pre-5.1: Flow Redesign + Subagent Design + Validate Block Design
-    ↓    (tightly coupled — designed together, requires interview)
-Pre-5.2: Implementation — graph.ts, new/modified blocks, state changes
-    ↓
-Pre-5.3: Multi-instruction YAML + Hierarchical Layout (UC-MW-30/31)
-    ↓    (independent of flow, but needed before repo-analysis generates many instructions)
-Pre-5.4: Load/Validation Test at 100K Instructions
-    ↓
-Pre-5.5: Documentation Finalization — ARCHITECTURE.md, diagram, sequence diagram, README
-    ↓
-Phase 5: Repo-Analysis
+5.1: Flow Redesign + Subagent Design + Validate Block Design
+  ↓  (tightly coupled — designed together, requires interview)
+5.2: Implementation — graph.ts, new/modified blocks, state changes
+  ↓
+5.3: Multi-instruction YAML + Hierarchical Layout (UC-MW-30/31)
+  ↓  (independent of flow, but needed before repo-analysis generates many instructions)
+5.4: Load/Validation Test at 100K Instructions
+  ↓
+5.5: Documentation Finalization — ARCHITECTURE.md, diagram, sequence diagram, README
+  ↓
+Phase 6: Repo-Analysis
 ```
 
-### Pre-5.1: Flow Redesign + Subagent + Validate (NEEDS INTERVIEW)
+### 5.1: Flow Redesign + Subagent + Validate (NEEDS INTERVIEW)
 
 #### Proposed Unified Flow
 
@@ -157,7 +157,7 @@ These must be resolved before implementation:
 13. Programmatic mode: single subagent for entire flow (no HITL needed)?
 14. Author RAG: subagent calls kiro-cortex MCP directly, or root agent pre-fetches and passes via task description?
 
-### Pre-5.2: Implementation (after interview resolves questions)
+### 5.2: Implementation (after interview resolves questions)
 
 - Redesign graph.ts with simplified edges
 - New validate block (or refactored lint-artifacts)
@@ -168,9 +168,9 @@ These must be resolved before implementation:
 - Update render-diagram.ts for new flow
 - Smoke test all paths
 
-### Pre-5.3: Multi-instruction YAML + Hierarchical Layout (UC-MW-30/31)
+### 5.3: Multi-instruction YAML + Hierarchical Layout (UC-MW-30/31)
 
-Independent of flow redesign. Needed before Phase 5 generates many instructions.
+Independent of flow redesign. Needed before Phase 6 generates many instructions.
 
 - Array of instructions per YAML (each gets own vector in pgvector)
 - Directory hierarchy: `instructions/<domain>/<topic>.yaml`
@@ -178,23 +178,23 @@ Independent of flow redesign. Needed before Phase 5 generates many instructions.
 - Author block: chunking guidance (one concept per instruction)
 - Backward compat with single-instruction files
 
-### Pre-5.4: Load/Validation Test at 100K Instructions
+### 5.4: Load/Validation Test at 100K Instructions
 
-Depends on Pre-5.2 and Pre-5.3.
+Depends on 5.2 and 5.3.
 
 - Seed pgvector with ~100K instructions across multiple domains
 - Run complex multi-block workflow with mocked HITL
 - Validate: OPA scoping at scale, RAG relevance (no context drift), block executor injection, subagent context shedding
 - Goal: prove OPA→RAG pipeline holds at scale before building real workflows
 
-### Pre-5.5: Documentation Finalization
+### 5.5: Documentation Finalization
 
 After all implementation.
 
 - ARCHITECTURE.md: updated use cases, flow, block table, diagram, mode paths
 - Sequence diagram: updated for unified flow + validate loop
 - README: updated status
-- Resume: final state for Phase 5 handoff
+- Resume: final state for Phase 6 handoff
 
 ## Bugs Found (2026-03-18 flow review)
 
@@ -221,7 +221,7 @@ These are subsumed by the flow redesign but documented for reference:
 - F3: "pattern-detector" skill — DRY across workflows
 - F4: Meta-workflow self-analysis for interview improvement
 
-## Phase 5 — Repo-Analysis (after Pre-Phase 5 complete)
+## Phase 6 — Repo-Analysis (after Phase 5 complete)
 
 First workflow built by meta-workflow:
 - Git worktree aware (repo identity by remote origin)
@@ -261,16 +261,16 @@ pg 8.20.0, yaml 2.8.2. NO @effect/schema. NO zod.
 
 ## Resume Prompt
 
-Read resume.md. Pre-Phase 5 redesign in progress. Status: NEEDS INTERVIEW before implementation.
+Read resume.md. Phase 5 in progress. Status: NEEDS INTERVIEW before implementation.
 
 Key context:
-1. Flow redesign proposed — collapse 6 modes into unified flow + validate block. See "Pre-5.1" section for full proposal and interview questions (14 questions).
+1. Flow redesign proposed — collapse 6 modes into unified flow + validate block. See "5.1" section for full proposal and interview questions (14 questions).
 2. Subagent design integrated with flow redesign — 7 open questions.
 3. UC-MW-30..33 not yet implemented. UC-MW-32/33 may fold into the new validate block.
-4. Load test at 100K instructions planned for Pre-5.4.
+4. Load test at 100K instructions planned for 5.4.
 5. Three bugs found in current graph (audit loop, refine mismatch, missing export) — all subsumed by redesign.
 6. `gap-analyze` already renamed to `lint-artifacts` across all code/docs.
 7. Diagram renderer at `scripts/render-diagram.ts` — needs update after flow redesign.
 8. Generic sequence diagram at `docs/sequence-diagram.txt` — needs update after flow redesign.
 
-Next step: Interview user on the 14 questions in Pre-5.1 to resolve open design decisions before implementation.
+Next step: Interview user on the 14 questions in 5.1 to resolve open design decisions before implementation.
