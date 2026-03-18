@@ -25,35 +25,48 @@ Validation checklist: **9/9 complete** — all 5 smoke tests pass.
 | UC-MW-29 | done | Lint-artifacts block: cross-system structural completeness checks |
 | Cleanup | done | MCP rewrite to @effect/ai (stdio, no HTTP), tagged WorkflowError, unused deps removed, YAML export complete |
 
-## Phase 5: Flow Redesign + Subagent + Remaining UCs
+## Phase 5: Task-Scoped Interview + Implementation
 
-### Overview
+### Approach
 
-Two work streams merged into one dependency-ordered plan:
-
-**Stream A — Flow Redesign:** Collapse 6 modes (build/update/refine/audit/programmatic/scoped-reoptimize) into a unified flow with 2 entry points. Add a "validate" block that runs before promote on every flow. Interview adapts based on context rather than mode.
-
-**Stream B — Remaining work:** Subagent design, multi-instruction YAML (UC-MW-30/31), per-workflow arch docs (UC-MW-32), semantic gap analysis (UC-MW-33), load test at 100K.
+Interviews scoped per-task. Each task has its own interview (if needed), then implementation. Later answers depend on seeing earlier results — no upfront 14-question marathon.
 
 ### Dependency Order
 
 ```
-5.1: Flow Redesign + Subagent Design + Validate Block Design
-  ↓  (tightly coupled — designed together, requires interview)
-5.2: Implementation — graph.ts, new/modified blocks, state changes
+5.1: Interview (flow Q1-6) → Implement flow redesign
   ↓
-5.3: Multi-instruction YAML + Hierarchical Layout (UC-MW-30/31)
-  ↓  (independent of flow, but needed before repo-analysis generates many instructions)
-5.4: Context Budget Analysis + RAG Adequacy
-  ↓  (needs validate block from 5.2 + enough instructions from 5.3 to test with)
-5.5: Load/Validation Test at 100K Instructions
+5.2: Interview (validate Q7-10) → Implement validate block
   ↓
-5.6: Documentation Finalization — ARCHITECTURE.md, diagram, sequence diagram, README
+5.3: Interview (subagent Q11-14) → Implement subagent support
+  ↓
+5.4: Multi-instruction YAML (no interview) — can run parallel with 5.1-5.3
+  ↓
+5.5: Context budget / RAG adequacy (mini-interview if needed)
+  ↓
+5.6: Load test at 100K
+  ↓
+5.7: Documentation finalization
   ↓
 Phase 6: Repo-Analysis
 ```
 
-### 5.1: Flow Redesign + Subagent + Validate (NEEDS INTERVIEW)
+### 5.1: Flow Redesign (INTERVIEW → IMPLEMENT)
+
+**Status: INTERVIEW IN PROGRESS**
+
+#### Interview Questions (6)
+
+1. Confirm: unified flow with 2 entry points (interactive / programmatic). No separate modes. Interview adapts. Validate runs on every flow. Yes/no?
+2. Validate → interview loop: full re-pass (interview → decompose → ... → validate) or short-circuit to just affected blocks?
+3. Cross-workflow "refactor everything" (UC-MW-13): run the flow once per workflow? Or a separate capability?
+4. Mode field in state: replace with context detection (workflow_id/block_id/structured_input presence)? Or keep mode with 2 values (interactive/programmatic)?
+5. Export block: keep separate or fold into author/wire/promote (each exports its own artifacts)?
+6. Naming: "validate" for the new block? Or "check"/"verify"/something else?
+
+#### Decisions
+
+_(filled in as interview progresses)_
 
 #### Proposed Unified Flow
 
@@ -77,12 +90,6 @@ route → [interview ↔ research] → decompose → optimize → author → wir
 - Existing workflow + `block_id` → narrows to that block (was REFINE)
 - Called back from validate → "Here are discrepancies, how should we resolve?"
 
-**Validate block (new, replaces standalone audit/lint-artifacts modes):**
-- Runs before promote on EVERY flow
-- Subsumes: UC-MW-29 (structural completeness), UC-MW-14 (scoped re-optimize), UC-MW-13 (cross-workflow DRY)
-- Autonomous loop: checks → fixes what it can → raises discrepancies to interview if human input needed
-- On clean → promote
-
 **What this eliminates:**
 - REFINE mode → interview with `block_id` in state
 - AUDIT mode → validate step on every flow
@@ -104,45 +111,29 @@ route → [interview ↔ research] → decompose → optimize → author → wir
 | UC-MW-32 (per-wf arch docs) | Not implemented | Interview captures → validate checks against |
 | UC-MW-33 (semantic gap) | Not implemented | Part of validate block (LLM-powered) |
 
-#### New Use Cases Needed
+#### New Use Cases (proposed)
 
 - **UC-MW-34**: Interview adapts behavior based on state context (build/update/refine/validate-callback are one block with adaptive instructions)
 - **UC-MW-35**: Validate block — autonomous loop before promote. Structural checks (UC-MW-29) + scoped re-optimize (UC-MW-14) + cross-workflow DRY (UC-MW-13) + semantic gap analysis (UC-MW-33). Loops until clean, raises discrepancies to interview.
 - **UC-MW-36**: Validate → interview → decompose loop (discrepancy resolution path). When validate finds issues needing human judgment, it interrupts back to interview. After resolution, flow continues through decompose → ... → validate again.
 
-#### Subagent Design (integrated with flow redesign)
+#### Implementation (after interview)
 
-**Design proposal (from 2026-03-17):** Use existing interrupt() pattern — block executor checks execution_env, if "subagent" it interrupts with spawn payload. Claude spawns subagent, gets summary, resumes. No graph changes needed.
+- Redesign graph.ts with simplified edges
+- Update route.ts (remove mode switch, context-based routing)
+- Update interview.ts (adaptive behavior based on state)
+- Update state.ts (remove/simplify mode field, add block_id)
+- Update render-diagram.ts for new flow
+- Smoke test all paths
 
-**Block classification (needs review post-redesign):**
-- Root agent (HITL): route (inline), interview, research, promote
-- Subagent candidates (autonomous): validate, author, wire, export, decompose, optimize
-- Key question: validate is autonomous but needs to raise to interview — how does this work across subagent boundary?
+### 5.2: Validate Block (INTERVIEW → IMPLEMENT)
 
-**Subagent MCPs:** kiro-cortex (RAG), OpenMemory, Sequential Thinking, fetch. Built-in: read, write, shell, code.
+**Status: BLOCKED on 5.1**
 
-**Open questions (5 from original + new ones from flow redesign):**
-1. Per-block vs per-segment subagents
-2. Should programmatic mode be fully autonomous (single subagent for entire flow)?
-3. Generic vs specialized subagent agent configs
-4. Author block RAG access — via kiro-cortex MCP or task description?
-5. Update workflow.yaml execution_env now or at implementation time?
-6. Validate as subagent — how does "raise to interview" work across subagent boundary?
-7. Does validate run as one long subagent that can interrupt, or does it interrupt back to root which then goes to interview?
+Depends on 5.1 — need to see the implemented flow before designing validate's behavior.
 
-#### Interview Questions (for next session)
+#### Interview Questions (4)
 
-These must be resolved before implementation:
-
-**Flow structure:**
-1. Confirm: unified flow with 2 entry points (interactive / programmatic). No separate modes. Interview adapts. Validate runs on every flow. Yes/no?
-2. Validate → interview loop: full re-pass (interview → decompose → ... → validate) or short-circuit to just affected blocks?
-3. Cross-workflow "refactor everything" (UC-MW-13): run the flow once per workflow? Or a separate capability?
-4. Mode field in state: replace with context detection (workflow_id/block_id/structured_input presence)? Or keep mode with 2 values (interactive/programmatic)?
-5. Export block: keep separate or fold into author/wire/promote (each exports its own artifacts)?
-6. Naming: "validate" for the new block? Or "check"/"verify"/something else?
-
-**Validate block design:**
 7. UC-MW-32 (per-workflow arch docs): created during interview? Validate checks against it?
 8. UC-MW-33 (semantic gap analysis): is this the validate block, or a sub-step within it?
 9. Should validate attempt autonomous fixes or only report? (User said "loop until analysis is complete with option to raise discrepancies")
@@ -153,26 +144,57 @@ These must be resolved before implementation:
     - Scoped re-optimize: can this workflow reuse global patterns? Context budget? (UC-MW-14)
     - Semantic gap: use cases vs implementation coverage (UC-MW-33)
 
-**Subagent design:**
+#### Decisions
+
+_(filled in as interview progresses)_
+
+#### Implementation (after interview)
+
+- New validate block (refactored from lint-artifacts)
+- Update optimize.ts (move cross-workflow checks to validate, keep local checks)
+- Wire validate into graph between wire and promote
+- Smoke test validate loop
+
+### 5.3: Subagent Design (INTERVIEW → IMPLEMENT)
+
+**Status: BLOCKED on 5.2**
+
+Depends on 5.2 — need to see validate block behavior before deciding subagent boundaries.
+
+#### Interview Questions (4)
+
 11. Validate as subagent: autonomous loop that can interrupt back to root? Or stays in root agent?
 12. Per-block vs per-segment: spawn one subagent per autonomous block, or one per autonomous segment (multiple blocks)?
 13. Programmatic mode: single subagent for entire flow (no HITL needed)?
 14. Author RAG: subagent calls kiro-cortex MCP directly, or root agent pre-fetches and passes via task description?
 
-### 5.2: Implementation (after interview resolves questions)
+#### Background
 
-- Redesign graph.ts with simplified edges
-- New validate block (or refactored lint-artifacts)
-- Update route.ts (remove mode switch, context-based routing)
-- Update interview.ts (adaptive behavior based on state)
-- Update state.ts (remove/simplify mode field, add block_id, validate state)
-- Update optimize.ts (move cross-workflow checks to validate, keep local checks)
-- Update render-diagram.ts for new flow
-- Smoke test all paths
+**Design proposal (from 2026-03-17):** Use existing interrupt() pattern — block executor checks execution_env, if "subagent" it interrupts with spawn payload. Claude spawns subagent, gets summary, resumes. No graph changes needed.
 
-### 5.3: Multi-instruction YAML + Hierarchical Layout (UC-MW-30/31)
+**Block classification (needs review post-redesign):**
+- Root agent (HITL): route (inline), interview, research, promote
+- Subagent candidates (autonomous): validate, author, wire, export, decompose, optimize
+- Key question: validate is autonomous but needs to raise to interview — how does this work across subagent boundary?
 
-Independent of flow redesign. Needed before Phase 6 generates many instructions.
+**Subagent MCPs:** kiro-cortex (RAG), OpenMemory, Sequential Thinking, fetch. Built-in: read, write, shell, code.
+
+#### Decisions
+
+_(filled in as interview progresses)_
+
+#### Implementation (after interview)
+
+- Update workflow.yaml execution_env per block
+- Generate subagent agent configs
+- Wire subagent spawn into block executor
+- Smoke test subagent paths
+
+### 5.4: Multi-instruction YAML + Hierarchical Layout (UC-MW-30/31)
+
+**Status: READY (no interview needed, independent of 5.1-5.3)**
+
+Can run in parallel with flow redesign tasks.
 
 - Array of instructions per YAML (each gets own vector in pgvector)
 - Directory hierarchy: `instructions/<domain>/<topic>.yaml`
@@ -180,7 +202,11 @@ Independent of flow redesign. Needed before Phase 6 generates many instructions.
 - Author block: chunking guidance (one concept per instruction)
 - Backward compat with single-instruction files
 
-### 5.4: Context Budget Analysis + RAG Adequacy (NEW)
+### 5.5: Context Budget Analysis + RAG Adequacy
+
+**Status: BLOCKED on 5.2 + 5.4**
+
+Needs validate block (5.2) + enough instructions to test with (5.4). May need mini-interview after seeing results.
 
 The OPA→RAG pipeline has an unresolved gap: blocks get a hard `max_results` limit (20 or 50) from OPA scoping, and the executor does a single pgvector search using only the block's description as the embedding query. If a block genuinely needs more instructions than the limit, they're silently dropped. No warning, no fallback, no multi-query.
 
@@ -193,27 +219,25 @@ The OPA→RAG pipeline has an unresolved gap: blocks get a hard `max_results` li
 - No mechanism for a block to declare "I need more context than the default"
 
 **What this step must resolve:**
-1. How does the system detect when a block's relevant instruction set exceeds `max_results`? (e.g., run uncapped query, compare count vs limit, flag if truncated)
+1. How does the system detect when a block's relevant instruction set exceeds `max_results`?
 2. Should blocks declare a context budget? (e.g., `max_context` in BlockDef or OPA per-block overrides)
-3. Should the executor support multi-query RAG? (embed description + embed state-derived queries, deduplicate, merge)
-4. Should there be a cosine distance cutoff? (stop returning results below a relevance threshold, even if under the limit)
-5. How does validate/optimize use this? (detect truncation → recommend block splitting or limit adjustment)
-6. At 100K+ instructions, how do we ensure the right 20 surface? (OPA domain filtering is the first gate — is it sufficient?)
+3. Should the executor support multi-query RAG?
+4. Should there be a cosine distance cutoff?
+5. How does validate/optimize use this?
+6. At 100K+ instructions, how do we ensure the right 20 surface?
 
-**Depends on:** 5.2 (validate block exists to run these checks), 5.3 (multi-instruction YAML to generate enough instructions to test with)
+### 5.6: Load/Validation Test at 100K Instructions
 
-### 5.5: Load/Validation Test at 100K Instructions
-
-Depends on 5.2, 5.3, and 5.4.
+**Status: BLOCKED on 5.1-5.5**
 
 - Seed pgvector with ~100K instructions across multiple domains
 - Run complex multi-block workflow with mocked HITL
-- Validate: OPA scoping at scale, RAG relevance (no context drift), block executor injection, subagent context shedding, **context budget adequacy (no silent truncation)**
+- Validate: OPA scoping at scale, RAG relevance (no context drift), block executor injection, subagent context shedding, context budget adequacy (no silent truncation)
 - Goal: prove OPA→RAG pipeline holds at scale before building real workflows
 
-### 5.6: Documentation Finalization
+### 5.7: Documentation Finalization
 
-After all implementation.
+**Status: BLOCKED on 5.1-5.6**
 
 - ARCHITECTURE.md: updated use cases, flow, block table, diagram, mode paths
 - Sequence diagram: updated for unified flow + validate loop
@@ -285,16 +309,15 @@ pg 8.20.0, yaml 2.8.2. NO @effect/schema. NO zod.
 
 ## Resume Prompt
 
-Read resume.md. Phase 5 in progress. Status: NEEDS INTERVIEW before implementation.
+Read resume.md. Phase 5 in progress. Interviews scoped per-task — each task has its own interview, then implementation.
 
 Key context:
-1. Flow redesign proposed — collapse 6 modes into unified flow + validate block. See "5.1" section for full proposal and interview questions (14 questions).
-2. Subagent design integrated with flow redesign — 7 open questions.
-3. UC-MW-30..33 not yet implemented. UC-MW-32/33 may fold into the new validate block.
-4. Load test at 100K instructions planned for 5.5.
-5. Three bugs found in current graph (audit loop, refine mismatch, missing export) — all subsumed by redesign.
-6. `gap-analyze` already renamed to `lint-artifacts` across all code/docs.
-7. Diagram renderer at `scripts/render-diagram.ts` — needs update after flow redesign.
-8. Generic sequence diagram at `docs/sequence-diagram.txt` — needs update after flow redesign.
+1. Phase 5 restructured into 7 tasks (5.1-5.7), each with scoped interview before implementation.
+2. 5.1 (flow redesign) interview IN PROGRESS — 6 questions about flow structure.
+3. 5.2 (validate block) BLOCKED on 5.1 — 4 questions, need to see flow before designing validate.
+4. 5.3 (subagent design) BLOCKED on 5.2 — 4 questions, need to see validate before deciding subagent boundaries.
+5. 5.4 (multi-instruction YAML) READY — no interview needed, can run parallel with 5.1-5.3.
+6. Three bugs found in current graph — all subsumed by redesign.
+7. `gap-analyze` already renamed to `lint-artifacts` across all code/docs.
 
-Next step: Interview user on the 14 questions in 5.1 to resolve open design decisions before implementation.
+Next step: Interview user on 5.1 questions (Q1-6: flow structure) one at a time, recording decisions as we go.

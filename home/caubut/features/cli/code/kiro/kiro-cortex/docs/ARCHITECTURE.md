@@ -606,9 +606,21 @@ More reusable patterns will emerge as workflows are built. The meta-workflow sho
 
 **SCOPED RE-OPTIMIZE** (UC-MW-14): A calling workflow (e.g., repo-analysis) triggers meta-workflow to re-optimize its full workflow scope. Scoped to the calling workflow, not all workflows. Baked into the calling workflow at design time.
 
-### PROPOSED: Unified Flow (Phase 5 Redesign — pending interview)
+### PROPOSED: Unified Flow (Phase 5 Redesign — per-task interview in progress)
 
-**Status: DESIGN PHASE — requires interview to resolve open questions before implementation.**
+**Status: DESIGN PHASE — interviews scoped per-task. 5.1 (flow structure) interview in progress.**
+
+**Approach:** Each task has its own interview, then implementation. Later answers depend on seeing earlier results.
+
+| Task | Interview | Status |
+|------|-----------|--------|
+| 5.1 Flow redesign | Q1-6 (flow structure) | IN PROGRESS |
+| 5.2 Validate block | Q7-10 (validate design) | BLOCKED on 5.1 |
+| 5.3 Subagent design | Q11-14 (subagent boundaries) | BLOCKED on 5.2 |
+| 5.4 Multi-instruction YAML | None needed | READY (parallel) |
+| 5.5 Context budget | Mini-interview if needed | BLOCKED on 5.2+5.4 |
+| 5.6 Load test | None | BLOCKED on 5.1-5.5 |
+| 5.7 Documentation | None | BLOCKED on 5.1-5.6 |
 
 Collapse 6 modes into 1 flow with 2 entry points. Interview adapts based on context. Validate block runs before promote on every flow.
 
@@ -648,15 +660,10 @@ route → [interview ↔ research] → decompose → optimize → author → wir
 - UC-MW-35: Validate block — autonomous loop with structural + semantic checks
 - UC-MW-36: Validate → interview → decompose loop (discrepancy resolution)
 
-**Open questions (14 — see resume.md Pre-5.1 for full list):**
-1. Validate → interview loop: full re-pass or short-circuit?
-2. Cross-workflow "refactor everything": per-workflow run or separate capability?
-3. Mode field: replace with context detection or keep with 2 values?
-4. Export block: keep separate or fold into other blocks?
-5. Naming: "validate" or something else?
-6. UC-MW-32/33 integration into validate
-7. Subagent design for validate (autonomous but needs to raise to interview)
-8–14. See resume.md
+**Open questions (scoped per-task — see resume.md for full details):**
+- 5.1 (Q1-6): Flow structure — unified flow, validate loop scope, mode field, export block, naming
+- 5.2 (Q7-10): Validate block — arch docs, semantic gap, autonomous fixes, check list
+- 5.3 (Q11-14): Subagent design — validate as subagent, per-block vs per-segment, programmatic autonomy, author RAG
 
 ### HITL Implementation
 
