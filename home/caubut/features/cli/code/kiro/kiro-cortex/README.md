@@ -41,7 +41,7 @@ home-manager switch          # PostgreSQL + OPA services
 cd kiro-cortex && pnpm install
 # MCP server is launched by kiro-cli via mcp.json — not run directly
 # For manual testing:
-CORTEX_DEBUG=true bun src/mcp.ts
+CORTEX_DEBUG=true bun agents/meta-workflow/src/main.ts
 ```
 
 ## Architecture

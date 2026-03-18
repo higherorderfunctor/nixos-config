@@ -204,7 +204,7 @@
       };
       kiro-cortex = {
         command = "${pkgs.bun}/bin/bun";
-        args = ["run" "${kiroCortexPath}/src/mcp.ts"];
+        args = ["run" "${kiroCortexPath}/agents/meta-workflow/src/main.ts"];
         env = {
           CORTEX_DEBUG = "true";
         };
