@@ -10,7 +10,7 @@ Branch: chore/save-point
 Phase 4.5+ COMPLETE. UC-MW-29 DONE. 34 files, 0 errors, 0 warnings.
 Validation checklist: **9/9 complete** — all 5 smoke tests pass.
 
-**5.1 (flow redesign) COMPLETE. 5.2 (subagent) COMPLETE. 5.3 (package restructure) IN PROGRESS. 5.4 (validate) interview COMPLETE. Next: 5.3 implementation.**
+**5.1 (flow redesign) COMPLETE. 5.2 (subagent) COMPLETE. 5.3 (package restructure) COMPLETE. 5.4 (validate) interview COMPLETE. Next: 5.4 implementation.**
 
 ### What's Built (all phases)
 
@@ -184,7 +184,7 @@ Subagent is a general execution pattern (context reset). Decisions here inform h
 
 ### 5.3: Package Restructure (IMPLEMENT)
 
-**Status: IN PROGRESS**
+**Status: COMPLETE**
 
 Move agent-specific code into `agents/` directory. kiro-cortex becomes a generic shared library. Agent packages depend on kiro-cortex via `pnpm link:`.
 
