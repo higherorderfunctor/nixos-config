@@ -6,15 +6,16 @@
  * can build anything. Unlike other workflows that use PipelineExecutor + BlockExecutor,
  * this one is hand-wired with explicit node registration and conditional edges.
  *
- * ARCH: Full 4.5 graph with loops:
- * - interview ↔ research (research informs interview, interview may trigger more)
- * - decompose → optimize → author (optimize can recommend redesign via HITL)
+ * ARCH: Unified flow (5.1 decisions). No mode field — context detection in route.
  *
- * Graph structure (by mode):
- *   BUILD/UPDATE: route → interview → research → decompose → optimize → author → wire → promote → export → END
- *   REFINE:       route → author → END
- *   AUDIT:        route → lint-artifacts → optimize → interview → research → decompose → optimize → author → wire → promote → export → END
- *   PROGRAMMATIC: route → decompose → optimize → author → wire → promote → export → END
+ * Graph structure:
+ *   INTERACTIVE:  route → interview ↔ research → decompose → optimize → author → wire → validate → promote → export → END
+ *   PROGRAMMATIC: route → decompose → optimize → author → wire → validate → promote → export → END
+ *
+ * Loops:
+ *   interview ↔ research — research informs interview, interview may trigger more
+ *   decompose ↔ optimize — optimize can recommend redesign via HITL
+ *   validate → promote (clean) or validate → interview (tier 3 discrepancies, wired in 5.2)
  *
  * ARCH: export node (UC-MW-16/17) writes workflow.yaml metadata to disk for Nix reproducibility.
  * Together with author (instructions/*.yaml) and wire (pipeline.yaml), workflows are fully
@@ -31,29 +32,29 @@ import { decomposeNode } from "./decompose.js"
 import { optimizeNode } from "./optimize.js"
 import { authorNode } from "./author.js"
 import { wireNode } from "./wire.js"
+import { validateNode } from "./validate.js"
 import { promoteNode } from "./promote.js"
 import { exportNode } from "./export.js"
-import { lintArtifactsNode } from "./lint-artifacts.js"
 
 /**
  * Build the meta-workflow StateGraph with PG checkpointer.
  *
- * ARCH: route uses Command with goto for mode-based entry point selection.
- * Conditional edges handle the interview↔research and optimize→author/decompose loops.
+ * ARCH: Unified flow — route uses Command with goto for context-based entry
+ * point selection (5.1 Q4). No mode-based branching.
  */
 export const buildMetaWorkflow = async () => {
   const checkpointer = await getCheckpointer()
 
   const graph = new StateGraph(MetaWorkflowState)
     // --- Nodes ---
-    .addNode("route", routeNode, { ends: ["interview", "author", "lint-artifacts", "decompose"] })
-    .addNode("lint-artifacts", lintArtifactsNode)
+    .addNode("route", routeNode, { ends: ["interview", "decompose"] })
     .addNode("interview", interviewNode)
     .addNode("research", researchNode)
     .addNode("decompose", decomposeNode)
     .addNode("optimize", optimizeNode)
     .addNode("author", authorNode)
     .addNode("wire", wireNode)
+    .addNode("validate", validateNode)
     .addNode("promote", promoteNode)
     .addNode("export", exportNode)
 
@@ -61,34 +62,23 @@ export const buildMetaWorkflow = async () => {
     .addEdge(START, "route")
 
     // --- interview ↔ research loop ---
-    // ARCH: After interview, check needs_research. If true → research → back to interview.
-    // If false → decompose.
     .addConditionalEdges("interview", (s: MetaWorkflowStateType) =>
       s.needs_research ? "research" : "decompose",
     )
     .addEdge("research", "interview")
 
-    // --- lint-artifacts → optimize (audit mode entry, UC-MW-29) ---
-    .addEdge("lint-artifacts", "optimize")
-
-    // --- decompose → optimize → author (with redesign loop) ---
+    // --- decompose → optimize (with redesign loop) ---
     .addEdge("decompose", "optimize")
-    // ARCH: optimize routing depends on scope:
-    // - Audit mode (UC-MW-13): global scan → interview to discuss findings with user
-    // - Build/update/programmatic: local check → redesign loop or author
     .addConditionalEdges("optimize", (s: MetaWorkflowStateType) =>
-      s.mode === "audit" && !s.needs_redesign ? "interview"
-        : s.needs_redesign ? "decompose"
-        : "author",
+      s.needs_redesign ? "decompose" : "author",
     )
 
-    // --- author → wire or END (refine skips wire) ---
-    .addConditionalEdges("author", (s: MetaWorkflowStateType) =>
-      s.mode === "refine" ? END : "wire",
-    )
-
-    // --- wire → promote → export → END ---
-    .addEdge("wire", "promote")
+    // --- author → wire → validate → promote → export → END ---
+    .addEdge("author", "wire")
+    .addEdge("wire", "validate")
+    // ARCH: validate → promote for now. 5.2 adds conditional edge:
+    // validate → interview (tier 3 discrepancies) or validate → promote (clean)
+    .addEdge("validate", "promote")
     .addEdge("promote", "export")
     .addEdge("export", END)
 

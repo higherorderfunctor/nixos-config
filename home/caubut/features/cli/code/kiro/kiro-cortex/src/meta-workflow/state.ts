@@ -5,6 +5,12 @@
  * ARCH: The meta-workflow is the bootstrap workflow that builds, updates, and
  * refines other workflows. It's hand-wired (not via PipelineExecutor) because
  * it needs to exist before the pipeline system can build anything.
+ *
+ * ARCH: No mode field — routing uses context detection (5.1 decision Q4):
+ * - workflow_id present → update
+ * - workflow_id + block_id → refine (narrows to specific block)
+ * - structured_input present → programmatic (skip interview)
+ * - neither → build (fresh start)
  */
 
 import { Annotation } from "@langchain/langgraph"
@@ -49,14 +55,17 @@ export interface StructuredInput {
  *
  * ARCH: This state flows through all blocks. Fields are accumulated as the
  * pipeline progresses — each block reads what it needs and writes its outputs.
+ *
+ * ARCH: Context detection replaces mode field (5.1 Q4). Route inspects
+ * workflow_id, block_id, and structured_input to determine entry point.
  */
 export const MetaWorkflowState = Annotation.Root({
-  // --- Core fields (from 4.4) ---
+  // --- Core fields ---
 
-  /** Workflow operation mode. */
-  mode: Annotation<"build" | "update" | "refine" | "audit" | "programmatic">,
   /** Workflow ID from caller input (mapped to workflow_name by route). */
   workflow_id: Annotation<string>,
+  /** Specific block to refine — narrows interview to this block (UC-MW-34). */
+  block_id: Annotation<string>,
   /** Name of the workflow being designed (used as directory name). */
   workflow_name: Annotation<string>,
   /** Human-readable description of the workflow's purpose. */
@@ -70,19 +79,14 @@ export const MetaWorkflowState = Annotation.Root({
   /** Error message if any block fails. */
   error: Annotation<string | null>,
 
-  // --- Research fields (4.5) ---
+  // --- Research fields ---
 
   /** Accumulated research findings from external search. */
   research_findings: Annotation<string>,
   /** Whether interview wants research before proceeding. */
   needs_research: Annotation<boolean>,
 
-  // --- Lint fields (UC-MW-29) ---
-
-  /** Lint-artifacts report — cross-system structural completeness findings. */
-  lint_report: Annotation<string>,
-
-  // --- Decompose / optimize fields (4.5) ---
+  // --- Decompose / optimize fields ---
 
   /** Optimization report — issues found by optimize block. */
   optimization_report: Annotation<string>,
@@ -94,7 +98,7 @@ export const MetaWorkflowState = Annotation.Root({
   /** How the workflow will be triggered: dedicated agent or skill. */
   trigger_type: Annotation<"agent" | "skill" | null>,
 
-  // --- Promote fields (4.5) ---
+  // --- Promote fields ---
 
   /** File paths of generated trigger artifacts (SKILL.md, agent config). */
   promoted_artifacts: Annotation<ReadonlyArray<string>>,

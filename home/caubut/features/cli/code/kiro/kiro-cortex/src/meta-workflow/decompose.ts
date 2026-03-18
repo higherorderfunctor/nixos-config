@@ -6,7 +6,7 @@
  * proposes new blocks for uncovered capabilities, and suggests execution
  * environments per block (UC-MW-19). Uses interrupt() for user approval.
  *
- * ARCH: For programmatic mode (UC-MW-4/12), uses structured_input directly
+ * ARCH: For programmatic calls (UC-MW-4/12), uses structured_input directly
  * without interrupt — the caller already provided the block breakdown.
  * Fails if structured_input is missing required fields (UC-MW-12).
  */
@@ -19,17 +19,17 @@ import type { MetaWorkflowStateType, BlockSpec } from "./state.js"
 /**
  * Propose block structure for the workflow being designed.
  *
- * - Programmatic mode: validates structured_input, uses proposed_blocks directly.
- * - Build/update/audit: searches registry for reuse, proposes structure via interrupt().
+ * - Programmatic: validates structured_input, uses proposed_blocks directly.
+ * - Interactive: searches registry for reuse, proposes structure via interrupt().
  *
  * @returns Partial state with blocks and workflow metadata.
  */
 export const decomposeNode = async (
   state: MetaWorkflowStateType,
 ): Promise<Partial<MetaWorkflowStateType>> => {
-  // --- Programmatic mode: use structured_input directly (UC-MW-4/12) ---
-  if (state.mode === "programmatic") {
-    if (!state.structured_input?.problem_statement || !state.structured_input?.use_cases?.length) {
+  // --- Programmatic: use structured_input directly (UC-MW-4/12) ---
+  if (state.structured_input) {
+    if (!state.structured_input.problem_statement || !state.structured_input.use_cases?.length) {
       return { error: "Programmatic mode requires problem_statement and use_cases (UC-MW-12)" }
     }
     return {

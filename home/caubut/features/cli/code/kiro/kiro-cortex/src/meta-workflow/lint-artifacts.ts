@@ -31,7 +31,7 @@ const exists = (path: string): Promise<boolean> =>
  * Analyze a workflow for cross-system gaps.
  *
  * ARCH: Uses Node.js fs directly (same pattern as export.ts, author.ts).
- * Deterministic — no interrupt. Produces lint_report for downstream consumption.
+ * Deterministic — no interrupt. Produces optimization_report for downstream consumption.
  */
 export const lintArtifactsNode = async (
   state: MetaWorkflowStateType,
@@ -49,7 +49,7 @@ export const lintArtifactsNode = async (
 
   if (names.length === 0) {
     findings.push({ severity: "error", category: "filesystem", message: "No workflows found in workflows/" })
-    return { lint_report: formatFindings(findings) }
+    return { optimization_report: formatFindings(findings) }
   }
 
   for (const wfName of names) {
@@ -57,7 +57,7 @@ export const lintArtifactsNode = async (
     await analyzeWorkflow(dir, wfName, state, findings)
   }
 
-  return { lint_report: formatFindings(findings) }
+  return { optimization_report: formatFindings(findings) }
 }
 
 /** Analyze a single workflow directory for gaps. */

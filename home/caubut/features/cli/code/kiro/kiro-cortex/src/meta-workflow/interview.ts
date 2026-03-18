@@ -2,13 +2,15 @@
  * @module meta-workflow/interview
  * Interview block — gathers workflow requirements from the user via HITL interrupt.
  *
- * ARCH: Uses LangGraph interrupt() for human-in-the-loop. The pipeline pauses,
- * the user provides workflow details, and the pipeline resumes with
- * Command({ resume: answer }).
+ * ARCH: Adaptive behavior based on state context (UC-MW-34, 5.1 Q1):
+ * - No workflow → "What do you want to build?"
+ * - workflow_id → "What do you want to change?"
+ * - workflow_id + block_id → narrows to that block
+ * - (future: validate_findings → "Here are discrepancies, how should we resolve?")
  *
- * ARCH: Sets needs_research flag when the user indicates knowledge gaps.
- * The graph routes interview → research → interview when research is needed,
- * then interview → decompose when requirements are complete.
+ * ARCH: Uses LangGraph interrupt() for human-in-the-loop. Sets needs_research
+ * flag when the user indicates knowledge gaps. The graph routes
+ * interview → research → interview when research is needed.
  */
 
 import { interrupt } from "@langchain/langgraph"
@@ -29,8 +31,10 @@ interface InterviewAnswer {
  * Interview the user about the workflow they want to build or update.
  * Pauses execution via interrupt() and waits for user input.
  *
- * ARCH: When research_findings are present (from a previous research loop),
- * the interview prompt includes them so the user can refine requirements.
+ * ARCH: Adapts question based on state context (UC-MW-34):
+ * - workflow_id + block_id → refine specific block
+ * - workflow_id → update existing workflow
+ * - neither → build new workflow
  *
  * @returns Partial state with workflow metadata and needs_research flag.
  */
@@ -41,10 +45,11 @@ export function interviewNode(state: MetaWorkflowStateType): Partial<MetaWorkflo
 
   const triggerPrompt = "\n\nHow should this workflow be triggered?\n- agent: dedicated agent (user switches explicitly, focused context)\n- skill: default agent activates on request match (on-demand, lower context cost)"
 
-  const question = state.mode === "update"
-    ? `Updating workflow "${state.workflow_name}". What changes?${researchContext}\n\nProvide updated details. Set needs_research: true if you need external research first.`
-    : state.mode === "audit"
-      ? `Optimization findings for review:\n${state.optimization_report}${researchContext}\n\nWhich issues should be addressed? Provide workflow_name and blocks to restructure.`
+  // ARCH: Context detection determines question framing (5.1 Q4, UC-MW-34)
+  const question = state.workflow_id && state.block_id
+    ? `Refining block "${state.block_id}" in workflow "${state.workflow_name}".${researchContext}\n\nWhat needs to change in this block's instructions?`
+    : state.workflow_id
+      ? `Updating workflow "${state.workflow_name}". What changes?${researchContext}\n\nProvide updated details. Set needs_research: true if you need external research first.`
       : `Describe the workflow: name, description, and optionally blocks.${researchContext}${triggerPrompt}\n\nSet needs_research: true if you want external research before decomposition.`
 
   const answer: unknown = interrupt({ question })

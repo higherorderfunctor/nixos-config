@@ -6,8 +6,8 @@
  * so the user can decide whether to redesign. Sets needs_redesign flag to
  * loop back to decompose if the user wants changes.
  *
- * ARCH: Scope is LOCAL to the workflow being worked on during create/update.
- * Full repo-wide scan only via audit mode (UC-MW-13). Checks:
+ * ARCH: Scope is LOCAL to the workflow being worked on (5.1 Q3).
+ * Cross-workflow DRY analysis is user-prompted separately. Checks:
  * - Instruction bloat per block (UC-MW-8)
  * - Spaghetti detection — too many blocks (UC-MW-9)
  * - DRY violations — similar block descriptions (UC-MW-10)
@@ -48,7 +48,6 @@ const wordSimilarity = (a: string, b: string): number => {
  * @returns Partial state with optimization_report and needs_redesign flag.
  */
 export function optimizeNode(state: MetaWorkflowStateType): Partial<MetaWorkflowStateType> {
-  // ARCH: In audit mode, optimize runs after lint-artifacts with no blocks in state.
   if (!state.blocks?.length) {
     return { optimization_report: "No blocks to analyze.", needs_redesign: false }
   }

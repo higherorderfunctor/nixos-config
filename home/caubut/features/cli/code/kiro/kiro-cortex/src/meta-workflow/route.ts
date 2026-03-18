@@ -1,38 +1,34 @@
 /**
  * @module meta-workflow/route
- * Route block — classifies user intent and directs to the appropriate next block.
+ * Route block — classifies user intent via context detection and directs to
+ * the appropriate next block.
  *
- * ARCH: Uses LangGraph Command for conditional routing. Supports 5 modes:
- * - build/update → interview (gather requirements)
- * - refine → author (direct instruction editing)
- * - audit → lint-artifacts (structural completeness check, UC-MW-29, then optimize)
- * - programmatic → decompose (skip interview, UC-MW-4/12)
+ * ARCH: No mode field (5.1 Q4). Uses context detection:
+ * - structured_input present → decompose (programmatic, UC-MW-4/12)
+ * - workflow_id present → interview (update/refine — interview adapts, UC-MW-34)
+ * - neither → interview (build — fresh start)
  */
 
 import { Command } from "@langchain/langgraph"
 import type { MetaWorkflowStateType } from "./state.js"
 
 /**
- * Route based on workflow mode.
+ * Route based on state context.
  *
  * ARCH: Returns a LangGraph Command with `goto` for conditional edge routing.
- * Each mode maps to a specific entry block in the pipeline.
+ * Context detection replaces the old mode switch (5.1 Q4).
  */
 export const routeNode = (state: MetaWorkflowStateType): Command => {
   // ARCH: Map workflow_id from caller input to workflow_name used by all downstream nodes.
-  const update = state.workflow_id && !state.workflow_name
+  const update: Partial<MetaWorkflowStateType> = state.workflow_id && !state.workflow_name
     ? { workflow_name: state.workflow_id }
     : {}
 
-  switch (state.mode) {
-    case "refine":
-      return new Command({ goto: "author", update })
-    case "audit":
-      return new Command({ goto: "lint-artifacts", update })
-    case "programmatic":
-      return new Command({ goto: "decompose", update })
-    default:
-      // build, update
-      return new Command({ goto: "interview", update })
+  // Programmatic: structured_input provided → skip interview (UC-MW-4/12)
+  if (state.structured_input) {
+    return new Command({ goto: "decompose", update })
   }
+
+  // Interactive: interview adapts based on workflow_id / block_id presence (UC-MW-34)
+  return new Command({ goto: "interview", update })
 }
