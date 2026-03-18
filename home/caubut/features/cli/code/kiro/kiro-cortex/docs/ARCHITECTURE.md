@@ -473,7 +473,12 @@ Building workflows by hand doesn't scale. Each workflow needs decomposition into
 - **UC-MW-30**: Multi-instruction YAML format. Instruction files support an array of instructions per YAML, each with its own `id`, `text`, OPA metadata, and `content_hash`. Each instruction becomes its own vector in pgvector. Seed.ts walks directories recursively and parses both single-instruction (backward compat) and multi-instruction files. Author block chunks knowledge into one concept per instruction for optimal retrieval.
 - **UC-MW-31**: Hierarchical instruction layout on disk. Instructions are organized in a directory hierarchy: `instructions/<domain>/<topic>.yaml` (e.g., `instructions/effect/effect-stream.yaml`, `instructions/effect/effect-http-api.yaml`). Domains can nest. This scales to millions of instructions with navigable structure. A domain directory groups related files; individual files group related instructions.
 - **UC-MW-32**: Per-workflow architecture document. Meta-workflow generates and maintains an ARCHITECTURE.md for every workflow it builds. Interview captures use cases (numbered, testable assertions). Refinements across sessions accumulate in the arch doc — nothing is lost. The arch doc is the source of truth for what the workflow should do; the flow/blocks/instructions are the implementation.
-- **UC-MW-33**: Semantic gap analysis — use-case-vs-implementation validation. An LLM-powered block (or mode) compares the workflow's architecture doc (use cases, design intent) against its actual implementation (blocks, pipeline, instructions). Identifies coverage gaps: "UC-3 says X but no block handles X." Distinct from the structural lint block (UC-MW-29) which checks filesystem consistency. Runs during audit mode after structural checks.
+- **UC-MW-33**: Semantic gap analysis — use-case-vs-implementation validation. An LLM-powered sub-check within the validate block compares the workflow's architecture doc (use cases, design intent) against its actual implementation (blocks, pipeline, instructions). Identifies coverage gaps: "UC-3 says X but no block handles X." Distinct from structural checks (UC-MW-29) which check filesystem consistency. Tier 3 check within validate.
+- **UC-MW-34**: Interview adapts behavior based on state context (build/update/refine/validate-callback are one block with adaptive instructions). No existing workflow → "What do you want to build?" Existing workflow → "What do you want to change?" Existing + block_id → narrows to that block. Called from validate → "Here are discrepancies, how should we resolve?"
+- **UC-MW-35**: Validate block — autonomous tiered loop before promote. Tier 1 (structural): filesystem artifacts, pipeline↔block consistency, YAML schema validity. Tier 2 (quality): instruction bloat (UC-MW-8), local DRY, scoped re-optimize (UC-MW-14). Tier 3 (semantic): arch doc use cases vs block coverage (UC-MW-33), cross-workflow DRY (UC-MW-10/13, user-prompted only). Loops until clean, raises discrepancies to interview.
+- **UC-MW-36**: Validate → interview → decompose loop (discrepancy resolution path). When validate finds issues needing human judgment (low confidence), it interrupts back to interview. After resolution, flow continues through decompose → ... → validate again.
+- **UC-MW-37**: Programmatic validation resolution — LLM acts as interviewer during validate. Fixes what it's confident about (any tier), re-validates. Fails with explanation on low confidence rather than silently applying bad fixes.
+- **UC-MW-38**: Session persistence — track active workflow design sessions in OpenMemory so user can resume after interruptions. LangGraph PG checkpointer handles graph state; OpenMemory tracks session context (what we're doing, where we left off, decisions made).
 - _(Add more use cases here as they emerge)_
 
 ### Description
@@ -524,103 +529,86 @@ More reusable patterns will emerge as workflows are built. The meta-workflow sho
 
 | Block | Purpose | HITL | Reusable |
 |-------|---------|------|----------|
-| **route** | Entry point. Classify intent (build/update/refine/audit). Load existing workflow state if update/refine. Validate structured input for programmatic calls (UC-MW-12). | No | No |
-| **interview** | Multi-turn conversation via LangGraph `interrupt()`. Adapts questions based on mode. Loops with research when needed. | Yes | Potentially |
+| **route** | Entry point. Context detection: `workflow_id` → update, `workflow_id` + `block_id` → refine, `structured_input` → programmatic, neither → build. No mode field. | No | No |
+| **interview** | Multi-turn conversation via LangGraph `interrupt()`. Adapts based on state context (UC-MW-34): build/update/refine/validate-callback. Loops with research when needed. | Yes | Potentially |
 | **research** | External search for best practices, similar systems, prior art. Also searches block registry for reuse candidates. Generic — usable by any workflow. | No | Yes |
 | **decompose** | Takes interview output → proposes block structure. Searches existing blocks for reuse. Applies reusable patterns (historical tracking, etc.). Calls optimize before presenting proposal. | Yes (approve/refine) | No |
-| **lint-artifacts** | Cross-system completeness check (UC-MW-29). Verifies filesystem artifacts, pipeline↔instruction consistency, block coverage. Broader than optimize — checks structural completeness, not instruction quality. | No (feeds into optimize) | Yes |
-| **optimize** | Reviews structure for instruction bloat (UC-MW-8), spaghetti (UC-MW-9), DRY violations (UC-MW-10). Returns recommendations — doesn't act on them. Scope: local to the workflow being worked on during create/update. Full repo scan only via manual audit trigger (UC-MW-13). | No (feeds into interview/decompose) | Yes |
+| **optimize** | Reviews structure for instruction bloat (UC-MW-8), spaghetti (UC-MW-9), local DRY (UC-MW-10). Returns recommendations — doesn't act on them. Scope: local to the workflow being worked on. Cross-workflow DRY moved to validate. | No (feeds into interview/decompose) | Yes |
 | **author** | Writes/updates instructions for each block. Stores in DB with OPA metadata (agent_role, task_type, domain). | No | No |
 | **wire** | Creates/updates pipeline definition (block order, conditions, routing). Stores in DB. | No | No |
+| **validate** | Tiered autonomous loop before promote (UC-MW-35). Tier 1: structural completeness (from UC-MW-29/lint-artifacts). Tier 2: quality (bloat, DRY, re-optimize). Tier 3: semantic gap (UC-MW-33). Confidence-based resolution: fixes what it can, raises low-confidence issues to interview (UC-MW-36/37). Runs as subagent (Option B). | No (raises to interview on low confidence) | Yes |
 | **promote** | Generates trigger artifacts (SKILL.md, agent config, MCP tool). Presents options for user to choose. | Yes | No |
+| **export** | Deterministic filesystem flush — writes workflow.yaml, pipeline.yaml, instruction YAMLs to disk. Separate from promote. | No | No |
 
-### Flow Diagram
+### Flow Diagram (Unified — Phase 5 Implemented)
 
 ```
-                              ┌───────┐
-                              │ START │
-                              └───┬───┘
-                                  │
-                              ┌───▼───┐
-                              │ route │
-                              └───┬───┘
-                                  │
-               ┌──────────┬───────┼───────────┬──────────┐
-               │          │       │           │          │
-           build/update  refine  audit    programmatic   │
-               │          │       │       (UC-MW-4)      │
-               │          │       │           │          │
-               ▼          │       ▼           │     (invalid input)
-          ┌─────────┐     │  ┌───────────┐   │          │
-          │interview│     │  │lint-artifacts│   │          ▼
-          └────┬────┘     │  └─────┬─────┘   │        FAIL
-            ▲  │          │        │         │    (UC-MW-12)
-            │  ▼          │        ▼         │
-          ┌──────────┐    │  ┌──────────┐    │
-          │ research │    │  │ optimize │    │
-          └──────────┘    │  │(all wfs) │    │
-               │          │  └────┬─────┘    │
-               ▼          │       │          │
-          ┌─────────┐     │  ┌────▼─────┐    │
-          │decompose│◄──  │  │interview │    │
-          └────┬────┘     │  │(findings)│    │
-            ▲  │          │  └────┬─────┘    │
-            │  ▼          │       │          │
-          ┌──────────┐    │       ▼          │
-          │ optimize │    │  ┌─────────┐     │
-          │ (local)  │    │  │decompose│◄────┘
-          └──────────┘    │
-               │          │
-               ▼          ▼
-          ┌────────┐ ┌────────┐
-          │ author │ │ author │
-          └────┬───┘ └────┬───┘
-               │          │
-          ┌────▼──┐       ▼
-          │ wire  │      END
-          └────┬──┘
-               │
-          ┌────▼────┐
-          │ promote │
-          └────┬────┘
-               │
-              END
+INTERACTIVE:  route → interview ↔ research → decompose ↔ optimize → author → wire → validate → promote → export → END
+PROGRAMMATIC: route → decompose ↔ optimize → author → wire → validate → promote → export → END
+
+Validate escalation (low confidence): validate → interview → decompose → ... → validate (full re-pass)
 ```
 
-**Key loops (dynamic routing via LangGraph `Command`):**
+**Route (context detection, no mode field):**
+- `workflow_id` provided → load existing workflow (update)
+- `workflow_id` + `block_id` → load + narrow scope (refine)
+- `structured_input` provided → skip to decompose (programmatic)
+- Neither → fresh start (build)
+
+**Key loops:**
 - `interview ↔ research` — research informs interview, interview may trigger more research
-- `decompose ↔ optimize` — optimize may reject, send back for restructuring
-- `decompose → interview` — user may want to refine goals after seeing proposed decomposition
+- `decompose ↔ optimize` — optimize may reject, send back for restructuring via `needs_redesign`
+- `validate → interview` — low-confidence issues escalate to HITL (tier 3 / any tier)
 
-### Mode Paths (current — being replaced by unified flow, see below)
+### Mode Paths (SUPERSEDED — unified flow implemented in Phase 5)
 
-**BUILD** (UC-MW-1, 5, 6): route → interview ↔ research → decompose ↔ optimize → author → wire → promote → export → END
+The following mode-based paths have been collapsed into the unified flow above:
+- BUILD → interactive, no workflow_id
+- UPDATE → interactive, workflow_id provided
+- REFINE → interactive, workflow_id + block_id
+- AUDIT → validate block runs on every flow
+- PROGRAMMATIC → structured_input skips to decompose
+- SCOPED RE-OPTIMIZE → validate block runs on every flow
 
-**UPDATE** (UC-MW-2): route (load existing) → interview ↔ research → decompose (modify) ↔ optimize → author → wire → promote → export → END
+See resume.md 5.1 decisions for full rationale.
 
-**REFINE** (UC-MW-3): route → author → END _(Note: ARCHITECTURE.md previously said route → interview → author → END but code routes directly to author. Moot — refine collapses into adaptive interview in unified flow.)_
+### Phase 5: Unified Flow + Validate + Scale (Current)
 
-**AUDIT** (UC-MW-13, UC-MW-29): route → lint-artifacts → optimize → interview → decompose → author → wire → promote → export → END _(Note: has infinite loop bug — optimize routes back to interview after decompose. Moot — audit mode eliminated in unified flow.)_
+**Status: 5.1-5.3 interviews complete, 5.1 implemented. See resume.md for full task status.**
 
-**PROGRAMMATIC** (UC-MW-4, 12): route (validate structured input) → decompose ↔ optimize → author → wire → promote → export → END. Fails if input lacks problem statement or use cases.
+| Task | Interview | Implementation |
+|------|-----------|----------------|
+| 5.1 Flow redesign | Q1-6 ✓ | ✅ COMPLETE |
+| 5.2 Subagent design | Q12-14 ✓ | Deferred to 5.6 load test |
+| 5.3 Validate block | Q7-11 ✓ | Ready |
+| 5.4 Multi-instruction YAML | None needed | Ready (parallel) |
+| 5.5 Context budget | Mini-interview if needed | Blocked on 5.3+5.4 |
+| 5.6 Load test at 100K | None | Blocked on 5.1-5.5 |
+| 5.7 Documentation | None | Blocked on 5.1-5.6 |
 
-**SCOPED RE-OPTIMIZE** (UC-MW-14): A calling workflow (e.g., repo-analysis) triggers meta-workflow to re-optimize its full workflow scope. Scoped to the calling workflow, not all workflows. Baked into the calling workflow at design time.
+#### Subagent Design (5.2 — Option B: Generic Context Reset)
 
-### PROPOSED: Unified Flow (Phase 5 Redesign — per-task interview in progress)
+One generic subagent config. Purpose: fresh context window per autonomous block.
+- Specialization comes from OPA scoping + task description, not agent config
+- Per-block spawning (not per-segment) — each block has its own OPA context
+- Subagent calls kiro-cortex MCP directly for instructions (no pre-fetch)
+- Root agent blocks (HITL): route (inline), interview, research, promote
+- Subagent candidates (autonomous): decompose, optimize, author, wire, validate, export
+- Implemented as `execution_env: "subagent"` flag on BlockDef — toggle per-block without rewiring graph
+- Start inline, flip to subagent as scale demands (validated in 5.6 load test)
 
-**Status: DESIGN PHASE — interviews scoped per-task. 5.1 (flow structure) interview in progress.**
+#### Validate Block Design (5.3 — Tiered Autonomous Loop)
 
-**Approach:** Each task has its own interview, then implementation. Later answers depend on seeing earlier results.
+Single block with internal tiered checks, runs as subagent (Option B poster child):
+- **Tier 1 (structural)**: filesystem artifacts exist, pipeline↔block consistency, YAML schema validity
+- **Tier 2 (quality)**: instruction bloat per block (UC-MW-8), local DRY, scoped re-optimize against global patterns (UC-MW-14)
+- **Tier 3 (semantic)**: arch doc use cases vs block coverage (UC-MW-33), cross-workflow DRY (UC-MW-10/13, user-prompted only)
 
-| Task | Interview | Status |
-|------|-----------|--------|
-| 5.1 Flow redesign | Q1-6 (flow structure) | IN PROGRESS |
-| 5.2 Validate block | Q7-10 (validate design) | BLOCKED on 5.1 |
-| 5.3 Subagent design | Q11-14 (subagent boundaries) | BLOCKED on 5.2 |
-| 5.4 Multi-instruction YAML | None needed | READY (parallel) |
-| 5.5 Context budget | Mini-interview if needed | BLOCKED on 5.2+5.4 |
-| 5.6 Load test | None | BLOCKED on 5.1-5.5 |
-| 5.7 Documentation | None | BLOCKED on 5.1-5.6 |
+Resolution: confidence-based, not tier-based. Fix what's confident (any tier), re-validate. Low confidence: interactive → raises to interview (HITL), programmatic → fails with explanation (UC-MW-37).
+
+Interview captures architecture doc at `docs/architecture.yaml` per workflow root. Validate checks implementation against it. Arch doc lives with the agent package. Packaging split (kiro-cortex as shared lib, agent packages self-contained) deferred to Phase 6.
+
+#### Unified Flow (5.1 — Implemented)
 
 Collapse 6 modes into 1 flow with 2 entry points. Interview adapts based on context. Validate block runs before promote on every flow.
 
@@ -632,38 +620,12 @@ route → [interview ↔ research] → decompose → optimize → author → wir
                                                                   back to interview
 ```
 
-**Route (context-based, no mode switch):**
-- `workflow_id` provided → load existing workflow into state
-- `structured_input` provided → skip to decompose
-- Neither → fresh start
-
-**Interview adapts based on state:**
-- No existing workflow → "What do you want to build?" (was BUILD)
-- Existing workflow loaded → "What do you want to change?" (was UPDATE)
-- Existing workflow + `block_id` → narrows to that block (was REFINE)
-- Called back from validate → "Here are discrepancies, how should we resolve?"
-
-**Validate block (new — replaces standalone audit/lint-artifacts modes):**
-- Runs before promote on EVERY flow
-- Subsumes: UC-MW-29 (structural completeness), UC-MW-14 (scoped re-optimize), UC-MW-13 (cross-workflow DRY), UC-MW-33 (semantic gap analysis)
-- Autonomous loop: checks → fixes what it can → raises discrepancies to interview if human input needed
-- On clean → promote
-
-**What this eliminates:**
+**What this eliminated:**
 - REFINE mode → interview with `block_id` in state
 - AUDIT mode → validate step on every flow
 - SCOPED RE-OPTIMIZE mode → validate step on every flow
 - BUILD vs UPDATE distinction → interview adapts based on whether workflow exists
-
-**New use cases (proposed):**
-- UC-MW-34: Interview adapts behavior based on state context
-- UC-MW-35: Validate block — autonomous loop with structural + semantic checks
-- UC-MW-36: Validate → interview → decompose loop (discrepancy resolution)
-
-**Open questions (scoped per-task — see resume.md for full details):**
-- 5.1 (Q1-6): Flow structure — unified flow, validate loop scope, mode field, export block, naming
-- 5.2 (Q7-10): Validate block — arch docs, semantic gap, autonomous fixes, check list
-- 5.3 (Q11-14): Subagent design — validate as subagent, per-block vs per-segment, programmatic autonomy, author RAG
+- Separate lint-artifacts entry point → lint-artifacts logic moved into validate
 
 ### HITL Implementation
 
@@ -1345,7 +1307,7 @@ Custom agents must explicitly include skills via `resources`:
 - Phase 4.5+ complete. All items implemented or documented.
 - Next: Meta-workflow self-maintenance validation, then Phase 5
 
-### Phase 5: Repo-Analysis (Built by Meta-Workflow)
+### Phase 6: Repo-Analysis (Built by Meta-Workflow)
 - Use meta-workflow to build repo-analysis as first generated workflow
 - Git worktree aware (repo identity by remote origin)
 - Instruction scoping (repo-specific vs framework-agnostic, OPA enforced)
@@ -1354,7 +1316,7 @@ Custom agents must explicitly include skills via `resources`:
 - Output workflows TBD (meta-workflow interviews user on what's useful)
 - Known knowledge sources: EffectPatterns (300+), effect-solutions (10+)
 
-### Phase 6: Web Dashboard (Read-Only, Afterthought)
+### Phase 7: Web Dashboard (Read-Only, Afterthought)
 - Read-only DB visualizer: instruction browser, workflow status, pipeline execution history
 - OPA policy viewer
 - Knowledge graph visualization

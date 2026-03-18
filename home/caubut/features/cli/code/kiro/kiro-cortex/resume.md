@@ -10,7 +10,7 @@ Branch: chore/save-point
 Phase 4.5+ COMPLETE. UC-MW-29 DONE. 34 files, 0 errors, 0 warnings.
 Validation checklist: **9/9 complete** — all 5 smoke tests pass.
 
-**5.1 (flow redesign) COMPLETE. Next: 5.3 interview (validate block design).**
+**5.1 (flow redesign) COMPLETE. 5.2 (subagent) COMPLETE. 5.3 (validate) interview COMPLETE. Next: 5.3 implementation.**
 
 ### What's Built (all phases)
 
@@ -313,7 +313,7 @@ src/
   embedding/{index,Embedding}.ts
   instruction/{index,Repo,Loader,Error}.ts
   workflow/{index,Block,Registry,Executor,Pipeline,Workflow}.ts
-  meta-workflow/{state,route,interview,research,decompose,optimize,lint-artifacts,author,wire,promote,export,seed,graph}.ts
+  meta-workflow/{state,route,interview,research,decompose,optimize,lint-artifacts,validate,author,wire,promote,export,seed,graph}.ts
   Sql.ts, mcp.ts, index.ts (doc-only)
   migrations/{0001_init,0002_add_instruction_columns,0003_add_content_hash,_schema.sql}.ts
 scripts/
@@ -341,10 +341,10 @@ Read resume.md. Phase 5 in progress. Interviews scoped per-task — each task ha
 Key context:
 1. 5.1 (flow redesign) COMPLETE — all 6 questions answered, code implemented. 34 files, 0 errors.
 2. 5.2 (subagent design) COMPLETE — Option B (generic subagent for context reset). Implementation deferred to 5.6 load test.
-3. 5.3 (validate block) READY for interview — Q7-10 + Q11 (moved from subagent). Next step.
+3. 5.3 (validate block) INTERVIEW COMPLETE — Q7-11 all answered. Ready for implementation.
 4. 5.4 (multi-instruction YAML) READY — no interview needed, can run parallel.
 5. New UCs: UC-MW-34 (adaptive interview), UC-MW-35 (tiered validate), UC-MW-36 (validate→interview loop), UC-MW-37 (programmatic validation), UC-MW-38 (session persistence).
 6. Agent prompt (`prompts/meta-workflow.md`) needs updating — currently mode-centric.
 7. Three bugs in old graph all subsumed by redesign.
 
-Next step: Interview user on 5.3 questions (Q7-10 + Q11: validate block design) one at a time, recording decisions as we go.
+Next step: Implement 5.3 (validate block) — refactor lint-artifacts into tiered validate with confidence-based resolution.
