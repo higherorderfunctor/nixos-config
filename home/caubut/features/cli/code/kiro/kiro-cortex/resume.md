@@ -9,7 +9,7 @@ kiro-cortex is a workflow orchestration platform that replaces steering files wi
 Branch: chore/save-point
 Phase 4.5+ COMPLETE. UC-MW-29 DONE. 33 files, 0 errors, 0 warnings.
 Validation checklist: **9/9 complete** — all 5 smoke tests pass.
-**Next: Review ARCHITECTURE.md flow diagram against use cases, then Phase 5.**
+**Next: Pre-Phase 5 work (subagent design, flow diagram, UC-MW-30..33), then Phase 5.**
 
 ### What's Built (all phases)
 
@@ -77,7 +77,7 @@ Validation checklist: **9/9 complete** — all 5 smoke tests pass.
 
 **Current state:** Renderer produces correct 3-column layout (build|audit|programmatic) with convergence into shared tail. WIP — need to review full flow end-to-end against use cases before replacing ARCHITECTURE.md diagram.
 
-**Resume prompt:** "Read resume.md. We were reviewing the ARCHITECTURE.md flow diagram. The renderer at scripts/render-diagram.ts produces a corrected diagram. Run it to see current output. We need to: (1) walk through each mode path end-to-end to verify it matches the use cases in ARCHITECTURE.md, (2) check if the refine short-circuit (interview → author, skipping research/decompose/optimize) is clear in the diagram, (3) once verified, replace the Flow Diagram section in ARCHITECTURE.md with the rendered output, (4) commit and move to Phase 5."
+**Resume prompt:** "Read resume.md. Pre-Phase 5 work in progress. Key items: (1) Flow diagram — run `scripts/render-diagram.ts`, walk each mode path against ARCHITECTURE.md use cases, I want to review before replacing the diagram. (2) Subagent context reset — design proposal in Pre-Phase 5 TODO with 5 open questions: per-block vs per-segment, programmatic mode autonomy, generic vs specialized configs, author RAG access, execution_env timing. Generic sequence diagram at `docs/sequence-diagram.txt`. (3) UC-MW-30..33 not yet implemented: multi-instruction YAML, hierarchical layout, per-workflow arch docs, semantic gap analysis. (4) Load/validation test at 100K instructions. (5) `gap-analyze` already renamed to `lint-artifacts` across all code/docs."
 
 ## Pre-Phase 5 TODO
 
