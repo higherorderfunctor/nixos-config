@@ -53,7 +53,7 @@ Phase 6: Repo-Analysis
 
 ### 5.1: Flow Redesign (INTERVIEW → IMPLEMENT)
 
-**Status: INTERVIEW IN PROGRESS**
+**Status: INTERVIEW COMPLETE — ready for implementation**
 
 #### Interview Questions (6)
 
@@ -81,6 +81,7 @@ Phase 6: Repo-Analysis
    - No separate audit mode. Local optimization is automatic. Cross-workflow refactoring is on-demand.
 4. **DROP MODE** — Remove `mode` field from state. Route uses context detection: `workflow_id` → update, `workflow_id` + `block_id` → refine, `structured_input` → programmatic, neither → build. No redundant flag. **Note:** Meta-workflow agent prompt (`prompts/meta-workflow.md`) needs updating — currently mode-centric.
 5. **KEEP SEPARATE** — Export stays as its own block after promote. Single deterministic "flush to disk" step. Session state tracked via OpenMemory so user can resume across kiro sessions (not long-term history — just active create/update sessions). New UC-MW-38: Session persistence — track active workflow design sessions in OpenMemory so user can resume after interruptions (meetings, etc.). LangGraph PG checkpointer handles graph state; OpenMemory tracks session context (what we're doing, where we left off, decisions made).
+6. **VALIDATE** — Name confirmed. "validate" for the new pre-promote block.
 
 #### Proposed Unified Flow
 
