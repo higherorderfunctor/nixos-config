@@ -284,6 +284,21 @@
     },
     "version": "e6f23c22fc5e9aa7a22e4c31af56cdc6f859afbd"
   },
+  "mcp-server-fetch": {
+    "cargoLock": null,
+    "date": null,
+    "extract": null,
+    "name": "mcp-server-fetch",
+    "passthru": null,
+    "pinned": false,
+    "src": {
+      "name": null,
+      "sha256": "sha256-VieePFXLHlBrlYypuyPtRBOUSm8jC8oh4ESu5Rc0/kc=",
+      "type": "url",
+      "url": "https://pypi.org/packages/source/m/mcp_server_fetch/mcp_server_fetch-2025.4.7.tar.gz"
+    },
+    "version": "2025.4.7"
+  },
   "oh-my-posh": {
     "cargoLock": null,
     "date": null,

@@ -190,3 +190,7 @@ src.git = "https://github.com/jwadow/kiro-gateway.git"
 src.use_commit = true
 src.branch = "main"
 fetch.git = "https://github.com/jwadow/kiro-gateway.git"
+
+[mcp-server-fetch]
+src.pypi = "mcp-server-fetch"
+fetch.pypi = "mcp_server_fetch"

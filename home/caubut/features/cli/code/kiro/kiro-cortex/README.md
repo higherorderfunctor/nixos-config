@@ -28,8 +28,9 @@ All codified knowledge (steering rules, coding standards, repo conventions, work
   - 5.1: Unified flow + validate block + subagent design (NEEDS INTERVIEW)
   - 5.2: Implementation (graph.ts, blocks, state)
   - 5.3: Multi-instruction YAML + hierarchical layout (UC-MW-30/31)
-  - 5.4: Load/validation test at 100K instructions
-  - 5.5: Documentation finalization
+  - 5.4: Context budget analysis + RAG adequacy
+  - 5.5: Load/validation test at 100K instructions
+  - 5.6: Documentation finalization
 - Phase 6: Repo-Analysis (built by meta-workflow)
 - Phase 7: Web Dashboard (read-only)
 

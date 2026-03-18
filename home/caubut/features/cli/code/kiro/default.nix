@@ -45,6 +45,32 @@
       "https://mcp.us-east-1.amazonaws.com/sse" "$@"
   '';
 
+  # ── git-analytics MCP server ───────────────────────────────────
+  git-analytics-mcp-server = pkgs.buildNpmPackage {
+    pname = "git-analytics-mcp-server";
+    version = "1.0.0";
+    src = pkgs.fetchFromGitHub {
+      owner = "singhashish4000";
+      repo = "MCP-Server";
+      rev = "d531a4b7d4b5a01d5fda48267e61a23af80d220d";
+      hash = "sha256-RzdXO1VQHYQsK039+hs3BleQl6ISc4wQoc59QMCd29c=";
+    };
+    npmDepsHash = "sha256-Fa3TjwUW0uoUnKV5JSvDc+44i/4ssL3xWmRuIO40064=";
+    buildPhase = ''
+      runHook preBuild
+      npx tsc
+      # Fix: console.log pollutes stdout (MCP protocol channel)
+      sed -i 's/console\.log/console.error/g' dist/*.js
+      runHook postBuild
+    '';
+    installPhase = ''
+      runHook preInstall
+      mkdir -p $out/lib/git-analytics-mcp-server
+      cp -r dist node_modules package.json $out/lib/git-analytics-mcp-server/
+      runHook postInstall
+    '';
+  };
+
   # ── Symlink helper ────────────────────────────────────────────
   # Generates mkOutOfStoreSymlink entries for a directory of files.
   # Avoids repeating the same pattern 11 times.
@@ -148,8 +174,8 @@
         args = [];
       };
       fetch = {
-        command = "${pkgs.uv}/bin/uvx";
-        args = ["mcp-server-fetch"];
+        command = "${pkgs.mcp-server-fetch}/bin/mcp-server-fetch";
+        args = [];
       };
       github = {
         command = "${githubWrapper}";
@@ -175,8 +201,8 @@
         };
       };
       git-analytics = {
-        command = "npx";
-        args = ["-y" "git-analytics-mcp-server"];
+        command = "${pkgs.nodejs}/bin/node";
+        args = ["${git-analytics-mcp-server}/lib/git-analytics-mcp-server/dist/index.js"];
       };
     };
   };

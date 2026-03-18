@@ -179,6 +179,14 @@
     };
     date = "2026-02-12";
   };
+  mcp-server-fetch = {
+    pname = "mcp-server-fetch";
+    version = "2025.4.7";
+    src = fetchurl {
+      url = "https://pypi.org/packages/source/m/mcp_server_fetch/mcp_server_fetch-2025.4.7.tar.gz";
+      sha256 = "sha256-VieePFXLHlBrlYypuyPtRBOUSm8jC8oh4ESu5Rc0/kc=";
+    };
+  };
   oh-my-posh = {
     pname = "oh-my-posh";
     version = "v29.9.0";

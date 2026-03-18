@@ -44,9 +44,11 @@ Two work streams merged into one dependency-ordered plan:
   ↓
 5.3: Multi-instruction YAML + Hierarchical Layout (UC-MW-30/31)
   ↓  (independent of flow, but needed before repo-analysis generates many instructions)
-5.4: Load/Validation Test at 100K Instructions
+5.4: Context Budget Analysis + RAG Adequacy
+  ↓  (needs validate block from 5.2 + enough instructions from 5.3 to test with)
+5.5: Load/Validation Test at 100K Instructions
   ↓
-5.5: Documentation Finalization — ARCHITECTURE.md, diagram, sequence diagram, README
+5.6: Documentation Finalization — ARCHITECTURE.md, diagram, sequence diagram, README
   ↓
 Phase 6: Repo-Analysis
 ```
@@ -178,16 +180,38 @@ Independent of flow redesign. Needed before Phase 6 generates many instructions.
 - Author block: chunking guidance (one concept per instruction)
 - Backward compat with single-instruction files
 
-### 5.4: Load/Validation Test at 100K Instructions
+### 5.4: Context Budget Analysis + RAG Adequacy (NEW)
 
-Depends on 5.2 and 5.3.
+The OPA→RAG pipeline has an unresolved gap: blocks get a hard `max_results` limit (20 or 50) from OPA scoping, and the executor does a single pgvector search using only the block's description as the embedding query. If a block genuinely needs more instructions than the limit, they're silently dropped. No warning, no fallback, no multi-query.
+
+**Current behavior (gap):**
+- `scoping.rego` returns `max_results: 20` (or 50 for analysis tasks) — hard LIMIT on pgvector
+- `Executor.ts` embeds `block.description` once, searches once, takes top N
+- No cosine distance threshold — returns `max_results` even if tail results are barely relevant
+- No multi-query (e.g., description + state-derived sub-queries + deduplication)
+- `optimize.ts` checks block count and DRY but NOT whether instructions are being truncated
+- No mechanism for a block to declare "I need more context than the default"
+
+**What this step must resolve:**
+1. How does the system detect when a block's relevant instruction set exceeds `max_results`? (e.g., run uncapped query, compare count vs limit, flag if truncated)
+2. Should blocks declare a context budget? (e.g., `max_context` in BlockDef or OPA per-block overrides)
+3. Should the executor support multi-query RAG? (embed description + embed state-derived queries, deduplicate, merge)
+4. Should there be a cosine distance cutoff? (stop returning results below a relevance threshold, even if under the limit)
+5. How does validate/optimize use this? (detect truncation → recommend block splitting or limit adjustment)
+6. At 100K+ instructions, how do we ensure the right 20 surface? (OPA domain filtering is the first gate — is it sufficient?)
+
+**Depends on:** 5.2 (validate block exists to run these checks), 5.3 (multi-instruction YAML to generate enough instructions to test with)
+
+### 5.5: Load/Validation Test at 100K Instructions
+
+Depends on 5.2, 5.3, and 5.4.
 
 - Seed pgvector with ~100K instructions across multiple domains
 - Run complex multi-block workflow with mocked HITL
-- Validate: OPA scoping at scale, RAG relevance (no context drift), block executor injection, subagent context shedding
+- Validate: OPA scoping at scale, RAG relevance (no context drift), block executor injection, subagent context shedding, **context budget adequacy (no silent truncation)**
 - Goal: prove OPA→RAG pipeline holds at scale before building real workflows
 
-### 5.5: Documentation Finalization
+### 5.6: Documentation Finalization
 
 After all implementation.
 
@@ -267,7 +291,7 @@ Key context:
 1. Flow redesign proposed — collapse 6 modes into unified flow + validate block. See "5.1" section for full proposal and interview questions (14 questions).
 2. Subagent design integrated with flow redesign — 7 open questions.
 3. UC-MW-30..33 not yet implemented. UC-MW-32/33 may fold into the new validate block.
-4. Load test at 100K instructions planned for 5.4.
+4. Load test at 100K instructions planned for 5.5.
 5. Three bugs found in current graph (audit loop, refine mismatch, missing export) — all subsumed by redesign.
 6. `gap-analyze` already renamed to `lint-artifacts` across all code/docs.
 7. Diagram renderer at `scripts/render-diagram.ts` — needs update after flow redesign.

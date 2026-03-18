@@ -19,6 +19,7 @@ args: let
     ./hyprland-overlay.nix
     ./kiro-overlay.nix
     ./mcp-hub-overlay.nix
+    ./mcp-server-fetch-overlay.nix
     ./mirrors-overlay.nix
     ./neovim-nightly-overlay.nix
     ./nix-gl-host-overlay.nix
