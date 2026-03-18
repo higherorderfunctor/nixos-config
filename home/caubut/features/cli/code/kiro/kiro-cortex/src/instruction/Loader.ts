@@ -43,7 +43,7 @@ const toUuid = (input: string): string => {
 // YAML shape — matches the instruction YAML files on disk
 // ---------------------------------------------------------------------------
 
-/** Shape of a YAML instruction file (e.g., workflows/meta-workflow/instructions/route.yaml). */
+/** Shape of a YAML instruction file — single instruction or array (UC-MW-30). */
 interface YamlInstruction {
   readonly id: string
   readonly text: string
@@ -55,13 +55,38 @@ interface YamlInstruction {
   }
 }
 
+/** Multi-instruction YAML: array wrapper (UC-MW-30). */
+interface YamlInstructionArray {
+  readonly instructions: ReadonlyArray<YamlInstruction>
+}
+
+/** Normalize single or array YAML into instruction array. */
+const normalizeYaml = (doc: unknown): ReadonlyArray<YamlInstruction> => {
+  if (doc && typeof doc === "object" && "instructions" in doc && Array.isArray((doc as YamlInstructionArray).instructions))
+    return (doc as YamlInstructionArray).instructions
+  return [doc as YamlInstruction]
+}
+
 // ---------------------------------------------------------------------------
 // File discovery
 // ---------------------------------------------------------------------------
 
 /**
+ * Recursively find all .yaml files under a directory.
+ * Supports hierarchical layout: instructions/<domain>/<topic>.yaml (UC-MW-31).
+ */
+const walkYaml = async (dir: string, files: Array<string>): Promise<void> => {
+  const entries = await readdir(dir, { withFileTypes: true })
+  for (const e of entries) {
+    const full = join(dir, e.name)
+    if (e.isDirectory()) await walkYaml(full, files)
+    else if (e.name.endsWith(".yaml")) files.push(full)
+  }
+}
+
+/**
  * Find all instruction YAML files under the agents directory.
- * Scans each agent's instructions subdirectory for .yaml files.
+ * Scans each agent's instructions subdirectory recursively for .yaml files.
  */
 const findYamlFiles = (agentsDir: string) =>
   Effect.tryPromise({
@@ -71,22 +96,17 @@ const findYamlFiles = (agentsDir: string) =>
       for (const agent of agents) {
         if (!agent.isDirectory()) continue
         const instrDir = join(agentsDir, agent.name, "instructions")
-        try {
-          const entries = await readdir(instrDir)
-          for (const f of entries) {
-            if (f.endsWith(".yaml")) files.push(join(instrDir, f))
-          }
-        } catch { /* no instructions dir — skip */ }
+        try { await walkYaml(instrDir, files) } catch { /* no instructions dir — skip */ }
       }
       return files
     },
     catch: (e) => new LoaderError({ message: `Failed to scan agents: ${e}` }),
   })
 
-/** Parse a YAML file into a typed instruction object. */
+/** Parse a YAML file into a raw object (normalized by caller). */
 const parseYaml = (path: string) =>
   Effect.tryPromise({
-    try: async () => parse(await readFile(path, "utf-8")) as YamlInstruction,
+    try: async () => parse(await readFile(path, "utf-8")) as unknown,
     catch: (e) => new LoaderError({ message: `Failed to parse ${path}: ${e}` }),
   })
 
@@ -115,32 +135,34 @@ export const loadInstructions = Effect.gen(function* () {
 
   let loaded = 0
   for (const file of files) {
-    const doc = yield* parseYaml(file)
-    const contentHash = md5(doc.text)
-    const id = toUuid(doc.id)
+    const raw = yield* parseYaml(file)
+    const docs = normalizeYaml(raw)
 
-    const vec = yield* embedText(doc.text).pipe(
-      Effect.mapError((e) => new LoaderError({ message: String(e) })),
-    )
+    for (const doc of docs) {
+      const contentHash = md5(doc.text)
+      const id = toUuid(doc.id)
 
-    // CONSTRAINT: YAML metadata uses singular (agent_role, task_type) but DB
-    // columns are arrays (agent_roles, task_types). Wrap in arrays here.
-    const input: UpsertInput = {
-      id,
-      text: doc.text,
-      embedding: vec,
-      domain: doc.metadata.domain,
-      agent_roles: [doc.metadata.agent_role],
-      task_types: [doc.metadata.task_type],
-      repo: doc.metadata.repo,
-      content_hash: contentHash,
-      source: file,
+      const vec = yield* embedText(doc.text).pipe(
+        Effect.mapError((e) => new LoaderError({ message: String(e) })),
+      )
+
+      const input: UpsertInput = {
+        id,
+        text: doc.text,
+        embedding: vec,
+        domain: doc.metadata.domain,
+        agent_roles: [doc.metadata.agent_role],
+        task_types: [doc.metadata.task_type],
+        repo: doc.metadata.repo,
+        content_hash: contentHash,
+        source: file,
+      }
+
+      yield* repo.upsert(input).pipe(
+        Effect.mapError((e) => new LoaderError({ message: e.message })),
+      )
+      loaded++
     }
-
-    yield* repo.upsert(input).pipe(
-      Effect.mapError((e) => new LoaderError({ message: e.message })),
-    )
-    loaded++
   }
 
   yield* Effect.log(`Loaded ${loaded} instructions from ${files.length} YAML files`)

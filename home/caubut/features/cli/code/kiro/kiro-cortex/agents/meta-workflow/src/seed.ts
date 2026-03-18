@@ -62,23 +62,31 @@ export const loadWorkflow = async (workflowDir: string): Promise<SeedWorkflow> =
   // --- Read pipeline ---
   const pipelineYaml = await readFile(join(workflowDir, "pipeline.yaml"), "utf-8")
 
-  // --- Read instructions ---
+  // --- Read instructions (recursive walk, multi-instruction support) ---
   const instrDir = join(workflowDir, "instructions")
-  const files = await readdir(instrDir).catch(() => [] as string[])
   const instructions: SeedInstruction[] = []
 
-  for (const file of files.filter((f) => f.endsWith(".yaml"))) {
-    const parsed = parse(await readFile(join(instrDir, file), "utf-8")) as {
-      id: string; text: string; content_hash: string
-      metadata: { agent_role: string; task_type: string; domain: string; repo: string | null }
+  const walkInstructions = async (dir: string): Promise<void> => {
+    const entries = await readdir(dir, { withFileTypes: true }).catch(() => [])
+    for (const entry of entries) {
+      const full = join(dir, entry.name)
+      if (entry.isDirectory()) { await walkInstructions(full); continue }
+      if (!entry.name.endsWith(".yaml")) continue
+      const raw = parse(await readFile(full, "utf-8"))
+      const docs = raw && typeof raw === "object" && "instructions" in raw && Array.isArray(raw.instructions)
+        ? raw.instructions
+        : [raw]
+      for (const parsed of docs) {
+        instructions.push({
+          block_id: parsed.id,
+          text: parsed.text,
+          content_hash: parsed.content_hash,
+          metadata: parsed.metadata,
+        })
+      }
     }
-    instructions.push({
-      block_id: parsed.id,
-      text: parsed.text,
-      content_hash: parsed.content_hash,
-      metadata: parsed.metadata,
-    })
   }
+  await walkInstructions(instrDir)
 
   return {
     name: workflowYaml.name,

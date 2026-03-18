@@ -103,6 +103,13 @@ export const MetaWorkflowState = Annotation.Root({
   /** File paths of generated trigger artifacts (SKILL.md, agent config). */
   promoted_artifacts: Annotation<ReadonlyArray<string>>,
 
+  // --- Validate fields (UC-MW-35/36/37) ---
+
+  /** Validation findings summary from validate block. */
+  validation_result: Annotation<string>,
+  /** Whether validate needs interview to resolve low-confidence issues (tier 3). */
+  needs_interview: Annotation<boolean>,
+
   // --- Programmatic mode (UC-MW-4/12) ---
 
   /** Structured input for programmatic calls — skips interview. */

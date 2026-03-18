@@ -73,12 +73,14 @@ export const buildMetaWorkflow = async () => {
       s.needs_redesign ? "decompose" : "author",
     )
 
-    // --- author → wire → validate → promote → export → END ---
+    // --- author → wire → validate → promote/interview → export → END ---
     .addEdge("author", "wire")
     .addEdge("wire", "validate")
-    // ARCH: validate → promote for now. 5.2 adds conditional edge:
-    // validate → interview (tier 3 discrepancies) or validate → promote (clean)
-    .addEdge("validate", "promote")
+    // ARCH: Confidence-based escalation (5.4 Q9). Clean → promote.
+    // Low confidence → interview for tier 3 resolution (UC-MW-36).
+    .addConditionalEdges("validate", (s: MetaWorkflowStateType) =>
+      s.needs_interview ? "interview" : "promote",
+    )
     .addEdge("promote", "export")
     .addEdge("export", END)
 

@@ -38,7 +38,7 @@ export const lintArtifactsNode = async (
 ): Promise<Partial<MetaWorkflowStateType>> => {
   const findings: Array<GapFinding> = []
   const name = state.workflow_name
-  const base = join(process.cwd(), "workflows")
+  const base = join(process.cwd(), "agents")
 
   // ARCH: When no workflow_name, scan all workflow directories (audit-all mode).
   const names = name
