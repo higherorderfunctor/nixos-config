@@ -66,7 +66,15 @@ Phase 6: Repo-Analysis
 
 #### Decisions
 
-_(filled in as interview progresses)_
+1. **YES** — Unified flow confirmed. 2 entry points (interactive / programmatic). No separate modes. Interview adapts based on context. Validate runs on every flow.
+2. **TIERED HYBRID** — Validate is one block with internal tiered checks, each with its own resolution path and RAG re-querying:
+   - Tier 1 (structural, deterministic): auto-fix in place, re-validate. No loop.
+   - Tier 2 (quality, LLM-assessed): LLM proposes fix, short-circuits to affected blocks only.
+   - Tier 3 (semantic, LLM-powered): escalates to interview → full re-pass (interview → decompose → ... → validate).
+   - Single block, multiple internal RAG queries per sub-check — block count doesn't drive RAG precision, query scoping does.
+   - Interview adapts to caller: human (interactive) or LLM-as-interviewer (programmatic).
+   - Programmatic mode: LLM resolves what it can confidently, fails with explanation on low confidence (consistent with UC-MW-12).
+   - New UC-MW-37: Programmatic validation resolution — LLM acts as interviewer, fails on ambiguity.
 
 #### Proposed Unified Flow
 
