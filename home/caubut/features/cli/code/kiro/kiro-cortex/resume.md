@@ -36,9 +36,9 @@ Interviews scoped per-task. Each task has its own interview (if needed), then im
 ```
 5.1: Interview (flow Q1-6) → Implement flow redesign
   ↓
-5.2: Interview (validate Q7-10) → Implement validate block
+5.2: Interview (subagent Q11-14) → Implement subagent support
   ↓
-5.3: Interview (subagent Q11-14) → Implement subagent support
+5.3: Interview (validate Q7-10) → Implement validate block
   ↓
 5.4: Multi-instruction YAML (no interview) — can run parallel with 5.1-5.3
   ↓
@@ -141,40 +141,11 @@ route → [interview ↔ research] → decompose → optimize → author → wir
 - Update render-diagram.ts for new flow
 - Smoke test all paths
 
-### 5.2: Validate Block (INTERVIEW → IMPLEMENT)
+### 5.2: Subagent Design (INTERVIEW → IMPLEMENT)
 
-**Status: BLOCKED on 5.1**
+**Status: INTERVIEW IN PROGRESS**
 
-Depends on 5.1 — need to see the implemented flow before designing validate's behavior.
-
-#### Interview Questions (4)
-
-7. UC-MW-32 (per-workflow arch docs): created during interview? Validate checks against it?
-8. UC-MW-33 (semantic gap analysis): is this the validate block, or a sub-step within it?
-9. Should validate attempt autonomous fixes or only report? (User said "loop until analysis is complete with option to raise discrepancies")
-10. What checks does validate run? Proposed list:
-    - Structural completeness (filesystem artifacts, pipeline↔block consistency) — from UC-MW-29
-    - Instruction bloat per block (UC-MW-8) — currently in optimize
-    - Cross-workflow DRY (UC-MW-10/13) — currently in optimize
-    - Scoped re-optimize: can this workflow reuse global patterns? Context budget? (UC-MW-14)
-    - Semantic gap: use cases vs implementation coverage (UC-MW-33)
-
-#### Decisions
-
-_(filled in as interview progresses)_
-
-#### Implementation (after interview)
-
-- New validate block (refactored from lint-artifacts)
-- Update optimize.ts (move cross-workflow checks to validate, keep local checks)
-- Wire validate into graph between wire and promote
-- Smoke test validate loop
-
-### 5.3: Subagent Design (INTERVIEW → IMPLEMENT)
-
-**Status: BLOCKED on 5.2**
-
-Depends on 5.2 — need to see validate block behavior before deciding subagent boundaries.
+Subagent is a general execution pattern (context reset). Decisions here inform how validate and other blocks get executed.
 
 #### Interview Questions (4)
 
@@ -204,6 +175,35 @@ _(filled in as interview progresses)_
 - Generate subagent agent configs
 - Wire subagent spawn into block executor
 - Smoke test subagent paths
+
+### 5.3: Validate Block (INTERVIEW → IMPLEMENT)
+
+**Status: BLOCKED on 5.2**
+
+Depends on 5.2 — subagent decisions inform how validate executes (root vs subagent, escalation path).
+
+#### Interview Questions (4)
+
+7. UC-MW-32 (per-workflow arch docs): created during interview? Validate checks against it?
+8. UC-MW-33 (semantic gap analysis): is this the validate block, or a sub-step within it?
+9. Should validate attempt autonomous fixes or only report? (User said "loop until analysis is complete with option to raise discrepancies")
+10. What checks does validate run? Proposed list:
+    - Structural completeness (filesystem artifacts, pipeline↔block consistency) — from UC-MW-29
+    - Instruction bloat per block (UC-MW-8) — currently in optimize
+    - Cross-workflow DRY (UC-MW-10/13) — currently in optimize
+    - Scoped re-optimize: can this workflow reuse global patterns? Context budget? (UC-MW-14)
+    - Semantic gap: use cases vs implementation coverage (UC-MW-33)
+
+#### Decisions
+
+_(filled in as interview progresses)_
+
+#### Implementation (after interview)
+
+- New validate block (refactored from lint-artifacts)
+- Update optimize.ts (move cross-workflow checks to validate, keep local checks)
+- Wire validate into graph between wire and promote
+- Smoke test validate loop
 
 ### 5.4: Multi-instruction YAML + Hierarchical Layout (UC-MW-30/31)
 
