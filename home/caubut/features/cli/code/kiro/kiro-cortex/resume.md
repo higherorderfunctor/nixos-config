@@ -10,7 +10,7 @@ Branch: chore/save-point
 Phase 4.5+ COMPLETE. UC-MW-29 DONE. 34 files, 0 errors, 0 warnings.
 Validation checklist: **9/9 complete** — all 5 smoke tests pass.
 
-**5.1 (flow redesign) COMPLETE. 5.2 (subagent) COMPLETE. 5.3 (validate) interview COMPLETE. Next: 5.3 implementation.**
+**5.1 (flow redesign) COMPLETE. 5.2 (subagent) COMPLETE. 5.3 (package restructure) IN PROGRESS. 5.4 (validate) interview COMPLETE. Next: 5.3 implementation.**
 
 ### What's Built (all phases)
 
@@ -38,15 +38,17 @@ Interviews scoped per-task. Each task has its own interview (if needed), then im
   ↓
 5.2: Interview (subagent Q11-14) → Implement subagent support
   ↓
-5.3: Interview (validate Q7-10) → Implement validate block
+5.3: Package restructure (agents/ split from kiro-cortex core)
   ↓
-5.4: Multi-instruction YAML (no interview) — can run parallel with 5.1-5.3
+5.4: Interview (validate Q7-10+Q11) → Implement validate block
   ↓
-5.5: Context budget / RAG adequacy (mini-interview if needed)
+5.5: Multi-instruction YAML (no interview) — can run parallel with 5.4
   ↓
-5.6: Load test at 100K
+5.6: Context budget / RAG adequacy (mini-interview if needed)
   ↓
-5.7: Documentation finalization
+5.7: Load test at 100K + subagent implementation
+  ↓
+5.8: Documentation finalization
   ↓
 Phase 6: Repo-Analysis
 ```
@@ -180,7 +182,49 @@ Subagent is a general execution pattern (context reset). Decisions here inform h
 - Implemented as `execution_env: "subagent"` flag on BlockDef — toggle per-block without rewiring graph.
 - Start inline, flip to subagent as scale demands (validated in 5.6 load test).
 
-### 5.3: Validate Block (INTERVIEW → IMPLEMENT)
+### 5.3: Package Restructure (IMPLEMENT)
+
+**Status: IN PROGRESS**
+
+Move agent-specific code into `agents/` directory. kiro-cortex becomes a generic shared library. Agent packages depend on kiro-cortex via `pnpm link:`.
+
+#### What Moves
+
+- `src/meta-workflow/` → `agents/meta-workflow/src/`
+- `workflows/meta-workflow/` → `agents/meta-workflow/` (instructions/, workflow.yaml, pipeline.yaml)
+- `scripts/render-diagram.ts` → `agents/meta-workflow/scripts/`
+- `prompts/meta-workflow.md` → `agents/meta-workflow/prompts/` (if exists)
+
+#### What Stays in kiro-cortex
+
+- `src/opa/`, `src/embedding/`, `src/instruction/`, `src/workflow/` — generic shared lib
+- `src/Sql.ts`, `src/mcp.ts`, `src/index.ts`, `src/migrations/` — infrastructure
+- `policies/` — shared OPA policies
+- `docs/ARCHITECTURE.md` — system-level docs
+
+#### Agent Package Structure
+
+```
+agents/meta-workflow/
+  src/                    ← block implementations (state, route, interview, etc.)
+  instructions/           ← YAML artifacts per block
+  workflow.yaml
+  pipeline.yaml
+  docs/
+    architecture.yaml     ← per-workflow arch doc (5.4 validate checks against this)
+  scripts/
+    render-diagram.ts
+  prompts/
+    meta-workflow.md
+  package.json            ← "kiro-cortex": "link:../.."
+  tsconfig.json
+```
+
+#### mcp.ts Coupling
+
+`mcp.ts` imports `buildMetaWorkflow` from meta-workflow. For now: update import path to `../agents/meta-workflow/src/graph.js`. Dynamic workflow discovery deferred to Phase 6 when second workflow exists.
+
+### 5.4: Validate Block (INTERVIEW COMPLETE → IMPLEMENT)
 
 **Status: INTERVIEW COMPLETE — ready for implementation**
 
@@ -201,7 +245,7 @@ Subagent is a general execution pattern (context reset). Decisions here inform h
 
 #### Decisions
 
-7. **INTERVIEW → ARCH DOC** — Interview captures architecture doc, stored at `docs/architecture.yaml` in the workflow root. Validate checks implementation against it. Arch doc lives with the agent package (not centrally). Packaging split (kiro-cortex as shared lib, agent packages self-contained) deferred to Phase 6 when multi-repo becomes real — validate just needs a workflow root path.
+7. **INTERVIEW → ARCH DOC** — Interview captures architecture doc, stored at `docs/architecture.yaml` in the workflow root. Validate checks implementation against it. Arch doc lives with the agent package (not centrally). Packaging split (kiro-cortex as shared lib, agent packages self-contained) established in 5.3 — validate just needs a workflow root path.
 8. **SUB-CHECK INSIDE VALIDATE** — Semantic gap analysis is tier 3 within validate, not a separate block. Validate runs as subagent (Option B), loops through tiers with fresh RAG queries per check. Sequential thinking pattern handles context pressure within the subagent. Returns condensed result to root.
 9. **CONFIDENCE-BASED RESOLUTION** — Validate fixes what it's confident about (any tier), re-validates. Low confidence: interactive → raises to interview (HITL), programmatic → fails with explanation (UC-MW-37). Tier distinction is about check type (structural/quality/semantic), not fix aggressiveness. Confidence drives escalation, not tier number.
 10. **CHECK LIST CONFIRMED** —
@@ -217,11 +261,11 @@ Subagent is a general execution pattern (context reset). Decisions here inform h
 - Wire validate into graph between wire and promote
 - Smoke test validate loop
 
-### 5.4: Multi-instruction YAML + Hierarchical Layout (UC-MW-30/31)
+### 5.5: Multi-instruction YAML + Hierarchical Layout (UC-MW-30/31)
 
 **Status: READY (no interview needed, independent of 5.1-5.3)**
 
-Can run in parallel with flow redesign tasks.
+Can run in parallel with validate implementation.
 
 - Array of instructions per YAML (each gets own vector in pgvector)
 - Directory hierarchy: `instructions/<domain>/<topic>.yaml`
@@ -229,9 +273,9 @@ Can run in parallel with flow redesign tasks.
 - Author block: chunking guidance (one concept per instruction)
 - Backward compat with single-instruction files
 
-### 5.5: Context Budget Analysis + RAG Adequacy
+### 5.6: Context Budget Analysis + RAG Adequacy
 
-**Status: BLOCKED on 5.2 + 5.4**
+**Status: BLOCKED on 5.4 + 5.5**
 
 Needs validate block (5.2) + enough instructions to test with (5.4). May need mini-interview after seeing results.
 
@@ -253,18 +297,18 @@ The OPA→RAG pipeline has an unresolved gap: blocks get a hard `max_results` li
 5. How does validate/optimize use this?
 6. At 100K+ instructions, how do we ensure the right 20 surface?
 
-### 5.6: Load/Validation Test at 100K Instructions
+### 5.7: Load/Validation Test at 100K Instructions
 
-**Status: BLOCKED on 5.1-5.5**
+**Status: BLOCKED on 5.1-5.6**
 
 - Seed pgvector with ~100K instructions across multiple domains
 - Run complex multi-block workflow with mocked HITL
 - Validate: OPA scoping at scale, RAG relevance (no context drift), block executor injection, subagent context shedding, context budget adequacy (no silent truncation)
 - Goal: prove OPA→RAG pipeline holds at scale before building real workflows
 
-### 5.7: Documentation Finalization
+### 5.8: Documentation Finalization
 
-**Status: BLOCKED on 5.1-5.6**
+**Status: BLOCKED on 5.1-5.7**
 
 - ARCHITECTURE.md: updated use cases, flow, block table, diagram, mode paths
 - Sequence diagram: updated for unified flow + validate loop
@@ -308,20 +352,22 @@ First workflow built by meta-workflow:
 ## File Structure
 
 ```
-src/
+src/                          ← generic shared library
   opa/{index,Opa}.ts
   embedding/{index,Embedding}.ts
   instruction/{index,Repo,Loader,Error}.ts
   workflow/{index,Block,Registry,Executor,Pipeline,Workflow}.ts
-  meta-workflow/{state,route,interview,research,decompose,optimize,lint-artifacts,validate,author,wire,promote,export,seed,graph}.ts
   Sql.ts, mcp.ts, index.ts (doc-only)
   migrations/{0001_init,0002_add_instruction_columns,0003_add_content_hash,_schema.sql}.ts
-scripts/
-  render-diagram.ts  # deterministic ASCII flow diagram renderer
-workflows/
-  meta-workflow/
-    workflow.yaml, pipeline.yaml
+agents/
+  meta-workflow/              ← agent package ("kiro-cortex": "link:../..")
+    src/{state,route,interview,research,decompose,optimize,lint-artifacts,validate,author,wire,promote,export,seed,graph}.ts
     instructions/{route,interview,research,decompose,optimize,author,wire,promote,export,lint-artifacts}.yaml
+    workflow.yaml, pipeline.yaml
+    docs/architecture.yaml    ← per-workflow arch doc
+    scripts/render-diagram.ts
+    prompts/meta-workflow.md
+    package.json, tsconfig.json
 policies/
   access.rego, scoping.rego, isolation.rego
 docs/
@@ -340,11 +386,12 @@ Read resume.md. Phase 5 in progress. Interviews scoped per-task — each task ha
 
 Key context:
 1. 5.1 (flow redesign) COMPLETE — all 6 questions answered, code implemented. 34 files, 0 errors.
-2. 5.2 (subagent design) COMPLETE — Option B (generic subagent for context reset). Implementation deferred to 5.6 load test.
-3. 5.3 (validate block) INTERVIEW COMPLETE — Q7-11 all answered. Ready for implementation.
-4. 5.4 (multi-instruction YAML) READY — no interview needed, can run parallel.
-5. New UCs: UC-MW-34 (adaptive interview), UC-MW-35 (tiered validate), UC-MW-36 (validate→interview loop), UC-MW-37 (programmatic validation), UC-MW-38 (session persistence).
-6. Agent prompt (`prompts/meta-workflow.md`) needs updating — currently mode-centric.
-7. Three bugs in old graph all subsumed by redesign.
+2. 5.2 (subagent design) COMPLETE — Option B (generic subagent for context reset). Implementation deferred to 5.7 load test.
+3. 5.3 (package restructure) IN PROGRESS — move agent-specific code to agents/meta-workflow/, kiro-cortex becomes shared lib.
+4. 5.4 (validate block) INTERVIEW COMPLETE — Q7-11 all answered. Ready for implementation after 5.3.
+5. 5.5 (multi-instruction YAML) READY — no interview needed, can run parallel with 5.4.
+6. New UCs: UC-MW-34 (adaptive interview), UC-MW-35 (tiered validate), UC-MW-36 (validate→interview loop), UC-MW-37 (programmatic validation), UC-MW-38 (session persistence).
+7. Agent prompt (`prompts/meta-workflow.md`) needs updating — currently mode-centric.
+8. Three bugs in old graph all subsumed by redesign.
 
-Next step: Implement 5.3 (validate block) — refactor lint-artifacts into tiered validate with confidence-based resolution.
+Next step: Implement 5.3 (package restructure), then 5.4 (validate) and 5.5 (multi-instruction YAML).
