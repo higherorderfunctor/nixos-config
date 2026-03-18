@@ -387,11 +387,12 @@ Read resume.md. Phase 5 in progress. Interviews scoped per-task — each task ha
 Key context:
 1. 5.1 (flow redesign) COMPLETE — all 6 questions answered, code implemented. 34 files, 0 errors.
 2. 5.2 (subagent design) COMPLETE — Option B (generic subagent for context reset). Implementation deferred to 5.7 load test.
-3. 5.3 (package restructure) IN PROGRESS — move agent-specific code to agents/meta-workflow/, kiro-cortex becomes shared lib.
+3. 5.3 (package restructure) COMPLETE — agents/meta-workflow/ is self-contained package, kiro-cortex is shared lib with startMcpServer() factory, pnpm workspace, sub-path exports.
 4. 5.4 (validate block) INTERVIEW COMPLETE — Q7-11 all answered. Ready for implementation after 5.3.
 5. 5.5 (multi-instruction YAML) READY — no interview needed, can run parallel with 5.4.
 6. New UCs: UC-MW-34 (adaptive interview), UC-MW-35 (tiered validate), UC-MW-36 (validate→interview loop), UC-MW-37 (programmatic validation), UC-MW-38 (session persistence).
 7. Agent prompt (`prompts/meta-workflow.md`) needs updating — currently mode-centric.
 8. Three bugs in old graph all subsumed by redesign.
+9. Entry point is now `bun agents/meta-workflow/src/main.ts` (not `bun src/mcp.ts`). Nix/agent config needs updating.
 
-Next step: Implement 5.3 (package restructure), then 5.4 (validate) and 5.5 (multi-instruction YAML).
+Next step: Implement 5.4 (validate block) and 5.5 (multi-instruction YAML) — can run in parallel.
