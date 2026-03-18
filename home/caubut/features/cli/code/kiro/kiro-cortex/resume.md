@@ -10,7 +10,7 @@ Branch: chore/save-point
 Phase 4.5+ COMPLETE. UC-MW-29 DONE. 34 files, 0 errors, 0 warnings.
 Validation checklist: **9/9 complete** — all 5 smoke tests pass.
 
-**5.1 (flow redesign) COMPLETE. 5.2 (subagent) COMPLETE. 5.3 (package restructure) COMPLETE. 5.4 (validate) interview COMPLETE. Next: 5.4 implementation.**
+**5.1 (flow redesign) COMPLETE. 5.2 (subagent) COMPLETE. 5.3 (package restructure) COMPLETE. 5.4 (validate) COMPLETE. 5.5 (multi-instruction YAML) COMPLETE. 5.6 (context budget) interview COMPLETE. Next: 5.6 implementation.**
 
 ### What's Built (all phases)
 
@@ -226,7 +226,7 @@ agents/meta-workflow/
 
 ### 5.4: Validate Block (INTERVIEW COMPLETE → IMPLEMENT)
 
-**Status: INTERVIEW COMPLETE — ready for implementation**
+**Status: COMPLETE**
 
 5.2 complete — subagent decisions (Option B, per-block, direct MCP) inform validate execution.
 
@@ -263,7 +263,7 @@ agents/meta-workflow/
 
 ### 5.5: Multi-instruction YAML + Hierarchical Layout (UC-MW-30/31)
 
-**Status: READY (no interview needed, independent of 5.1-5.3)**
+**Status: COMPLETE**
 
 Can run in parallel with validate implementation.
 
@@ -273,29 +273,56 @@ Can run in parallel with validate implementation.
 - Author block: chunking guidance (one concept per instruction)
 - Backward compat with single-instruction files
 
-### 5.6: Context Budget Analysis + RAG Adequacy
+### 5.6: Context Budget Analysis + RAG Adequacy (INTERVIEW → IMPLEMENT)
 
-**Status: BLOCKED on 5.4 + 5.5**
+**Status: INTERVIEW COMPLETE — ready for implementation**
 
-Needs validate block (5.2) + enough instructions to test with (5.4). May need mini-interview after seeing results.
+#### Interview Questions (6, collapsed to 3 decisions)
 
-The OPA→RAG pipeline has an unresolved gap: blocks get a hard `max_results` limit (20 or 50) from OPA scoping, and the executor does a single pgvector search using only the block's description as the embedding query. If a block genuinely needs more instructions than the limit, they're silently dropped. No warning, no fallback, no multi-query.
+15. How does the system detect when relevant instructions got dropped?
+16. Should blocks declare a context budget?
+17. Should the executor support multi-query RAG?
+18. Should there be a cosine distance cutoff?
+19. How do validate/optimize use context budget info?
+20. At 100K+ instructions, what's the layered strategy?
 
-**Current behavior (gap):**
-- `scoping.rego` returns `max_results: 20` (or 50 for analysis tasks) — hard LIMIT on pgvector
-- `Executor.ts` embeds `block.description` once, searches once, takes top N
-- No cosine distance threshold — returns `max_results` even if tail results are barely relevant
-- No multi-query (e.g., description + state-derived sub-queries + deduplication)
-- `optimize.ts` checks block count and DRY but NOT whether instructions are being truncated
-- No mechanism for a block to declare "I need more context than the default"
+#### Decisions
 
-**What this step must resolve:**
-1. How does the system detect when a block's relevant instruction set exceeds `max_results`?
-2. Should blocks declare a context budget? (e.g., `max_context` in BlockDef or OPA per-block overrides)
-3. Should the executor support multi-query RAG?
-4. Should there be a cosine distance cutoff?
-5. How does validate/optimize use this?
-6. At 100K+ instructions, how do we ensure the right 20 surface?
+**Q15-Q18 (combined): Adaptive multi-query with distance-based sizing.**
+- Surface cosine distances from pgvector (already computed, just not exposed).
+- Cosine distance cutoff for dynamic sizing — stop returning results when they become
+  irrelevant. No fixed result count. Blocks get exactly as many relevant instructions as exist.
+- OPA `max_results` repurposed as ceiling (safety cap), not target.
+- Multi-query built before load test so 5.7 validates the real design.
+- No per-block declared budgets (neither BlockDef nor OPA per-block overrides).
+  Budgets are a crutch — adaptive retrieval makes them unnecessary.
+
+**Q19: Two-layer retrieval (Option C).**
+- Executor layer: fast single pass — embed `block.description`, search with distance cutoff,
+  return results. This is the baseline for inline blocks.
+- Subagent layer: iterative fold via MCP — subagent queries kiro-cortex, reads results,
+  reasons about gaps (sequential thinking), queries again with refined terms. Accumulates
+  until new results are below distance threshold. Like a fold function over queries.
+- Validate tier 2: flags when executor single pass hits OPA ceiling (truncation risk).
+  Signal that block should consider `execution_env: "subagent"` for iterative retrieval.
+- Optimize: flags low-overlap multi-query results as "block too broad, consider splitting."
+
+**Q20: Layered strategy at 100K+ confirmed.**
+1. OPA domain filtering — coarse filter, narrows search space (exists)
+2. Cosine distance cutoff — dynamic sizing, stops returning garbage (new)
+3. OPA ceiling — safety cap, prevents runaway context (existing max_results repurposed)
+4. Subagent iterative fold — intelligent multi-query for complex blocks via MCP (new)
+5. Validate quality gate — flags ceiling hits, recommends execution_env upgrades (new)
+Load test (5.7) validates this stack end-to-end at 100K.
+
+#### Implementation
+
+- Update `InstructionRepo.search()` to return distances alongside instructions
+- Add cosine distance cutoff to `Executor.ts` (configurable threshold)
+- Repurpose OPA `max_results` as ceiling in executor search call
+- Update `Instruction` type to include `distance` field
+- Validate tier 2: check for ceiling hits in validate.ts
+- Subagent iterative fold: implemented as part of 5.7 (subagent execution_env)
 
 ### 5.7: Load/Validation Test at 100K Instructions
 
@@ -385,14 +412,14 @@ pg 8.20.0, yaml 2.8.2. NO @effect/schema. NO zod.
 Read resume.md. Phase 5 in progress. Interviews scoped per-task — each task has its own interview, then implementation.
 
 Key context:
-1. 5.1 (flow redesign) COMPLETE — all 6 questions answered, code implemented. 34 files, 0 errors.
+1. 5.1 (flow redesign) COMPLETE — all 6 questions answered, code implemented.
 2. 5.2 (subagent design) COMPLETE — Option B (generic subagent for context reset). Implementation deferred to 5.7 load test.
 3. 5.3 (package restructure) COMPLETE — agents/meta-workflow/ is self-contained package, kiro-cortex is shared lib with startMcpServer() factory, pnpm workspace, sub-path exports.
-4. 5.4 (validate block) INTERVIEW COMPLETE — Q7-11 all answered. Ready for implementation after 5.3.
-5. 5.5 (multi-instruction YAML) READY — no interview needed, can run parallel with 5.4.
-6. New UCs: UC-MW-34 (adaptive interview), UC-MW-35 (tiered validate), UC-MW-36 (validate→interview loop), UC-MW-37 (programmatic validation), UC-MW-38 (session persistence).
-7. Agent prompt (`prompts/meta-workflow.md`) needs updating — currently mode-centric.
-8. Three bugs in old graph all subsumed by redesign.
+4. 5.4 (validate block) COMPLETE — tier 1 structural checks live, tier 2/3 stubs, conditional edge wired (validate → promote or validate → interview).
+5. 5.5 (multi-instruction YAML) COMPLETE — recursive directory walk + array format in Loader.ts and seed.ts.
+6. 5.6 (context budget) INTERVIEW COMPLETE — adaptive multi-query with distance-based sizing. Two-layer retrieval: executor fast pass + subagent iterative fold. Ready for implementation.
+7. New UCs: UC-MW-34 (adaptive interview), UC-MW-35 (tiered validate), UC-MW-36 (validate→interview loop), UC-MW-37 (programmatic validation), UC-MW-38 (session persistence).
+8. Agent prompt (`prompts/meta-workflow.md`) needs updating — currently mode-centric.
 9. Entry point is now `bun agents/meta-workflow/src/main.ts` (not `bun src/mcp.ts`). Nix/agent config needs updating.
 
-Next step: Implement 5.4 (validate block) and 5.5 (multi-instruction YAML) — can run in parallel.
+Next step: Implement 5.6 (distance surfacing, cosine cutoff, repurpose OPA ceiling). Then 5.7 load test validates the full stack at 100K.
