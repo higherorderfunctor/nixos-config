@@ -128,6 +128,7 @@
   agentFiles = [
     "ideation.json"
     "meta-workflow.json"
+    "dungeon-crawler-test-harness.json"
   ];
 
   # Directories under agents/ that need symlinks (e.g., prompts/)

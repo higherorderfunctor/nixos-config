@@ -155,8 +155,9 @@ export const startMcpServer = (workflows: ReadonlyArray<WorkflowDef>): void => {
   const LOG_PATH = "/tmp/kiro-cortex-mcp.log"
   const debug = process.env.CORTEX_DEBUG === "true" || process.env.CORTEX_DEBUG === "1"
 
-  const fileLogger = Logger.make(({ message, date, logLevel }) => {
-    appendFileSync(LOG_PATH, `${date.toISOString()} [${logLevel.label}] ${String(message)}\n`)
+  const fileLogger = Logger.make(({ message, date, logLevel, cause }) => {
+    const causeStr = cause && Cause.pretty(cause) !== "" ? ` cause=${Cause.pretty(cause)}` : ""
+    appendFileSync(LOG_PATH, `${date.toISOString()} [${logLevel.label}] ${Inspectable.toStringUnknown(message)}${causeStr}\n`)
   })
 
   const DebugLoggerLive = Layer.mergeAll(

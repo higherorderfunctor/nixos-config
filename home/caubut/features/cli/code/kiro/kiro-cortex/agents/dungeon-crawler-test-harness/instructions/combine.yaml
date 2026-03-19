@@ -1,0 +1,11 @@
+id: "combine"
+text: |
+  You are executing the "combine" block.
+  
+  Merge two inventory items.
+metadata:
+  agent_role: "dungeon-runner"
+  task_type: "combine"
+  domain: "dungeon"
+  repo: null
+content_hash: "de66a5c400f3550cbd690341b8a8be01"

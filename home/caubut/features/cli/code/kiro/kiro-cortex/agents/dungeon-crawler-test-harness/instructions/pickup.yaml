@@ -1,0 +1,11 @@
+id: "pickup"
+text: |
+  You are executing the "pickup" block.
+  
+  Take item from room.
+metadata:
+  agent_role: "dungeon-runner"
+  task_type: "pickup"
+  domain: "dungeon"
+  repo: null
+content_hash: "c9593e2f081b9d1566f8dcf04ad89455"

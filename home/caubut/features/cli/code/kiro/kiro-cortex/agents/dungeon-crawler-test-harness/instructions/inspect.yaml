@@ -1,0 +1,11 @@
+id: "inspect"
+text: |
+  You are executing the "inspect" block.
+  
+  Examine object using tier 2 RAG.
+metadata:
+  agent_role: "dungeon-runner"
+  task_type: "inspect"
+  domain: "dungeon"
+  repo: null
+content_hash: "243f74131950d8380cbca026cd179cdf"

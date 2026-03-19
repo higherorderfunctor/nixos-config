@@ -1,0 +1,11 @@
+id: "verify"
+text: |
+  You are executing the "verify" block.
+  
+  Compare AI actions against solver.
+metadata:
+  agent_role: "dungeon-runner"
+  task_type: "verify"
+  domain: "dungeon"
+  repo: null
+content_hash: "c9a68c0eb94af84d795670a107598bd1"

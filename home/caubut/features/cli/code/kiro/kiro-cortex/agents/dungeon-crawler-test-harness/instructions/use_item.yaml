@@ -1,0 +1,11 @@
+id: "use_item"
+text: |
+  You are executing the "use_item" block.
+  
+  Apply item to puzzle using tier 3 RAG.
+metadata:
+  agent_role: "dungeon-runner"
+  task_type: "use_item"
+  domain: "dungeon"
+  repo: null
+content_hash: "7674a8a74537587630f1b0fd56bea9e3"

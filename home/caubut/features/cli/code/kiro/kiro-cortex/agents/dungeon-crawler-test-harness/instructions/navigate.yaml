@@ -1,0 +1,11 @@
+id: "navigate"
+text: |
+  You are executing the "navigate" block.
+  
+  Move player between rooms using tier 1 RAG.
+metadata:
+  agent_role: "dungeon-runner"
+  task_type: "navigate"
+  domain: "dungeon"
+  repo: null
+content_hash: "2d4abbf0f4eaa92220184b133947ed11"

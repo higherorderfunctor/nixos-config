@@ -1,0 +1,11 @@
+id: "assess"
+text: |
+  You are executing the "assess" block.
+  
+  AI decision-making block.
+metadata:
+  agent_role: "dungeon-runner"
+  task_type: "assess"
+  domain: "dungeon"
+  repo: null
+content_hash: "8cc46a0eb85f345920ea7496903cab1a"
