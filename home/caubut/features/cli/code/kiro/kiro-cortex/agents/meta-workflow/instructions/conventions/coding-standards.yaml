@@ -41,3 +41,18 @@ instructions:
     domain: "conventions"
     repo: null
   content_hash: "seed"
+
+- id: "deployment-workflow"
+  text: |
+    kiro-cortex is deployed via Nix/Home Manager. After modifying source files
+    (TypeScript, YAML, prompts), the user must run `home-manager switch` to rebuild.
+    The agent MUST NOT run home-manager switch itself — always prompt the user to do it.
+    The MCP server runs built artifacts, not source directly. For iterative development
+    and bug hunting, run the MCP directly via `bun agents/meta-workflow/src/main.ts`
+    from the kiro-cortex source directory to bypass the Nix build cycle.
+  metadata:
+    agent_role: "workflow-builder"
+    task_type: "authoring"
+    domain: "conventions"
+    repo: null
+  content_hash: "seed"
