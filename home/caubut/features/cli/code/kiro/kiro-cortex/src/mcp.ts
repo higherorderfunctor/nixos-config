@@ -9,7 +9,7 @@ import { layer as opaLayer } from "./opa/index.js"
 import { layer as embeddingLayer } from "./embedding/index.js"
 import { layer as instructionLayer, loadInstructions } from "./instruction/index.js"
 import { registryLayer } from "./workflow/index.js"
-import { Command } from "@langchain/langgraph"
+import { Command, isInterrupted, INTERRUPT } from "@langchain/langgraph"
 import { appendFileSync, writeFileSync } from "node:fs"
 
 /** Workflow registration — agent packages provide these. */
@@ -100,7 +100,14 @@ export const startMcpServer = (workflows: ReadonlyArray<WorkflowDef>): void => {
               const result = params.thread_id !== undefined
                 ? await graph.invoke(new Command({ resume: params.input }), config)
                 : await graph.invoke(params.input ?? {}, config)
-              return JSON.stringify({ thread_id: tid, state: result }, null, 2)
+
+              // ARCH (5.7.1): Surface interrupt payloads so Claude sees what blocks are asking.
+              // LangGraph embeds interrupt values in the returned state via INTERRUPT symbol.
+              const interrupts = isInterrupted(result)
+                ? (result as Record<symbol, Array<{ value?: unknown }>>)[INTERRUPT].map((i) => i.value)
+                : []
+
+              return JSON.stringify({ thread_id: tid, state: result, interrupts }, null, 2)
             },
             catch: (e) => new WorkflowError({ message: e instanceof Error ? e.message : String(e) }),
           }).pipe(Effect.orDie),
