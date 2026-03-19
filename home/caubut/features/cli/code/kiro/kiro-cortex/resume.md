@@ -379,6 +379,7 @@ Domain: `conventions`, accessible to all agent roles via OPA.
 | Stale instruction YAMLs | 🟢 Nice-to-have | Yes (5.7.4) | Route YAML references modes |
 | Subagent execution_env not implemented | 🟢 Defer | No | All blocks run inline for now |
 | Session persistence (UC-MW-38) | 🟢 Defer | No | Thread ID + OpenMemory for now |
+| Loader embeds before hash check | 🟢 Defer | No | Skip Ollama call when content_hash matches — matters at 100K+ (Phase 6.7) |
 
 ### 5.8: Documentation Finalization
 
