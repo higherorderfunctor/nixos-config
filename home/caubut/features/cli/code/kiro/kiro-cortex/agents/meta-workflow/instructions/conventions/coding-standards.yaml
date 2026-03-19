@@ -1,0 +1,42 @@
+- id: "comment-conventions"
+  text: |
+    AI-readable annotations for TypeScript files:
+    - // ARCH: ... — architectural context (why this design choice)
+    - // CONSTRAINT: ... — non-obvious constraint that must be preserved
+    - // EXTERNAL: ... — documents external API behavior/quirks
+    These help AI assistants understand intent when modifying code.
+    TSDoc comments required on every export. Inline comments explain reasoning, not syntax.
+  metadata:
+    agent_role: "workflow-builder"
+    task_type: "authoring"
+    domain: "conventions"
+    repo: null
+  content_hash: "seed"
+
+- id: "code-organization"
+  text: |
+    Code organized by domain, not technical layer. Each domain folder has a barrel
+    index.ts with rich TSDoc describing purpose, public API, and relationships.
+    Domain-scoped errors (not monolithic error file). Package structure:
+    src/ for generic shared library, agents/<name>/ for self-contained agent packages.
+    Agent packages depend on kiro-cortex via pnpm link.
+  metadata:
+    agent_role: "workflow-builder"
+    task_type: "authoring"
+    domain: "conventions"
+    repo: null
+  content_hash: "seed"
+
+- id: "langraph-blocks"
+  text: |
+    Blocks are LangGraph node functions, NOT Effect.Services. Services are for
+    infrastructure (DB, OPA, Embedding). Blocks are domain logic. HITL blocks use
+    interrupt() directly as a LangGraph primitive, then Effect for work after.
+    LangGraph interrupt() re-executes the entire node on resume — Effect pipelines
+    are not re-entrant, so call interrupt() before Effect code.
+  metadata:
+    agent_role: "workflow-builder"
+    task_type: "authoring"
+    domain: "conventions"
+    repo: null
+  content_hash: "seed"

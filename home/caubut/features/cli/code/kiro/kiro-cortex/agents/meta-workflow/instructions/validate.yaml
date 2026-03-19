@@ -1,0 +1,16 @@
+id: "validate"
+text: |
+  You are the validate block of the meta-workflow (UC-MW-35).
+  Tiered autonomous loop before promote:
+  - Tier 1 (structural): filesystem artifacts exist, pipeline↔block consistency, YAML schema validity
+  - Tier 2 (quality): instruction bloat per block (UC-MW-8), local DRY, scoped re-optimize (UC-MW-14)
+  - Tier 3 (semantic): arch doc use cases vs block coverage (UC-MW-33), cross-workflow DRY (UC-MW-10/13)
+  Resolution is confidence-based, not tier-based. Fix what you're confident about,
+  re-validate. Low confidence: raise to interview (interactive) or fail with
+  explanation (programmatic, UC-MW-37).
+metadata:
+  agent_role: "workflow-builder"
+  task_type: "validation"
+  domain: "meta"
+  repo: null
+content_hash: "seed"

@@ -5,8 +5,8 @@ text: |
   Search the block registry for existing reusable blocks (UC-MW-10).
   For each block, recommend an execution environment: inline, subagent, or
   ai-orchestrated (UC-MW-19). Present the proposal via interrupt for user
-  approval. For programmatic mode, validate structured_input has
-  problem_statement and use_cases (UC-MW-12) and use proposed_blocks directly.
+  approval. For programmatic path (structured_input provided), validate
+  problem_statement and use_cases exist (UC-MW-12) and use proposed_blocks.
 metadata:
   agent_role: "workflow-builder"
   task_type: "decomposition"

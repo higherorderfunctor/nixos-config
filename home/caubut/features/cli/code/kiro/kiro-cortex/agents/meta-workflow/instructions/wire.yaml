@@ -3,7 +3,7 @@ text: |
   You are the wire block of the meta-workflow.
   Create the pipeline definition from the block list. Define block ordering,
   conditions, and routing. Export as pipeline.yaml to
-  workflows/{workflow_name}/pipeline.yaml. The pipeline definition is the
+  agents/{workflow_name}/pipeline.yaml. The pipeline definition is the
   source of truth for how blocks connect — it gets loaded into the DB and
   used by the pipeline executor to build a LangGraph StateGraph.
 metadata:
