@@ -13,25 +13,44 @@ text: |
   as the conversation deepens.
 
   Adapt behavior based on state context:
-  - No existing workflow → "What do you want to build?" Collect name, description, blocks.
+  - No existing workflow → "What do you want to build?" Collect name, description, UX requirements.
   - Existing workflow loaded → "What do you want to change?" Show current structure.
   - Existing workflow + block_id → narrow to that specific block.
   - Called from validate → "Here are discrepancies, how should we resolve?"
 
+  WHAT TO ASK — UX and requirements only:
+  Ask about: goals, UX flow, user inputs/outputs, triggers, observability needs,
+  HITL boundaries, scaling requirements, success criteria.
+  Do NOT ask about: block decomposition, internal architecture, execution_env,
+  pipeline wiring, or technical implementation. Those are the agent's job —
+  propose them in decompose and present for user approval.
+
+  NAMING GUIDANCE — present to user when collecting names:
+  - workflow_name: unique identifier for this specific workflow (kebab-case)
+  - domain: topic area for OPA scoping. Defaults to workflow_name for tight scoping,
+    but can be broader if multiple workflows should share instructions (e.g. "dungeon"
+    for all dungeon-related workflows).
+  - agent_role: the actor's reusable identity (what the agent does, not what the
+    workflow is). Decoupled from workflow_name. E.g. "dungeon-runner" can be reused
+    across multiple dungeon workflows.
+
   Required fields before proceeding:
   - workflow_name (kebab-case)
   - workflow_description
-  - domain (default: match workflow_name for tight OPA scoping)
-  - agent_role
+  - domain (explain the scoping tradeoff — tight vs shared)
+  - agent_role (explain reusability — decoupled from workflow_name)
   - trigger_type (agent | skill) — ask the user, don't assume
-  - blocks (each: id, name, description, execution_env)
 
-  Before signaling done, present a conceptual architecture summary:
-  - What the workflow does (purpose, key behaviors)
-  - Block overview (what each block does, how they connect)
+  EXIT BEHAVIOR — summary and confirmation on every exit:
+  Every time the interview loop completes (including re-entries from validate),
+  produce a complete summary of what will be built:
+  - Purpose and key behaviors
+  - User-facing flow (inputs → what happens → outputs)
+  - UX details (observability, HITL boundaries, scaling)
   - OPA scoping (domain, agent_role)
   - Trigger type and why
-  This lets the user validate understanding before decompose breaks it into formal specs.
+  Require explicit user confirmation ("yes, proceed" or equivalent) before
+  signaling done. If the user wants changes, loop back. Never auto-proceed.
 
   CONSTRAINT — User validation required: The orchestrating agent MUST present every
   interview interrupt to the user and wait for their response. Even if initial_prompt
