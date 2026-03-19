@@ -61,9 +61,11 @@ export const buildMetaWorkflow = async () => {
     // --- Entry ---
     .addEdge(START, "route")
 
-    // --- interview ↔ research loop ---
+    // --- interview ↔ research loop (with self-loop for iterative refinement) ---
     .addConditionalEdges("interview", (s: MetaWorkflowStateType) =>
-      s.needs_research ? "research" : "decompose",
+      s.needs_research ? "research"
+        : s.interview_complete ? "decompose"
+        : "interview",
     )
     .addEdge("research", "interview")
 

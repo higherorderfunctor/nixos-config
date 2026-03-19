@@ -1,87 +1,112 @@
 /**
  * @module meta-workflow/interview
- * Interview block — gathers workflow requirements from the user via HITL interrupt.
+ * Interview block — iterative HITL loop that gathers workflow requirements.
  *
- * ARCH: Adaptive behavior based on state context (UC-MW-34, 5.1 Q1):
- * - No workflow → "What do you want to build?"
- * - workflow_id → "What do you want to change?"
- * - workflow_id + block_id → narrows to that block
- * - (future: validate_findings → "Here are discrepancies, how should we resolve?")
+ * ARCH: Loops until user confirms the design. Each iteration:
+ * 1. Interrupt with question (includes accumulated context)
+ * 2. User responds via orchestrating agent
+ * 3. Parse response, accumulate in interview_messages, update state
+ * 4. If user signals done → set interview_complete, present architecture summary
+ * 5. If not done → graph routes back to interview (self-loop)
  *
- * ARCH: Uses LangGraph interrupt() for human-in-the-loop. Sets needs_research
- * flag when the user indicates knowledge gaps. The graph routes
- * interview → research → interview when research is needed.
+ * ARCH: This is the sequential-thinking-with-RAG-reload pattern. Today the loop
+ * accumulates context; future: each iteration re-queries RAG with evolving context
+ * so instructions refine as the conversation deepens.
+ *
+ * ARCH: Adaptive behavior based on state context (UC-MW-34, 5.1 Q1).
  */
 
 import { interrupt } from "@langchain/langgraph"
 import type { MetaWorkflowStateType, BlockSpec } from "./state.js"
 
-/** Shape of the user's interview response. All fields optional for partial updates. */
 interface InterviewAnswer {
   readonly workflow_name?: string
   readonly workflow_description?: string
   readonly blocks?: ReadonlyArray<BlockSpec>
-  /** Set true to trigger research before decompose (UC-MW-7). */
   readonly needs_research?: boolean
-  /** How the workflow will be triggered (UC-MW-26). */
   readonly trigger_type?: "agent" | "skill"
-  /** OPA domain for instruction scoping (e.g., "dungeon", "repo-analysis"). */
   readonly domain?: string
-  /** OPA agent role for instruction scoping (e.g., "dungeon-runner"). */
   readonly agent_role?: string
+  /** User signals interview is complete — proceed to decompose. */
+  readonly done?: boolean
 }
 
-/**
- * Interview the user about the workflow they want to build or update.
- * Pauses execution via interrupt() and waits for user input.
- *
- * ARCH: If initial_prompt is set (first turn), includes it as context in the
- * interrupt question. The orchestrating agent sees the user's intent and
- * interviews to solidify the design. Clears initial_prompt after consumption.
- *
- * ARCH: Adapts question based on state context (UC-MW-34):
- * - workflow_id + block_id → refine specific block
- * - workflow_id → update existing workflow
- * - neither → build new workflow
- *
- * @returns Partial state with workflow metadata and needs_research flag.
- */
+function parseAnswer(raw: unknown): InterviewAnswer & { text: string } {
+  if (typeof raw === "string") {
+    try {
+      const parsed = JSON.parse(raw) as InterviewAnswer
+      return { ...parsed, text: raw }
+    } catch {
+      return { text: raw }
+    }
+  }
+  const obj = raw as InterviewAnswer
+  return { ...obj, text: JSON.stringify(raw) }
+}
+
+function buildQuestion(state: MetaWorkflowStateType): string {
+  const history = state.interview_messages
+  const isFirstTurn = history.length === 0
+
+  const researchCtx = state.research_findings
+    ? `\n\nResearch findings:\n${state.research_findings}`
+    : ""
+
+  const initialCtx = state.initial_prompt && isFirstTurn
+    ? `\n\nInitial context from user:\n${state.initial_prompt}`
+    : ""
+
+  // Show accumulated state so orchestrator has full picture each iteration
+  const accumulated = !isFirstTurn
+    ? `\n\nAccumulated state so far:`
+      + (state.workflow_name ? `\n- name: ${state.workflow_name}` : "")
+      + (state.workflow_description ? `\n- description: ${state.workflow_description}` : "")
+      + (state.domain ? `\n- domain: ${state.domain}` : "")
+      + (state.agent_role ? `\n- agent_role: ${state.agent_role}` : "")
+      + (state.trigger_type ? `\n- trigger_type: ${state.trigger_type}` : "")
+      + (state.blocks?.length ? `\n- blocks: ${state.blocks.map(b => b.id).join(", ")}` : "")
+      + `\n\nConversation history (${history.length} messages):\n${history.map((m, i) => `[${i + 1}] ${m}`).join("\n")}`
+    : ""
+
+  // Context detection (UC-MW-34)
+  if (state.workflow_id && state.block_id) {
+    return `Refining block "${state.block_id}" in workflow "${state.workflow_name}".${researchCtx}${accumulated}\n\nWhat needs to change?`
+  }
+  if (state.workflow_id) {
+    return `Updating workflow "${state.workflow_name}".${researchCtx}${accumulated}\n\nWhat changes are needed?`
+  }
+
+  // Build mode
+  if (isFirstTurn) {
+    return `Interview loop started. Gather workflow requirements iteratively.\n\nNeeded: name, description, domain, agent_role, trigger_type (agent|skill), blocks.\n\nPresent each interrupt to the user. Resume with their answer as JSON or free text.\nWhen the user confirms the design, resume with { "done": true } to proceed to decompose.${researchCtx}${initialCtx}`
+  }
+
+  return `Interview continues.${researchCtx}${accumulated}\n\nContinue gathering requirements. When the user confirms the design, resume with { "done": true }.`
+}
+
 export function interviewNode(state: MetaWorkflowStateType): Partial<MetaWorkflowStateType> {
-  const researchContext = state.research_findings
-    ? `\n\nResearch findings from previous step:\n${state.research_findings}`
-    : ""
+  const question = buildQuestion(state)
+  const raw: unknown = interrupt({ question })
+  const answer = parseAnswer(raw)
 
-  const triggerPrompt = "\n\nHow should this workflow be triggered?\n- agent: dedicated agent (user switches explicitly, focused context)\n- skill: default agent activates on request match (on-demand, lower context cost)"
-
-  // ARCH: If initial_prompt is set, include it as context so the interviewer
-  // sees the user's intent but still interrupts to ask clarifying questions.
-  const initialContext = state.initial_prompt
-    ? `\n\nInitial context from user:\n${state.initial_prompt}\n\nReview this context and interview the user to solidify the design.`
-    : ""
-
-  // ARCH: Context detection determines question framing (5.1 Q4, UC-MW-34)
-  const question = state.workflow_id && state.block_id
-    ? `Refining block "${state.block_id}" in workflow "${state.workflow_name}".${researchContext}\n\nWhat needs to change in this block's instructions?`
-    : state.workflow_id
-      ? `Updating workflow "${state.workflow_name}". What changes?${researchContext}\n\nProvide updated details. Set needs_research: true if you need external research first.`
-      : `Describe the workflow: name, description, and optionally blocks.${researchContext}${triggerPrompt}\n\nSet needs_research: true if you want external research before decomposition.${initialContext}`
-
-  // ARCH: Always interrupt — initial_prompt is context for the interviewer, not the answer.
-  const answer: unknown = interrupt({ question })
-
-  // CONSTRAINT: Answer can be a JSON string or pre-parsed object depending on caller
-  const parsed: InterviewAnswer = typeof answer === "string"
-    ? (() => { try { return JSON.parse(answer) as InterviewAnswer } catch { return { workflow_description: answer } as InterviewAnswer } })()
-    : answer as InterviewAnswer
+  if (answer.done) {
+    return {
+      interview_complete: true,
+      interview_messages: [answer.text],
+      initial_prompt: "",
+    }
+  }
 
   return {
-    workflow_name: parsed.workflow_name ?? state.workflow_name,
-    workflow_description: parsed.workflow_description ?? state.workflow_description,
-    blocks: parsed.blocks ?? state.blocks,
-    needs_research: parsed.needs_research ?? false,
-    trigger_type: parsed.trigger_type ?? state.trigger_type,
-    domain: parsed.domain ?? state.domain,
-    agent_role: parsed.agent_role ?? state.agent_role,
-    initial_prompt: "", // consumed — future interview calls (e.g. from validate) will interrupt
+    workflow_name: answer.workflow_name ?? state.workflow_name,
+    workflow_description: answer.workflow_description ?? state.workflow_description,
+    blocks: answer.blocks ?? state.blocks,
+    needs_research: answer.needs_research ?? false,
+    trigger_type: answer.trigger_type ?? state.trigger_type,
+    domain: answer.domain ?? state.domain,
+    agent_role: answer.agent_role ?? state.agent_role,
+    interview_complete: false,
+    interview_messages: [answer.text],
+    initial_prompt: "",
   }
 }

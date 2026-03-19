@@ -124,6 +124,16 @@ export const MetaWorkflowState = Annotation.Root({
 
   /** User's initial prompt — interview uses this instead of interrupting on first pass. */
   initial_prompt: Annotation<string>,
+
+  // --- Interview loop fields (iterative RAG-reloaded refinement) ---
+
+  /** Whether the interview loop is complete — user confirmed architecture summary. */
+  interview_complete: Annotation<boolean>,
+  /** Accumulated user responses across interview iterations. Append-only. */
+  interview_messages: Annotation<ReadonlyArray<string>>({
+    reducer: (a, b) => [...a, ...b],
+    default: () => [],
+  }),
 })
 
 /** TypeScript type for the meta-workflow state. */
