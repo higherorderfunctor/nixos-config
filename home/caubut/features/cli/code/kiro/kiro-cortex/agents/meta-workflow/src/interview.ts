@@ -89,15 +89,7 @@ export function interviewNode(state: MetaWorkflowStateType): Partial<MetaWorkflo
   const raw: unknown = interrupt({ question })
   const answer = parseAnswer(raw)
 
-  if (answer.done) {
-    return {
-      interview_complete: true,
-      interview_messages: [answer.text],
-      initial_prompt: "",
-    }
-  }
-
-  return {
+  const fields = {
     workflow_name: answer.workflow_name ?? state.workflow_name,
     workflow_description: answer.workflow_description ?? state.workflow_description,
     blocks: answer.blocks ?? state.blocks,
@@ -105,8 +97,13 @@ export function interviewNode(state: MetaWorkflowStateType): Partial<MetaWorkflo
     trigger_type: answer.trigger_type ?? state.trigger_type,
     domain: answer.domain ?? state.domain,
     agent_role: answer.agent_role ?? state.agent_role,
-    interview_complete: false,
     interview_messages: [answer.text],
     initial_prompt: "",
   }
+
+  if (answer.done) {
+    return { ...fields, interview_complete: true }
+  }
+
+  return { ...fields, interview_complete: false }
 }
