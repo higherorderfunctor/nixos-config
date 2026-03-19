@@ -10,7 +10,7 @@ Branch: chore/save-point
 Phase 4.5+ COMPLETE. UC-MW-29 DONE. 34 files, 0 errors, 0 warnings.
 Validation checklist: **9/9 complete** — all 5 smoke tests pass.
 
-**5.1 (flow redesign) COMPLETE. 5.2 (subagent) COMPLETE. 5.3 (package restructure) COMPLETE. 5.4 (validate) COMPLETE. 5.5 (multi-instruction YAML) COMPLETE. 5.6 (context budget) COMPLETE. Next: 5.7 load test at 100K.**
+**5.1–5.6 COMPLETE. 5.7 (MVP gap fixes) NEXT. Then Phase 6: Dungeon Crawler Test Harness via meta-workflow.**
 
 ### What's Built (all phases)
 
@@ -46,11 +46,13 @@ Interviews scoped per-task. Each task has its own interview (if needed), then im
   ↓
 5.6: Context budget / RAG adequacy (mini-interview if needed)
   ↓
-5.7: Load test at 100K + subagent implementation
+5.7: MVP gap fixes (interrupt surfacing, output paths, author metadata)
   ↓
 5.8: Documentation finalization
   ↓
-Phase 6: Repo-Analysis
+Phase 6: Dungeon Crawler Test Harness (via meta-workflow)
+  ↓
+Phase 7: Repo-Analysis
 ```
 
 ### 5.1: Flow Redesign (INTERVIEW → IMPLEMENT)
@@ -323,23 +325,73 @@ Load test (5.7) validates this stack end-to-end at 100K.
 - ✅ `ContextMeta` type: ceiling_hit, count, dropped — injected as `_context_meta`
 - Subagent iterative fold: deferred to 5.7 (requires execution_env implementation)
 
-### 5.7: Load/Validation Test at 100K Instructions
+### 5.7: MVP Gap Fixes (manual, pre-meta-workflow)
 
 **Status: NEXT — 5.1-5.6 complete**
 
-- Seed pgvector with ~100K instructions across multiple domains
-- Run complex multi-block workflow with mocked HITL
-- Validate: OPA scoping at scale, RAG relevance (no context drift), block executor injection, subagent context shedding, context budget adequacy (no silent truncation)
-- Goal: prove OPA→RAG pipeline holds at scale before building real workflows
+Minimum changes so meta-workflow can attempt to build a new workflow (the dungeon crawler).
+After 5.7, we switch to meta-workflow for Phase 6.
+
+#### 5.7.1: Surface interrupt payloads in `run_workflow` response
+
+5 blocks use `interrupt()` (interview, decompose, research, optimize, promote).
+When `graph.invoke()` hits an interrupt, it returns state — but the interrupt payload
+(the question/proposal) is in the checkpoint's `tasks` metadata, not the returned state.
+Claude never sees what blocks are asking.
+
+Fix: After `graph.invoke()`, call `graph.getState(config)` to check for pending interrupts.
+Return `{ thread_id, state, interrupts }` instead of `{ thread_id, state }`.
+
+#### 5.7.2: Fix output paths → `agents/<name>/`
+
+Author, wire, export blocks write to `workflows/<name>/` (relative to cwd).
+New package structure is `agents/<name>/`. Hardcoded paths.
+
+Fix: Change base dir to `agents/<name>/`. Add `instructions/`, `src/`, `docs/` subdirectory creation.
+
+#### 5.7.3: Fix author metadata — derive from state, not hardcoded
+
+Author block hardcodes `agent_role: "workflow-builder"`, `domain: "meta"` for every instruction.
+New workflows need different metadata. Without correct metadata, OPA scoping breaks.
+
+Fix: Add `domain` and `agent_role` fields to `MetaWorkflowState`. Interview asks for these.
+Author uses them when writing YAML metadata.
+
+#### 5.7.4: Update stale instruction YAMLs
+
+Route YAML still references modes. Other YAMLs may have stale content.
+Switch to multi-instruction array format where it makes sense.
+
+#### 5.7.5: Codify conventions as instructions
+
+Extract Effect patterns, comment conventions (ARCH/CONSTRAINT/EXTERNAL), and coding standards
+from ARCHITECTURE.md into instruction YAMLs. Domain: `conventions`, accessible to all agent roles.
+These become RAG-accessible for author block and future workflows.
+
+#### Gap Analysis (found during dungeon crawler planning)
+
+| Gap | Severity | Fix in 5.7? | Notes |
+|-----|----------|-------------|-------|
+| Interrupt payloads invisible to Claude | 🔴 Critical | Yes (5.7.1) | Blocks all 5 HITL blocks |
+| Output paths wrong (`workflows/` not `agents/`) | 🔴 Critical | Yes (5.7.2) | Wrong directory structure |
+| Author metadata hardcoded to "meta" | 🔴 Critical | Yes (5.7.3) | OPA scoping breaks for new workflows |
+| Author generates trivial instructions | 🟡 Important | Partial | Claude writes real instructions directly for now |
+| Wire only supports linear pipelines | 🟡 Important | No | Dungeon crawler graph.ts hand-wired like meta-workflow |
+| No OPA policy generation for new domains | 🟡 Important | No | Manual for now |
+| No TypeScript code generation | 🟡 Important | No | Claude writes code directly, meta-workflow handles YAML/config |
+| No package scaffolding (package.json etc) | 🟡 Important | No | Claude creates directly |
+| Stale instruction YAMLs | 🟢 Nice-to-have | Yes (5.7.4) | Route YAML references modes |
+| Subagent execution_env not implemented | 🟢 Defer | No | All blocks run inline for now |
+| Session persistence (UC-MW-38) | 🟢 Defer | No | Thread ID + OpenMemory for now |
 
 ### 5.8: Documentation Finalization
 
-**Status: BLOCKED on 5.1-5.7**
+**Status: BLOCKED on Phase 6 completion**
 
-- ARCHITECTURE.md: updated use cases, flow, block table, diagram, mode paths
+- Per-package ARCHITECTURE.md, README.md, USECASES.md
+- Stale content cleanup in docs/ARCHITECTURE.md
 - Sequence diagram: updated for unified flow + validate loop
-- README: updated status
-- Resume: final state for Phase 6 handoff
+- Resume: final state for Phase 7 handoff
 
 ## Bugs Found (2026-03-18 flow review)
 
@@ -366,9 +418,64 @@ These are subsumed by the flow redesign but documented for reference:
 - F3: "pattern-detector" skill — DRY across workflows
 - F4: Meta-workflow self-analysis for interview improvement
 
-## Phase 6 — Repo-Analysis (after Phase 5 complete)
+## Phase 6 — Dungeon Crawler Test Harness (first workflow built by meta-workflow)
 
-First workflow built by meta-workflow:
+**Status: BLOCKED on 5.7**
+
+Procedural Myst-style dungeon crawler that validates the full OPA→RAG→LangGraph pipeline at scale.
+Design doc: `agents/dungeon-crawler/docs/design.md`. This replaces the old synthetic load test —
+the dungeon IS the load test (100K+ facts, OPA domain scoping, multi-block loops, HITL).
+
+### Approach
+
+Use meta-workflow to design and build the dungeon crawler workflow. This test-drives meta-workflow
+itself. Gaps found during the build become self-updates to meta-workflow's instructions.
+
+### Steps
+
+```
+6.1: Design interview (meta-workflow: route → interview)
+  ↓
+6.2: Decompose + optimize (meta-workflow: decompose → optimize)
+  ↓
+6.3: Author + wire + validate + promote + export (meta-workflow completes)
+  ↓  ← expect failures here — find gaps
+6.4: Fix gaps found in 6.3 (manual), update meta-workflow instructions
+  ↓
+6.5: Write dungeon crawler code (manual, Claude-assisted)
+     - state.ts, graph.ts, block implementations, generator, verifier
+  ↓
+6.6: OPA policies for dungeon domain
+  ↓
+6.7: Seed + run at scale (100 → 100K facts), tune COSINE_DISTANCE_CUTOFF
+  ↓
+6.8: Visualization (optional — WebSocket event bus + web UI, DCC narrator)
+```
+
+### What Meta-Workflow Handles vs Manual
+
+| Artifact | Who | Notes |
+|----------|-----|-------|
+| Instruction YAMLs | Meta-workflow (author) | Per-block instructions |
+| pipeline.yaml | Meta-workflow (wire) | Block ordering |
+| workflow.yaml | Meta-workflow (export) | Metadata |
+| Agent config JSON | Meta-workflow (promote) | Trigger artifact |
+| TypeScript code | Claude (manual) | graph.ts, state.ts, blocks, generator, verifier |
+| OPA policies | Claude (manual) | dungeon domain in scoping.rego |
+| package.json, tsconfig | Claude (manual) | Package scaffolding |
+
+### Cleanup Items (deferred, tracked)
+
+- Block runner agent: clarify if subagent of itself or special agent
+- Per-package ARCHITECTURE.md, README.md, USECASES.md
+- Stale/deprecated content cleanup in docs/ARCHITECTURE.md
+- Comment conventions (ARCH/CONSTRAINT/EXTERNAL) in generated code
+- Existing YAMLs still use single-instruction format (multi supported but unused)
+- Codify ARCHITECTURE.md patterns as RAG-accessible instructions
+
+## Phase 7 — Repo-Analysis (after Phase 6)
+
+First *real* workflow built by meta-workflow (dungeon crawler was the test harness):
 - Git worktree aware (repo identity by remote origin)
 - Instruction scoping (repo-specific vs framework-agnostic, OPA enforced)
 - Historical tracking pattern for convention evolution
@@ -421,4 +528,4 @@ Key context:
 8. Agent prompt (`prompts/meta-workflow.md`) needs updating — currently mode-centric.
 9. Entry point: `bun agents/meta-workflow/src/main.ts`. Nix config updated (default.nix), needs `home-manager switch` to regenerate mcp.json.
 
-Next step: 5.7 load test — seed pgvector with ~100K instructions, validate OPA→RAG pipeline at scale, tune COSINE_DISTANCE_CUTOFF, implement subagent iterative fold.
+Next step: 5.7 MVP gap fixes — surface interrupt payloads (5.7.1), fix output paths (5.7.2), fix author metadata (5.7.3). Then switch to meta-workflow for Phase 6 (dungeon crawler). Design doc at `agents/dungeon-crawler/docs/design.md`.
