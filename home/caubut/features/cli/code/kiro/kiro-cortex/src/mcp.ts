@@ -3,7 +3,7 @@
 import { McpServer, Tool, Toolkit } from "@effect/ai"
 import { BunSink, BunStream } from "@effect/platform-bun"
 import * as BunPlatform from "@effect/platform-bun"
-import { Data, Effect, Inspectable, Layer, Logger, LogLevel, Schema, flow } from "effect"
+import { Data, Effect, Inspectable, Layer, Logger, LogLevel, Schema, Cause, flow } from "effect"
 import { SqlLive } from "./Sql.js"
 import { layer as opaLayer } from "./opa/index.js"
 import { layer as embeddingLayer } from "./embedding/index.js"
@@ -114,17 +114,23 @@ export const startMcpServer = (workflows: ReadonlyArray<WorkflowDef>): void => {
             },
             catch: (e) => new WorkflowError({ message: e instanceof Error ? e.message : String(e) }),
           }).pipe(
-            Effect.tapError(flow(Inspectable.toStringUnknown, Effect.logError)),
-            Effect.tapDefect(flow(Inspectable.toStringUnknown, Effect.logFatal)),
-            Effect.orDie,
+            Effect.sandbox,
+            Effect.catchAll((cause) =>
+              Effect.logError(Cause.pretty(cause)).pipe(
+                Effect.map(() => JSON.stringify({ error: Cause.pretty(cause) })),
+              ),
+            ),
           ),
 
         reload_workflows: () =>
           reload.pipe(
             Effect.map(() => JSON.stringify({ loaded: 0, message: "Workflow instructions reloaded from YAML" })),
-            Effect.tapError(flow(Inspectable.toStringUnknown, Effect.logError)),
-            Effect.tapDefect(flow(Inspectable.toStringUnknown, Effect.logFatal)),
-            Effect.orDie,
+            Effect.sandbox,
+            Effect.catchAll((cause) =>
+              Effect.logError(Cause.pretty(cause)).pipe(
+                Effect.map(() => JSON.stringify({ error: Cause.pretty(cause) })),
+              ),
+            ),
           ),
       }
     }),

@@ -36,7 +36,8 @@ export class BlockRegistry extends Effect.Service<BlockRegistry>()("BlockRegistr
 
     /** Search blocks by name, description, or tags (case-insensitive substring match). */
     const search = (query: string): ReadonlyArray<BlockDef<any>> => {
-      const q = query.toLowerCase()
+      const q = (query ?? "").toLowerCase()
+      if (q === "") return list()
       return Array.from(blocks.values()).filter((b) =>
         b.name.toLowerCase().includes(q)
         || b.description.toLowerCase().includes(q)

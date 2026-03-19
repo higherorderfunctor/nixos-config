@@ -34,14 +34,14 @@ interface InterviewAnswer {
 function parseAnswer(raw: unknown): InterviewAnswer & { text: string } {
   if (typeof raw === "string") {
     try {
-      const parsed = JSON.parse(raw) as InterviewAnswer
-      return { ...parsed, text: raw }
+      const parsed = JSON.parse(raw) as InterviewAnswer & { description?: string }
+      return { ...parsed, workflow_description: parsed.workflow_description ?? parsed.description, text: raw }
     } catch {
       return { text: raw }
     }
   }
-  const obj = raw as InterviewAnswer
-  return { ...obj, text: JSON.stringify(raw) }
+  const obj = raw as InterviewAnswer & { description?: string }
+  return { ...obj, workflow_description: obj.workflow_description ?? obj.description, text: JSON.stringify(raw) }
 }
 
 function buildQuestion(state: MetaWorkflowStateType): string {

@@ -43,17 +43,29 @@ instructions:
 
 - id: "effect-error-visibility"
   text: |
-    Every Effect boundary (runPromise, runMain, fork) MUST have tapError + tapDefect
-    BEFORE the run call and BEFORE any logger configuration. This prevents errors and
-    defects from being silently swallowed. Pattern:
+    Effect error handling at boundaries:
+
+    MCP tool handlers / fiber boundaries that return results to callers: use Effect.sandbox
+    to lift defects into the error channel, then catchAll to log and return the error as a
+    string. NEVER use orDie at these boundaries — it converts errors to defects which kills
+    the server process. Pattern:
+      myEffect.pipe(
+        Effect.sandbox,
+        Effect.catchAll((cause) =>
+          Effect.logError(Cause.pretty(cause)).pipe(
+            Effect.map(() => JSON.stringify({ error: Cause.pretty(cause) })),
+          ),
+        ),
+      )
+    Imports: { Effect, Cause } from "effect".
+
+    Process-level boundaries (runMain, Layer.launch): tapError + tapDefect is fine since
+    there's no caller to return to — just log before exit. Pattern:
       myEffect.pipe(
         Effect.tapError(flow(Inspectable.toStringUnknown, Effect.logError)),
         Effect.tapDefect(flow(Inspectable.toStringUnknown, Effect.logFatal)),
       )
     Imports: { Effect, Inspectable, flow } from "effect".
-    Apply to: Effect.runPromise, BunRuntime.runMain, NodeRuntime.runMain, Effect.fork.
-    Place BEFORE Effect.provide(LoggerLayer) so the logger is available for the tap.
-    Place BEFORE Effect.orDie so the error is logged before being converted to a defect.
   metadata:
     agent_role: "workflow-builder"
     task_type: "authoring"

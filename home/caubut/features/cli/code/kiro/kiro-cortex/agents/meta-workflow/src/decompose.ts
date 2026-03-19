@@ -40,7 +40,7 @@ export const decomposeNode = async (
 
   // --- Search registry for reusable blocks ---
   const registry = await Effect.runPromise(
-    Effect.map(BlockRegistry, (r) => r.search(state.workflow_description)).pipe(
+    Effect.map(BlockRegistry, (r) => r.search(state.workflow_description ?? state.workflow_name ?? "")).pipe(
       Effect.tapError(flow(Inspectable.toStringUnknown, Effect.logError)),
       Effect.tapDefect(flow(Inspectable.toStringUnknown, Effect.logFatal)),
       Effect.provide(BlockRegistry.Default),

@@ -58,7 +58,7 @@ const r2 = await invoke(
   new Command({
     resume: {
       workflow_name: "dungeon-crawler-test-harness",
-      description: "Procedural Myst-style dungeon crawler validating OPA→RAG→LangGraph at scale (100K+ facts)",
+      workflow_description: "Procedural Myst-style dungeon crawler validating OPA→RAG→LangGraph at scale (100K+ facts)",
       domain: "dungeon",
       agent_role: "dungeon-runner",
       trigger_type: "agent",
