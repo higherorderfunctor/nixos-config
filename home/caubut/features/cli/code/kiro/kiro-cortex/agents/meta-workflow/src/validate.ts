@@ -68,6 +68,7 @@ export const validateNode = async (
 
   const allFindings = results.flatMap((r) => r.findings)
   const allConfident = results.every((r) => r.confident)
+  const hasErrors = allFindings.some((f) => f.severity === "error")
 
   if (allFindings.length === 0) {
     return { validation_result: "All checks passed.", needs_interview: false }
@@ -77,8 +78,9 @@ export const validateNode = async (
 
   // ARCH: Confidence-based escalation (5.4 Q9).
   // Low confidence on any tier → needs_interview for interactive, fail for programmatic.
+  // Errors even when confident → needs_interview so user can decide to proceed or fix.
   return {
     validation_result: report,
-    needs_interview: !allConfident,
+    needs_interview: !allConfident || hasErrors,
   }
 }

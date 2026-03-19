@@ -77,7 +77,11 @@ const analyzeWorkflow = async (
   const instrDir = join(dir, "instructions")
 
   if (!(await exists(workflowYaml)))
-    findings.push({ severity: "error", category: "filesystem", message: "workflow.yaml missing" })
+    // ARCH: workflow.yaml is written by export block which runs AFTER validate.
+    // Checking for it here is a false positive during create flows.
+    // Only flag if workflow_id is set (update flow — file should already exist).
+    if (state.workflow_id)
+      findings.push({ severity: "error", category: "filesystem", message: "workflow.yaml missing" })
   if (!(await exists(pipelineYaml)))
     findings.push({ severity: "error", category: "filesystem", message: "pipeline.yaml missing" })
   if (!(await exists(instrDir)))
