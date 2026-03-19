@@ -11,7 +11,7 @@
  * Fails if structured_input is missing required fields (UC-MW-12).
  */
 
-import { Effect } from "effect"
+import { Effect, Inspectable, flow } from "effect"
 import { interrupt } from "@langchain/langgraph"
 import { BlockRegistry } from "kiro-cortex/workflow"
 import type { MetaWorkflowStateType, BlockSpec } from "./state.js"
@@ -41,6 +41,8 @@ export const decomposeNode = async (
   // --- Search registry for reusable blocks ---
   const registry = await Effect.runPromise(
     Effect.map(BlockRegistry, (r) => r.search(state.workflow_description)).pipe(
+      Effect.tapError(flow(Inspectable.toStringUnknown, Effect.logError)),
+      Effect.tapDefect(flow(Inspectable.toStringUnknown, Effect.logFatal)),
       Effect.provide(BlockRegistry.Default),
     ),
   )

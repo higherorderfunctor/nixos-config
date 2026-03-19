@@ -3,7 +3,7 @@
 import { McpServer, Tool, Toolkit } from "@effect/ai"
 import { BunSink, BunStream } from "@effect/platform-bun"
 import * as BunPlatform from "@effect/platform-bun"
-import { Data, Effect, Layer, Logger, LogLevel, Schema } from "effect"
+import { Data, Effect, Inspectable, Layer, Logger, LogLevel, Schema, flow } from "effect"
 import { SqlLive } from "./Sql.js"
 import { layer as opaLayer } from "./opa/index.js"
 import { layer as embeddingLayer } from "./embedding/index.js"
@@ -113,11 +113,17 @@ export const startMcpServer = (workflows: ReadonlyArray<WorkflowDef>): void => {
               return JSON.stringify({ thread_id: tid, state: result, interrupts }, null, 2)
             },
             catch: (e) => new WorkflowError({ message: e instanceof Error ? e.message : String(e) }),
-          }).pipe(Effect.orDie),
+          }).pipe(
+            Effect.tapError(flow(Inspectable.toStringUnknown, Effect.logError)),
+            Effect.tapDefect(flow(Inspectable.toStringUnknown, Effect.logFatal)),
+            Effect.orDie,
+          ),
 
         reload_workflows: () =>
           reload.pipe(
             Effect.map(() => JSON.stringify({ loaded: 0, message: "Workflow instructions reloaded from YAML" })),
+            Effect.tapError(flow(Inspectable.toStringUnknown, Effect.logError)),
+            Effect.tapDefect(flow(Inspectable.toStringUnknown, Effect.logFatal)),
             Effect.orDie,
           ),
       }
@@ -153,6 +159,8 @@ export const startMcpServer = (workflows: ReadonlyArray<WorkflowDef>): void => {
   )
 
   const program = Layer.launch(ServerLayer).pipe(
+    Effect.tapError(flow(Inspectable.toStringUnknown, Effect.logError)),
+    Effect.tapDefect(flow(Inspectable.toStringUnknown, Effect.logFatal)),
     debug
       ? Effect.provide(DebugLoggerLive)
       : Logger.withMinimumLogLevel(LogLevel.None),

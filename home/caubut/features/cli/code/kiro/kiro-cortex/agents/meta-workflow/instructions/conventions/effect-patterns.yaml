@@ -40,3 +40,23 @@ instructions:
     domain: "conventions"
     repo: null
   content_hash: "seed"
+
+- id: "effect-error-visibility"
+  text: |
+    Every Effect boundary (runPromise, runMain, fork) MUST have tapError + tapDefect
+    BEFORE the run call and BEFORE any logger configuration. This prevents errors and
+    defects from being silently swallowed. Pattern:
+      myEffect.pipe(
+        Effect.tapError(flow(Inspectable.toStringUnknown, Effect.logError)),
+        Effect.tapDefect(flow(Inspectable.toStringUnknown, Effect.logFatal)),
+      )
+    Imports: { Effect, Inspectable, flow } from "effect".
+    Apply to: Effect.runPromise, BunRuntime.runMain, NodeRuntime.runMain, Effect.fork.
+    Place BEFORE Effect.provide(LoggerLayer) so the logger is available for the tap.
+    Place BEFORE Effect.orDie so the error is logged before being converted to a defect.
+  metadata:
+    agent_role: "workflow-builder"
+    task_type: "authoring"
+    domain: "conventions"
+    repo: null
+  content_hash: "seed"

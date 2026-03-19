@@ -18,7 +18,7 @@
 
 import { mkdir, writeFile } from "node:fs/promises"
 import { join } from "node:path"
-import { Effect, Layer } from "effect"
+import { Effect, Inspectable, Layer, flow } from "effect"
 import { loadInstructions, instructionLayer, embeddingLayer, SqlLive } from "kiro-cortex"
 import type { MetaWorkflowStateType } from "./state.js"
 
@@ -54,6 +54,8 @@ export const exportNode = async (state: MetaWorkflowStateType): Promise<Partial<
   // instructions are available for RAG immediately (not just on disk).
   await Effect.runPromise(
     loadInstructions.pipe(
+      Effect.tapError(flow(Inspectable.toStringUnknown, Effect.logError)),
+      Effect.tapDefect(flow(Inspectable.toStringUnknown, Effect.logFatal)),
       Effect.provide(Layer.mergeAll(instructionLayer, embeddingLayer).pipe(Layer.provide(SqlLive))),
     ),
   )
