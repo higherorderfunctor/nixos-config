@@ -221,12 +221,17 @@ Dungeon metrics map directly to RAG system insights:
 vs fact count. The shape tells you where RAG breaks down — directly transferable to
 "how many docs can I load before code analysis degrades?"
 
-## Session Resumability
+## Session Resumability (system-level, UC-MW-38)
+
+Applies to ALL workflows, not just the dungeon crawler.
 
 - LangGraph PG checkpointer handles graph state across interrupt/resume
 - Thread ID is the session handle — passed back to Claude for resume
-- OpenMemory tracks human-readable session context (what we're doing, where we left off)
-- Any kiro session can resume a dungeon run by providing the thread_id
+- On interrupt: agent stores `{ thread_id, workflow_id, context }` in OpenMemory
+- On spawn: agent queries OpenMemory for resumable sessions, offers to continue
+- Any kiro session can resume any workflow by providing the thread_id
+- OpenMemory tracks human-readable context (what step, what was asked, decisions made)
+- LangGraph checkpointer tracks the actual graph state (not duplicated in OpenMemory)
 
 ## What This Tests
 
