@@ -28,7 +28,7 @@ export const authorNode = async (state: MetaWorkflowStateType): Promise<Partial<
   const instructions: Record<string, string> = {}
   if (!state.blocks?.length) return { instructions }
 
-  const dir = join(process.cwd(), "workflows", state.workflow_name, "instructions")
+  const dir = join(process.cwd(), "agents", state.workflow_name, "instructions")
   await mkdir(dir, { recursive: true })
 
   for (const block of state.blocks) {

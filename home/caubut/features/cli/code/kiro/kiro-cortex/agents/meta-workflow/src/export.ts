@@ -7,11 +7,13 @@
  * from instructions alone: trigger_type, block specs with execution_env.
  *
  * ARCH: Together, these three files make a workflow fully reconstructable:
- *   workflows/<name>/
+ *   agents/<name>/
  *   ├── workflow.yaml       # metadata (this file)
  *   ├── pipeline.yaml       # block ordering (wire.ts)
- *   └── instructions/       # instruction text per block (author.ts)
- *       └── <block-id>.yaml
+ *   ├── instructions/       # instruction text per block (author.ts)
+ *   │   └── <block-id>.yaml
+ *   ├── src/                # block implementations (manual)
+ *   └── docs/               # architecture, design docs
  */
 
 import { mkdir, writeFile } from "node:fs/promises"
@@ -24,8 +26,10 @@ import type { MetaWorkflowStateType } from "./state.js"
  * @returns Unchanged state (export is a side effect).
  */
 export const exportNode = async (state: MetaWorkflowStateType): Promise<Partial<MetaWorkflowStateType>> => {
-  const dir = join(process.cwd(), "workflows", state.workflow_name)
-  await mkdir(dir, { recursive: true })
+  const dir = join(process.cwd(), "agents", state.workflow_name)
+  await mkdir(join(dir, "src"), { recursive: true })
+  await mkdir(join(dir, "docs"), { recursive: true })
+  await mkdir(join(dir, "instructions"), { recursive: true })
 
   const blocksYaml = state.blocks.map((b) => [
     `  - id: "${b.id}"`,

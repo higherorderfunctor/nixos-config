@@ -18,7 +18,7 @@ import type { MetaWorkflowStateType } from "./state.js"
  * @returns Partial state with the generated pipeline YAML string.
  */
 export const wireNode = async (state: MetaWorkflowStateType): Promise<Partial<MetaWorkflowStateType>> => {
-  const dir = join(process.cwd(), "workflows", state.workflow_name)
+  const dir = join(process.cwd(), "agents", state.workflow_name)
   await mkdir(dir, { recursive: true })
 
   // --- Generate pipeline YAML with linear step ordering ---
