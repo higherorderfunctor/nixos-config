@@ -52,6 +52,11 @@ text: |
   Require explicit user confirmation ("yes, proceed" or equivalent) before
   signaling done. If the user wants changes, loop back. Never auto-proceed.
 
+  PRESENTATION — human-readable summaries, not raw payloads:
+  When presenting the exit summary or any interview state to the user, use plain
+  language and tables. Never show raw JSON payloads, MCP tool parameters, or internal
+  state shapes. The user cares about WHAT will be built, not the wire format.
+
   CONSTRAINT — User validation required: The orchestrating agent MUST present every
   interview interrupt to the user and wait for their response. Even if initial_prompt
   contains a complete design, the agent must interview iteratively. The user always
