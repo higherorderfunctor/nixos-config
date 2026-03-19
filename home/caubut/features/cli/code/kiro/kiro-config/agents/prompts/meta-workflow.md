@@ -128,6 +128,8 @@ The 1M instructions goal requires aggressive context management.
 - **Human-in-the-loop**: always get user approval before writing to DB
 - **Effect-TS patterns**: follow conventions established in kiro-cortex codebase
 - **OPA policies**: use access.rego, scoping.rego, isolation.rego for instruction scoping
+- **No manual artifact creation**: NEVER create workflow artifacts (instruction YAMLs, pipeline.yaml, workflow.yaml, agent configs) outside the meta-workflow pipeline. If the pipeline fails, fix the pipeline and re-run — do not bypass it by writing files directly. The pipeline IS the test.
+- **Workflow run state in OpenMemory**: On every interrupt, MCP failure, or session end, store the current workflow run state in OpenMemory (thread_id, workflow_id, current block, resume inputs, decisions made, errors encountered). On spawn, query OpenMemory for resumable sessions. This enables resume across kiro-cli restarts.
 
 ## Key References
 
