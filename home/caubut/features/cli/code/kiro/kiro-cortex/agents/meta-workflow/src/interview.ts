@@ -35,9 +35,9 @@ interface InterviewAnswer {
  * Interview the user about the workflow they want to build or update.
  * Pauses execution via interrupt() and waits for user input.
  *
- * ARCH: If initial_prompt is set (first turn), uses it directly instead of
- * interrupting. The orchestrating agent already has the user's intent — no
- * need for a round trip. Clears initial_prompt after consumption.
+ * ARCH: If initial_prompt is set (first turn), includes it as context in the
+ * interrupt question. The orchestrating agent sees the user's intent and
+ * interviews to solidify the design. Clears initial_prompt after consumption.
  *
  * ARCH: Adapts question based on state context (UC-MW-34):
  * - workflow_id + block_id → refine specific block
@@ -53,17 +53,21 @@ export function interviewNode(state: MetaWorkflowStateType): Partial<MetaWorkflo
 
   const triggerPrompt = "\n\nHow should this workflow be triggered?\n- agent: dedicated agent (user switches explicitly, focused context)\n- skill: default agent activates on request match (on-demand, lower context cost)"
 
+  // ARCH: If initial_prompt is set, include it as context so the interviewer
+  // sees the user's intent but still interrupts to ask clarifying questions.
+  const initialContext = state.initial_prompt
+    ? `\n\nInitial context from user:\n${state.initial_prompt}\n\nReview this context and interview the user to solidify the design.`
+    : ""
+
   // ARCH: Context detection determines question framing (5.1 Q4, UC-MW-34)
   const question = state.workflow_id && state.block_id
     ? `Refining block "${state.block_id}" in workflow "${state.workflow_name}".${researchContext}\n\nWhat needs to change in this block's instructions?`
     : state.workflow_id
       ? `Updating workflow "${state.workflow_name}". What changes?${researchContext}\n\nProvide updated details. Set needs_research: true if you need external research first.`
-      : `Describe the workflow: name, description, and optionally blocks.${researchContext}${triggerPrompt}\n\nSet needs_research: true if you want external research before decomposition.`
+      : `Describe the workflow: name, description, and optionally blocks.${researchContext}${triggerPrompt}\n\nSet needs_research: true if you want external research before decomposition.${initialContext}`
 
-  // ARCH: First-turn passthrough — skip interrupt if the agent already has user intent.
-  const answer: unknown = state.initial_prompt
-    ? state.initial_prompt
-    : interrupt({ question })
+  // ARCH: Always interrupt — initial_prompt is context for the interviewer, not the answer.
+  const answer: unknown = interrupt({ question })
 
   // CONSTRAINT: Answer can be a JSON string or pre-parsed object depending on caller
   const parsed: InterviewAnswer = typeof answer === "string"
