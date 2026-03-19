@@ -97,8 +97,11 @@ export const startMcpServer = (workflows: ReadonlyArray<WorkflowDef>): void => {
               const graph = await getGraph(def)
               const tid = params.thread_id ?? crypto.randomUUID()
               const config = { configurable: { thread_id: tid } }
+              // ARCH: On resume, unwrap resume_value if present — MCP input schema
+              // forces Record<string, unknown> but interrupt answers can be any type.
+              const resumeValue = params.input?.resume_value ?? params.input
               const result = params.thread_id !== undefined
-                ? await graph.invoke(new Command({ resume: params.input }), config)
+                ? await graph.invoke(new Command({ resume: resumeValue }), config)
                 : await graph.invoke(params.input ?? {}, config)
 
               // ARCH (5.7.1): Surface interrupt payloads so Claude sees what blocks are asking.
