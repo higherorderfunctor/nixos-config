@@ -95,6 +95,11 @@ export const MetaWorkflowState = Annotation.Root({
 
   // --- Trigger selection (UC-MW-26) ---
 
+  /** OPA domain for the workflow being designed (e.g., "dungeon", "repo-analysis"). */
+  domain: Annotation<string>,
+  /** OPA agent role for the workflow being designed (e.g., "dungeon-runner"). */
+  agent_role: Annotation<string>,
+
   /** How the workflow will be triggered: dedicated agent or skill. */
   trigger_type: Annotation<"agent" | "skill" | null>,
 

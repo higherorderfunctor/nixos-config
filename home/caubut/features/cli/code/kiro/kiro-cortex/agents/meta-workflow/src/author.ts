@@ -43,9 +43,9 @@ export const authorNode = async (state: MetaWorkflowStateType): Promise<Partial<
       "text: |",
       ...text.split("\n").map((l) => `  ${l}`),
       "metadata:",
-      '  agent_role: "workflow-builder"',
+      `  agent_role: "${state.agent_role || "workflow-builder"}"`,
       `  task_type: "${block.id}"`,
-      '  domain: "meta"',
+      `  domain: "${state.domain || "meta"}"`,
       "  repo: null",
       `content_hash: "${contentHash(text)}"`,
     ].join("\n")

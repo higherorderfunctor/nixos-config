@@ -25,6 +25,10 @@ interface InterviewAnswer {
   readonly needs_research?: boolean
   /** How the workflow will be triggered (UC-MW-26). */
   readonly trigger_type?: "agent" | "skill"
+  /** OPA domain for instruction scoping (e.g., "dungeon", "repo-analysis"). */
+  readonly domain?: string
+  /** OPA agent role for instruction scoping (e.g., "dungeon-runner"). */
+  readonly agent_role?: string
 }
 
 /**
@@ -65,5 +69,7 @@ export function interviewNode(state: MetaWorkflowStateType): Partial<MetaWorkflo
     blocks: parsed.blocks ?? state.blocks,
     needs_research: parsed.needs_research ?? false,
     trigger_type: parsed.trigger_type ?? state.trigger_type,
+    domain: parsed.domain ?? state.domain,
+    agent_role: parsed.agent_role ?? state.agent_role,
   }
 }
