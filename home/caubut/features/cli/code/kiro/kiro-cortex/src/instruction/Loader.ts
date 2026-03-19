@@ -60,10 +60,11 @@ interface YamlInstructionArray {
   readonly instructions: ReadonlyArray<YamlInstruction>
 }
 
-/** Normalize single or array YAML into instruction array. */
+/** Normalize single, array, or wrapped YAML into instruction array. */
 const normalizeYaml = (doc: unknown): ReadonlyArray<YamlInstruction> => {
   if (doc && typeof doc === "object" && "instructions" in doc && Array.isArray((doc as YamlInstructionArray).instructions))
     return (doc as YamlInstructionArray).instructions
+  if (Array.isArray(doc)) return doc as ReadonlyArray<YamlInstruction>
   return [doc as YamlInstruction]
 }
 

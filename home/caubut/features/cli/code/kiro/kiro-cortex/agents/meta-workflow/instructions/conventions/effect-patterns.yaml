@@ -1,3 +1,4 @@
+instructions:
 - id: "effect-services"
   text: |
     Effect-TS service pattern: use Context.Tag + Layer.effect for external API clients
