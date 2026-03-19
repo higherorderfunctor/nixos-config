@@ -10,7 +10,7 @@ Branch: chore/save-point
 Phase 4.5+ COMPLETE. UC-MW-29 DONE. 34 files, 0 errors, 0 warnings.
 Validation checklist: **9/9 complete** — all 5 smoke tests pass.
 
-**5.1–5.6 COMPLETE. 5.7 (MVP gap fixes) NEXT. Then Phase 6: Dungeon Crawler Test Harness via meta-workflow.**
+**5.1–5.7 COMPLETE. Phase 6: Dungeon Crawler Test Harness via meta-workflow is NEXT.**
 
 ### What's Built (all phases)
 
@@ -327,46 +327,42 @@ Load test (5.7) validates this stack end-to-end at 100K.
 
 ### 5.7: MVP Gap Fixes (manual, pre-meta-workflow)
 
-**Status: NEXT — 5.1-5.6 complete**
+**Status: COMPLETE**
 
 Minimum changes so meta-workflow can attempt to build a new workflow (the dungeon crawler).
-After 5.7, we switch to meta-workflow for Phase 6.
 
-#### 5.7.1: Surface interrupt payloads in `run_workflow` response
+#### 5.7.1: Surface interrupt payloads in `run_workflow` response (DONE)
 
-5 blocks use `interrupt()` (interview, decompose, research, optimize, promote).
-When `graph.invoke()` hits an interrupt, it returns state — but the interrupt payload
-(the question/proposal) is in the checkpoint's `tasks` metadata, not the returned state.
-Claude never sees what blocks are asking.
+Uses `isInterrupted()` + `INTERRUPT` symbol from LangGraph. Response now returns
+`{ thread_id, state, interrupts }` where `interrupts` is array of interrupt values.
 
-Fix: After `graph.invoke()`, call `graph.getState(config)` to check for pending interrupts.
-Return `{ thread_id, state, interrupts }` instead of `{ thread_id, state }`.
+#### 5.7.2: Fix output paths → `agents/<name>/` (DONE)
 
-#### 5.7.2: Fix output paths → `agents/<name>/`
+Author, wire, export blocks write to `agents/<name>/`. Export scaffolds `src/`, `docs/`,
+`instructions/` subdirectories.
 
-Author, wire, export blocks write to `workflows/<name>/` (relative to cwd).
-New package structure is `agents/<name>/`. Hardcoded paths.
+#### 5.7.3: Fix author metadata — derive from state, not hardcoded (DONE)
 
-Fix: Change base dir to `agents/<name>/`. Add `instructions/`, `src/`, `docs/` subdirectory creation.
+Added `domain` and `agent_role` fields to `MetaWorkflowState`. Interview captures them.
+Author uses state values (defaults: domain from workflow_name, agent_role "workflow-builder").
 
-#### 5.7.3: Fix author metadata — derive from state, not hardcoded
+#### 5.7.4: Update stale instruction YAMLs (DONE)
 
-Author block hardcodes `agent_role: "workflow-builder"`, `domain: "meta"` for every instruction.
-New workflows need different metadata. Without correct metadata, OPA scoping breaks.
+All 10 instruction YAMLs updated to match Phase 5 redesign:
+- Route: context detection replaces mode-based routing
+- Interview: adaptive behavior per UC-MW-34, captures domain/agent_role
+- Author/wire/export: paths → `agents/{name}/`, state-derived metadata
+- Optimize: audit mode reference removed, scope clarified
+- Decompose: context-based language replaces mode references
+- Validate: new YAML for tiered autonomous loop (UC-MW-35)
+- Lint-artifacts: removed (logic moved into validate)
 
-Fix: Add `domain` and `agent_role` fields to `MetaWorkflowState`. Interview asks for these.
-Author uses them when writing YAML metadata.
+#### 5.7.5: Codify conventions as instructions (DONE)
 
-#### 5.7.4: Update stale instruction YAMLs
-
-Route YAML still references modes. Other YAMLs may have stale content.
-Switch to multi-instruction array format where it makes sense.
-
-#### 5.7.5: Codify conventions as instructions
-
-Extract Effect patterns, comment conventions (ARCH/CONSTRAINT/EXTERNAL), and coding standards
-from ARCHITECTURE.md into instruction YAMLs. Domain: `conventions`, accessible to all agent roles.
-These become RAG-accessible for author block and future workflows.
+Extracted from ARCHITECTURE.md into multi-instruction YAMLs:
+- `conventions/effect-patterns.yaml`: services, schema, generators (3 instructions)
+- `conventions/coding-standards.yaml`: comments, code org, LangGraph blocks (3 instructions)
+Domain: `conventions`, accessible to all agent roles via OPA.
 
 #### Gap Analysis (found during dungeon crawler planning)
 
@@ -420,7 +416,7 @@ These are subsumed by the flow redesign but documented for reference:
 
 ## Phase 6 — Dungeon Crawler Test Harness (first workflow built by meta-workflow)
 
-**Status: BLOCKED on 5.7**
+**Status: READY — 5.7 complete**
 
 Procedural Myst-style dungeon crawler that validates the full OPA→RAG→LangGraph pipeline at scale.
 Design doc: `agents/dungeon-crawler/docs/design.md`. This replaces the old synthetic load test —
@@ -470,8 +466,6 @@ itself. Gaps found during the build become self-updates to meta-workflow's instr
 - Per-package ARCHITECTURE.md, README.md, USECASES.md
 - Stale/deprecated content cleanup in docs/ARCHITECTURE.md
 - Comment conventions (ARCH/CONSTRAINT/EXTERNAL) in generated code
-- Existing YAMLs still use single-instruction format (multi supported but unused)
-- Codify ARCHITECTURE.md patterns as RAG-accessible instructions
 
 ## Phase 7 — Repo-Analysis (after Phase 6)
 
@@ -495,7 +489,8 @@ src/                          ← generic shared library
 agents/
   meta-workflow/              ← agent package ("kiro-cortex": "link:../..")
     src/{state,route,interview,research,decompose,optimize,lint-artifacts,validate,author,wire,promote,export,seed,graph}.ts
-    instructions/{route,interview,research,decompose,optimize,author,wire,promote,export,lint-artifacts}.yaml
+    instructions/{route,interview,research,decompose,optimize,author,wire,validate,promote,export}.yaml
+    instructions/conventions/{effect-patterns,coding-standards}.yaml
     workflow.yaml, pipeline.yaml
     docs/architecture.yaml    ← per-workflow arch doc
     scripts/render-diagram.ts
@@ -515,17 +510,16 @@ pg 8.20.0, yaml 2.8.2. NO @effect/schema. NO zod.
 
 ## Resume Prompt
 
-Read resume.md. Phase 5 in progress. Interviews scoped per-task — each task has its own interview, then implementation.
+Read resume.md. Phase 5 COMPLETE. Phase 6 (Dungeon Crawler Test Harness) is NEXT.
 
 Key context:
-1. 5.1 (flow redesign) COMPLETE — all 6 questions answered, code implemented.
-2. 5.2 (subagent design) COMPLETE — Option B (generic subagent for context reset). Implementation deferred to 5.7 load test.
-3. 5.3 (package restructure) COMPLETE — agents/meta-workflow/ is self-contained package, kiro-cortex is shared lib with startMcpServer() factory, pnpm workspace, sub-path exports.
-4. 5.4 (validate block) COMPLETE — tier 1 structural checks live, tier 2/3 stubs, conditional edge wired (validate → promote or validate → interview).
-5. 5.5 (multi-instruction YAML) COMPLETE — recursive directory walk + array format in Loader.ts and seed.ts.
-6. 5.6 (context budget) COMPLETE — COSINE_DISTANCE_CUTOFF=0.5 in Executor.ts, OPA max_results as ceiling, ContextMeta (ceiling_hit/count/dropped) injected as _context_meta. Subagent iterative fold deferred to 5.7.
-7. New UCs: UC-MW-34 (adaptive interview), UC-MW-35 (tiered validate), UC-MW-36 (validate→interview loop), UC-MW-37 (programmatic validation), UC-MW-38 (session persistence).
-8. Agent prompt (`prompts/meta-workflow.md`) needs updating — currently mode-centric.
-9. Entry point: `bun agents/meta-workflow/src/main.ts`. Nix config updated (default.nix), needs `home-manager switch` to regenerate mcp.json.
+1. 5.1-5.7 ALL COMPLETE — flow redesign, subagent design, package restructure, validate block, multi-instruction YAML, context budget, MVP gap fixes.
+2. Subagent design: Option B (generic subagent for context reset). Implementation deferred — all blocks run inline for now.
+3. Package structure: agents/meta-workflow/ is self-contained, kiro-cortex is shared lib with startMcpServer() factory.
+4. Validate block: tier 1 structural checks live, tier 2/3 stubs, conditional edge (validate → promote or validate → interview).
+5. Context budget: COSINE_DISTANCE_CUTOFF=0.5, OPA max_results as ceiling, ContextMeta injected as _context_meta.
+6. MVP gap fixes: interrupt payloads surfaced (5.7.1), output paths fixed (5.7.2), author metadata from state (5.7.3), stale YAMLs updated (5.7.4), conventions codified (5.7.5).
+7. New UCs: UC-MW-34 through UC-MW-38 (adaptive interview, tiered validate, validate→interview loop, programmatic validation, session persistence).
+8. Entry point: `bun agents/meta-workflow/src/main.ts`.
 
-Next step: 5.7 MVP gap fixes — surface interrupt payloads (5.7.1), fix output paths (5.7.2), fix author metadata (5.7.3). Then switch to meta-workflow for Phase 6 (dungeon crawler). Design doc at `agents/dungeon-crawler/docs/design.md`.
+Next step: Phase 6 — use meta-workflow to design and build the dungeon crawler workflow. Design doc at `agents/dungeon-crawler/docs/design.md`. This test-drives meta-workflow itself. Start with 6.1 (design interview via run_workflow).
