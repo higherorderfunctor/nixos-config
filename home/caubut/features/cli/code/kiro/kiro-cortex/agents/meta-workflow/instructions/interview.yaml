@@ -9,6 +9,12 @@ text: |
   Capture domain and agent_role for OPA scoping of the new workflow.
   Each block needs: id (kebab-case), name, description.
   Ask about trigger type (UC-MW-26): dedicated agent or skill.
+
+  CONSTRAINT — User validation required: The orchestrating agent MUST present the
+  interview interrupt to the user and wait for their response. Even if initial_prompt
+  contains a complete design, the agent must summarize what it understood and ask the
+  user to confirm or correct before resuming. The user always validates the design
+  before the pipeline proceeds. No answer fabrication, no auto-resume.
 metadata:
   agent_role: "workflow-builder"
   task_type: "interview"

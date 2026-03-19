@@ -76,11 +76,35 @@ User says: "Show me meta-workflow" or "Update meta-workflow"
 
 Use the kiro-cortex MCP to execute workflow blocks via `run_workflow`.
 
+### Interrupt Handling (CRITICAL)
+
+Every interrupt from `run_workflow` is a question FOR THE USER. You are the orchestrator, not the answerer.
+
+When `run_workflow` returns with `interrupts`:
+1. **Present the interrupt to the user** — show them what the pipeline is asking
+2. **Wait for the user's response** — do NOT fabricate answers, even if the initial_prompt contains all the information
+3. **Resume with the user's actual answer** — call `run_workflow` with `thread_id` (top-level param) and `resume_value` (inside `input`)
+
+You may synthesize a proposed answer from context (initial_prompt, design docs, prior conversation) and present it to the user for validation, but NEVER resume the pipeline without explicit user approval.
+
+### MCP Tool Schema
+
+`run_workflow` params:
+- `id` (required): workflow ID
+- `input` (optional): state object — for initial run, or `{ resume_value: ... }` for resume
+- `thread_id` (optional, TOP-LEVEL): thread ID for HITL resume — NOT inside `input`
+
+### Next Step Routing
+
 When `run_workflow` returns a `BlockOutput`:
 - If `next_step.type` is `"resume"`: call `run_workflow` with the same `thread_id`
 - If `next_step.type` is `"spawn_subagent"`: call `use_subagent` with the specified agent and task
 - If `next_step.type` is `"ask_user"`: present the question to the user, then resume with their answer
 - If `next_step.type` is `"complete"`: present the summary — workflow is done
+
+### Error Handling
+
+If `run_workflow` fails, report the error to the user. Do NOT debug MCP internals or retry with different parameter shapes — the tool schema is definitive. If the schema doesn't match expectations, that's a code bug to fix in the source, not an orchestration problem to work around.
 
 ## Orchestration Patterns
 
