@@ -35,6 +35,10 @@ interface InterviewAnswer {
  * Interview the user about the workflow they want to build or update.
  * Pauses execution via interrupt() and waits for user input.
  *
+ * ARCH: If initial_prompt is set (first turn), uses it directly instead of
+ * interrupting. The orchestrating agent already has the user's intent — no
+ * need for a round trip. Clears initial_prompt after consumption.
+ *
  * ARCH: Adapts question based on state context (UC-MW-34):
  * - workflow_id + block_id → refine specific block
  * - workflow_id → update existing workflow
@@ -56,11 +60,14 @@ export function interviewNode(state: MetaWorkflowStateType): Partial<MetaWorkflo
       ? `Updating workflow "${state.workflow_name}". What changes?${researchContext}\n\nProvide updated details. Set needs_research: true if you need external research first.`
       : `Describe the workflow: name, description, and optionally blocks.${researchContext}${triggerPrompt}\n\nSet needs_research: true if you want external research before decomposition.`
 
-  const answer: unknown = interrupt({ question })
+  // ARCH: First-turn passthrough — skip interrupt if the agent already has user intent.
+  const answer: unknown = state.initial_prompt
+    ? state.initial_prompt
+    : interrupt({ question })
 
   // CONSTRAINT: Answer can be a JSON string or pre-parsed object depending on caller
   const parsed: InterviewAnswer = typeof answer === "string"
-    ? JSON.parse(answer) as InterviewAnswer
+    ? (() => { try { return JSON.parse(answer) as InterviewAnswer } catch { return { workflow_description: answer } as InterviewAnswer } })()
     : answer as InterviewAnswer
 
   return {
@@ -71,5 +78,6 @@ export function interviewNode(state: MetaWorkflowStateType): Partial<MetaWorkflo
     trigger_type: parsed.trigger_type ?? state.trigger_type,
     domain: parsed.domain ?? state.domain,
     agent_role: parsed.agent_role ?? state.agent_role,
+    initial_prompt: "", // consumed — future interview calls (e.g. from validate) will interrupt
   }
 }

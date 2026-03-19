@@ -119,6 +119,11 @@ export const MetaWorkflowState = Annotation.Root({
 
   /** Structured input for programmatic calls — skips interview. */
   structured_input: Annotation<StructuredInput | null>,
+
+  // --- Initial prompt (first-turn passthrough) ---
+
+  /** User's initial prompt — interview uses this instead of interrupting on first pass. */
+  initial_prompt: Annotation<string>,
 })
 
 /** TypeScript type for the meta-workflow state. */
