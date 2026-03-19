@@ -1,0 +1,61 @@
+instructions:
+- id: "test-script-pattern"
+  text: |
+    To test kiro-cortex code changes, write standalone bun scripts — never rely solely
+    on the MCP transport. Scripts import the graph/blocks directly and exercise them
+    without kiro-cli. Requires PG on localhost:5435 (checkpointer). No other services
+    needed — OPA/Embedding only matter for blocks that query RAG.
+    Location: agents/<name>/scripts/test-<what>.ts. Pattern:
+      import { buildMetaWorkflow } from "../src/graph.js"
+      import { Command, isInterrupted, INTERRUPT } from "@langchain/langgraph"
+      const graph = await buildMetaWorkflow()
+      const tid = `test-${Date.now()}`
+      const r = await graph.invoke(input, { configurable: { thread_id: tid } })
+      const interrupts = isInterrupted(r)
+        ? (r as Record<symbol, Array<{ value?: unknown }>>)[INTERRUPT].map(i => i.value)
+        : []
+    Resume: await graph.invoke(new Command({ resume: answer }), config)
+    Run with: bun agents/meta-workflow/scripts/test-<what>.ts
+    Clean up test data: DELETE FROM checkpoints WHERE thread_id LIKE 'test-%';
+    Test scripts are disposable — commit useful ones, delete one-offs.
+  metadata:
+    agent_role: "workflow-builder"
+    task_type: "authoring"
+    domain: "conventions"
+    repo: null
+  content_hash: "seed"
+
+- id: "crash-recovery"
+  text: |
+    When a workflow run crashes (MCP transport dies, kiro-cli exits, server error):
+    1. Check OpenMemory: query for thread_id, workflow_id, last block, resume inputs.
+       Memory stores full interview answers and BlockSpec arrays for replay.
+    2. Check PG checkpointer for thread state:
+       psql -h localhost -p 5435 -d kiro_cortex -c "SELECT thread_id, checkpoint_ns FROM checkpoints WHERE thread_id = '...';"
+    3. Try resume: run_workflow with old thread_id + resume_value. If PG state is
+       intact and the graph hasn't changed, it resumes from the last interrupt.
+    4. If thread is dead or graph changed: start fresh with new thread_id. Replay
+       preserved answers from OpenMemory (pass as initial_prompt or structured_input).
+    5. After recovery, store updated session state in OpenMemory for next crash.
+    Always store session state on every interrupt — not just on crash.
+  metadata:
+    agent_role: "workflow-builder"
+    task_type: "authoring"
+    domain: "conventions"
+    repo: null
+  content_hash: "seed"
+
+- id: "debug-logging"
+  text: |
+    Enable MCP debug logging: set CORTEX_DEBUG=1 in the environment (or in the
+    agent config mcpServers env block). Logs write to /tmp/kiro-cortex-mcp.log.
+    Tail in a separate terminal: tail -f /tmp/kiro-cortex-mcp.log.
+    For block-level debugging, add Effect.logDebug calls inside blocks — they
+    appear in the debug log. For LangGraph state inspection, query the PG
+    checkpointer directly: SELECT * FROM checkpoints WHERE thread_id = '...'.
+  metadata:
+    agent_role: "workflow-builder"
+    task_type: "authoring"
+    domain: "conventions"
+    repo: null
+  content_hash: "seed"
