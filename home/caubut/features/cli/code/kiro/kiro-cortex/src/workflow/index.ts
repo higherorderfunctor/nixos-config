@@ -36,7 +36,7 @@ export type {
 } from "./Block.js"
 export { BlockRegistry, layer as registryLayer } from "./Registry.js"
 export { executeBlock } from "./Executor.js"
-export type { BlockExecutorServices } from "./Executor.js"
+export type { BlockExecutorServices, ContextMeta } from "./Executor.js"
 export { getCheckpointer, buildPipeline } from "./Pipeline.js"
 export { createContextWorkflow } from "./Workflow.js"
 export type { ContextState } from "./Workflow.js"
