@@ -18,6 +18,8 @@
 
 import { mkdir, writeFile } from "node:fs/promises"
 import { join } from "node:path"
+import { Effect, Layer } from "effect"
+import { loadInstructions, instructionLayer, embeddingLayer, SqlLive } from "kiro-cortex"
 import type { MetaWorkflowStateType } from "./state.js"
 
 /**
@@ -47,5 +49,14 @@ export const exportNode = async (state: MetaWorkflowStateType): Promise<Partial<
   ].join("\n")
 
   await writeFile(join(dir, "workflow.yaml"), yaml + "\n")
+
+  // ARCH: Reload all instruction YAMLs into pgvector so newly authored
+  // instructions are available for RAG immediately (not just on disk).
+  await Effect.runPromise(
+    loadInstructions.pipe(
+      Effect.provide(Layer.mergeAll(instructionLayer, embeddingLayer).pipe(Layer.provide(SqlLive))),
+    ),
+  )
+
   return {}
 }
