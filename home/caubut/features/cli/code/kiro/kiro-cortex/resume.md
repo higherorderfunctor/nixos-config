@@ -1,4 +1,4 @@
-# kiro-cortex Resume — 2026-03-18
+# kiro-cortex Resume — 2026-03-19
 
 ## What Is This Project
 
@@ -10,7 +10,7 @@ Branch: chore/save-point
 Phase 4.5+ COMPLETE. UC-MW-29 DONE. 34 files, 0 errors, 0 warnings.
 Validation checklist: **9/9 complete** — all 5 smoke tests pass.
 
-**5.1 (flow redesign) COMPLETE. 5.2 (subagent) COMPLETE. 5.3 (package restructure) COMPLETE. 5.4 (validate) COMPLETE. 5.5 (multi-instruction YAML) COMPLETE. 5.6 (context budget) interview COMPLETE. Next: 5.6 implementation.**
+**5.1 (flow redesign) COMPLETE. 5.2 (subagent) COMPLETE. 5.3 (package restructure) COMPLETE. 5.4 (validate) COMPLETE. 5.5 (multi-instruction YAML) COMPLETE. 5.6 (context budget) COMPLETE. Next: 5.7 load test at 100K.**
 
 ### What's Built (all phases)
 
@@ -275,7 +275,7 @@ Can run in parallel with validate implementation.
 
 ### 5.6: Context Budget Analysis + RAG Adequacy (INTERVIEW → IMPLEMENT)
 
-**Status: INTERVIEW COMPLETE — ready for implementation**
+**Status: COMPLETE**
 
 #### Interview Questions (6, collapsed to 3 decisions)
 
@@ -317,16 +317,15 @@ Load test (5.7) validates this stack end-to-end at 100K.
 
 #### Implementation
 
-- Update `InstructionRepo.search()` to return distances alongside instructions
-- Add cosine distance cutoff to `Executor.ts` (configurable threshold)
-- Repurpose OPA `max_results` as ceiling in executor search call
-- Update `Instruction` type to include `distance` field
-- Validate tier 2: check for ceiling hits in validate.ts
-- Subagent iterative fold: implemented as part of 5.7 (subagent execution_env)
+- ✅ `InstructionRepo.search()` already returns distances (Instruction.distance field)
+- ✅ Cosine distance cutoff in `Executor.ts` (COSINE_DISTANCE_CUTOFF = 0.5, tune in 5.7)
+- ✅ OPA `max_results` as ceiling — executor fetches up to ceiling, filters by distance
+- ✅ `ContextMeta` type: ceiling_hit, count, dropped — injected as `_context_meta`
+- Subagent iterative fold: deferred to 5.7 (requires execution_env implementation)
 
 ### 5.7: Load/Validation Test at 100K Instructions
 
-**Status: BLOCKED on 5.1-5.6**
+**Status: NEXT — 5.1-5.6 complete**
 
 - Seed pgvector with ~100K instructions across multiple domains
 - Run complex multi-block workflow with mocked HITL
@@ -417,9 +416,9 @@ Key context:
 3. 5.3 (package restructure) COMPLETE — agents/meta-workflow/ is self-contained package, kiro-cortex is shared lib with startMcpServer() factory, pnpm workspace, sub-path exports.
 4. 5.4 (validate block) COMPLETE — tier 1 structural checks live, tier 2/3 stubs, conditional edge wired (validate → promote or validate → interview).
 5. 5.5 (multi-instruction YAML) COMPLETE — recursive directory walk + array format in Loader.ts and seed.ts.
-6. 5.6 (context budget) INTERVIEW COMPLETE — adaptive multi-query with distance-based sizing. Two-layer retrieval: executor fast pass + subagent iterative fold. Ready for implementation.
+6. 5.6 (context budget) COMPLETE — COSINE_DISTANCE_CUTOFF=0.5 in Executor.ts, OPA max_results as ceiling, ContextMeta (ceiling_hit/count/dropped) injected as _context_meta. Subagent iterative fold deferred to 5.7.
 7. New UCs: UC-MW-34 (adaptive interview), UC-MW-35 (tiered validate), UC-MW-36 (validate→interview loop), UC-MW-37 (programmatic validation), UC-MW-38 (session persistence).
 8. Agent prompt (`prompts/meta-workflow.md`) needs updating — currently mode-centric.
 9. Entry point: `bun agents/meta-workflow/src/main.ts`. Nix config updated (default.nix), needs `home-manager switch` to regenerate mcp.json.
 
-Next step: Implement 5.6 — update InstructionRepo.search() to return distances, add cosine distance cutoff to Executor.ts, repurpose OPA max_results as ceiling. Then 5.7 load test validates the full stack at 100K.
+Next step: 5.7 load test — seed pgvector with ~100K instructions, validate OPA→RAG pipeline at scale, tune COSINE_DISTANCE_CUTOFF, implement subagent iterative fold.
