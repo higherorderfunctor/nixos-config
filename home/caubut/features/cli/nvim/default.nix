@@ -42,6 +42,12 @@ in {
       # NOTE: bundled with nightly
       # tree-sitter
     ];
+    extraWrapperArgs = [
+      "--prefix"
+      "LD_LIBRARY_PATH"
+      ":"
+      "${pkgs.lib.makeLibraryPath [pkgs.openssl]}"
+    ];
   };
 
   # symlink to clone of project to allow for easy editing

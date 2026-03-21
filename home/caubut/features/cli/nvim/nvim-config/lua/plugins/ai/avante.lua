@@ -36,61 +36,61 @@ end
 vim.env.KIRO_API_KEY = "my-super-secret-password-123"
 
 return {
-  {
-    "ravitemer/mcphub.nvim",
-    dependencies = { "nvim-lua/plenary.nvim" },
-    build = "pnpm install -g mcp-hub@latest",
-    config = function()
-      require("mcphub").setup({
-        servers = {
-          filesystem = {
-            command = "pnpm",
-            args = { "dlx", "@modelcontextprotocol/server-filesystem", "." },
-          },
-          -- fetch = {
-          --   command = "uvx",
-          --   args = { "mcp-server-fetch" },
-          -- },
-          -- git = {
-          --   command = "uvx",
-          --   args = { "mcp-server-git" },
-          -- },
-          -- ["sequential-thinking"] = {
-          --   command = "npx",
-          --   args = { "-y", "@modelcontextprotocol/server-sequentialthinking" },
-          -- },
-          -- ["memory-graph"] = {
-          --   command = "npx",
-          --   args = { "-y", "memory-graph" },
-          --   env = {
-          --     NEO4J_URI = "bolt://localhost:7687",
-          --     NEO4J_USER = "neo4j",
-          --     NEO4J_PASSWORD = os.getenv("NEO4J_PASSWORD") or "changeme",
-          --   },
-          -- },
-          -- time = {
-          --   command = "npx",
-          --   args = { "-y", "@modelcontextprotocol/server-time" },
-          -- },
-          -- notifications = {
-          --   command = "npx",
-          --   args = { "-y", "@anthropic/mcp-server-notifications" },
-          -- },
-        },
-        extensions = {
-          avante = {
-            make_slash_commands = true,
-          },
-        },
-      })
-    end,
-  },
+  -- {
+  --   "ravitemer/mcphub.nvim",
+  --   dependencies = { "nvim-lua/plenary.nvim" },
+  --   build = "pnpm install -g mcp-hub@latest",
+  --   config = function()
+  --     require("mcphub").setup({
+  --       servers = {
+  --         filesystem = {
+  --           command = "pnpm",
+  --           args = { "dlx", "@modelcontextprotocol/server-filesystem", "." },
+  --         },
+  --         -- fetch = {
+  --         --   command = "uvx",
+  --         --   args = { "mcp-server-fetch" },
+  --         -- },
+  --         -- git = {
+  --         --   command = "uvx",
+  --         --   args = { "mcp-server-git" },
+  --         -- },
+  --         -- ["sequential-thinking"] = {
+  --         --   command = "npx",
+  --         --   args = { "-y", "@modelcontextprotocol/server-sequentialthinking" },
+  --         -- },
+  --         -- ["memory-graph"] = {
+  --         --   command = "npx",
+  --         --   args = { "-y", "memory-graph" },
+  --         --   env = {
+  --         --     NEO4J_URI = "bolt://localhost:7687",
+  --         --     NEO4J_USER = "neo4j",
+  --         --     NEO4J_PASSWORD = os.getenv("NEO4J_PASSWORD") or "changeme",
+  --         --   },
+  --         -- },
+  --         -- time = {
+  --         --   command = "npx",
+  --         --   args = { "-y", "@modelcontextprotocol/server-time" },
+  --         -- },
+  --         -- notifications = {
+  --         --   command = "npx",
+  --         --   args = { "-y", "@anthropic/mcp-server-notifications" },
+  --         -- },
+  --       },
+  --       extensions = {
+  --         avante = {
+  --           make_slash_commands = true,
+  --         },
+  --       },
+  --     })
+  --   end,
+  -- },
   {
     "yetone/avante.nvim",
     opts = function(_, opts)
       return vim.tbl_deep_extend("force", opts or {}, {
         provider = "kiro",
-        auto_suggestions_provider = "kiro",
+        auto_suggestions_provider = "copilot",
 
         behavior = {
           auto_suggestions = true,
@@ -102,6 +102,20 @@ return {
           ["kiro"] = {
             command = "kiro-cli",
             args = { "acp" },
+          },
+        },
+        providers = {
+          claude = {
+            auth_type = "max",
+            model = "claude-opus-4-6-20250514",
+            extra_request_body = {
+              temperature = 1, -- required when using extended thinking
+              max_tokens = 16384,
+              thinking = {
+                type = "enabled",
+                budget_tokens = 10240,
+              },
+            },
           },
         },
 
@@ -130,6 +144,10 @@ return {
         --     extra = nil,
         --   },
         -- },
+
+        input = {
+          provider = "snacks",
+        },
 
         web_search_engine = {
           provider = "kagi",
