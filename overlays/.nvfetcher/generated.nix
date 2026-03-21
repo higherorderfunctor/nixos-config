@@ -138,6 +138,25 @@
       };
     };
   };
+  gh = {
+    pname = "gh";
+    version = "v2.88.1";
+    src = fetchFromGitHub {
+      owner = "cli";
+      repo = "cli";
+      rev = "v2.88.1";
+      fetchSubmodules = false;
+      sha256 = "sha256-aM5hpkI4MTQ6eNUB4FVNQRSNUmwI84dTdVMUANtrnJk=";
+    };
+  };
+  github-copilot-cli = {
+    pname = "github-copilot-cli";
+    version = "1.0.10";
+    src = fetchurl {
+      url = "https://github.com/github/copilot-cli/releases/download/v1.0.10/copilot-linux-x64.tar.gz";
+      sha256 = "sha256-ubimegI/OSOnamgZoR0GkpOg/xIJoEWIxPPQSMA8cyg=";
+    };
+  };
   gluetun-src = {
     pname = "gluetun-src";
     version = "v3.41.1";

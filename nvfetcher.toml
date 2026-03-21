@@ -181,6 +181,17 @@ src.use_commit = true
 src.branch = "main"
 fetch.git = "https://github.com/L4ki/Vivid-Plasma-Themes.git"
 
+[gh]
+src.github = "cli/cli"
+fetch.github = "cli/cli"
+
+[github-copilot-cli]
+src.github = "github/copilot-cli"
+src.from_pattern = "v([0-9]+\\.[0-9]+\\.[0-9]+)$"
+src.exclude_regex = ".*-[0-9]+$"
+src.to_pattern = "\\1"
+fetch.url = "https://github.com/github/copilot-cli/releases/download/v$ver/copilot-linux-x64.tar.gz"
+
 [kiro-cli]
 src.cmd = "curl -s https://desktop-release.q.us-east-1.amazonaws.com/latest/manifest.json | jq -r '.version'"
 fetch.url = "https://desktop-release.q.us-east-1.amazonaws.com/$ver/kirocli-x86_64-linux.tar.gz"

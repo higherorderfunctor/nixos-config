@@ -5,6 +5,7 @@ args: let
     ./arkenfox-overlay.nix
     ./astal-overlay.nix
     ./bruno-overlay.nix
+    ./copilot-cli-overlay.nix
     ./btop-overlay.nix
     ./bun-overlay.nix
     ./catppuccin-gtk-overlay.nix
@@ -13,6 +14,7 @@ args: let
     # ./gitlab-language-server-overlay.nix
     ./fblog-overlay.nix
     ./firefox-nightly-overlay.nix
+    ./gh-overlay.nix
     ./gluetun-overlay.nix
     ./go-overlay.nix
     ./hotfixes-overlay.nix

@@ -35,6 +35,7 @@ done
 ##
 # Cache externally generated hashes for nvfetcher
 oh_my_posh_vendor_hash=$(yq -r '.oh-my-posh.vendorHash // "'"$FAKE_HASH"'"' overlays/.nvfetcher/generated.json)
+gh_vendor_hash=$(yq -r '.gh.vendorHash // "'"$FAKE_HASH"'"' overlays/.nvfetcher/generated.json)
 
 ##
 # Run nvfetcher to get updates
@@ -58,6 +59,7 @@ nvfetcher -k ~/.config/nvfetcher/keyfile.toml -o overlays/.nvfetcher
 # nvfetcher always writes a file with or without updates so they need
 # to be restored. and then fixed after if there is an actual update
 yq e -iP '.oh-my-posh.vendorHash = "'"$oh_my_posh_vendor_hash"'"' overlays/.nvfetcher/generated.json -o json
+yq e -iP '.gh.vendorHash = "'"$gh_vendor_hash"'"' overlays/.nvfetcher/generated.json -o json
 
 ##
 # Fixup externally generated hashes
@@ -90,20 +92,37 @@ yq e -iP '.oh-my-posh.vendorHash = "'"$oh_my_posh_vendor_hash"'"' overlays/.nvfe
       ];
   }
 }:
-pkgs.oh-my-posh
+pkgs.oh-my-posh.goModules
 EOF
 	)"
 
-	# this command succeeds if its already in the store and the rest is skipped,
-	# otherwise, on failure, it tries to build, captures the correct hash, and updates generated.json
-	if ! output=$(nix-build --show-trace --expr "$oh_my_posh" 2>&1 | tee >(cat - >&5)); then
+	# Build only goModules (skips compilation) to resolve the vendorHash.
+	# Succeeds if already in the store; on failure, captures the correct hash.
+	if ! output=$(nix-build --no-link --show-trace --expr "$oh_my_posh" 2>&1 | tee >(cat - >&5)); then
 		# if the command fails, it should just be on the vendor hash which is captured
 		oh_my_posh_vendor_hash=$(echo "$output" | grep -oP 'got:\s+\Ksha256-[a-zA-Z0-9+/=]+')
 		echo -e "\nUpdating vendorHash: $oh_my_posh_vendor_hash\n"
 		yq e -iP '.oh-my-posh.vendorHash = "'"$oh_my_posh_vendor_hash"'"' overlays/.nvfetcher/generated.json -o json
 	fi
 
-	rm -rf result 2>/dev/null
+	# gh
+	gh_expr="$(
+		cat <<'EOF'
+{ pkgs ? import <nixpkgs> {
+    overlays = [
+      (import ./overlays/gh-overlay.nix {})
+    ];
+  }
+}:
+pkgs.gh.goModules
+EOF
+	)"
+
+	if ! output=$(nix-build --no-link --show-trace --expr "$gh_expr" 2>&1 | tee >(cat - >&5)); then
+		gh_vendor_hash=$(echo "$output" | grep -oP 'got:\s+\Ksha256-[a-zA-Z0-9+/=]+')
+		echo -e "\nUpdating gh vendorHash: $gh_vendor_hash\n"
+		yq e -iP '.gh.vendorHash = "'"$gh_vendor_hash"'"' overlays/.nvfetcher/generated.json -o json
+	fi
 )
 
 # SPECTRAL_VERSION=$(yq -r '.spectral.version' overlays/.nvfetcher/generated.json)

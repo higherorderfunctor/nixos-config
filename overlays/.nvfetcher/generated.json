@@ -213,6 +213,43 @@
     },
     "version": "v4.17.0"
   },
+  "gh": {
+    "cargoLock": null,
+    "date": null,
+    "extract": null,
+    "name": "gh",
+    "passthru": null,
+    "pinned": false,
+    "src": {
+      "deepClone": false,
+      "fetchSubmodules": false,
+      "leaveDotGit": false,
+      "name": null,
+      "owner": "cli",
+      "repo": "cli",
+      "rev": "v2.88.1",
+      "sha256": "sha256-aM5hpkI4MTQ6eNUB4FVNQRSNUmwI84dTdVMUANtrnJk=",
+      "sparseCheckout": [],
+      "type": "github"
+    },
+    "version": "v2.88.1",
+    "vendorHash": "sha256-RD40Lqg6EF0T12JJ7Y4B5L2KIvwRHcgGRU1UMiU3qTo="
+  },
+  "github-copilot-cli": {
+    "cargoLock": null,
+    "date": null,
+    "extract": null,
+    "name": "github-copilot-cli",
+    "passthru": null,
+    "pinned": false,
+    "src": {
+      "name": null,
+      "sha256": "sha256-ubimegI/OSOnamgZoR0GkpOg/xIJoEWIxPPQSMA8cyg=",
+      "type": "url",
+      "url": "https://github.com/github/copilot-cli/releases/download/v1.0.10/copilot-linux-x64.tar.gz"
+    },
+    "version": "1.0.10"
+  },
   "gluetun-src": {
     "cargoLock": null,
     "date": null,
