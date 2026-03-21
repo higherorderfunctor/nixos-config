@@ -4,6 +4,7 @@
   ...
 }: {
   imports = [
+    ./ai
     ./docker.nix
     ./kiro
     ./markdown.nix
@@ -18,10 +19,6 @@
     # kiro-gateway
     uv
   ];
-
-  programs.claude-code = {
-    enable = true;
-  };
 
   # home.file = {
   #   ".kiro/settings/mcp.json" = let
