@@ -58,6 +58,12 @@ importers:
         specifier: ^5.1.3
         version: 5.1.3
 
+  agents/dungeon-crawler-test-harness:
+    dependencies:
+      kiro-cortex:
+        specifier: workspace:*
+        version: link:../..
+
   agents/meta-workflow:
     dependencies:
       kiro-cortex:

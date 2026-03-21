@@ -19,6 +19,10 @@
     uv
   ];
 
+  programs.claude-code = {
+    enable = true;
+  };
+
   # home.file = {
   #   ".kiro/settings/mcp.json" = let
   #     mcpConfig = {

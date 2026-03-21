@@ -1,11 +1,37 @@
 id: "use_item"
 text: |
-  You are executing the "use_item" block.
-  
-  Apply item to puzzle using tier 3 RAG.
+  You are the USE_ITEM block — apply an inventory item to a room object or feature.
+
+  ## Inputs
+  Read from state: `current_room`, `action_target` (object with `item_id` and `target_object`),
+  `inventory`, `discovered_facts`, `puzzle_progress`, `current_room_facts`.
+
+  ## Logic
+  1. Validate `item_id` exists in `inventory` and `target_object` exists in current room.
+  2. Query RAG for interaction facts: domain=dungeon, room=current_room, item=item_id,
+     target=target_object, tier=3. OPA gates based on game state.
+  3. If no interaction facts returned, this is an invalid use. Return error: item has no effect
+     on target. Tag as 'dead-end'.
+  4. Process the interaction effect:
+     - **unlock**: Remove lock from an exit. Update `room_graph` to mark exit as passable.
+     - **reveal**: Make hidden objects/exits visible. Add new facts to `current_room_facts`.
+     - **solve_puzzle**: Mark puzzle as solved in `puzzle_progress`. May trigger cascading reveals.
+     - **transform**: Change a room object's state (light candle, move statue, drain water).
+     - **cross_room**: Effect applies to a different room (lever in A drains water in B).
+  5. If item is a key_item, consume it from inventory after use. Tools stay.
+  6. Retrieve any TIER 3 facts unlocked by this interaction. Store in `discovered_facts`.
+  7. Check for TIER 4 (emergent) facts: state-dependent facts that only appear when multiple
+     conditions are met (candle lit AND book open). Query with full game state context.
+  8. Classify: 'critical' if it solves a puzzle or unlocks required path, 'enabling' if it reveals facts.
+
+  ## Outputs
+  Write to state: `inventory` (consume if key_item), `puzzle_progress`, `current_room_facts`,
+  `discovered_facts`, `room_graph` (if exits changed), `action_log`.
+
+  ## Next Block
+  Always routes back to ASSESS.
 metadata:
-  agent_role: "dungeon-runner"
+  agent_role: "dungeon-master"
   task_type: "use_item"
   domain: "dungeon"
   repo: null
-content_hash: "7674a8a74537587630f1b0fd56bea9e3"

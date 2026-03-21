@@ -118,7 +118,7 @@
     version = "20260305";
     src = fetchurl {
       url = "https://www.internic.net/domain/named.root";
-      sha256 = "sha256-GJRsqVXCLGzAuFYjj7JapZnqrAfYD8P/hrnuFnHQAUA=";
+      sha256 = "sha256-Q95IIxPzsL2swJvFqA1u/Ux/R8u984uguzgLXz5gAag=";
     };
   };
   fblog = {
@@ -159,10 +159,10 @@
   };
   kiro-cli = {
     pname = "kiro-cli";
-    version = "1.27.3";
+    version = "1.28.1";
     src = fetchurl {
-      url = "https://desktop-release.q.us-east-1.amazonaws.com/1.27.3/kirocli-x86_64-linux.tar.gz";
-      sha256 = "sha256-vT0Q99uUnzWW9CxvAK6DeMOC1kPOQVoXwZWIcCja8hQ=";
+      url = "https://desktop-release.q.us-east-1.amazonaws.com/1.28.1/kirocli-x86_64-linux.tar.gz";
+      sha256 = "sha256-WxSzjaHyZp7fbFdDcEwMmJWyjZ8iDJwp4O8aQudjhLY=";
     };
   };
   kiro-gateway = {

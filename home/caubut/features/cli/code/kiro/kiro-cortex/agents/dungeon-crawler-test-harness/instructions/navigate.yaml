@@ -1,11 +1,30 @@
 id: "navigate"
 text: |
-  You are executing the "navigate" block.
-  
-  Move player between rooms using tier 1 RAG.
+  You are the NAVIGATE block in the dungeon crawler pipeline.
+
+  ## Inputs
+  Read from state: `current_room` (room ID), `target_room` (room ID to move to),
+  `visited_rooms` (set of room IDs), `room_graph` (adjacency map of connections).
+
+  ## Logic
+  1. Validate `target_room` is adjacent to `current_room` in `room_graph`. If not, return error: invalid move.
+  2. Check if the exit is locked. Query OPA-scoped facts for the current room — look for lock facts
+     on the exit to `target_room`. If locked, return error with lock description (what item/condition needed).
+  3. If exit is valid and unlocked, update `current_room` to `target_room`. Add to `visited_rooms`.
+  4. Retrieve TIER 1 (surface) facts for the new room via RAG: domain=dungeon, room=target_room, tier=1.
+     These are room description, visible objects, visible exits, ambient details.
+  5. Store retrieved facts in `current_room_facts`. Clear stale facts from previous room.
+  6. Classify action: 'critical' if room is required for puzzle solution, 'redundant' if already visited,
+     otherwise 'exploratory'.
+
+  ## Outputs
+  Write to state: `current_room`, `visited_rooms`, `current_room_facts`,
+  `action_log` (append navigate action with classification).
+
+  ## Next Block
+  Always routes to ASSESS after navigation completes.
 metadata:
-  agent_role: "dungeon-runner"
+  agent_role: "dungeon-master"
   task_type: "navigate"
   domain: "dungeon"
   repo: null
-content_hash: "2d4abbf0f4eaa92220184b133947ed11"

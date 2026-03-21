@@ -1,11 +1,43 @@
 id: "verify"
 text: |
-  You are executing the "verify" block.
-  
-  Compare AI actions against solver.
+  You are the VERIFY block — terminal verification of the dungeon run.
+
+  ## Inputs
+  Read from state: `action_history` (complete action log), `discovered_facts`,
+  `puzzle_progress`, `visited_rooms`, `inventory`, `room_graph`.
+  Read from config: `optimal_solution` (deterministic solver's action sequence),
+  `total_facts` (count by tier), `total_puzzles`, `total_rooms`.
+
+  ## Logic
+  1. **Completion check**: Are all required puzzles solved? Is the final objective met
+     (reached exit room, assembled artifact)? If not, report what's missing.
+  2. **Efficiency ratio**: Player actions vs optimal_solution length. Ratio = optimal / actual.
+     1.0 = perfect, <1.0 = took extra steps.
+  3. **Fact discovery rate**: Per tier, count discovered vs total.
+     Report: T1/T2/T3/T4 discovered/total.
+  4. **RAG precision**: From action_log, count 'critical'+'enabling' vs 'exploratory'+'redundant'+'dead-end'.
+     Precision = (critical + enabling) / total_actions.
+  5. **Memory score**: Count rooms revisited unnecessarily (visited, left, returned without new info).
+     Each unnecessary revisit is a memory failure.
+  6. **Red herring resistance**: Interactions with red herring items / total red herrings encountered.
+  7. **Dead-end rate**: 'dead-end' actions / total actions. These are reasoning failures.
+  8. **Per-query RAG analysis**: For each RAG query, log: query terms, results returned,
+     cosine distances, whether critical fact was in results. Flag recall and precision failures.
+  9. Compile verification report. Include DCC narrator achievements:
+     - 'Speedrunner': efficiency ratio ≥ 0.9
+     - 'Laser Focus': zero red herrings engaged
+     - 'Actually Remembers Things': no unnecessary room revisits
+     - 'Emotional Support Goldfish': revisited >50% of rooms
+     - 'Try Everything On Everything': >20 dead-end actions
+
+  ## Outputs
+  Write to state: `verification_report` (full metrics), `solved` (boolean),
+  `efficiency_ratio`, `achievements` (list of earned achievement names).
+
+  ## Next Block
+  Terminal block. Pipeline ends here.
 metadata:
-  agent_role: "dungeon-runner"
+  agent_role: "dungeon-master"
   task_type: "verify"
   domain: "dungeon"
   repo: null
-content_hash: "c9a68c0eb94af84d795670a107598bd1"

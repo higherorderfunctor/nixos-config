@@ -1,11 +1,33 @@
 id: "combine"
 text: |
-  You are executing the "combine" block.
-  
-  Merge two inventory items.
+  You are the COMBINE block — merge two inventory items into a new item.
+
+  ## Inputs
+  Read from state: `action_target` (object with `item_a` and `item_b` IDs),
+  `inventory`, `discovered_facts`.
+
+  ## Logic
+  1. Validate both `item_a` and `item_b` exist in `inventory`. If either missing, return error.
+  2. Look up the recipe in `discovered_facts`. Recipes are T2/T3 facts discovered via INSPECT,
+     stored as: { inputs: [item_a, item_b], output: result_item, output_properties: {...} }.
+     If no recipe found for this pair, return error: unknown combination. Tag as 'dead-end'.
+  3. Combination is max 1 step (no chaining A+B=C then C+D=E in one call — that's two COMBINE actions).
+  4. Remove consumed input items from `inventory` (components are consumed). If either input is
+     a tool (reusable), it stays in inventory.
+  5. Add the result item to `inventory` with its properties and tooltip.
+  6. Classify: 'critical' if result item needed for a puzzle, 'enabling' if it's a tool upgrade.
+
+  ## Outputs
+  Write to state: `inventory` (remove consumed inputs, add result), `action_log` (append with classification).
+
+  ## Edge Cases
+  - Combining two red herrings: recipe won't exist → dead-end error. ASSESS should avoid this.
+  - Combining in wrong order: recipes are order-independent (check both [a,b] and [b,a]).
+
+  ## Next Block
+  Always routes back to ASSESS.
 metadata:
-  agent_role: "dungeon-runner"
+  agent_role: "dungeon-master"
   task_type: "combine"
   domain: "dungeon"
   repo: null
-content_hash: "de66a5c400f3550cbd690341b8a8be01"
