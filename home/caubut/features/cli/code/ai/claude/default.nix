@@ -25,9 +25,10 @@
 
   # Global skill directories (symlinked to ~/.claude/skills/)
   skillDirs = [
-    "stack-submit"
     "stack-fix"
+    "stack-restack"
     "stack-split"
+    "stack-submit"
     "stack-test"
   ];
 
