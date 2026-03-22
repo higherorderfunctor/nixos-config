@@ -23,19 +23,16 @@
     "CLAUDE.md"
   ];
 
-  # Global skill directories (symlinked to ~/.claude/skills/)
-  skillDirs = [
-    "index-repo-docs"
-    "stack-fix"
-    "stack-restack"
-    "stack-split"
-    "stack-submit"
-    "stack-test"
+  # Global directories (symlinked as whole dirs to ~/.claude/<name>/)
+  # New files appear automatically without rebuild.
+  globalDirs = [
+    "references"
+    "skills"
   ];
 
-  symlinkSkill = name: {
-    ".claude/skills/${name}".source =
-      config.lib.file.mkOutOfStoreSymlink "${claudeConfigPath}/skills/${name}";
+  symlinkGlobalDir = name: {
+    ".claude/${name}".source =
+      config.lib.file.mkOutOfStoreSymlink "${claudeConfigPath}/${name}";
   };
 
   # Per-project directories (symlinked to ~/.claude/projects/<key>/)
@@ -49,6 +46,6 @@ in {
 
   home.file =
     builtins.foldl' (acc: name: acc // symlinkClaudeConfig name) {} configFiles
-    // builtins.foldl' (acc: name: acc // symlinkSkill name) {} skillDirs
+    // builtins.foldl' (acc: name: acc // symlinkGlobalDir name) {} globalDirs
     // builtins.foldl' (acc: name: acc // symlinkClaudeProject nixosConfigProjectKey name) {} nixosConfigProjectDirs;
 }
