@@ -20,8 +20,9 @@ match a known name, treat it as a GitHub URL or `owner/repo`.
 | `git-absorb` | `tummychow/git-absorb` | README, man page, usage patterns |
 | `git-revise` | `mystor/git-revise` | README, docs, interactive usage |
 
-If `$ARGUMENTS` is `all`, iterate through every entry in the table above and
-run the full indexing process for each one, skipping repos that are up to date.
+If `$ARGUMENTS` is `all` or empty (no arguments), iterate through every entry
+in the table above and run the full indexing process for each one, skipping
+repos that are up to date.
 
 ## Output
 
