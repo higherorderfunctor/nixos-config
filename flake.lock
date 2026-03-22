@@ -1227,11 +1227,11 @@
     },
     "nixos-secrets": {
       "locked": {
-        "lastModified": 1774203197,
-        "narHash": "sha256-nMhgz9JV7Lx1U1RuQsUSqKsGvRRV6dr5eVQ68xdtHqk=",
+        "lastModified": 1774206766,
+        "narHash": "sha256-yXj7KNMQGfshwZqf4GUPsPMLx0VBFifxxVkat52pa64=",
         "ref": "refs/heads/main",
-        "rev": "6d22ba89bd2494804bec6f5973a512ee5be1b7ff",
-        "revCount": 5,
+        "rev": "353b53bc713ff255c48821201711c1d4c2f714cd",
+        "revCount": 6,
         "type": "git",
         "url": "ssh://git@codeberg.org/lucidrevisiona/nixos-secrets.git"
       },

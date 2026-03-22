@@ -13,8 +13,10 @@ nixos-unstable. Single user (`caubut`), multiple machines.
 # NixOS system rebuild (on NixOS machines)
 sudo nixos-rebuild switch --flake .#<hostname>
 
-# Home-manager standalone rebuild (on non-NixOS machines like the Dell laptop)
-home-manager switch --flake .#caubut@precision-7760
+# Home-manager standalone activation (on non-NixOS machines)
+# Use: nix run '.#homeConfigurations.caubut@<hostname>.activationPackage'
+# Detect hostname with: hostname
+nix run ".#homeConfigurations.caubut@$(hostname).activationPackage"
 
 # Format all nix files
 nix fmt
@@ -88,6 +90,10 @@ fetch.url = "https://github.com/github/copilot-cli/releases/download/v$ver/copil
 ```
 
 ### Secrets
+
+**NEVER read, cat, or inspect decrypted secret files** (e.g., files under
+`/run/user/1000/secrets/`, `/run/secrets/`, or sops-encrypted YAML). Verify
+existence with `ls` only if needed.
 
 Managed via sops-nix with a private Codeberg flake input (`nixos-secrets`).
 All encrypted secrets, public keys, identity values, and sops declarations
