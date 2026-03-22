@@ -28,7 +28,9 @@ defaults to HEAD if not specified.
    - Core logic changes
    - Edge cases / error handling
    - Tests
-   - Config / build changes
+
+   Documentation belongs with the feature it documents, not as a separate
+   split. Dependencies and config files go in the commit that first uses them.
 
 4. **Propose a split plan** to the user. For each proposed commit:
    - One-sentence description

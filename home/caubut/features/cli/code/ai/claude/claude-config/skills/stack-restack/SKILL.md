@@ -48,7 +48,12 @@ grouped by concern. The input is a commit range — anything `git diff` and
    4. Core business logic (the main feature or fix)
    5. Edge cases / error handling
    6. Tests
-   7. Documentation / config
+
+   Documentation goes WITH the feature commit it documents, not as a separate
+   commit at the end. Each commit should include the docs for what it introduces.
+   Dependencies (imports, config files) arrive in the commit that first uses
+   them — never frontloaded. Generated files should show incremental additions
+   even if the tool regenerates them wholesale.
 
    For each group, note:
    - Which files and hunks belong to it

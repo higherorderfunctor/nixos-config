@@ -26,10 +26,21 @@ Work in small, atomic commits. Every commit should:
 - Be independently revertable without side effects
 - Leave the codebase in a working state (tests pass, code compiles)
 - Target 50-200 lines of changed code
+- Only reference things that exist in earlier commits (no forward references)
+- Include documentation for the feature it introduces (not in a separate doc commit)
 
 Never accumulate a large diff then commit at the end. Commit as you go, one
 concern per commit. This is how Meta, Google, and Uber engineers work — the
 unit of change is an individual commit, not a branch.
+
+Dependencies (imports, inputs, config files) arrive in the commit that first
+uses them — never frontloaded "just in case." If `.envrc` depends on a flake,
+it goes in the flake commit. If a linter flag references a tool, it goes in
+the commit that adds that tool.
+
+Generated or auto-managed files (lock files, code-gen output) should still
+show incremental additions per commit, even if the tool regenerates them
+wholesale. Each commit's diff should tell a coherent story.
 
 ### Commit Ordering
 
@@ -43,6 +54,12 @@ When building a feature, structure the stack as:
 Each of these is one or more separate commits. Never mix refactoring with
 feature work in the same commit.
 
+When initializing a new repo, the first commit should establish project
+identity (LICENSE, README intro paragraph) — no tooling, no config, no code.
+Universal coding standards (ordering conventions, DRY principle, shell strict
+mode) go in the earliest instruction file commit. Feature-specific rules go
+with the commit that introduces the tooling they depend on.
+
 ### History Hygiene
 
 The commit history should read as a clean narrative — what *should* happen, not
@@ -53,6 +70,18 @@ a diary of what *did* happen during development.
 - Use `git amend` to update the current commit (auto-restacks descendants)
 - Use `git reword` to fix commit messages without checkout
 - Clean up before pushing, not after
+- After any structural change (squash, split, reorder), audit checklists,
+  commit messages, and docs for accuracy — don't wait to be asked
+
+### Boilerplate Sync
+
+Project CLAUDE.md files must be self-contained — someone cloning the repo
+without your global config should get all the instructions they need. When
+the user revises boilerplate in a project CLAUDE.md (coding standards, commit
+conventions, ordering rules, etc.) and the change is general rather than
+project-specific, **prompt the user** to also update these global instructions
+so future projects get the improvement too. Never make project files reference
+global config — copy or adapt instead.
 
 ### Initialization
 
@@ -161,3 +190,68 @@ Alternative for full-stack restructure:
 1. `git reset --soft main` — uncommit everything, keep staged
 2. `git restore --staged .` — unstage to working tree
 3. `git add -p` → `git commit`, repeat per concern
+
+---
+
+## Coding Standards
+
+### Bash
+
+All shell scripts must use full strict mode. Never use the abbreviated
+`set -euo pipefail`:
+
+```bash
+#!/usr/bin/env bash
+set -euETo pipefail
+shopt -s inherit_errexit 2>/dev/null || :
+```
+
+This applies everywhere: standalone scripts, generated wrappers,
+`writeShellApplication`, heredocs in Nix. The `-E` (errtrace), `-T`
+(functrace), and `inherit_errexit` flags catch failures in subshells and
+functions that the abbreviated form misses.
+
+### Ordering
+
+Keep entries sorted alphabetically within categorical groups. Use section
+headers for readability, sort entries within each group. Don't flatten to pure
+alphabetical (loses context) or leave unsorted (produces noisy diffs). This
+applies to lists, attribute sets, JSON objects, markdown tables, TOML sections,
+and similar collections.
+
+### DRY Principle
+
+Never duplicate logic, configuration, or patterns. When the same thing appears
+twice, extract it. Prefer functional programming patterns — pure functions,
+composition, and higher-order abstractions over copy-paste with modifications.
+
+- Repeated logic → shared function, module, or abstraction
+- Repeated config/flags → single source of truth consumed by all callers
+- Similar-but-different patterns → parameterize the common shape, pass the
+  differences as arguments
+- Three similar lines is better than a premature abstraction, but three similar
+  *blocks* means it's time to extract
+
+When adding or changing something that has multiple consumers, update the
+single definition — not each consumer independently.
+
+### Commit Convention
+
+Use [Conventional Commits](https://www.conventionalcommits.org/):
+
+```
+<type>(<scope>): <description>
+
+[optional body]
+
+[optional footer(s)]
+```
+
+**Types:** `feat`, `fix`, `refactor`, `docs`, `chore`, `build`, `ci`, `style`,
+`perf`, `test`
+
+**Scopes** are optional but encouraged. Use the most specific component name
+(package, module, tool, directory). If the project has a naming convention for
+scopes, follow it.
+
+Keep descriptions lowercase, imperative mood, no trailing period.
