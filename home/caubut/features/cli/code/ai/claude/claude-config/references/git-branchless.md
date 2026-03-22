@@ -1,3 +1,15 @@
+---
+repo: arxanas/git-branchless
+last-indexed: 2026-03-21
+repo-head: f238c0993fea69700b56869b3ee9fd03178c6e32
+wiki-head: 98aa4029b230f432416e9029fe6182ed8fa1d695
+exclude-issue-patterns:
+  - "renovate"
+  - "dependabot"
+  - "bump version"
+  - "release v"
+---
+
 # git-branchless Reference
 
 Distilled from https://github.com/arxanas/git-branchless, updated 2026-03-21.
@@ -14,6 +26,10 @@ never touching the working copy unless merge conflicts require it.
 The tool is fully compatible with branches — "branchless" refers to the ability
 to work *without* them when convenient, via anonymous branching where all draft
 commits stay visible in the smartlog.
+
+**Status:** Alpha. Latest release v0.10.0 (Oct 2024). The maintainer considers
+Jujutsu the long-term successor; git-branchless serves as a bridge and
+workflow test-bed.
 
 ## Installation & Setup
 
@@ -51,6 +67,24 @@ git config branchless.test.alias.check "nix fmt -- --check"
 git config 'branchless.revsets.alias.d' 'draft()'
 ```
 
+### All Configuration Options
+
+| Key | Default | Description |
+|-----|---------|-------------|
+| `branchless.core.mainBranch` | `master` | Main branch name |
+| `branchless.next.interactive` | `false` | Interactive ambiguity resolution |
+| `branchless.navigation.autoSwitchBranches` | `true` | Auto-switch to branch on target |
+| `branchless.restack.preserveTimestamps` | `false` | Keep authored timestamp |
+| `branchless.restack.warnAbandoned` | `true` | Warn about abandoned children |
+| `branchless.smartlog.defaultRevset` | *(complex)* | Default smartlog query |
+| `branchless.commitMetadata.branches` | `true` | Show branches in smartlog |
+| `branchless.commitMetadata.relativeTime` | `true` | Show timestamps in smartlog |
+| `branchless.undo.createSnapshots` | `true` | Working copy snapshots for undo |
+| `branchless.test.strategy` | `working-copy` | Test isolation strategy |
+| `branchless.test.jobs` | `1` | Parallel test jobs (0 = auto) |
+| `branchless.test.alias.<name>` | — | Named test commands |
+| `branchless.revsets.alias.<key>` | — | Custom revset aliases |
+
 ## Core Concepts
 
 ### Commit Stacks
@@ -76,6 +110,11 @@ git-branchless tracks how commits change over time (like Mercurial's Changeset
 Evolution). This powers `git undo` — you can undo any graph operation by
 browsing previous states of the repository.
 
+### Working Copy Snapshots
+Some commands create ephemeral snapshots of the working copy (including
+unstaged changes). These power `git undo` but never include untracked files.
+Auto garbage-collected. Disable via `branchless.undo.createSnapshots = false`.
+
 ## Command Reference
 
 ### Visualization
@@ -88,6 +127,11 @@ git sl 'branches()'       # only commits with branches
 ```
 
 Icons: `◆`/`◇` = public, `◯`/`●` = draft (● = HEAD), `✕` = hidden/abandoned.
+
+Visibility rules: shows checked-out commit, commits with branches, your
+commits (not hidden), commits with visible descendants, and hidden public
+commits that were rewritten. Commits made before `git branchless init`
+won't appear.
 
 ### Navigation
 
@@ -192,6 +236,9 @@ git submit 'draft()'      # push all draft branches
 Note: force-pushes by design (updating review branches). Set
 `git config remote.pushDefault origin` for `--create`.
 
+**Known issue:** GitHub forge (`--forge github`) requires two executions —
+first creates PR with wrong base, second fixes it.
+
 ### Undo & Recovery
 
 **`git undo`** — Undo any graph operation.
@@ -201,7 +248,8 @@ git undo -i               # interactive: browse repo states, pick one
 ```
 
 Can undo: commits, amends, rebases, merges, checkouts, branch operations.
-Cannot undo: working copy changes (unless captured in a snapshot), untracked files.
+Cannot undo: working copy changes (unless captured in a snapshot), untracked
+files. Requires Git v2.29+. Can undo a `git undo`.
 
 **`git hide`** / **`git unhide`** — Remove commits from smartlog.
 ```bash
@@ -222,6 +270,9 @@ git test run -x 'cmd' --search binary          # bisect for first failure
 git test run -x 'cmd' -b                       # shorthand for --bisect
 git test run -c check                          # use command alias "check"
 ```
+
+Results are cached by command + tree ID. Use `--no-cache` to bypass.
+Environment: `BRANCHLESS_TEST_COMMIT`, `BRANCHLESS_TEST_COMMAND` available.
 
 **`git test fix`** — Apply formatter/linter fixes to each commit.
 ```bash
@@ -248,6 +299,16 @@ git query --branches 'draft() & branches()'    # branch names on drafts
 git query -r 'stack()'                         # raw hashes for scripting
 ```
 
+### Diff Tools
+
+**`git branchless difftool`** — Interactive diff viewing (v0.8.0+).
+```gitconfig
+[difftool "branchless"]
+  cmd = git-branchless difftool --read-only --dir-diff $LOCAL $REMOTE
+[mergetool "branchless"]
+  cmd = git-branchless difftool $LOCAL $REMOTE --base $BASE --output $MERGED
+```
+
 ## Revset Quick Reference
 
 ### Functions
@@ -262,7 +323,9 @@ git query -r 'stack()'                         # raw hashes for scripting
 | `none()` | Empty set |
 | `children(x)` / `parents(x)` | Immediate children/parents |
 | `descendants(x)` / `ancestors(x)` | All descendants/ancestors (inclusive) |
+| `ancestors.nth(x, n)` / `parents.nth(x, n)` | Nth ancestor/parent |
 | `heads(x)` / `roots(x)` | Leaf/root commits within set |
+| `merges()` | Merge commits |
 | `message(pat)` | Commits matching message pattern |
 | `paths.changed(pat)` | Commits touching matching file paths |
 | `author.name(pat)` / `author.email(pat)` | Filter by author |
@@ -270,6 +333,7 @@ git query -r 'stack()'                         # raw hashes for scripting
 | `current(x)` | Resolve rewritten commits to current version |
 | `exactly(x, n)` | x only if it contains exactly n commits |
 | `tests.passed([cmd])` / `tests.failed([cmd])` | Test result filters |
+| `tests.fixable([cmd])` | Commits fixable by `git test fix` |
 
 ### Operators
 | Operator | Meaning |
@@ -470,6 +534,14 @@ When branchless says "This operation abandoned N commits!", run `git restack`
 `git move` and `git sync` skip conflicts by default. Only pass `--merge` when
 you're ready to resolve. This lets you safely try operations without risk.
 
+### Don't use `feature.manyFiles = true` without workaround
+Git v2.40.0+ with `index.skipHash` (set by `feature.manyFiles`) causes
+libgit2 crashes. Workaround: `git config --local index.skipHash false`.
+
+### GPG/SSH signing not supported
+git-branchless cannot sign commits. All rewrite operations produce unsigned
+commits. This is a known limitation (issue #465, labeled "help wanted").
+
 ## Integration
 
 ### With git-absorb
@@ -488,9 +560,19 @@ git revise -c <hash>           # split a commit interactively
 git revise --autosquash        # process fixup! commits
 ```
 
+**Caveat:** git-revise does not call `post-rewrite` hooks, so branchless
+can't track the rewrite. Run `git restack` afterward. For operations where
+branchless has equivalents (`reword`, `split`, `move`), prefer those.
+
 ### With GitHub (git submit workflow)
 1. Create branches: `git branch feat-1 <hash>` for each commit
 2. Push: `git submit -c` (creates remote branches)
 3. Create PRs via `gh pr create` for each branch
 4. After amend/restack: `git submit` to force-push updates
 5. After merge: `git sync --pull` auto-cleans merged commits
+
+### Git Version Compatibility
+- **v2.29+**: Full support including `git undo`
+- **v2.24-2.27**: Supported, no `git undo`
+- **v2.28**: Not supported (reference-transaction bug)
+- **<= v2.23**: Not supported
