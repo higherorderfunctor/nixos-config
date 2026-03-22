@@ -4,8 +4,8 @@ repo-head: f238c0993fea69700b56869b3ee9fd03178c6e32
 repo-indexed: 2026-03-21
 wiki-head: 98aa4029b230f432416e9029fe6182ed8fa1d695
 wiki-indexed: 2026-03-21
-issues-indexed: null
-discussions-indexed: null
+issues-indexed: 2026-03-21
+discussions-indexed: 2026-03-21
 labels-indexed: 2026-03-21
 label-head: 904c06c39a895525e0e94a1888d19139c20c7eedfb489ef889635d3ea5d45e30
 exclude-issue-patterns:
@@ -31,11 +31,11 @@ value-labels:
   - name: "help wanted"
     reason: "community-discussed issues, often contain workarounds"
 issue-stats:
-  total-fetched: 0
-  from-labels: 0
-  from-keywords: 0
-  from-reactions: 0
-  after-dedup: 0
+  total-fetched: 1551
+  from-labels: 248
+  from-keywords: 166
+  from-reactions: 1465
+  after-dedup: 1456 issues + 95 discussions
 ---
 
 # git-branchless Reference
@@ -159,7 +159,8 @@ Icons: `◆`/`◇` = public, `◯`/`●` = draft (● = HEAD), `✕` = hidden/ab
 Visibility rules: shows checked-out commit, commits with branches, your
 commits (not hidden), commits with visible descendants, and hidden public
 commits that were rewritten. Commits made before `git branchless init`
-won't appear.
+won't appear. For color in pipes: `git branchless --color always smartlog`
+(flag goes before subcommand, #1308).
 
 ### Navigation
 
@@ -201,6 +202,7 @@ git amend                 # amend with all unstaged changes
 git add file && git amend # amend with only staged changes
 git amend --reparent      # amend without rebasing children (for formatters)
 ```
+**Gotcha:** `git amend` skips pre-commit hooks (#1275). Use `git commit --amend` + `git restack` if hooks are needed.
 
 ### Rewriting
 
@@ -211,6 +213,7 @@ git reword <hash>                  # edit specific commit's message
 git reword <hash> -m "new msg"     # replace message inline
 git reword 'stack()'               # batch reword entire stack
 ```
+**Gotcha:** `git reword` rewrites all stack commits even when only one message changed (#1385).
 
 **`git move`** — Move commits/subtrees in the graph (in-memory rebase).
 ```bash
@@ -253,6 +256,10 @@ git sync --merge          # resolve conflicts for all stacks
 Conflict handling: skips conflicting stacks by default, prints summary.
 Fix individually: `git move -b <hash> -d main --merge`.
 
+**Gotcha:** `git sync --pull` with a dirty working tree can strand you on an old commit (#1137). Commit or stash first.
+**Gotcha:** `git sync` in worktrees may corrupt the index in other worktrees (#1524). Check `git status` afterward.
+**Gotcha:** Squash-merged PRs are not detected by `git sync` — manually `git hide -r <hash>` (#965).
+
 **`git submit`** — Push branches to remote.
 ```bash
 git submit                # force-push existing remote branches in stack
@@ -264,8 +271,11 @@ git submit 'draft()'      # push all draft branches
 Note: force-pushes by design (updating review branches). Set
 `git config remote.pushDefault origin` for `--create`.
 
+**Gotcha:** `git submit` skips commits with 2+ branches attached (#1131). One branch per commit.
+
 **Known issue:** GitHub forge (`--forge github`) requires two executions —
-first creates PR with wrong base, second fixes it.
+first creates PR with wrong base, second fixes it (#1550). Multiple bugs
+with stack reorder (#1259). Prefer manual `gh pr create` workflow.
 
 ### Undo & Recovery
 
@@ -534,6 +544,21 @@ git prev 2                     # navigate to insertion point
 git record -I -m "new middle commit"   # insert + restack children
 ```
 
+### 16. Resolve "trying to rewrite N public commits"
+```bash
+git restack -f                 # force past the check
+git restack 'draft()'          # target only drafts
+```
+Happens when main was force-pushed or commits unexpectedly became public (#988).
+
+### 17. Clean up stale commits after squash-merge
+```bash
+git sync --pull                # auto-cleans linearly merged stacks
+git hide -r <hash>             # manually hide squash-merged stacks
+git hide "draft() & message('substr:WIP')"  # bulk hide by pattern
+```
+`git sync` only detects linear merges, not squash merges (#965, #977, #1218).
+
 ## Anti-Patterns
 
 ### Don't use `git stash`
@@ -564,11 +589,33 @@ you're ready to resolve. This lets you safely try operations without risk.
 
 ### Don't use `feature.manyFiles = true` without workaround
 Git v2.40.0+ with `index.skipHash` (set by `feature.manyFiles`) causes
-libgit2 crashes. Workaround: `git config --local index.skipHash false`.
+libgit2 crashes. Same crash with `--index-version 4` (#1363). Workaround:
+`git config --local index.skipHash false`.
+
+### Don't commit on `main`
+Commits on `main` are treated as public — they vanish from draft smartlog
+and can't be rewritten. Always detach first (`git checkout --detach`) (#860).
+
+### Don't init in a worktree
+`git branchless init` only works from the main worktree, not from
+`git worktree add` worktrees (#540).
 
 ### GPG/SSH signing not supported
 git-branchless cannot sign commits. All rewrite operations produce unsigned
 commits. This is a known limitation (issue #465, labeled "help wanted").
+Community PR #1538 pending.
+
+## Known Bugs
+
+- **"Could not parse reference-transaction-line"** — harmless ERROR log on
+  newer Git versions. Operations complete normally (#1388, #1321).
+- **Git v2.46+ test failures** — reference-transaction hook changes break
+  some tests; user impact unclear (#1416).
+- **`git sync` slow on `main`** — redundant checkout per stack. Detach
+  first to avoid (#1155).
+- **Anti-GC ref accumulation** — 100k+ refs under `refs/branchless/*` over
+  months. `git branchless gc` partially helps (#1125).
+- **Rust 1.89+ build failure** — fails to compile with newer Rust (#1585).
 
 ## Integration
 
@@ -595,14 +642,23 @@ branchless has equivalents (`reword`, `split`, `move`), prefer those.
 ### With GitHub (git submit workflow)
 1. Create branches: `git branch feat-1 <hash>` for each commit
 2. Push: `git submit -c` (creates remote branches)
-3. Create PRs via `gh pr create` for each branch
+3. Create PRs via `gh pr create --base <prev-branch> --head <branch>`
 4. After amend/restack: `git submit` to force-push updates
 5. After merge: `git sync --pull` auto-cleans merged commits
+
+Set PR base to the previous branch in the stack; GitHub auto-updates
+dependent PRs on merge (#716).
+
+### Hooks Requirement
+Hooks installed by `git branchless init` are required for commit tracking,
+undo, and auto-restack. Without them, `git move` still works for basic
+rebasing but loses commit tracking (#1286).
 
 ### Git Version Compatibility
 - **v2.29+**: Full support including `git undo`
 - **v2.24-2.27**: Supported, no `git undo`
 - **v2.28**: Not supported (reference-transaction bug)
+- **v2.46+**: Some test failures (#1416)
 - **<= v2.23**: Not supported
 
 <!-- BEGIN LOCAL NOTES — preserved across regeneration -->

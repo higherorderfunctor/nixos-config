@@ -86,8 +86,15 @@ On re-run:
    ```
 6. **Check for new discussions** (if enabled) since `discussions-indexed`
 7. If ALL sources are up to date, report "already up to date" and skip
-8. Otherwise, fetch only the stale sources and merge insights into the
-   existing doc (or do a full regeneration if repo/wiki changed)
+8. Otherwise, fetch only the stale sources and **merge** insights into the
+   existing doc. Only do a **full regeneration** if `repo-head` or `wiki-head`
+   changed (the prose/structure source material changed). When only
+   `issues-indexed` or `discussions-indexed` is stale, the existing doc text
+   is the baseline — add new gotchas, recipes, and anti-patterns from issues
+   without rewriting or condensing existing sections. Never drop existing
+   content to make room; the 500-line limit applies to the final result, so
+   if the doc is already near the limit, integrate only the highest-value
+   issue insights.
 
 ### Exclude Patterns
 
@@ -196,14 +203,18 @@ changed, re-assess and update the cache.
    Search issues/discussions for usage-pattern keywords. These surface "how do
    I...?" and "can I...?" questions that reveal practical workflows:
 
+   **Important:** `gh search issues` returns a JSON array per call. Pipe each
+   call through `jq` individually to emit JSONL — do NOT append raw arrays
+   with `>>` (creates invalid JSON when concatenated).
+
    ```bash
-   # Keywords that surface usage questions and recipes
    keywords=("how" "can I" "workflow" "workaround" "example" "recipe" "pattern")
 
    for kw in "${keywords[@]}"; do
      gh search issues "${kw}" --repo "${owner}/${repo}" --sort reactions \
-       --json number,title,body,labels,reactions \
-       --limit 50 >> "$tmp_dir/keyword-issues.json" 2>/dev/null || true
+       --json number,title,body,labels,reactions --limit 50 2>/dev/null \
+       | jq -c '.[] | {number, title, body: (.body // "" | .[0:2000]), labels: [.labels[].name]}' \
+       >> "$tmp_dir/keyword-issues.jsonl" 2>/dev/null || true
    done
    ```
 
@@ -320,13 +331,25 @@ changed, re-assess and update the cache.
    <!-- END LOCAL NOTES -->
    ```
 
-8. **Clean up**:
+8. **Verify no content regression.** Before writing the final doc, diff it
+   against the existing doc (if one exists). Check that:
+   - No existing **sections** were dropped (every `##` heading in the old doc
+     should appear in the new doc, unless deliberately merged into another)
+   - No existing **issue-reference gotchas** (lines containing `#NNN`) were
+     removed — these were distilled from prior issue fetches
+   - The doc is **not shorter** than the previous version unless sections were
+     intentionally consolidated (and even then, verify no information was lost)
+   - All **recipes** are still present (count `### N.` headings)
+   If any of these checks fail, stop and fix before writing. A regeneration
+   that drops content is worse than no regeneration at all.
+
+9. **Clean up**:
    ```bash
    rm -rf "$tmp_dir"
    ```
 
-9. **Report** what was generated (full/incremental/skipped), how many source
-   files were read, and the output path.
+10. **Report** what was generated (full/incremental/skipped), how many source
+    files were read, and the output path.
 
 ## Guidelines
 
@@ -334,7 +357,9 @@ changed, re-assess and update the cache.
 - Every recipe should be a numbered procedure someone can follow
 - Include the exact commands, not just descriptions
 - Call out gotchas and edge cases from issues/discussions
-- Keep the doc under 500 lines — this is a reference, not a textbook
+- Aim for under 500 lines — this is a reference, not a textbook. But never
+  drop existing content to hit the target. If a doc grows past 500 due to
+  issue insights, that's acceptable. Condense prose, not information.
 - If the wiki has workflow guides, prioritize those over API docs
 - Preserve and extend `exclude-issue-patterns` across runs — never shrink it
 - Preserve and extend `value-labels` across runs — only remove a label if it

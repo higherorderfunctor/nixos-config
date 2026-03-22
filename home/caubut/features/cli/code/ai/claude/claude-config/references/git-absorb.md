@@ -4,7 +4,7 @@ repo-head: debdcd28d9db2ac6b36205bda307b6693a6a91e7
 repo-indexed: 2026-03-21
 wiki-head: null
 wiki-indexed: null
-issues-indexed: null
+issues-indexed: 2026-03-21
 discussions-indexed: null
 labels-indexed: 2026-03-21
 label-head: 61da6cc314d0c00da78c5a875e51a4c71241dad289c628c295baee450d1c42ff
@@ -25,11 +25,11 @@ value-labels:
   - name: "packaging"
     reason: "installation and packaging context"
 issue-stats:
-  total-fetched: 0
-  from-labels: 0
+  total-fetched: 212
+  from-labels: 212
   from-keywords: 0
   from-reactions: 0
-  after-dedup: 0
+  after-dedup: 212
 ---
 
 # git-absorb Reference
@@ -91,6 +91,14 @@ By default, only the last 10 commits are candidates. Set `absorb.maxStack=50`
 for deeper stacks. Use `--no-limit` to consider all commits until root, a
 merge, or a different author. Use `--base <commit>` for explicit targeting.
 
+### Stack Boundaries
+
+The revwalk stops at: merge commits, commits by a different author (unless
+`--force-author`), or the configured depth limit. Branches in the ancestry
+also interrupt the search when `--base` is not specified. If the stack ends
+early, absorb warns with the reason (e.g., "merge commit found", "stack limit
+reached") to help you decide whether to use `--base` or `--no-limit`.
+
 ## Command Reference
 
 ```
@@ -101,16 +109,16 @@ git absorb [FLAGS] [OPTIONS]
 
 | Flag | Description |
 |------|-------------|
-| `-r, --and-rebase` | Run autosquash rebase after creating fixups |
-| `-n, --dry-run` | Show what would happen without making changes |
+| `-f, --force` | Skip all safety checks (author + detach) |
 | `-F, --one-fixup-per-commit` | Consolidate to one fixup per target commit |
-| `-s, --squash` | Create squash commits (edit message) instead of fixup |
-| `-w, --whole-file` | Match first commit touching same file (not line-level) |
-| `-f, --force` | Skip all safety checks |
 | `--force-author` | Create fixups for other authors' commits |
 | `--force-detach` | Allow on detached HEAD |
+| `-n, --dry-run` | Show what would happen without making changes |
 | `--no-limit` | Remove stack depth limit |
+| `-r, --and-rebase` | Run autosquash rebase after creating fixups |
+| `-s, --squash` | Create squash commits (edit message) instead of fixup |
 | `-v, --verbose` | Display more output |
+| `-w, --whole-file` | Match first commit touching same file (not line-level) |
 
 ### Options
 
@@ -124,13 +132,13 @@ git absorb [FLAGS] [OPTIONS]
 
 | Key | Default | Description |
 |-----|---------|-------------|
-| `maxStack` | 10 | Number of ancestor commits to consider |
-| `oneFixupPerCommit` | false | One fixup per target commit |
 | `autoStageIfNothingStaged` | false | Auto-stage tracked changes if nothing staged |
+| `createSquashCommits` | false | Create squash commits instead of fixup |
 | `fixupTargetAlwaysSHA` | false | Reference targets by SHA, not message |
 | `forceAuthor` | false | Allow fixups to other authors' commits |
 | `forceDetach` | false | Allow on detached HEAD |
-| `createSquashCommits` | false | Create squash commits instead of fixup |
+| `maxStack` | 10 | Number of ancestor commits to consider |
+| `oneFixupPerCommit` | false | One fixup per target commit |
 
 ## Recipes
 
@@ -166,6 +174,9 @@ git absorb --and-rebase
 
 ### 4. Handle leftover staged changes
 
+After absorb, any staged hunks it couldn't attribute remain staged. Check
+`git status` to see what's left; these need manual fixups:
+
 ```bash
 git add -A
 git absorb --and-rebase
@@ -190,7 +201,7 @@ git absorb --and-rebase
 ### 6. Recover from a bad absorb
 
 ```bash
-# Undo everything absorb did
+# Undo everything absorb did (ref set before any fixups are created)
 git reset --soft PRE_ABSORB_HEAD
 ```
 
@@ -198,9 +209,37 @@ git reset --soft PRE_ABSORB_HEAD
 
 ```bash
 # With config: absorb.autoStageIfNothingStaged = true
-# Don't stage anything — absorb stages tracked changes, creates fixups,
+# Don't stage anything -- absorb stages tracked changes, creates fixups,
 # then unstages whatever it couldn't absorb
 git absorb --and-rebase
+```
+
+### 8. Pair programming: fixup a colleague's commits
+
+```bash
+# Per-repo (or use absorb.forceAuthor = true in config)
+git absorb --force-author --and-rebase
+```
+
+### 9. Pass extra options to rebase
+
+```bash
+# Run pre-commit hooks on each rebased commit
+git absorb --and-rebase -- -x "pre-commit run --all-files"
+
+# Update stacked branch refs during rebase
+git absorb --and-rebase -- --update-refs
+```
+
+### 10. Use --whole-file for new-line additions
+
+When absorb can't match new lines (e.g., an `import` statement added to
+support code in an earlier commit), `--whole-file` matches to the last
+commit that touched the same file:
+
+```bash
+git add -p
+git absorb --whole-file --and-rebase
 ```
 
 ## Anti-Patterns
@@ -217,12 +256,17 @@ If your workflow requires hooks, run them manually after absorb:
 ```bash
 git absorb --and-rebase
 pre-commit run --from-ref HEAD~5 --to-ref HEAD  # if using pre-commit framework
+# Or pass -x to rebase:
+git absorb --and-rebase -- -x "pre-commit run --all-files"
 ```
 
 ### Don't rely on `includeIf` gitconfig
 
 libgit2 doesn't fully support `includeIf` directives. If you use conditional
-includes (e.g., for work email), put overrides in `.git/config` instead.
+includes (e.g., for work email), put overrides in the repo's `.git/config`
+instead. This also affects `GIT_AUTHOR_EMAIL` / `GIT_COMMITTER_EMAIL` env
+vars -- libgit2 may not respect them for the author check. Use
+`--force-author` or `absorb.forceAuthor` as a workaround.
 
 ### Don't expect signed commits
 
@@ -232,7 +276,42 @@ libgit2 limitation with no current workaround.
 ### Don't absorb through merge commits
 
 git-absorb only works with linear history. Merge commits in the stack will
-cause errors or unexpected behavior.
+stop the revwalk. Use `--base` to explicitly target past a merge if you know
+what you're doing.
+
+### Don't expect git CLI `-c` overrides to work
+
+`git -c absorb.fixupTargetAlwaysSHA=true absorb` does **not** work because
+libgit2 reads config independently from the git CLI. Use `.git/config`,
+`~/.gitconfig`, or `GIT_CONFIG_GLOBAL` env var instead.
+
+### Don't expect new file additions to be absorbed
+
+Staging a brand-new file or re-adding a deleted file shows "No additions
+staged" because absorb only considers line-level diffs against ancestor
+commits. New files have no ancestor attribution. Create manual fixup commits
+for these.
+
+### Don't expect submodule changes to be absorbed
+
+Submodule pointer updates are not handled. Absorb reports "No additions
+staged" for submodule diffs. Create manual fixup commits for submodule
+updates.
+
+## Known Limitations (libgit2 / upstream)
+
+These are blocked on libgit2 or git2-rs and have no fix in git-absorb:
+
+| Issue | Limitation | Workaround |
+|-------|------------|------------|
+| `@` alias not supported | `--base @~5` fails, must use `HEAD` | Use `--base HEAD~5` |
+| `extensions.partialclone` | Repos with partial-clone fail to open | Clone without partial-clone |
+| `extensions.worktreeConfig` | Fails in repos with this extension | `git config --unset extensions.worktreeConfig`, run absorb, re-enable |
+| `feature.manyFiles` | Older libgit2 versions fail | Update to git-absorb >= 0.7 (git2 0.19+) |
+| `index.skipHash` | Checksum mismatch error | `git config --local index.skipHash false`, re-stage |
+| `includeIf` not fully supported | Conditional includes ignored | Put overrides in `.git/config` |
+| Reftable format | Repos using reftable backend fail | Awaiting libgit2 reftable support |
+| `skip-worktree` bits cleared | Auto-stage resets index entry flags | Avoid auto-stage with skip-worktree files |
 
 ## Integration
 
@@ -249,6 +328,9 @@ git restack
 
 Configure `absorb.maxStack=50` to match typical branchless stack depths.
 
+Use `--and-rebase -- --update-refs` to keep stacked branch pointers in sync
+during the autosquash rebase.
+
 ### With git-revise
 
 Alternative to `--and-rebase`:
@@ -256,6 +338,9 @@ Alternative to `--and-rebase`:
 git absorb                    # create fixup commits only
 git revise --autosquash       # in-memory autosquash (faster than rebase)
 ```
+
+A native `--and-revise` flag has been requested (#188) but is not yet
+implemented.
 
 ### Recovery
 
@@ -265,7 +350,7 @@ git reset --soft PRE_ABSORB_HEAD   # undo absorb completely
 git diff PRE_ABSORB_HEAD           # inspect what changed
 ```
 
-<!-- BEGIN LOCAL NOTES — preserved across regeneration -->
+<!-- BEGIN LOCAL NOTES -- preserved across regeneration -->
 ## Local Notes
 
 Hard-won lessons, workarounds, and patterns discovered through actual usage.
@@ -277,12 +362,20 @@ Absorb routes *line-level fixes* to the ancestor commit that last touched
 those lines. It fundamentally cannot handle paragraph-level content moves
 (removing a section from one commit and adding it to another) because:
 
-1. Removing lines from commit A isn't a "fix" to any ancestor — it's a new
+1. Removing lines from commit A isn't a "fix" to any ancestor -- it's a new
    deletion that no prior commit introduced.
 2. Adding lines to commit B is new content with no ancestor attribution.
 
 Content moves across commits require the manual checkout + edit + amend
 workflow. Absorb is only useful when you're *fixing* existing lines (typos,
 bug fixes, adjustments to code that a specific earlier commit introduced).
+
+### `rebase.updateRefs = true` makes `-- --update-refs` redundant
+
+The local git config sets `rebase.updateRefs = true`, so `git absorb
+--and-rebase` automatically keeps stacked branch pointers in sync during
+the autosquash rebase. The recipe `git absorb --and-rebase -- --update-refs`
+from the upstream docs is unnecessary — the flag is already the default.
+Just use `git absorb --and-rebase`.
 
 <!-- END LOCAL NOTES -->

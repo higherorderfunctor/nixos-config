@@ -4,7 +4,7 @@ repo-head: a5bdbe420521a7784dd16c8f22b374b2f1d2d167
 repo-indexed: 2026-03-21
 wiki-head: null
 wiki-indexed: null
-issues-indexed: null
+issues-indexed: 2026-03-21
 discussions-indexed: null
 labels-indexed: 2026-03-21
 label-head: 6fd8065eca9d1cb1b5803fdcc443d6d9898cf7890b5fb620fa11d3e53c8a9494
@@ -25,11 +25,11 @@ value-labels:
   - name: "help wanted"
     reason: "may surface known limitations"
 issue-stats:
-  total-fetched: 0
-  from-labels: 0
+  total-fetched: 152
+  from-labels: 152
   from-keywords: 0
   from-reactions: 0
-  after-dedup: 0
+  after-dedup: 152
 ---
 
 # git-revise Reference
@@ -61,6 +61,13 @@ git config revise.autoSquash true
 
 # GPG/SSH sign revised commits
 git config revise.gpgSign true
+
+# Enable rerere for cached conflict resolution
+git config revise.rerere true        # or rerere.enabled
+git config rerere.autoUpdate true    # auto-apply cached resolutions
+
+# Opt-in commit-msg hook support (PR #82, not yet merged)
+# git config revise.run-hooks.commit-msg true
 ```
 
 ## Core Concepts
@@ -84,6 +91,20 @@ your files are exactly as they were. This means:
 If automatic merge fails, git-revise prompts for manual conflict resolution
 in the editor. No mergetool support. Unsuccessful commands leave the
 repository unmodified.
+
+The conflict prompt format is: `Resolution or (A)bort?` — type the resolution
+number (1 or 2) or `a` to abort. The prompt shows which commit each side
+comes from (#45/#53). Note: when reordering two commits that touch the same
+line, you may be asked to resolve the same conflict twice (#132).
+
+### Rerere Support
+
+git-revise supports `git-rerere`-style conflict caching (#75). When enabled,
+resolved conflicts are recorded and replayed automatically on future
+encounters. Resolutions are stored in `.git/rr-cache/` and shared with git's
+own rerere. Enable via `revise.rerere` (or `rerere.enabled`) plus
+`rerere.autoUpdate`. Variant support (multiple resolutions per conflict)
+is not yet implemented.
 
 ## Command Reference
 
@@ -125,6 +146,10 @@ git revise [<options>] [<target>]
 | `reword` | Edit commit message |
 | `cut` | Interactively split into two commits |
 | `index` | Leave changes staged (must be last) |
+
+**Not available:** `drop` (see Anti-Patterns), `exec` (#28, won't fix).
+Editing summary lines directly in `-i` view is ignored; use `-ie` or
+`reword` instead (#34).
 
 ## Recipes
 
@@ -171,6 +196,10 @@ git revise -c <hash>               # select hunks for first commit
                                    # edit both messages
 ```
 
+Note: `--cut` only splits into exactly two commits. For more pieces, run
+`-c` repeatedly on the remainder (#80). Pathspec support (`git revise -c
+<hash> -- path/to/file`) is proposed but not yet merged (#134).
+
 ### 7. Reword a commit message
 
 ```bash
@@ -196,6 +225,32 @@ git reset @{1}                     # reflog-based undo (single entry per revise)
 git revise --no-index -e <hash>    # only edit message, ignore index
 ```
 
+### 11. Revise the last commit that touched staged files
+
+Useful alias — automatically finds the most recent commit for the staged
+files and revises it (#66):
+
+```bash
+# Add to .gitconfig [alias] section:
+revise-auto = "!f() { \
+  REV=$(git status --porcelain --untracked-files=no | sed '/^ /d;s/^.. //' \
+    | xargs -n1 git rev-list -1 HEAD --); \
+  NUM=$(echo \"$REV\" | sort -u | wc -l); \
+  [ $NUM -ne 1 ] && echo 'Staged files span multiple commits' >&2 && exit 1; \
+  REV=$(echo \"$REV\" | sort -u); \
+  git revise \"$REV\" \"$@\"; \
+}; f"
+```
+
+### 12. Sign all commits in a range
+
+```bash
+git revise --gpg-sign <oldest-hash>  # signs all commits from target to HEAD
+```
+
+Passing `--gpg-sign` with no index changes triggers signing for the
+entire range without modifying content (#73).
+
 ## Performance
 
 Benchmarked on mozilla-central (large repo):
@@ -211,9 +266,9 @@ tree objects directly, no working directory or index operations.
 
 ### Don't use through merge commits
 
-git-revise cannot rewrite through merge commits. Error: "has 2 parents".
-Workaround: use `git merge-base HEAD origin/HEAD` as target to stop before
-the merge.
+git-revise cannot rewrite through merge commits. Error: "has 2 parents" (#32,
+#137). Workaround: use `git merge-base HEAD origin/HEAD` as target to stop
+before the merge.
 
 ### Don't expect rename detection
 
@@ -222,22 +277,45 @@ involve renames, use `git rebase` instead for correct results.
 
 ### Don't drop commits via interactive mode
 
-There is no `drop` command. git-revise's invariant is that the working tree
-state doesn't change, and dropping a commit would alter file state.
+There is no `drop` command (#16). git-revise's invariant is that the working
+tree state doesn't change, and dropping a commit would alter file state.
 Workaround: move commit to end and change `pick` to `index` (leaves changes
-staged), then handle manually.
+staged), then handle manually. Note: deleting a line in `-i` mode also does
+not work — it errors with "Unexpected commits missing from TODO list" (#52).
 
 ### Don't rely on post-rewrite hooks
 
-git-revise does **not** call `post-rewrite` or `reference-transaction` hooks.
-This is the primary interop issue with git-branchless — both old and new
-commits appear in `git sl` after using git-revise.
+git-revise does **not** call `post-rewrite` or `reference-transaction` hooks
+(#106). This is the primary interop issue with git-branchless — both old and
+new commits appear in `git sl` after using git-revise.
 
 ### Don't split commits with only binary changes
 
 `git revise -c` fails with "cut part [1] is empty" when only binary changes
-remain in one side. Workaround: split in reverse order and reorder via
-`git revise -i`.
+remain in one side (#33). Similarly, empty file creations are invisible to
+`-c` and always land in the second commit (#55). Workaround: split in reverse
+order and reorder via `git revise -i`.
+
+### Don't expect --update-refs support
+
+git-revise does not support `--update-refs` (#131, 12 reactions — most
+requested feature). When rewriting commits that are shared across multiple
+branches, only the current branch (or `--ref` target) is updated. Other
+local branches diverge silently (#25). Workaround: manually update affected
+branches, or use `git rebase --update-refs` for multi-branch rewrites.
+
+### Don't expect git notes to be copied
+
+Unlike `git rebase` and `git commit --amend`, git-revise does not copy git
+notes to rewritten commits (#83). If you rely on notes (e.g., Gerrit
+Change-Ids stored as notes), verify them after revising.
+
+### Autosquash only matches full subject lines
+
+Unlike `git rebase --autosquash`, git-revise's `--autosquash` requires the
+full commit subject to match — partial subject matches and hash-based
+`fixup!` targeting may not work reliably (#79). Ensure fixup commit messages
+use the exact full subject of the target commit.
 
 ## Integration
 
@@ -267,9 +345,26 @@ git restack                        # fix branchless tracking
 
 ### Signing Support
 
-git-revise supports both GPG and SSH signing (`-S` flag or `revise.gpgSign`
-config). Unlike git-absorb, signing works correctly since git-revise
-implements its own `sign_buffer()`.
+git-revise supports GPG, SSH, and X.509 signing (`-S` flag or
+`revise.gpgSign` config). SSH signing was added in #136 (fixing #123).
+Unlike git-absorb, signing works correctly since git-revise implements
+its own `sign_buffer()`. Reads `gpg.format`, `user.signingKey`, and
+related git config.
+
+### Git 2.48 Compatibility
+
+A reflog corruption bug in git 2.48 affected `git update-ref` when
+symbolic refs (like HEAD) referenced the updated branch (#138). This was
+fixed in git-revise via #139. If you encounter corrupted reflog entries,
+ensure you're on git-revise >= 0.7.0+ with this fix.
+
+### Editor Configuration
+
+git-revise respects `GIT_SEQUENCE_EDITOR` and `sequence.editor` for the
+todo list editor, falling back to `GIT_EDITOR` / `core.editor` for commit
+messages (#60, #70). This matches `git rebase -i` behavior. The tool also
+respects `core.commentChar` (#38) and `commit.cleanup` / `commit.verbose`
+(#126).
 
 <!-- BEGIN LOCAL NOTES — preserved across regeneration -->
 ## Local Notes
