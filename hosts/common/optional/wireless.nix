@@ -1,8 +1,4 @@
 {config, ...}: {
-  sops.secrets.wireless = {
-    sopsFile = ../secrets/wireless.yaml;
-  };
-
   networking.wireless = {
     enable = true;
 

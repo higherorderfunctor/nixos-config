@@ -1,4 +1,8 @@
-{pkgs, ...}: {
+{
+  inputs,
+  pkgs,
+  ...
+}: {
   imports = [
     ../global/nix.nix
     ./openssh.nix
@@ -8,7 +12,7 @@
     "ssh/authorized_keys.d/root" = {
       text = pkgs.lib.mkDefault (
         pkgs.lib.mkAfter (
-          builtins.readFile ../../../home/caubut/secrets/personal_ed25519_key.pub
+          builtins.readFile inputs.nixos-secrets.secretFiles.personalPubKey
         )
       );
       mode = "0444";

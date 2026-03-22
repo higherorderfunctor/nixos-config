@@ -278,13 +278,6 @@
   };
 
 in {
-  # ── Sops secrets ──────────────────────────────────────────────
-  sops.secrets = {
-    "${username}-kagi-api-key" = {
-      mode = "0400";
-    };
-  };
-
   home = {
     packages = with pkgs; [
       bun

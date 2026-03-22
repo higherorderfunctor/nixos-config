@@ -22,12 +22,6 @@
   #   generate = true;
   # };
 in {
-  sops.secrets = {
-    "${username}-ai-hub-mix-api-key" = {
-      mode = "400";
-    };
-  };
-
   home = {
     packages = with pkgs; [tree-sitter mcp-hub];
   };

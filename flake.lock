@@ -1225,6 +1225,21 @@
         "type": "github"
       }
     },
+    "nixos-secrets": {
+      "locked": {
+        "lastModified": 1774154511,
+        "narHash": "sha256-dDjCsMIIQlDCOjzYaP64w2YmlxOPCmWksOvNB2I9APQ=",
+        "ref": "refs/heads/main",
+        "rev": "99b32311555640a9a5cb75583c62e0bc4420b33c",
+        "revCount": 4,
+        "type": "git",
+        "url": "ssh://git@codeberg.org/lucidrevisiona/nixos-secrets.git"
+      },
+      "original": {
+        "type": "git",
+        "url": "ssh://git@codeberg.org/lucidrevisiona/nixos-secrets.git"
+      }
+    },
     "nixpkgs": {
       "locked": {
         "lastModified": 1773389992,
@@ -1433,6 +1448,7 @@
         "nixd": "nixd",
         "nixos": "nixos",
         "nixos-hardware": "nixos-hardware",
+        "nixos-secrets": "nixos-secrets",
         "nixpkgs": "nixpkgs_3",
         "nixpkgs-lib": "nixpkgs-lib",
         "nvfetcher": "nvfetcher",

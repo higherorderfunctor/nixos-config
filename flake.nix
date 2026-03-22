@@ -197,6 +197,10 @@
     nixos-hardware = {
       url = "github:nixos/nixos-hardware";
     };
+    nixos-secrets = {
+      url = "git+ssh://git@codeberg.org/lucidrevisiona/nixos-secrets.git";
+      flake = true;
+    };
     neovim-src = {
       url = "github:neovim/neovim";
       flake = false;

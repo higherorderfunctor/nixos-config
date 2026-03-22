@@ -7,25 +7,11 @@
   username = "${config.home.username}";
 in {
   home.packages = with pkgs; [git-absorb git-branchless git-revise dprint];
-  sops.secrets = {
-    "${username}-github-api-key" = {
-      mode = "400";
-    };
-  };
   programs.git = {
     enable = true;
     package = pkgs.git;
     # signing.format = "ssh";
     settings = {
-      credential."https://github.com" = {
-        helper = ''
-          !f() { echo "username=x-access-token"; echo "password=$(cat ${config.sops.secrets."caubut-github-api-key".path})"; }; f
-        '';
-      };
-      user = {
-        name = "Christopher Aubut";
-        email = "christopher@aubut.me";
-      };
       column.ui = "auto";
       branch.sort = "-committerdate";
       branchless = {
@@ -94,19 +80,10 @@ in {
         autoupdate = true;
       };
     };
-    includes = [
-      {
-        path = "${config.xdg.configHome}/git/work.inc";
-        condition = "gitdir:${config.xdg.userDirs.documents}/work/";
-      }
-    ];
   };
   programs.delta = {
     enable = true;
     enableGitIntegration = true;
-  };
-  xdg.configFile."git/work.inc".text = lib.generators.toGitINI {
-    user.email = "christopher.aubut@charter.com";
   };
   systemd.user.tmpfiles.rules = [
     # TODO: fix permissions on other files

@@ -1,19 +1,10 @@
-{
-  config,
-  inputs,
-  ...
-}: let
-  username = "caubut";
-in {
-  imports = [inputs.sops-nix.nixosModules.sops ../../common/shared];
+{...}: {
+  imports = [../../common/shared];
 
   nix = {
     gc = {
       dates = "weekly";
     };
-    extraOptions = ''
-      !include ${config.sops.secrets."${username}-nix-conf-secrets".path}
-    '';
     settings = {
       #trusted-substituters = lib.mkForce null;
       #
@@ -31,10 +22,5 @@ in {
     MemoryAccounting = true;
     MemoryMax = "20G"; # Cap daemon memory usage
     OOMScoreAdjust = 500; # Prefer killing builds over system processes
-  };
-
-  sops.secrets."${username}-nix-conf-secrets" = {
-    mode = "400";
-    sopsFile = ../../../home/caubut/secrets/secrets.yaml;
   };
 }

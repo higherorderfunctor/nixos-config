@@ -64,33 +64,8 @@ in {
     }
   ];
 
-  environment.etc = {
-    "ssh/authorized_keys.d/${username}" = {
-      text = pkgs.lib.mkDefault (
-        pkgs.lib.mkAfter (
-          builtins.readFile ../../../../home/${username}/secrets/personal_ed25519_key.pub
-        )
-      );
-      mode = "0444";
-    };
-  };
-
   # TODO: ssh agent error in journal
   # TODO passwordless sudo not working
-
-  # defines at system level since there is no
-  # key for home manager to unlock secrets
-  sops.secrets = {
-    "${username}-personal-ed25519-key" = {
-      owner = "${username}";
-      mode = "400";
-      sopsFile = ../../../../home/${username}/secrets/secrets.yaml;
-    };
-    "${username}-password" = {
-      neededForUsers = true;
-      sopsFile = ../../../../home/${username}/secrets/secrets.yaml;
-    };
-  };
 
   # host specific home-manager configuration for user
   home-manager.users.caubut = import ../../../../home/${username}/hosts/${config.networking.hostName};
