@@ -20,6 +20,9 @@ match a known name, treat it as a GitHub URL or `owner/repo`.
 | `git-absorb` | `tummychow/git-absorb` | README, man page, usage patterns |
 | `git-revise` | `mystor/git-revise` | README, docs, interactive usage |
 
+If `$ARGUMENTS` is `all`, iterate through every entry in the table above and
+run the full indexing process for each one.
+
 ## Output
 
 Write to: `home/<user>/features/cli/code/ai/claude/claude-config/references/<name>.md`
