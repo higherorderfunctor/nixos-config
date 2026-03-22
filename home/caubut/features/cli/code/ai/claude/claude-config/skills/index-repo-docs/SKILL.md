@@ -331,24 +331,34 @@ changed, re-assess and update the cache.
    <!-- END LOCAL NOTES -->
    ```
 
-8. **Verify no content regression.** Before writing the final doc, diff it
-   against the existing doc (if one exists). Check that:
-   - No existing **sections** were dropped (every `##` heading in the old doc
-     should appear in the new doc, unless deliberately merged into another)
-   - No existing **issue-reference gotchas** (lines containing `#NNN`) were
-     removed — these were distilled from prior issue fetches
-   - The doc is **not shorter** than the previous version unless sections were
-     intentionally consolidated (and even then, verify no information was lost)
-   - All **recipes** are still present (count `### N.` headings)
-   If any of these checks fail, stop and fix before writing. A regeneration
-   that drops content is worse than no regeneration at all.
-
-9. **Clean up**:
+8. **Write the draft to a temp file** — never directly to the reference doc.
    ```bash
-   rm -rf "$tmp_dir"
+   # e.g. /tmp/<name>-index/draft.md
    ```
 
-10. **Report** what was generated (full/incremental/skipped), how many source
+9. **Present a change summary for user review.** Do NOT write the final doc
+   until the user approves. Show, in this order:
+
+   1. **Additions** — new sections, recipes, gotchas, anti-patterns
+   2. **Changes** — modified sections (briefly describe what changed)
+   3. **Removals** — any sections, recipes, or gotchas from the old doc that
+      are absent in the draft (flag these prominently — removals need
+      justification)
+   4. **Stats** — line count old vs new, recipe count old vs new, issue-ref
+      (`#NNN`) count old vs new
+
+   If there are removals, explain why each one was dropped. The user may
+   reject the draft or ask for revisions. Only proceed to step 10 after
+   explicit approval.
+
+10. **Write the approved doc** to the reference file path.
+
+11. **Clean up**:
+    ```bash
+    rm -rf "$tmp_dir"
+    ```
+
+12. **Report** what was generated (full/incremental/skipped), how many source
     files were read, and the output path.
 
 ## Guidelines
