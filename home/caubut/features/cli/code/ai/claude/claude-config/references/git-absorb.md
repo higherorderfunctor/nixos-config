@@ -1,13 +1,35 @@
 ---
 repo: tummychow/git-absorb
-last-indexed: 2026-03-21
 repo-head: debdcd28d9db2ac6b36205bda307b6693a6a91e7
+repo-indexed: 2026-03-21
 wiki-head: null
+wiki-indexed: null
+issues-indexed: null
+discussions-indexed: null
+labels-indexed: 2026-03-21
+label-head: 61da6cc314d0c00da78c5a875e51a4c71241dad289c628c295baee450d1c42ff
 exclude-issue-patterns:
   - "renovate"
   - "dependabot"
   - "bump version"
   - "release v"
+value-labels:
+  - name: "bug"
+    reason: "resolved bugs reveal workarounds and confirmed patterns"
+  - name: "question"
+    reason: "direct Q&A, recipes, usage clarification"
+  - name: "upstream"
+    reason: "known limitations blocked on libgit2/git2rs with workarounds"
+  - name: "enhancement"
+    reason: "feature discussions and design decisions"
+  - name: "packaging"
+    reason: "installation and packaging context"
+issue-stats:
+  total-fetched: 0
+  from-labels: 0
+  from-keywords: 0
+  from-reactions: 0
+  after-dedup: 0
 ---
 
 # git-absorb Reference
@@ -242,3 +264,25 @@ After any absorb operation, `PRE_ABSORB_HEAD` points to the pre-absorb state:
 git reset --soft PRE_ABSORB_HEAD   # undo absorb completely
 git diff PRE_ABSORB_HEAD           # inspect what changed
 ```
+
+<!-- BEGIN LOCAL NOTES — preserved across regeneration -->
+## Local Notes
+
+Hard-won lessons, workarounds, and patterns discovered through actual usage.
+This section is never overwritten by index-repo-docs.
+
+### Absorb cannot help with content moves between commits
+
+Absorb routes *line-level fixes* to the ancestor commit that last touched
+those lines. It fundamentally cannot handle paragraph-level content moves
+(removing a section from one commit and adding it to another) because:
+
+1. Removing lines from commit A isn't a "fix" to any ancestor — it's a new
+   deletion that no prior commit introduced.
+2. Adding lines to commit B is new content with no ancestor attribution.
+
+Content moves across commits require the manual checkout + edit + amend
+workflow. Absorb is only useful when you're *fixing* existing lines (typos,
+bug fixes, adjustments to code that a specific earlier commit introduced).
+
+<!-- END LOCAL NOTES -->

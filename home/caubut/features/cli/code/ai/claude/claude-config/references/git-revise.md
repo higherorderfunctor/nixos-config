@@ -1,13 +1,35 @@
 ---
 repo: mystor/git-revise
-last-indexed: 2026-03-21
 repo-head: a5bdbe420521a7784dd16c8f22b374b2f1d2d167
+repo-indexed: 2026-03-21
 wiki-head: null
+wiki-indexed: null
+issues-indexed: null
+discussions-indexed: null
+labels-indexed: 2026-03-21
+label-head: 6fd8065eca9d1cb1b5803fdcc443d6d9898cf7890b5fb620fa11d3e53c8a9494
 exclude-issue-patterns:
   - "renovate"
   - "dependabot"
   - "bump version"
   - "release v"
+value-labels:
+  - name: "bug"
+    reason: "confirmed bugs reveal edge cases and workarounds"
+  - name: "question"
+    reason: "resolved questions contain recipes and usage clarification"
+  - name: "design"
+    reason: "design decisions and rationale"
+  - name: "enhancement"
+    reason: "feature discussions and design decisions"
+  - name: "help wanted"
+    reason: "may surface known limitations"
+issue-stats:
+  total-fetched: 0
+  from-labels: 0
+  from-keywords: 0
+  from-reactions: 0
+  after-dedup: 0
 ---
 
 # git-revise Reference
@@ -248,3 +270,11 @@ git restack                        # fix branchless tracking
 git-revise supports both GPG and SSH signing (`-S` flag or `revise.gpgSign`
 config). Unlike git-absorb, signing works correctly since git-revise
 implements its own `sign_buffer()`.
+
+<!-- BEGIN LOCAL NOTES — preserved across regeneration -->
+## Local Notes
+
+Hard-won lessons, workarounds, and patterns discovered through actual usage.
+This section is never overwritten by index-repo-docs.
+
+<!-- END LOCAL NOTES -->

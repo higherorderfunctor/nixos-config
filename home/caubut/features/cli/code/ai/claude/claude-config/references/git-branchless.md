@@ -1,13 +1,41 @@
 ---
 repo: arxanas/git-branchless
-last-indexed: 2026-03-21
 repo-head: f238c0993fea69700b56869b3ee9fd03178c6e32
+repo-indexed: 2026-03-21
 wiki-head: 98aa4029b230f432416e9029fe6182ed8fa1d695
+wiki-indexed: 2026-03-21
+issues-indexed: null
+discussions-indexed: null
+labels-indexed: 2026-03-21
+label-head: 904c06c39a895525e0e94a1888d19139c20c7eedfb489ef889635d3ea5d45e30
 exclude-issue-patterns:
   - "renovate"
   - "dependabot"
   - "bump version"
   - "release v"
+value-labels:
+  - name: "bug"
+    reason: "confirmed bugs reveal edge cases and error handling details"
+  - name: "has-workaround"
+    reason: "direct workarounds and recipes for known issues"
+  - name: "no-planned-fix"
+    reason: "confirmed limitations users must work around"
+  - name: "question"
+    reason: "resolved Q&A with usage patterns and recipes"
+  - name: "documentation"
+    reason: "doc gaps and usage clarifications"
+  - name: "enhancement"
+    reason: "feature discussions and design decisions"
+  - name: "good first issue"
+    reason: "sometimes reveals architectural patterns"
+  - name: "help wanted"
+    reason: "community-discussed issues, often contain workarounds"
+issue-stats:
+  total-fetched: 0
+  from-labels: 0
+  from-keywords: 0
+  from-reactions: 0
+  after-dedup: 0
 ---
 
 # git-branchless Reference
@@ -576,3 +604,75 @@ branchless has equivalents (`reword`, `split`, `move`), prefer those.
 - **v2.24-2.27**: Supported, no `git undo`
 - **v2.28**: Not supported (reference-transaction bug)
 - **<= v2.23**: Not supported
+
+<!-- BEGIN LOCAL NOTES — preserved across regeneration -->
+## Local Notes
+
+Hard-won lessons, workarounds, and patterns discovered through actual usage.
+This section is never overwritten by index-repo-docs.
+
+### `git amend --reparent` does not skip restacking
+
+Despite the name suggesting it only re-parents, `--reparent` still restacks
+all descendants — it just preserves their tree contents unchanged (no merge).
+This means it's useful when the amended commit only changes metadata or
+formatting (the descendant diffs stay the same), but it will **not** help
+avoid conflicts when the amendment changes file content that descendants also
+touch. For content-changing amends, use plain `git amend` and resolve
+conflicts normally.
+
+### Mid-stack reorganization commits cause conflict cascades
+
+When a commit in the middle of a stack substantially rewrites a file (e.g.,
+reordering sections, restructuring an attrset), any edit to that same file in
+an earlier commit will conflict at the reorganization commit during restack —
+and potentially at every descendant after it.
+
+**Strategies:**
+1. **Batch pre-reorganization edits** — make all changes to the file *before*
+   the reorganization commit so the reorg sees a stable input.
+2. **Edit the reorganization commit directly** — use `git amend` while checked
+   out at that commit, so descendants rebase on top of the already-reorganized
+   version.
+3. **Accept one conflict** — if the reorganization empties or replaces a
+   structure (e.g., clearing an attrset so each later commit adds one entry),
+   expect exactly one conflict at the first descendant after the empty. All
+   subsequent commits restack cleanly since they only add, never modify.
+
+### Forward references in shell globs are silent failures
+
+A shell glob like `${self}/apps/*.sh` in a nix `runCommand` or linter config
+will silently expand to nothing when `apps/` doesn't exist yet. This won't
+fail the build, but it's still a forward reference — the check isn't doing
+anything until a later commit creates the directory. Defer the glob-based
+check to the commit that introduces the directory it references.
+
+### In-memory restack falls back to on-disk rebase on conflict
+
+When `git amend` triggers an in-memory restack that hits a merge conflict, it
+aborts the in-memory attempt and prints: "To resolve merge conflicts, run:
+git restack --merge". Running `git restack --merge` then starts an on-disk
+rebase that stops at each conflicting commit for manual resolution (`git add`
++ `git rebase --continue`). This is the normal flow, not an error state.
+
+### `git rerere` has limited effectiveness across repeated restacks
+
+`git rerere` records conflict resolutions during restack, but each amend to an
+earlier commit changes the conflict context slightly. `rerere` auto-resolves
+when the conflict is byte-identical to a previous one, but fails for
+similar-but-not-identical conflicts (e.g., same file section but with a
+one-line difference from the previous amend). Don't rely on it to eliminate
+repeated conflict resolution when making multiple edits to the same file
+across the stack.
+
+### Removing content from early commits can orphan additions downstream
+
+If you remove content (e.g., an attrset block, shell checks) from an early
+commit and a later commit's restack conflicts, the conflict resolution may
+drop the removed content from the "ours" side — but if the later commit was
+*adding* to that block, the additions vanish too. After any restack with
+conflict resolution, verify that content removed from an early commit was
+re-added at the correct later commit. Use `git diff <backup>..HEAD` to
+confirm the final tree is equivalent.
+
+<!-- END LOCAL NOTES -->
