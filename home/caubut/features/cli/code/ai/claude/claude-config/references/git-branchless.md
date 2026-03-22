@@ -731,4 +731,56 @@ conflict resolution, verify that content removed from an early commit was
 re-added at the correct later commit. Use `git diff <backup>..HEAD` to
 confirm the final tree is equivalent.
 
+### `git move -x` does not move descendants
+
+`-x` means "exact commit only." When moving a parent commit with `-x`, child
+commits stay on the old branch and need separate `git move` commands. This is
+easy to miss when moving a commit that has one obvious child (e.g., TODO →
+flake.lock). Use `-s` to move a commit and all descendants, or `-b` to move
+an entire branch lineage. When intentionally splitting parent from children,
+do the parent first, then move each child to the new location.
+
+### Branch pointers follow rewrites silently
+
+When `git move` rewrites a commit, any branch pointing at the old commit
+moves to the new one. This defeats backup branches: if
+`backup/pre-operation` points at commit `abc123` and `git move` rewrites it
+to `def456`, the branch now points at `def456` — the "before" state is lost.
+
+**Workaround:** After any move/rebase that touches backup targets, immediately
+`git branch -f backup/name <original-SHA>` to pin it back. The original SHA
+survives in the object store; only the branch ref moved. Alternatively, use
+`git tag` instead of `git branch` for bookmarks — tags are not updated by
+rewrite operations.
+
+### `git move -s` past a reorganization commit: expect per-commit conflicts
+
+`git move -s <subtree> -d <target> --merge` with a reorganization commit in
+the subtree falls back to on-disk rebase and stops at **each** conflicting
+commit for manual resolution via `git rebase --continue`. Budget for one
+conflict resolution per commit that touches the same files the reorganization
+rewrites. The reorganization commit itself is the worst; descendants that only
+add content (one table row, one attrset entry) are quick to resolve since the
+pattern is always "take HEAD + add the incoming addition."
+
+### In-memory amend succeeds when descendants don't touch the same files
+
+When amending a commit to add content to files that no descendant touches
+(e.g., adding ci.yml entries when no server commit modifies ci.yml), the
+in-memory restack succeeds instantly for all descendants — no conflicts, no
+on-disk fallback. This is the ideal case: structure your stack so shared
+infrastructure files are introduced once and only modified by their own
+commit, with server commits touching only their own overlay/module files.
+
+### Alphabetical insertion via sed causes ordering drift
+
+Using `sed -i '/<prev>/a\<new>'` to insert entries alphabetically works when
+building a list from scratch, but breaks if a pre-existing entry is already in
+the list (e.g., nixos-mcp inserted first by skeleton, then context7 through
+sympy inserted alphabetically around it). The pre-existing entry drifts to the
+wrong position because subsequent insertions reference their alphabetical
+predecessor, not accounting for the pre-existing entry's position. Fix by
+reordering in the last commit that completes the list, or by inserting the
+first entry at a sentinel position that sorts correctly.
+
 <!-- END LOCAL NOTES -->
