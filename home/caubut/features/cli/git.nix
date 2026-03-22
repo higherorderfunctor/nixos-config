@@ -37,6 +37,11 @@ in {
           # ((draft() | branches() | @) % main()) | branches() | @
         };
       };
+      absorb = {
+        fixupTargetAlwaysSHA = true;
+        maxStack = 50;
+        oneFixupPerCommit = true;
+      };
       commit.verbose = true;
       core = {
         autocrlf = "input";
