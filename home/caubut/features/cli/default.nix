@@ -72,6 +72,7 @@
     ./statix.nix
     ./stylua.nix
     ./swagger-codegen.nix
+    ./tea.nix
     ./vim.nix
     ./wget.nix
     ./xclip.nix
