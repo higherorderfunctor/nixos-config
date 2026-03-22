@@ -5,6 +5,7 @@ args: let
     ./arkenfox-overlay.nix
     ./astal-overlay.nix
     ./bruno-overlay.nix
+    ./copilot-cli-overlay.nix
     ./btop-overlay.nix
     ./bun-overlay.nix
     ./catppuccin-gtk-overlay.nix
@@ -13,9 +14,14 @@ args: let
     # ./gitlab-language-server-overlay.nix
     ./fblog-overlay.nix
     ./firefox-nightly-overlay.nix
+    ./gh-overlay.nix
     ./gluetun-overlay.nix
+    ./go-overlay.nix
     ./hotfixes-overlay.nix
     ./hyprland-overlay.nix
+    ./kiro-overlay.nix
+    ./mcp-hub-overlay.nix
+    ./mcp-server-fetch-overlay.nix
     ./mirrors-overlay.nix
     ./neovim-nightly-overlay.nix
     ./nix-gl-host-overlay.nix
@@ -28,8 +34,8 @@ args: let
     ./pnpm-overlay.nix
     ./rust-overlay.nix
     ./spectral-overlay.nix
-    ./standardnotes-overlay.nix
-    ./tmux-which-key-overlay.nix
+    # ./standardnotes-overlay.nix
+    ./sympy-mcp-overlay.nix
     # ./tree-sitter-cql-overlay.nix
     ./vivid-icons-themes-overlay.nix
     ./wezterm-overlay.nix

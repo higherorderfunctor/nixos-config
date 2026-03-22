@@ -1,19 +1,21 @@
-{inputs, ...}: inputs.neovim-nightly-overlay.overlays.default
-
-# {inputs, ...}: final: _: {
-#   neovim = inputs.neovim-nightly-overlay.packages.${final.system}.neovim.override (args: {
-#     tree-sitter = args.tree-sitter.override {
-#       rustPlatform =
-#         final.rustPlatform
-#         // {
-#           buildRustPackage = args:
-#             final.rustPlatform.buildRustPackage (
-#               args
-#               // {
-#                 cargoHash = "sha256-wrMqeJxOj9Jp3luy6ir6UzNQClRglqP8pfoqWk+Ky+w=";
-#               }
-#             );
-#         };
-#     };
-#   });
-# }
+{
+  inputs,
+  lib,
+  ...
+}: final: _: {
+  inherit (inputs.neovim-nightly-overlay.packages.${final.stdenv.hostPlatform.system}) neovim;
+  # neovim = inputs.neovim-nightly-overlay.packages.${final.stdenv.hostPlatform.system}.neovim
+  #     .override (args: {
+  #   tree-sitter = args.tree-sitter.overrideAttrs (attrs: let
+  #     cargoHash = lib.fakeHash;
+  #     # cargoHash = "sha256-u6RmwNR4QVwyuij5RlHTLC5lNNQpWMVrlQwfwF78pYc=";
+  #   in {
+  #     inherit cargoHash;
+  #     cargoDeps = final.rustPlatform.fetchCargoVendor {
+  #       inherit (attrs) src;
+  #       name = "${attrs.pname}-cargo-deps";
+  #       hash = cargoHash;
+  #     };
+  #   });
+  # });
+}

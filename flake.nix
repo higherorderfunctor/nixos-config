@@ -7,6 +7,7 @@
     # nixpkgs-91594d11.url = "github:Nixos/nixpkgs?rev=91594d11a2248ebe00f45f6b9be63fe264bb74e1";
     home-manager = {
       url = "github:nix-community/home-manager";
+      inputs.nixpkgs.follows = "nixpkgs";
     };
     ags = {
       url = "github:Aylur/ags";
@@ -23,19 +24,62 @@
     };
     firefox-nightly = {
       url = "github:nix-community/flake-firefox-nightly";
-      inputs.nixpkgs.follows = "nixpkgs";
+      inputs = {
+        nixpkgs.follows = "nixpkgs";
+        flake-compat.follows = "flake-compat";
+        lib-aggregate.follows = "lib-aggregate";
+      };
+    };
+    flake-compat = {
+      url = "github:nix-community/flake-compat";
+    };
+    flake-parts = {
+      url = "github:hercules-ci/flake-parts";
+      inputs = {
+        nixpkgs-lib.follows = "nixpkgs-lib";
+      };
+    };
+    flake-utils = {
+      url = "github:numtide/flake-utils";
+      inputs = {
+        systems.follows = "systems";
+      };
     };
     git-branchless = {
       url = "github:arxanas/git-branchless";
+      inputs = {
+        nixpkgs.follows = "nixpkgs";
+      };
+    };
+    git-hooks = {
+      url = "github:cachix/git-hooks.nix";
+      inputs = {
+        nixpkgs.follows = "nixpkgs";
+        flake-compat.follows = "flake-compat";
+      };
+    };
+    go-overlay = {
+      url = "github:purpleclay/go-overlay";
+      inputs = {
+        nixpkgs.follows = "nixpkgs";
+      };
+    };
+    hercules-ci-effects = {
+      url = "github:hercules-ci/hercules-ci-effects";
+      inputs = {
+        nixpkgs.follows = "nixpkgs";
+        flake-parts.follows = "flake-parts";
+      };
     };
     hyprland = {
       url = "github:hyprwm/Hyprland";
       # inputs = {
-      #   nixpkgs.follows = "hyprland/nixpkgs";
-      #   systems.follows = "hyprland/systems";
-      #   hyprutils.follows = "hyprland/hyprutils";
-      #   hyprlang.follows = "hyprland/hyprlang";
-      #   hyprgraphics.follows = "hyprland/hyprgraphics";
+      #   pre-commit-hooks.follows = "git-hooks";
+      #   # nixpkgs.follows = "hyprland/nixpkgs";
+      #   # systems.follows = "hyprland/systems";
+      #   # hyprutils.follows = "hyprland/hyprutils";
+      #   # hyprlang.follows = "hyprland/hyprlang";
+      #   # hyprgraphics.follows = "hyprland/hyprgraphics";
       #   # hyprwayland-scanner.follows = "hyprland/hyprwayland-scanner";
       # };
     };
@@ -101,39 +145,84 @@
         hyprwayland-scanner.follows = "hyprland/hyprwayland-scanner";
       };
     };
-    isd.url = "github:isd-project/isd";
+    mcp-hub = {
+      url = "github:ravitemer/mcp-hub";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+    systems = {
+      url = "github:nix-systems/default";
+    };
+    isd = {
+      url = "github:isd-project/isd";
+      inputs = {
+        nixpkgs.follows = "nixpkgs";
+        # nix-appimage.follows = "nix-appimage";
+        systems.follows = "systems";
+      };
+    };
     impermanence = {
       url = "github:nix-community/impermanence";
     };
-    # neovim-src = {
-    #   url = "github:neovim/neovim";
-    #   flake = false;
-    # };
-    neovim-nightly-overlay = {
-      url = "github:nix-community/neovim-nightly-overlay";
-      # inputs = {
-      #   nixpkgs.follows = "nixpkgs";
-      #   neovim-src.follows = "neovim-src";
-      # };
+    lib-aggregate = {
+      url = "github:nix-community/lib-aggregate";
+      inputs = {
+        nixpkgs-lib.follows = "nixpkgs-lib";
+        flake-utils.follows = "flake-utils";
+      };
     };
-    nixd = {
-      url = "github:nix-community/nixd";
+    # nix-appimage = {
+    #   url = "github:ralismark/nix-appimage";
+    #   inputs = {
+    #     nixpkgs.follows = "nixpkgs";
+    #     flake-compat.follows = "flake-compat";
+    #     flake-utils.follows = "flake-utils";
+    #   };
+    # };
+    nix-gl-host = {
+      url = "github:numtide/nix-gl-host";
       inputs.nixpkgs.follows = "nixpkgs";
     };
     nix-index-database = {
       url = "github:mic92/nix-index-database";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    nix-gl-host = {
-      url = "github:numtide/nix-gl-host";
-      inputs.nixpkgs.follows = "nixpkgs";
+    nixd = {
+      url = "github:nix-community/nixd";
+      inputs = {
+        nixpkgs.follows = "nixpkgs";
+        flake-parts.follows = "flake-parts";
+        treefmt-nix.follows = "treefmt-nix";
+      };
     };
     nixos-hardware = {
       url = "github:nixos/nixos-hardware";
     };
+    nixos-secrets = {
+      url = "git+ssh://git@codeberg.org/lucidrevisiona/nixos-secrets.git";
+      flake = true;
+    };
+    neovim-src = {
+      url = "github:neovim/neovim";
+      flake = false;
+    };
+    neovim-nightly-overlay = {
+      url = "github:nix-community/neovim-nightly-overlay";
+      inputs = {
+        nixpkgs.follows = "nixpkgs";
+        flake-parts.follows = "flake-parts";
+        neovim-src.follows = "neovim-src";
+      };
+    };
+    nixpkgs-lib = {
+      url = "github:nix-community/nixpkgs.lib";
+    };
     nvfetcher = {
       url = "github:berberman/nvfetcher";
-      inputs.nixpkgs.follows = "nixpkgs";
+      inputs = {
+        nixpkgs.follows = "nixpkgs";
+        flake-compat.follows = "flake-compat";
+        flake-utils.follows = "flake-utils";
+      };
     };
     rust-overlay = {
       url = "github:oxalica/rust-overlay";
@@ -143,11 +232,11 @@
       url = "github:mic92/sops-nix";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    # nix flake lock --update-input nixpkgs --update-input tmux-which-key
-    tmux-which-key = {
-      url = "github:higherorderfunctor/tmux-which-key?ref=feat/adds-nix-flake";
-      # url = "git+file:///home/caubut/Documents/projects/tmux-which-key";
-      inputs.nixpkgs.follows = "nixpkgs";
+    treefmt-nix = {
+      url = "github:numtide/treefmt-nix";
+      inputs = {
+        nixpkgs.follows = "nixpkgs";
+      };
     };
     wezterm = {
       url = "github:wez/wezterm?dir=nix";
@@ -175,6 +264,7 @@
           permittedInsecurePackages = [
             "electron-31.7.7" # standard notes
             #   "olm-3.2.16" # ???
+            "python3.13-ecdsa-0.19.1" # ???
           ];
         };
       };

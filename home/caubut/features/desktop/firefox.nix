@@ -66,14 +66,14 @@
         "Nix Options"
         "NixOS Wiki"
         "Home Manager Options"
-        "Google"
-        "Bing"
-        "DuckDuckGo"
+        "google"
+        "bing"
+        "ddg"
       ];
       engines = {
         "Kagi" = {
           urls = [{template = "https://kagi.com/search?q={searchTerms}";}];
-          iconUpdateURL = "https://assets.kagi.com/v1/kagi_assets/logos/blue_1.svg";
+          icon = "https://assets.kagi.com/v1/kagi_assets/logos/blue_1.svg";
           updateInterval = 24 * 60 * 60 * 1000; # every day
         };
         "Nix Packages" = {
@@ -122,16 +122,16 @@
         };
         "NixOS Wiki" = {
           urls = [{template = "https://nixos.wiki/index.php?search={searchTerms}";}];
-          iconUpdateURL = "https://nixos.wiki/favicon.png";
+          icon = "https://nixos.wiki/favicon.png";
           updateInterval = 24 * 60 * 60 * 1000; # every day
         };
         "Home Manager Options" = {
           urls = [{template = "https://home-manager-options.extranix.com/?query={searchTerms}";}];
           icon = "${pkgs.nixos-icons}/share/icons/hicolor/scalable/apps/nix-snowflake.svg";
         };
-        "eBay".metaData.hidden = true;
-        "Amazon.com".metaData.hidden = true;
-        "Wikipedia (en)".metaData.hidden = true;
+        "ebay".metaData.hidden = true;
+        "amazondotcom-us".metaData.hidden = true;
+        "wikipedia".metaData.hidden = true;
       };
     };
   };

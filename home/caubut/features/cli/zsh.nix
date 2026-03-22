@@ -15,7 +15,7 @@ in {
       "compinit -d ${config.xdg.dataHome}/zsh/.zcompdump"
     ];
     defaultKeymap = "viins";
-    dotDir = lib.strings.removePrefix "${config.home.homeDirectory}/" "${config.xdg.configHome}/zsh";
+    dotDir = "${config.xdg.configHome}/zsh";
     history = {
       path = "${config.xdg.dataHome}/zsh/zsh_history";
     };
@@ -25,14 +25,15 @@ in {
       l = "ls -lah";
       ll = "ls -lh";
       # TODO: opens in any terminal with tmux not one run from
-      lb = "tmux popup -w 99% -h 99% -E 'findmnt -n | less'";
+      # lb = "tmux popup -w 99% -h 99% -E 'findmnt -n | less'";
+      lb = "findmnt -n | less";
       nv = "${config.home.homeDirectory}/Documents/projects/nixos-config/scripts/nix-update";
       sw = "NIX_DEBUG=8 sudo nixos-rebuild --show-trace --option eval-cache false --flake \"${config.home.homeDirectory}/Documents/projects/nixos-config#$(hostname)\" switch"; # -b backup
       gc = "nix store gc";
       # git = "git-branchless wrap --";
     };
     # TODO: https://thevaluable.dev/zsh-completion-guide-examples/
-    initExtraBeforeCompInit = ''
+    initContent = lib.mkOrder 500 ''
       # directory options
       setopt auto_cd
       setopt auto_pushd
@@ -59,9 +60,8 @@ in {
       setopt long_list_jobs       # show long list format job notifications
       setopt interactivecomments  # recognize comments
       setopt promptsubst          # enable prompt expansion
+
       # setopt extended_glob      # more glob patterns - breaks nix expressions with #
-    '';
-    initExtra = ''
       zstyle ':completion:*:*:*:*:*' menu select
 
       autoload -U up-line-or-beginning-search

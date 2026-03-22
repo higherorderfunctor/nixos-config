@@ -4,7 +4,7 @@
     ./bruno.nix
     ./chromium.nix
     ./discord.nix
-    ./evolution.nix
+    # ./evolution.nix
     ./firefox.nix
     ./gajim.nix
     ./gimp.nix
@@ -22,7 +22,7 @@
     # ./transmission.nix only cli and doing over docker
     # ./virtualbox.nix
     ./vlc.nix
-    ./vscode.nix
+    # ./vscode.nix
     ./webex.nix
     ./zoom.nix
     # ./wezterm.nix

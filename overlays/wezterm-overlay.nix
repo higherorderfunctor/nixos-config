@@ -1,3 +1,3 @@
 {inputs, ...}: final: _: {
-  wezterm = inputs.wezterm.packages.${final.system}.default;
+  wezterm = inputs.wezterm.packages.${final.stdenv.hostPlatform.system}.default;
 }

@@ -1,0 +1,65 @@
+{
+  "name": "meta-workflow",
+  "description": "Design, build, update, and refine kiro-cortex workflows. Use when creating new workflows or improving existing ones.",
+  "model": "claude-opus-4.6",
+  "prompt": "file://./prompts/meta-workflow.md",
+  "tools": ["*"],
+  "allowedTools": [
+    "@kiro-cortex",
+    "openmemory_query",
+    "openmemory_store",
+    "openmemory_reinforce",
+    "openmemory_list",
+    "openmemory_get",
+    "sequentialthinking",
+    "fs_read",
+    "fs_write",
+    "code",
+    "grep",
+    "glob",
+    "execute_bash",
+    "git_status",
+    "git_log",
+    "git_diff",
+    "git_show",
+    "git_add",
+    "git_commit",
+    "web_search",
+    "web_fetch",
+    "querydocs",
+    "resolvelibraryid",
+    "effect_docs_search",
+    "get_effect_doc"
+  ],
+  "toolsSettings": {
+    "fs_write": {
+      "allowedPaths": [
+        "home/caubut/features/cli/code/kiro/kiro-cortex/**",
+        "home/caubut/features/cli/code/kiro/kiro-config/**",
+        ".kiro/**"
+      ]
+    }
+  },
+  "includeMcpJson": true,
+  "resources": [
+    {
+      "type": "knowledgeBase",
+      "source": "file:///home/caubut/Documents/projects/nixos-config/home/caubut/features/cli/code/kiro/kiro-cortex/docs",
+      "name": "kiro-cortex-docs",
+      "description": "kiro-cortex architecture, use cases, and design decisions",
+      "indexType": "best",
+      "autoUpdate": true
+    },
+    "file:///home/caubut/Documents/projects/nixos-config/home/caubut/features/cli/code/kiro/kiro-cortex/resume.md"
+  ],
+  "hooks": {
+    "agentSpawn": [
+      {
+        "command": "cd ~/Documents/projects/nixos-config/home/caubut/features/cli/code/kiro/kiro-cortex && echo '=== kiro-cortex status ===' && git log --oneline -5 && echo '' && echo '=== uncommitted ===' && git status --short",
+        "timeout_ms": 5000
+      }
+    ]
+  },
+  "keyboardShortcut": "ctrl+shift+m",
+  "welcomeMessage": "Meta-workflow agent ready. I'll check available workflows first. What would you like to do — build, update, audit, or explore workflows?"
+}

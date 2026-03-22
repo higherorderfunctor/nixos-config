@@ -1,0 +1,233 @@
+# Interaction Logging
+
+Analyze conversation sessions to detect patterns and improve over time.
+
+## How It Works
+
+Kiro automatically saves every conversation turn to SQLite database:
+- Linux: `~/.local/share/kiro-cli/data.sqlite3`
+- macOS: `~/Library/Application Support/kiro-cli/data.sqlite3`
+
+Sessions stored per-directory with full transcripts. No manual saving needed.
+
+## Reflection Markers
+
+**Explicit flagging** - User types in chat (no slash):
+```
+reflect: Had to explain memory-first pattern again, consider promoting
+```
+
+I acknowledge: "Reflection noted: Had to explain memory-first pattern again"
+
+**Then I immediately store in OpenMemory:**
+- Tag: `interaction-analysis-reflection`
+- Content: The reflection text + enough reference data to locate in SQLite transcript
+- Required references: conversation ID, timestamp, surrounding context for grep/search
+- Example: "Reflection during kiro-audit-2026-03-08 validation (conversation_id: abc123, ~12:13 PM, discussing reflect: marker storage)"
+
+**Why store immediately:** Explicit `reflect:` markers indicate HIGH PRIORITY issues that are really bugging the user. These need to be recorded immediately, not discovered later through weekly analysis.
+
+**Why include references:** During analysis, I need to pull up the full conversation context from SQLite to understand what led to the reflection.
+
+**Why no slash:** CLI intercepts all `/commands` before I see them. Using `reflect:` (no slash) lets me detect it in message text.
+
+## Reflection Lifecycle
+
+Track reflection status to measure effectiveness of solutions.
+
+**States:**
+1. **flagged** - Initial state when reflect: marker detected and stored
+2. **solution-proposed** - Steering file updated with proposed solution
+3. **solution-testing** - Waiting for validation (user testing the change)
+4. **verified** - Solution confirmed working (pattern no longer occurs)
+5. **closed** - Archived after verification (moved to historical record)
+
+**How to track:**
+- Store status in reflection memory content: `Status: solution-testing`
+- Update status when applying changes: `openmemory_reinforce` with updated content
+- Query reflections by status: search for `Status: solution-testing` in content
+
+**When to update:**
+- **flagged → solution-proposed**: When steering file is updated with fix
+- **solution-proposed → solution-testing**: When user begins testing the change
+- **solution-testing → verified**: When pattern stops occurring (tracked over 2+ weeks)
+- **verified → closed**: After 1+ month of no recurrence, archive to historical record
+
+**Example memory content:**
+```
+Reflection: Truncating output AGAIN - third instance
+
+Status: solution-testing
+Solution: Updated SKILL.md with explicit execution instructions (2026-03-09)
+Testing period: 2026-03-09 to 2026-03-23
+
+Pattern: REPEATED mistake - not internalizing the "don't truncate analysis output" rule
+Root cause: Habit/convenience bias - defaulting to truncation without thinking
+```
+
+## Correction Signals
+
+**Explicit signals** (high confidence):
+- `reflect: [annotation]` → explicit-reflection
+- User says "no, do X instead" → correction-direct
+- User provides additional context after response → correction-context
+- User asks "why did you do X?" → correction-confusion
+
+**Implicit signals** (detect patterns):
+- User repeats similar request → repeated-reminder
+- User corrects tool choice → correction-tool
+- User clarifies requirements multiple times → correction-interpretation
+- User provides examples (I need more context) → correction-examples
+- User references steering files (I should have known) → correction-steering
+
+## Analysis Index
+
+Lightweight index in OpenMemory (tag: `interaction-analysis-index`):
+
+```
+Interaction Index (Week of YYYY-MM-DD)
+
+Repeated Reminders (HIGH SIGNAL):
+- Pattern: "Check memory before searching"
+  Count: 3
+  Session IDs: [session-id-1, session-id-2, session-id-3]
+  
+Correction Types:
+- Tool choice: 3 (session IDs: [...])
+- Interpretation: 2 (session IDs: [...])
+- Context gaps: 1 (session IDs: [...])
+
+Explicit Reflections (HIGHEST PRIORITY):
+- Count: 2
+- Memory IDs: [reflection-id-1, reflection-id-2]
+
+Weekly Stats:
+- Total sessions analyzed: 47
+- Sessions with corrections: 11
+- reflect: markers: 2 (stored in OpenMemory)
+- Correction rate: 23% (11/47)
+```
+
+**Index is for DISCOVERY, not promotion.**
+Always read full transcripts from SQLite before crafting promotion.
+
+**Explicit reflections are already in OpenMemory** (tag: `interaction-analysis-reflection`) and should be prioritized first during analysis.
+
+## Analysis Workflow
+
+**Phase 1: Analyze (always run first)**
+1. Query OpenMemory for last analysis timestamp (tag: `interaction-analysis-state`)
+2. **Run script with timestamp** - Script queries SQLite for sessions SINCE that timestamp only
+3. Store raw script output in OpenMemory (tag: `interaction-analysis-raw`) for resumability
+4. Post-process: For each correction, read SQLite context (message_index - 5 to message_index + 1)
+5. Extract actionable patterns, discard false positives
+6. Query explicit reflections (tag: `interaction-analysis-reflection`)
+7. Store each pattern as individual pending item (tag: `interaction-analysis-pending`)
+8. Update analysis state with NEW completion timestamp
+
+**Default behavior:** Script only processes NEW sessions since last run. Never reprocess all sessions unless this is the first run.
+
+**Phase 2: Review (can stop and resume)**
+1. "show pending" → Load pending patterns from OpenMemory
+2. "show accepted" → Load accepted patterns with status
+3. "accept X" / "reject X" → Update pattern status
+4. "work on X" → Generate proposals for accepted patterns
+5. Apply approved changes to steering files
+6. Track promotions and update reflection status
+
+**Discovery (index-based):**
+1. Query SQLite for sessions since last analysis
+2. Parse transcripts, detect correction signals
+3. Build index: pattern → count → session IDs
+4. Store in OpenMemory (tag: `interaction-analysis-index`)
+
+**Validation (full transcripts):**
+1. For HIGH PRIORITY patterns (count >= 3)
+2. Read full transcripts from SQLite using session IDs
+3. Extract specific interactions with context
+4. Verify pattern is actionable
+5. Store proposals in OpenMemory (tag: `interaction-analysis-proposal`)
+
+**Promotion:**
+1. Present proposals to user (ranked by priority)
+2. User reviews: Approve / Reject / Refine
+3. Apply approved changes to steering files
+4. Track in OpenMemory (tag: `interaction-analysis-promoted`)
+
+## Cleanup (After Analysis)
+
+**DELETE from OpenMemory:**
+- Approved/rejected proposals
+- Old index entries for promoted patterns
+
+**UPDATE in OpenMemory:**
+- Last analysis date (tag: `interaction-analysis-state`)
+- Regenerated index (remove promoted patterns)
+
+**NO CLEANUP of SQLite:**
+- Kiro manages database lifecycle
+- Session transcripts remain permanent
+
+## Weekly Reminder
+
+Check memory for "Last interaction analysis" date at session start.
+
+If 7+ days AND 10+ flagged interactions:
+- Prompt: "Your interaction log has N flagged items. Want to run analysis?"
+- If yes: Invoke interaction-analysis skill
+- If no: Update "Last interaction analysis" date (snooze)
+
+Track reminder state in memory (tag: `interaction-analysis-state`).
+
+## Repeated Reminder Detection
+
+When user corrects me, extract the "reminder" (what they're teaching me).
+
+**Process:**
+1. Detect correction signal (explicit or implicit)
+2. Extract pattern: "User wants me to do X before Y"
+3. Check index: Have they said this before?
+4. If yes: Increment count, update session IDs
+5. If count >= 3: Flag as HIGH PRIORITY for promotion
+
+**This is the key signal** - user training me on the same thing repeatedly.
+
+## Confidence Building Metrics
+
+Track to measure if learning system is working:
+
+**Leading indicators** (early signals):
+- Correction rate: Fewer corrections over time
+- First-try success rate: More tasks succeed without iteration
+- reflect: frequency: Fewer explicit callouts needed
+- Repeated reminder count: Decreasing over time
+
+**Baseline** (establish now, week 2):
+- Current correction rate
+- Current first-try success rate
+- Track weekly to see improvement
+
+**Feedback loop:**
+After promoting a pattern, track if it reduces corrections.
+If not, the pattern was wrong or incomplete - refine or remove.
+
+## What NOT to Log
+
+- Trivial Q&A (simple syntax questions)
+- Successful first-try tasks (no corrections)
+- Sensitive information (credentials, API keys, personal data)
+- Information already in steering files (redundant)
+
+## Integration with Existing Workflow
+
+This builds on existing infrastructure:
+- Uses SQLite database (Kiro's built-in session management)
+- Uses OpenMemory (analysis metadata only)
+- Uses agent skills (interaction-analysis)
+- Uses steering lifecycle (migrations/, _archive/)
+
+New additions:
+- This steering file
+- interaction-analysis skill (separate file)
+- OpenMemory tagging convention
+- reflect: command (message-based detection)

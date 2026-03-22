@@ -1,12 +1,17 @@
 _: (final: prev: let
-  nv = (import ./nvpkgs.nix)."bun-${final.system}";
-  version = "${nv.version}-1";
+  nv =
+    ((import ./.nvfetcher/generated.nix) {
+      inherit (final) fetchgit fetchurl fetchFromGitHub dockerTools;
+    })
+    ."bun-${final.stdenv.hostPlatform.system}";
 in {
   bun = prev.bun.overrideAttrs {
-    inherit version;
-    postPhases = []; # FIXME: causing segfaults on completions
-    src = final.fetchurl {
-      inherit (nv.src) url sha256;
-    };
+    inherit (nv) src version;
+
+    meta =
+      prev.bun.meta
+      // {
+        changelog = builtins.replaceStrings [prev.bun.version] [nv.version] prev.bun.meta.changelog;
+      };
   };
 })

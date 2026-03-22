@@ -35,13 +35,13 @@ src.git = "https://github.com/catppuccin/gtk.git"
 src.use_commit = true
 fetch.git = "https://github.com/catppuccin/gtk.git"
 
-[catppuccin-hyprland ]
+[catppuccin-hyprland]
 src.git = "https://github.com/catppuccin/hyprland.git"
 src.use_commit = true
 src.branch = "main"
 fetch.git = "https://github.com/catppuccin/hyprland.git"
 
-[catppuccin-hyprlock ]
+[catppuccin-hyprlock]
 src.git = "https://github.com/catppuccin/hyprlock.git"
 src.use_commit = true
 src.branch = "main"
@@ -59,13 +59,13 @@ fetch.url = "https://www.internic.net/domain/named.root"
 [fblog]
 src.github = "brocode/fblog"
 fetch.github = "brocode/fblog"
-cargo_locks = ["Cargo.lock"]
+cargo_lock = ["Cargo.lock"]
 
-[gitlab-language-server]
-src.git = "https://gitlab.com/gitlab-org/editor-extensions/gitlab-lsp.git"
-src.use_commit = true
-src.branch = "main"
-fetch.git = "https://gitlab.com/gitlab-org/editor-extensions/gitlab-lsp.git"
+# [gitlab-language-server]
+# src.git = "https://gitlab.com/gitlab-org/editor-extensions/gitlab-lsp.git"
+# src.use_commit = true
+# src.branch = "main"
+# fetch.git = "https://gitlab.com/gitlab-org/editor-extensions/gitlab-lsp.git"
 
 [gluetun-src]
 src.github = "qdm12/gluetun"
@@ -92,7 +92,7 @@ fetch.github = "qdm12/gluetun"
 #  };
 #
 #  "gluetun": {
-#    "cargoLocks": null,
+#    "cargoLock": null,
 #    "date": null,
 #    "extract": null,
 #    "name": "gluetun",
@@ -134,16 +134,17 @@ src.from_pattern = "v([0-9]+\\.[0-9]+\\.[0-9]+)"
 src.to_pattern = "\\1"
 fetch.url = "https://github.com/ymtdzzz/otel-tui/releases/download/v$ver/otel-tui_Linux_x86_64.tar.gz"
 
-[oxc]
-src.github = "oxc-project/oxc"
-src.from_pattern = "oxlint_v([0-9]+\\.[0-9]+\\.[0-9]+)"
-src.to_pattern = "\\1"
-fetch.url = "https://github.com/oxc-project/oxc/archive/refs/tags/oxlint_v$ver.tar.gz"
-cargo_locks = ["Cargo.lock"]
+# [oxc]
+# src.github = "oxc-project/oxc"
+# src.from_pattern = "oxlint_v([0-9]+\\.[0-9]+\\.[0-9]+)"
+# src.to_pattern = "\\1"
+# fetch.url = "https://github.com/oxc-project/oxc/archive/refs/tags/oxlint_v$ver.tar.gz"
+# cargo_lock = ["Cargo.lock"]
 
 [pnpm]
 src.github_tag = "pnpm/pnpm"
 src.from_pattern = "v([0-9]+\\.[0-9]+\\.[0-9]+)"
+src.exclude_regex = ".*-(alpha|beta|dev)\\.[0-9]+"
 src.to_pattern = "\\1"
 fetch.url = "https://registry.npmjs.org/pnpm/-/pnpm-$ver.tgz"
 url.name = "pnpm.tgz"
@@ -156,15 +157,15 @@ fetch.github = "stoplightio/spectral"
 src.github = "stoplightio/vscode-spectral"
 fetch.github = "stoplightio/vscode-spectral"
 
-[standardnotes-desktop-deb-x86_64-linux]
-src.github_tag = "standardnotes/app"
-src.include_regex = "^@standardnotes/desktop@[0-9]+\\.[0-9]+\\.[0-9]+$"
-# no binary with this release
-src.exclude_regex = "^@standardnotes/desktop@3.195.26"
-src.from_pattern = "^@standardnotes/desktop@([0-9]+\\.[0-9]+\\.[0-9]+)$"
-src.to_pattern = "\\1"
-fetch.url = "https://github.com/standardnotes/app/releases/download/@standardnotes/desktop@$ver/standard-notes-$ver-linux-amd64.deb"
-url.name = "standardnotes-desktop-x86_64-linux.deb"
+# [standardnotes-desktop-deb-x86_64-linux]
+# src.github_tag = "standardnotes/app"
+# src.include_regex = "^@standardnotes/desktop@[0-9]+\\.[0-9]+\\.[0-9]+$"
+# # no binary with this release
+# src.exclude_regex = "^@standardnotes/desktop@3.195.26"
+# src.from_pattern = "^@standardnotes/desktop@([0-9]+\\.[0-9]+\\.[0-9]+)$"
+# src.to_pattern = "\\1"
+# fetch.url = "https://github.com/standardnotes/app/releases/download/@standardnotes/desktop@$ver/standard-notes-$ver-linux-amd64.deb"
+# url.name = "standardnotes-desktop-x86_64-linux.deb"
 
 [tree-sitter-cql]
 src.github_tag = "shotover/tree-sitter-cql"
@@ -179,3 +180,32 @@ src.git = "https://github.com/L4ki/Vivid-Plasma-Themes.git"
 src.use_commit = true
 src.branch = "main"
 fetch.git = "https://github.com/L4ki/Vivid-Plasma-Themes.git"
+
+[gh]
+src.github = "cli/cli"
+fetch.github = "cli/cli"
+
+[github-copilot-cli]
+src.github = "github/copilot-cli"
+src.from_pattern = "v([0-9]+\\.[0-9]+\\.[0-9]+)$"
+src.exclude_regex = ".*-[0-9]+$"
+src.to_pattern = "\\1"
+fetch.url = "https://github.com/github/copilot-cli/releases/download/v$ver/copilot-linux-x64.tar.gz"
+
+[kiro-cli]
+src.cmd = "curl -s https://desktop-release.q.us-east-1.amazonaws.com/latest/manifest.json | jq -r '.version'"
+fetch.url = "https://desktop-release.q.us-east-1.amazonaws.com/$ver/kirocli-x86_64-linux.tar.gz"
+
+[kiro-gateway]
+src.git = "https://github.com/jwadow/kiro-gateway.git"
+src.use_commit = true
+src.branch = "main"
+fetch.git = "https://github.com/jwadow/kiro-gateway.git"
+
+[mcp-server-fetch]
+src.pypi = "mcp-server-fetch"
+fetch.pypi = "mcp_server_fetch"
+
+[sympy-mcp]
+src.github = "sdiehl/sympy-mcp"
+fetch.github = "sdiehl/sympy-mcp"

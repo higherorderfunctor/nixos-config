@@ -14,7 +14,7 @@ return {
   "sindrets/diffview.nvim",
   lazy = false, -- for 'git mergetool' to ensure it is loaded
   keys = {
-    { "<leader>gd", diffview_toggle, desc = "Diffview" },
+    { "<leader>gD", diffview_toggle, desc = "Diffview" },
   },
 }
 

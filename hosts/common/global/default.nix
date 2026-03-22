@@ -9,11 +9,12 @@
   imports =
     [
       inputs.home-manager.nixosModules.home-manager
+      inputs.nixos-secrets.nixosModules.default
+      inputs.sops-nix.nixosModules.sops
       ./impermanence.nix
       ./mutable-users.nix
       ./nix.nix
       ./nvim.nix
-      ./sops.nix
       ./zsh.nix
       ../users/caubut
     ]
@@ -109,7 +110,4 @@
     ];
   };
 
-  environment.etc = {
-    "ssh/ssh_host_ed25519_key.pub".source = ../../${config.networking.hostName}/secrets/ssh_host_ed25519_key.pub;
-  };
 }

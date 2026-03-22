@@ -1,0 +1,74 @@
+instructions:
+- id: "effect-services"
+  text: |
+    Effect-TS service pattern: use Context.Tag + Layer.effect for external API clients
+    (OPA, Ollama). Type is inferred from HttpApiClient.make — no Effect.Service wrapper.
+    Use Effect.Service with dependencies array for infrastructure services (BlockRegistry,
+    InstructionRepo) that have custom logic beyond a client. Every module exporting a Layer
+    MUST export it as `export const layer = ...`.
+  metadata:
+    agent_role: "workflow-builder"
+    task_type: "authoring"
+    domain: "conventions"
+    repo: null
+  content_hash: "seed"
+
+- id: "effect-schema"
+  text: |
+    Schema is imported from "effect" directly — NOT from @effect/schema.
+    Use Schema.transform for envelope unwrapping (e.g., OPA { result: T } → T).
+    Use .addError(ErrorSchema) on HttpApiEndpoint with schemas matching external API
+    error shapes. Use Schema.TaggedError for domain errors, co-located with their
+    domain module. Use Schema.optionalWith for optional fields with defaults.
+  metadata:
+    agent_role: "workflow-builder"
+    task_type: "authoring"
+    domain: "conventions"
+    repo: null
+  content_hash: "seed"
+
+- id: "effect-generators"
+  text: |
+    All effectful code uses Effect.gen(function* () { ... }).
+    Yield services: const repo = yield* InstructionRepo.
+    Yield effects: yield* Effect.tryPromise({ try: ..., catch: ... }).
+    Use Effect.logInfo/logDebug/logError inside generators for logging.
+    Read env vars via Config: yield* Config.boolean("VAR").pipe(Config.withDefault(false)).
+  metadata:
+    agent_role: "workflow-builder"
+    task_type: "authoring"
+    domain: "conventions"
+    repo: null
+  content_hash: "seed"
+
+- id: "effect-error-visibility"
+  text: |
+    Effect error handling at boundaries:
+
+    MCP tool handlers / fiber boundaries that return results to callers: use Effect.sandbox
+    to lift defects into the error channel, then catchAll to log and return the error as a
+    string. NEVER use orDie at these boundaries — it converts errors to defects which kills
+    the server process. Pattern:
+      myEffect.pipe(
+        Effect.sandbox,
+        Effect.catchAll((cause) =>
+          Effect.logError(Cause.pretty(cause)).pipe(
+            Effect.map(() => JSON.stringify({ error: Cause.pretty(cause) })),
+          ),
+        ),
+      )
+    Imports: { Effect, Cause } from "effect".
+
+    Process-level boundaries (runMain, Layer.launch): tapError + tapDefect is fine since
+    there's no caller to return to — just log before exit. Pattern:
+      myEffect.pipe(
+        Effect.tapError(flow(Inspectable.toStringUnknown, Effect.logError)),
+        Effect.tapDefect(flow(Inspectable.toStringUnknown, Effect.logFatal)),
+      )
+    Imports: { Effect, Inspectable, flow } from "effect".
+  metadata:
+    agent_role: "workflow-builder"
+    task_type: "authoring"
+    domain: "conventions"
+    repo: null
+  content_hash: "seed"

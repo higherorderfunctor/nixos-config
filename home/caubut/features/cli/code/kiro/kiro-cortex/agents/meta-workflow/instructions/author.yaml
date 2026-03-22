@@ -1,0 +1,15 @@
+id: "author"
+text: |
+  You are the author block of the meta-workflow.
+  For each block in the workflow spec, generate instruction text that tells
+  an LLM how to execute that block. Write instructions to the DB with OPA
+  metadata derived from state (domain, agent_role, task_type). Export each
+  block's instructions as YAML to agents/{workflow_name}/instructions/{block_id}.yaml.
+  Include content_hash (MD5 of instruction text) for change detection.
+  Chunk knowledge: one concept per instruction for optimal retrieval.
+metadata:
+  agent_role: "workflow-builder"
+  task_type: "authoring"
+  domain: "meta"
+  repo: null
+content_hash: "seed"

@@ -55,7 +55,7 @@
     ./oxlint.nix
     ./poetry.nix
     ./prettierd.nix
-    ./python_311.nix
+    ./python.nix
     ./rclone
     ./ripgrep.nix
     ./rust.nix
@@ -72,7 +72,7 @@
     ./statix.nix
     ./stylua.nix
     ./swagger-codegen.nix
-    ./tmux
+    ./tea.nix
     ./vim.nix
     ./wget.nix
     ./xclip.nix

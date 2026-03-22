@@ -1,0 +1,462 @@
+#!/usr/bin/env python3
+"""
+Interaction Analysis - Parallel Session Analyzer
+Analyzes Kiro chat sessions for correction patterns using Ollama.
+"""
+
+import argparse
+import asyncio
+import json
+import sqlite3
+from datetime import datetime, timedelta
+from pathlib import Path
+import sys
+import time
+import os
+
+try:
+    from ollama import AsyncClient
+except ImportError:
+    print("Error: ollama package not found. Run: home-manager switch", file=sys.stderr)
+    sys.exit(1)
+
+# Configuration
+DB_PATH = Path.home() / ".local/share/kiro-cli/data.sqlite3"
+OLLAMA_MODEL = "llama3.2:3b"
+OLLAMA_URL = "http://localhost:11434"
+CLASSIFICATION_PROMPT = """Is this user message correcting the AI assistant's mistake or expressing frustration?
+
+Answer YES only if the message contains:
+- "no" or "wrong" or "incorrect" (rejecting assistant's action)
+- "again" or "I told you" or "like I said" (repetition signal)
+- "why did you" or "why do you keep" (questioning wrong behavior)
+
+Answer NO for:
+- Questions without correction ("how do I...", "what about...")
+- Providing information or context
+- Confirming or acknowledging ("ok", "yes", "thanks")
+- Giving new instructions (not correcting old ones)
+- Clarifying requirements
+- Negative requirements ("don't include X", "stop at Y")
+
+User message: "{message}"
+
+Answer only: yes or no"""
+
+SUFFICIENCY_PROMPT = """You are analyzing a correction from a user to an AI assistant.
+
+Context so far (most recent last):
+{messages}
+
+Question: Do you have enough information to understand:
+1. What the assistant did wrong?
+2. Why the assistant did it?
+3. What the user wants instead?
+
+Answer ONLY with one word: SUFFICIENT or NEED_MORE"""
+
+SUMMARY_PROMPT = """Analyze this correction from a user to an AI assistant.
+
+Conversation context (most recent last):
+{messages}
+
+Provide a summary using these exact markers:
+
+ERROR: What did the assistant do wrong?
+CAUSE: Why did the assistant do it (what was misunderstood)?
+CORRECTION: What did the user say to do instead?
+PATTERN: Is this a recurring issue? Related to what?
+CONTEXT: Any other relevant details?
+
+Use the markers exactly as shown above."""
+
+# Progress tracking - DRY implementation
+class ProgressTracker:
+    """Reusable progress tracker for different stages."""
+    def __init__(self):
+        self.start_time = None
+        self.last_update = 0
+    
+    def show(self, task_name, current, total):
+        """Show progress for a specific task."""
+        now = time.time()
+        # Throttle updates to every 0.5 seconds (but always show 100% and beyond)
+        if now - self.last_update < 0.5 and current != total:
+            return
+        self.last_update = now
+        
+        if self.start_time is None:
+            self.start_time = now
+        
+        if total > 0:
+            pct = (current / total) * 100
+            elapsed = now - self.start_time
+            
+            # Format elapsed time
+            if elapsed < 60:
+                elapsed_str = f"{int(elapsed)}s"
+            else:
+                elapsed_str = f"{int(elapsed/60)}m {int(elapsed%60)}s"
+            
+            # Calculate ETA (skip for first few samples for warmup)
+            if current > 3:
+                rate = current / elapsed
+                remaining = (total - current) / rate if rate > 0 else 0
+                if remaining < 60:
+                    eta_str = f" | ETA: {int(remaining)}s"
+                else:
+                    eta_str = f" | ETA: {int(remaining/60)}m {int(remaining%60)}s"
+            else:
+                eta_str = ""
+            
+            sys.stderr.write(f"\r{task_name}: {current}/{total} ({pct:.1f}%) | Elapsed: {elapsed_str}{eta_str}    ")
+            sys.stderr.flush()
+    
+    def finish(self, task_name):
+        """Mark task as complete and move to new line."""
+        now = time.time()
+        if self.start_time:
+            elapsed = now - self.start_time
+            if elapsed < 60:
+                elapsed_str = f"{int(elapsed)}s"
+            else:
+                elapsed_str = f"{int(elapsed/60)}m {int(elapsed%60)}s"
+            sys.stderr.write(f"\n{task_name}: Complete (Elapsed: {elapsed_str})\n")
+        else:
+            sys.stderr.write(f"\n{task_name}: Complete\n")
+        sys.stderr.flush()
+        self.start_time = None  # Reset for next stage
+
+# Global progress tracker
+progress = ProgressTracker()
+
+def check_ollama_model():
+    """Check if Ollama model exists, pull if needed."""
+    import subprocess
+    result = subprocess.run(
+        ["ollama", "list"],
+        capture_output=True,
+        text=True
+    )
+    
+    if OLLAMA_MODEL not in result.stdout:
+        print(f"Pulling {OLLAMA_MODEL}...", file=sys.stderr)
+        subprocess.run(["ollama", "pull", OLLAMA_MODEL], check=True)
+    else:
+        print(f"✓ {OLLAMA_MODEL} available", file=sys.stderr)
+
+def get_sessions_since(cutoff_date):
+    """Query SQLite for sessions since cutoff date."""
+    conn = sqlite3.connect(DB_PATH)
+    cursor = conn.cursor()
+    
+    cutoff_ms = int(cutoff_date.timestamp() * 1000)
+    
+    cursor.execute("""
+        SELECT conversation_id, key, value
+        FROM conversations_v2
+        WHERE updated_at > ?
+        ORDER BY updated_at DESC
+    """, (cutoff_ms,))
+    
+    sessions = []
+    for row in cursor.fetchall():
+        conv_id, workspace, value_json = row
+        value = json.loads(value_json)
+        transcript = value.get("transcript", [])
+        sessions.append((conv_id, workspace, transcript))
+    
+    conn.close()
+    return sessions
+
+def get_transcript_for_session(session_id):
+    """Get full transcript for a specific session."""
+    conn = sqlite3.connect(DB_PATH)
+    cursor = conn.cursor()
+    
+    cursor.execute("""
+        SELECT value FROM conversations_v2
+        WHERE conversation_id = ?
+        LIMIT 1
+    """, (session_id,))
+    
+    row = cursor.fetchone()
+    conn.close()
+    
+    if row:
+        value = json.loads(row[0])
+        return value.get("transcript", [])
+    return []
+
+async def check_context_sufficiency(client, messages):
+    """Ask Ollama if context is sufficient to understand the correction."""
+    try:
+        # Format messages for display
+        formatted = "\n".join([f"[{i}] {msg[:200]}" for i, msg in enumerate(messages)])
+        
+        prompt = SUFFICIENCY_PROMPT.format(messages=formatted)
+        response = await client.generate(
+            model=OLLAMA_MODEL,
+            prompt=prompt,
+            options={"temperature": 0, "num_ctx": 8192}  # Increased context window for 10-message contexts
+        )
+        
+        return "SUFFICIENT" in response['response'].upper()
+        
+    except Exception:
+        # On error, assume we need more context
+        return False
+
+async def gather_adaptive_context(client, session_id, message_index, max_messages=10, chunk_size=5):
+    """Gather context adaptively - add messages in chunks until Ollama says sufficient."""
+    transcript = get_transcript_for_session(session_id)
+    
+    if not transcript or message_index >= len(transcript):
+        return []
+    
+    # Start with just the correction message
+    context = [transcript[message_index]]
+    
+    # Add messages in chunks
+    messages_added = 0
+    while messages_added < max_messages:
+        # Check if current context is sufficient
+        is_sufficient = await check_context_sufficiency(client, context)
+        if is_sufficient:
+            break
+        
+        # Add next chunk of messages (up to chunk_size)
+        chunk_end = message_index - messages_added - 1
+        chunk_start = max(0, chunk_end - chunk_size + 1)
+        
+        if chunk_start < 0 or chunk_end < 0:
+            break
+        
+        # Add chunk to beginning of context
+        for i in range(chunk_end, chunk_start - 1, -1):
+            if i >= 0:
+                context.insert(0, transcript[i])
+                messages_added += 1
+                if messages_added >= max_messages:
+                    break
+    
+    return context
+
+async def generate_summary(client, messages):
+    """Generate marker-based summary of the correction."""
+    try:
+        # Format messages for display
+        formatted = "\n".join([f"[{i}] {msg[:500]}" for i, msg in enumerate(messages)])
+        
+        prompt = SUMMARY_PROMPT.format(messages=formatted)
+        response = await client.generate(
+            model=OLLAMA_MODEL,
+            prompt=prompt,
+            options={"temperature": 0, "num_ctx": 8192}  # Increased context window for 10-message contexts
+        )
+        
+        return response['response'].strip()
+        
+    except Exception as e:
+        return f"ERROR: Failed to generate summary\nCAUSE: {str(e)}\nCORRECTION: Unknown\nPATTERN: Unknown\nCONTEXT: Summary generation failed"
+
+async def classify_message(client, message):
+    """Ask Ollama if a message is a correction (yes/no) using async."""
+    try:
+        # Skip explicit reflect: markers (handled separately in OpenMemory)
+        if message.strip().lower().startswith("reflect:"):
+            return False
+        
+        prompt = CLASSIFICATION_PROMPT.format(message=message[:500])
+        response = await client.generate(
+            model=OLLAMA_MODEL,
+            prompt=prompt,
+            options={"temperature": 0}  # Deterministic for classification
+        )
+        
+        return "yes" in response['response'].lower()
+        
+    except Exception:
+        return False
+
+async def analyze_session(client, session_id, workspace, transcript, session_num, total_sessions, classification_counter):
+    """Analyze a single session - find correction messages."""
+    try:
+        # Extract user messages with indices
+        user_messages = [(i, msg[2:]) for i, msg in enumerate(transcript) if msg.startswith("> ") and len(msg.strip()) >= 3]
+        
+        if not user_messages:
+            return None
+        
+        # Create all classification tasks
+        tasks = [classify_message(client, user_msg) for i, user_msg in user_messages]
+        
+        # Wait for all classifications for this session
+        results = await asyncio.gather(*tasks)
+        
+        # Update classification progress
+        classification_counter['current'] += len(user_messages)
+        progress.show("Classifying messages", classification_counter['current'], classification_counter['total'])
+        
+        # Collect corrections (just indices for now)
+        correction_indices = [(i, user_msg) for (i, user_msg), is_correction in zip(user_messages, results) if is_correction]
+        
+        return {
+            "session_id": session_id,
+            "workspace": workspace,
+            "correction_indices": correction_indices,
+            "transcript": transcript
+        }
+        
+    except Exception as e:
+        return None
+
+async def process_correction(client, session_id, message_index, user_msg, transcript, correction_counter):
+    """Process a single correction: gather context and summarize."""
+    try:
+        # Gather adaptive context
+        context = await gather_adaptive_context(client, session_id, message_index)
+        
+        # Generate summary
+        summary = await generate_summary(client, context)
+        
+        # Update progress
+        correction_counter['current'] += 1
+        progress.show("Processing corrections", correction_counter['current'], correction_counter['total'])
+        
+        return {
+            "message_index": message_index,
+            "user_message": user_msg,
+            "context_messages": len(context),
+            "summary": summary
+        }
+    except Exception as e:
+        return None
+
+async def main_async(since_timestamp=None):
+    # Check Ollama model
+    check_ollama_model()
+    
+    # Get cutoff date
+    if since_timestamp:
+        cutoff_date = datetime.fromisoformat(since_timestamp)
+        print(f"Analyzing sessions since {cutoff_date.strftime('%Y-%m-%d %H:%M:%S')}", file=sys.stderr)
+    else:
+        cutoff_date = datetime.now() - timedelta(days=7)
+        print(f"Analyzing sessions since {cutoff_date.strftime('%Y-%m-%d')} (7 days ago, first run)", file=sys.stderr)
+    
+    # Get sessions
+    sessions = get_sessions_since(cutoff_date)
+    print(f"Found {len(sessions)} sessions\n", file=sys.stderr)
+    
+    if not sessions:
+        print("No sessions to analyze", file=sys.stderr)
+        output = {
+            "analyzed_at": datetime.now().isoformat(),
+            "cutoff_date": cutoff_date.isoformat(),
+            "total_sessions": 0,
+            "sessions_with_patterns": 0,
+            "results": []
+        }
+        print(json.dumps(output, indent=2))
+        return
+    
+    # Count total messages for classification
+    total_messages = sum(
+        sum(1 for msg in transcript if msg.startswith("> ") and len(msg.strip()) >= 3)
+        for _, _, transcript in sessions
+    )
+    
+    # Shared counter for classification progress
+    classification_counter = {'current': 0, 'total': total_messages}
+    
+    # Phase 1: Classify all messages
+    client = AsyncClient(host=OLLAMA_URL)
+    classify_tasks = [
+        analyze_session(client, sid, ws, transcript, idx+1, len(sessions), classification_counter)
+        for idx, (sid, ws, transcript) in enumerate(sessions)
+    ]
+    
+    # Wait for all classifications
+    classified_sessions = []
+    for coro in asyncio.as_completed(classify_tasks):
+        result = await coro
+        if result and result["correction_indices"]:
+            classified_sessions.append(result)
+    
+    # Finish classification progress
+    total_corrections = sum(len(s["correction_indices"]) for s in classified_sessions)
+    progress.finish(f"Classifying messages ({total_corrections} corrections found)")
+    
+    # Phase 2: Process corrections (context gathering + summarization)
+    if not classified_sessions:
+        output = {
+            "analyzed_at": datetime.now().isoformat(),
+            "cutoff_date": cutoff_date.isoformat(),
+            "total_sessions": len(sessions),
+            "sessions_with_patterns": 0,
+            "results": []
+        }
+        print(json.dumps(output, indent=2))
+        return
+    
+    # Count total corrections
+    total_corrections = sum(len(s["correction_indices"]) for s in classified_sessions)
+    correction_counter = {'current': 0, 'total': total_corrections}
+    
+    # Process all corrections
+    correction_tasks = []
+    for session in classified_sessions:
+        for i, user_msg in session["correction_indices"]:
+            correction_tasks.append(
+                process_correction(client, session["session_id"], i, user_msg, session["transcript"], correction_counter)
+            )
+    
+    # Wait for all corrections to be processed
+    all_corrections = []
+    for coro in asyncio.as_completed(correction_tasks):
+        result = await coro
+        if result:
+            all_corrections.append(result)
+    
+    # Finish correction processing progress
+    progress.finish("Processing corrections")
+    
+    # Group corrections by session
+    results = []
+    for session in classified_sessions:
+        session_corrections = [
+            c for c in all_corrections 
+            if any(c["message_index"] == idx for idx, _ in session["correction_indices"])
+        ]
+        if session_corrections:
+            results.append({
+                "session_id": session["session_id"],
+                "workspace": session["workspace"],
+                "corrections": session_corrections
+            })
+    
+    # Output results (stdout only)
+    output = {
+        "analyzed_at": datetime.now().isoformat(),
+        "cutoff_date": cutoff_date.isoformat(),
+        "total_sessions": len(sessions),
+        "sessions_with_patterns": len(results),
+        "results": results
+    }
+    
+    print(json.dumps(output, indent=2))
+
+def main():
+    parser = argparse.ArgumentParser(description="Analyze Kiro sessions for correction patterns")
+    parser.add_argument(
+        "--since",
+        type=str,
+        help="ISO 8601 timestamp to analyze sessions since (e.g., 2026-03-09T17:00:00). If not provided, analyzes last 7 days."
+    )
+    args = parser.parse_args()
+    
+    asyncio.run(main_async(since_timestamp=args.since))
+
+if __name__ == "__main__":
+    main()

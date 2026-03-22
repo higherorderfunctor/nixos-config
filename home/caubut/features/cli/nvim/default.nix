@@ -22,7 +22,10 @@
   #   generate = true;
   # };
 in {
-  home.packages = [pkgs.tree-sitter];
+  home = {
+    packages = with pkgs; [tree-sitter mcp-hub];
+  };
+
   programs.neovim = {
     enable = true;
     package = pkgs.neovim;
@@ -32,6 +35,12 @@ in {
       fswatch
       # NOTE: bundled with nightly
       # tree-sitter
+    ];
+    extraWrapperArgs = [
+      "--prefix"
+      "LD_LIBRARY_PATH"
+      ":"
+      "${pkgs.lib.makeLibraryPath [pkgs.openssl]}"
     ];
   };
 

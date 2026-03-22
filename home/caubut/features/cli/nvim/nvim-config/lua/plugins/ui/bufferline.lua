@@ -1,9 +1,14 @@
 return {
   "akinsho/bufferline.nvim",
   dependencies = { "catppuccin" },
+  -- TODO: Remove this once https://github.com/LazyVim/LazyVim/pull/6354 is merged
+  init = function()
+    local bufline = require("catppuccin.special.bufferline")
+    bufline.get = bufline.get_theme
+  end,
   opts = function(_, opts)
-    local highlights = require("catppuccin.groups.integrations.bufferline").get()(opts.highlights or {})
-    opts.options.always_show_bufferline = true
+    local highlights = require("catppuccin.special.bufferline").get_theme()(opts.highlights or {})
+    -- opts.options.always_show_bufferline = true
     return vim.list_extend(opts or {}, {
       options = {
         always_show_bufferline = true,

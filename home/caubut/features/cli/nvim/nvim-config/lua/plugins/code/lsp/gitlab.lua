@@ -11,7 +11,7 @@ return {
     return true
   end,
   opts = {
-    gitlab_url = "https://gitlab.spectrumflow.net",
+    gitlab_url = vim.env.GITLAB_CUSTOM_URL or "https://gitlab.com",
     statusline = {
       -- Hook into the built-in statusline to indicate the status
       -- of the GitLab Duo Code Suggestions integration

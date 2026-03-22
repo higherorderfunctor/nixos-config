@@ -1,0 +1,11 @@
+id: "dungeon-crawler-test-harness"
+name: "dungeon-crawler-test-harness"
+description: "Procedural Myst-style dungeon crawler validating OPA→RAG→LangGraph at scale"
+steps:
+  - block_id: "navigate"
+  - block_id: "assess"
+  - block_id: "inspect"
+  - block_id: "pickup"
+  - block_id: "combine"
+  - block_id: "use_item"
+  - block_id: "verify"

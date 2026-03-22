@@ -1,10 +1,10 @@
 local util = require("lspconfig.util")
 
--- local function custom_root_dir(fname)
---   local root = util.root_pattern("tsconfig.json", "package.json", "jsconfig.json", ".git")(fname)
---   require("lazyvim.util").info("Detected root directory: " .. (root or "none"))
---   return root
--- end
+local function custom_root_dir(fname)
+  local root = util.root_pattern("tsconfig.json", "package.json", "jsconfig.json", ".git")(fname)
+  require("lazyvim.util").info("Detected root directory: " .. (root or "none"))
+  return root
+end
 
 local eslint_lsp_path = vim.fn.getcwd()
   .. "/node_modules/vscode-langservers-extracted/lib/eslint-language-server/eslintServer.js"
@@ -17,6 +17,20 @@ if vim.loop.fs_stat(eslint_lsp_path) then
 end
 
 -- require("lazyvim.util").info(eslint_lsp)
+
+local vue_plugin = {
+  name = "@vue/typescript-plugin",
+  --  location = vim.fn.getcwd() .. "/usr/local/lib/node_modules",
+  configNamespace = "typescript",
+  enableForWorkspaceTypeScriptVersions = true,
+  location = custom_root_dir() .. "/node_modules/@vue/language-server",
+  languages = { "vue", "typescript" },
+}
+
+--                   languages = { "vue" },
+--                   configNamespace = "typescript",
+--                   enableForWorkspaceTypeScriptVersions = true,
+--                 },
 
 return {
   {
@@ -68,147 +82,164 @@ return {
       return opts
     end,
     config = function(_, opts)
-      require("lazyvim.util").lsp.on_attach(function(client)
-        if client.name == "eslint" then
-          client.server_capabilities.documentFormattingProvider = true
-        elseif client.name == "tsserver" or client.name == "vtsls" or client.name == "volar" then
-          client.server_capabilities.documentFormattingProvider = false
+      Snacks.util.lsp.on(function(client_id)
+        local client = vim.lsp.get_client_by_id(client_id)
+        if client then
+          if client.name == "eslint" then
+            client.server_capabilities.documentFormattingProvider = true
+          elseif client.name == "tsserver" or client.name == "vtsls" or client.name == "volar" then
+            client.server_capabilities.documentFormattingProvider = false
+          end
         end
       end)
       require("nvim-eslint").setup(opts)
-      -- require("lazyvim.util").info(
-      --   "ESLint post-setup-opts: " .. vim.inspect(require("nvim-eslint").make_settings(vim.api.nvim_get_current_buf()))
-      -- )
     end,
   },
   {
     "neovim/nvim-lspconfig",
-    opts = function(_, opts)
-      return vim.tbl_deep_extend("force", opts or {}, {
-        diagnostics = {
-          underline = true,
-          update_in_insert = false,
+    opts = {
+      diagnostics = {
+        underline = true,
+        update_in_insert = true,
+      },
+    },
+  },
+  {
+    "neovim/nvim-lspconfig",
+    opts = {
+      servers = {
+        ["*"] = {
+          keys = {
+            { "<leader>cz", "<cmd>LspRestart<cr>", desc = "Restart LSP" },
+          },
         },
-        servers = {
-          bashls = { mason = false },
-          docker_compose_language_service = { mason = false },
-          dockerls = { mason = false },
-          jsonls = {
-            cmd = { "vscode-json-languageserver", "--stdio" },
-            mason = false,
+        bashls = { mason = false },
+        docker_compose_language_service = { mason = false },
+        dockerls = { mason = false },
+        jsonls = {
+          cmd = { "vscode-json-languageserver", "--stdio" },
+          mason = false,
+        },
+        eslint = {
+          enabled = false,
+        },
+        lua_ls = {
+          cmd = { "lua-language-server" },
+          mason = false,
+        },
+        dprint = {
+          mason = false,
+          filetypes = {
+            "javascript",
+            "javascriptreact",
+            "typescript",
+            "typescriptreact",
+            "json",
+            "json5",
+            "jsonc",
+            "markdown",
+            "python",
+            "toml",
+            "rust",
+            "roslyn",
+            "graphql",
           },
-          -- vtsls = {
-          --   cmd = { "bunx", "--bun", "vtsls", "--stdio" },
-          --   -- cmd = { vim.fn.getcwd() .. "/bin/vtsls.sh", "--stdio" },
-          --   root_dir = custom_root_dir,
-          -- },
-          eslint = {
-            enabled = false,
-            --   -- cmd = { "bun", eslint_lsp_path, "--stdio" },
-            --   -- NOTE: useful for getting logs
-            --   -- cmd = vim.list_extend(eslint_lsp, { "--stdio" }),
-            --   flags = {
-            --     unstable_ts_config = true,
-            --   },
-            --   settings = {
-            --     --cache = true,
-            --     -- debug = "*",
-            --     -- useFlatConfig = true, -- set if using flat config
-            --     options = {
-            --       flags = { "unstable_ts_config" },
-            --       cache = false,
-            --     },
-            --     --overrideConfigFile = vim.fn.getcwd() .. "/eslint.config.ts",
-            --     -- experimental = {
-            --     --   useFlatConfig = nil, -- option not in the latest eslint-lsp
-            --     -- },
-            --   },
-          },
-          lua_ls = {
-            cmd = { "lua-language-server" },
-            mason = false,
-          },
-          dprint = {
-            mason = false,
-            filetypes = {
-              "javascript",
-              "javascriptreact",
-              "typescript",
-              "typescriptreact",
-              "json",
-              "json5",
-              "jsonc",
-              "markdown",
-              "python",
-              "toml",
-              "rust",
-              "roslyn",
-              "graphql",
-            },
-          },
-          marksman = { mason = false },
-          nil_ls = { mason = false },
-          nixd = { mason = false },
-          yamlls = {
-            cmd = { "/etc/profiles/per-user/caubut/bin/yaml-language-server", "--stdio" },
-            mason = false,
-          },
-          vtsls = {
-            settings = {
-              typescript = {
-                tsserver = {
-                  pluginPaths = { "./node_modules" },
+        },
+        marksman = { mason = false },
+        nil_ls = { mason = false },
+        nixd = { mason = false },
+        yamlls = {
+          cmd = { "/etc/profiles/per-user/caubut/bin/yaml-language-server", "--stdio" },
+          mason = false,
+        },
+      },
+    },
+
+    -- init = function()
+    --   local keys = require("lazyvim.plugins.lsp.keymaps").get()
+    --   -- change a keymap
+    --   -- keys[#keys + 1] = { "K", "<cmd>echo 'hello'<cr>" }
+    --   -- disable a keymap
+    --   -- keys[#keys + 1] = { "K", false }
+    --   -- add a keymap
+    --   keys[#keys + 1] = { "<leader>cz", "<cmd>LspRestart<cr>", desc = "Restart LSP" }
+    -- end,
+  },
+  {
+    "neovim/nvim-lspconfig",
+    opts = {
+      servers = {
+        vtsls = {
+          settings = {
+            complete_function_calls = true,
+            vtsls = {
+              enableMoveToFileCodeAction = true,
+              autoUseWorkspaceTsdk = true,
+              experimental = {
+                maxInlayHintLength = 30,
+                completion = {
+                  -- PERF: vtsls sends a large number of completions
+                  -- reducing this number makes blink.cmp fast again
+                  enableServerSideFuzzyMatch = true,
+                  entriesLimit = 20,
                 },
               },
             },
-            --   tsserver = {
-            --     globalPlugins = {
-            --       {
-            --         configNamespace = "typescript",
-            --         enableForWorkspaceTypeScriptVersions = true,
-            --         languages = { "typescript", "vue" },
-            --         location = "/home/caubut/.local/share/nvim/mason/packages/vue-language-server//node_modules/@vue/language-server",
-            --         name = "@vue/typescript-plugin",
-            --       },
-            --     },
-            --   },
-            -- },
-            -- tsserver = {
-            --   cmd = {
-            --     "bunx",
-            --     "typescript-language-server",
-            --     "--stdio",
-            --   },
+            typescript = {
+              preferences = { importModuleSpecifier = "non-relative" },
+              updateImportsOnFileMove = { enabled = "always" },
+              suggest = {
+                completeFunctionCalls = true,
+              },
+              inlayHints = {
+                enumMemberValues = { enabled = true },
+                functionLikeReturnTypes = { enabled = false },
+                parameterNames = { enabled = "all" },
+                parameterTypes = { enabled = false },
+                propertyDeclarationTypes = { enabled = true },
+                variableTypes = { enabled = false },
+              },
+              tsserver = {
+                maxTsServerMemory = 8192,
+                -- log = "verbose",
+                --     pluginPaths = { "./node_modules" },
+              },
+            },
+          },
+          flags = {
+            debounce_text_changes = 250,
           },
         },
-        format = { timeout_ms = 60000 },
-      })
-    end,
-    init = function()
-      local keys = require("lazyvim.plugins.lsp.keymaps").get()
-      -- change a keymap
-      -- keys[#keys + 1] = { "K", "<cmd>echo 'hello'<cr>" }
-      -- disable a keymap
-      -- keys[#keys + 1] = { "K", false }
-      -- add a keymap
-      keys[#keys + 1] = { "<leader>cz", "<cmd>LspRestart<cr>", desc = "Restart LSP" }
-    end,
+      },
+    },
   },
+  -- {
+  --   "neovim/nvim-lspconfig",
+  --   opts = {
+  --     servers = {
+  --       --     format = { timeout_ms = 60000 },
+  --     },
+  --   },
+  -- },
   {
-    "neovim/nvim-lspconfig",
-    opts = function(_, opts)
-      local plugins = opts.servers.vtsls.settings.vtsls.tsserver.globalPlugins
-      for _, plugin in ipairs(plugins) do
-        if plugin.name == "@vue/typescript-plugin" then
-          plugin.languages = { "vue", "typescript" }
-          plugin.location = LazyVim.root() .. "/node_modules/@vue/language-server"
-          break
-        end
-      end
-      return opts
-    end,
+    "yioneko/nvim-vtsls",
   },
 }
+
+--{
+--  "neovim/nvim-lspconfig",
+--  opts = function(_, opts)
+--    local plugins = opts.servers.vtsls.settings.vtsls.tsserver.globalPlugins
+--    for _, plugin in ipairs(plugins) do
+--      if plugin.name == "@vue/typescript-plugin" then
+--        plugin.languages = { "vue", "typescript" }
+--        plugin.location = LazyVim.root() .. "/node_modules/@vue/language-server"
+--        break
+--      end
+--    end
+--    return opts
+--  end,
+--},
 -- opts = function(_, opts)
 --   table.insert(opts.servers.vtsls.filetypes, "vue")
 --   LazyVim.extend(opts.servers.vtsls, "settings.vtsls.tsserver.globalPlugins", {

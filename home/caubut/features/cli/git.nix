@@ -6,14 +6,12 @@
 }: let
   username = "${config.home.username}";
 in {
-  home.packages = with pkgs; [git-branchless];
+  home.packages = with pkgs; [git-absorb git-branchless git-revise dprint];
   programs.git = {
     enable = true;
     package = pkgs.git;
-    userName = "Christopher Aubut";
-    userEmail = "christopher@aubut.me";
     # signing.format = "ssh";
-    extraConfig = {
+    settings = {
       column.ui = "auto";
       branch.sort = "-committerdate";
       branchless = {
@@ -24,6 +22,11 @@ in {
           defaultRevset = "(@ % main()) | stack() | descendants(@) | @";
           # ((draft() | branches() | @) % main()) | branches() | @
         };
+      };
+      absorb = {
+        fixupTargetAlwaysSHA = true;
+        maxStack = 50;
+        oneFixupPerCommit = true;
       };
       commit.verbose = true;
       core = {
@@ -54,6 +57,10 @@ in {
         prompt = false;
         diffview.cmd = ''nvim -n -c "DiffviewOpen" "$MERGE"'';
       };
+      paging = {
+        colorArg = "always";
+        pager = "delta --dark --paging=never";
+      };
       pull = {
         ff = "only";
         rebase = true;
@@ -73,15 +80,10 @@ in {
         autoupdate = true;
       };
     };
-    includes = [
-      {
-        path = "${config.xdg.configHome}/git/work.inc";
-        condition = "gitdir:${config.xdg.userDirs.documents}/work/";
-      }
-    ];
   };
-  xdg.configFile."git/work.inc".text = lib.generators.toGitINI {
-    user.email = "christopher.aubut@charter.com";
+  programs.delta = {
+    enable = true;
+    enableGitIntegration = true;
   };
   systemd.user.tmpfiles.rules = [
     # TODO: fix permissions on other files

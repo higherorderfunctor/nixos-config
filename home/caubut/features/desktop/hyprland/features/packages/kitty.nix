@@ -1,4 +1,4 @@
 {
   # TODO: temp
-  programs.kitty.enable = true;
+  # programs.kitty.enable = true;
 }

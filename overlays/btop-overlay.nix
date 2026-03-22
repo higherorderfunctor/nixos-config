@@ -18,5 +18,7 @@ in {
   btop = prev.btop.overrideAttrs (_: {
     inherit version;
     src = final.fetchFromGitHub {inherit (nv.src) owner repo rev sha256;};
+    patches = [];
+    patchPhase = false;
   });
 }

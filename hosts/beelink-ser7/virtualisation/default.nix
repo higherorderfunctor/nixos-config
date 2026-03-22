@@ -266,17 +266,4 @@ in {
     ];
   };
 
-  # secrets
-  sops.secrets = {
-    "gluetun.env" = {
-      mode = "400";
-      format = "dotenv";
-      sopsFile = ../secrets/gluetun.env;
-    };
-    "wg0.conf" = {
-      mode = "400";
-      format = "ini";
-      sopsFile = ../secrets/wireguard.ini;
-    };
-  };
 }

@@ -1,0 +1,39 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(git sl*)",
+      "Bash(git smartlog*)",
+      "Bash(git next*)",
+      "Bash(git prev*)",
+      "Bash(git sw*)",
+      "Bash(git record*)",
+      "Bash(git amend*)",
+      "Bash(git reword*)",
+      "Bash(git move*)",
+      "Bash(git restack*)",
+      "Bash(git sync*)",
+      "Bash(git submit*)",
+      "Bash(git hide*)",
+      "Bash(git unhide*)",
+      "Bash(git split*)",
+      "Bash(git test*)",
+      "Bash(git query*)",
+      "Bash(git branchless*)",
+      "Bash(git absorb*)",
+      "Bash(git revise*)",
+      "Bash(git undo*)",
+      "Bash(git diff*)",
+      "Bash(git show*)",
+      "Bash(git log*)",
+      "Bash(git status*)",
+      "Bash(git branch*)",
+      "Bash(git add*)",
+      "Bash(git reset HEAD*)",
+      "Bash(git restore --staged*)",
+      "Read(~/.claude/references/*)"
+    ],
+    "additionalDirectories": [
+      "~/.claude/references"
+    ]
+  }
+}
