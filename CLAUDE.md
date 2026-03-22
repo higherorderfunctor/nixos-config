@@ -89,19 +89,22 @@ fetch.url = "https://github.com/github/copilot-cli/releases/download/v$ver/copil
 
 ### Secrets
 
-Managed via sops-nix. Private SSH keys are decrypted at activation time:
-- `personal_ed25519_key` — personal GitHub, sops decryption
-- `professional_ed25519_key` — work GitHub/GitLab
+Managed via sops-nix with a private Codeberg flake input (`nixos-secrets`).
+All encrypted secrets, public keys, identity values, and sops declarations
+live in the private repo. The public repo imports it and never contains
+secret key names, emails, or identity info.
 
-Secrets files live in `home/caubut/secrets/`. System-level sops config is in
-`hosts/common/global/sops.nix`, user-level in `home/caubut/features/cli/sops.nix`.
+- **Private repo**: `git+ssh://git@codeberg.org/lucidrevisiona/nixos-secrets.git`
+- **Editing secrets**: Clone the private repo, run `sops edit` there, push,
+  then `nix flake lock --update-input nixos-secrets` in this repo
+- **sops-nix imports** stay in this repo (`sops.nix`, `hosts/common/global/default.nix`)
+- **Secret declarations + identity config** are in private NixOS/HM modules
 
 ### Multi-Identity Git
 
-Git is configured with conditional includes (`gitdir:~/Documents/work/`). Work
-repos use a different email. SSH uses host aliases: `github.com` routes to the
-personal key, `github-professional` routes to the professional key. Work repos
-must be cloned with `git@github-professional:org/repo.git`.
+Git is configured with conditional includes for work repos. SSH uses host
+aliases for multi-key routing. All identity values (emails, hostnames, SSH
+matchBlocks) are declared in the private `nixos-secrets` flake input.
 
 ### Claude Code Config
 
