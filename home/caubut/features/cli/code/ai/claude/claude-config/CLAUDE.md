@@ -33,10 +33,12 @@ Never accumulate a large diff then commit at the end. Commit as you go, one
 concern per commit. This is how Meta, Google, and Uber engineers work — the
 unit of change is an individual commit, not a branch.
 
-Dependencies (imports, inputs, config files) arrive in the commit that first
-uses them — never frontloaded "just in case." If `.envrc` depends on a flake,
-it goes in the flake commit. If a linter flag references a tool, it goes in
-the commit that adds that tool.
+Dependencies (imports, inputs, config files, devShell packages) arrive in the
+commit that first uses them — never frontloaded "just in case." If `.envrc`
+depends on a flake, it goes in the flake commit. If a linter flag references
+a tool, both the devShell package and the config go in the same commit.
+A boilerplate scaffold commit should be minimal — don't pre-populate it with
+tools that aren't configured until a later commit.
 
 Generated or auto-managed files (lock files, code-gen output) should still
 show incremental additions per commit, even if the tool regenerates them
