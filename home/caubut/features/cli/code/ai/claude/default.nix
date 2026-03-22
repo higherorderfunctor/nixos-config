@@ -25,6 +25,7 @@
 
   # Global skill directories (symlinked to ~/.claude/skills/)
   skillDirs = [
+    "index-repo-docs"
     "stack-fix"
     "stack-restack"
     "stack-split"
