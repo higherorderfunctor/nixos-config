@@ -29,7 +29,11 @@
       "Bash(git branch*)",
       "Bash(git add*)",
       "Bash(git reset HEAD*)",
-      "Bash(git restore --staged*)"
+      "Bash(git restore --staged*)",
+      "Read(~/.claude/references/*)"
+    ],
+    "additionalDirectories": [
+      "~/.claude/references"
     ]
   }
 }

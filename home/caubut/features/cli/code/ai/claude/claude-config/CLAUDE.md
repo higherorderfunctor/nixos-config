@@ -17,6 +17,22 @@ symlink, then rebuild.
 
 ---
 
+## Stacked Workflow References — MANDATORY
+
+Reference docs with exact flags, config, gotchas, and recipes:
+
+- `~/.claude/references/git-branchless.md`
+- `~/.claude/references/git-absorb.md`
+- `~/.claude/references/git-revise.md`
+
+**RULE: Before answering any question about, or running any command involving,
+git-branchless, git-absorb, or git-revise, you MUST use the Read tool to load
+the matching reference doc.** Do not rely on training data — the reference docs
+contain user-specific configuration and verified behavior. This is a blocking
+requirement, not a suggestion.
+
+---
+
 ## Git Workflow: Stacked Commits with git-branchless
 
 ### Philosophy
